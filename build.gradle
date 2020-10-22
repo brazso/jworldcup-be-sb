@@ -1,0 +1,199 @@
+buildscript {
+	ext {
+		generatedSourcesRelativePath = "generated/src"
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.2.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'eclipse'
+	//id "org.hidetake.swagger.generator" version "2.12.0" apply false
+	id "de.undercouch.download" version "4.0.4"
+	id "uk.co.boothen.gradle.wsimport" version "0.16"
+}
+
+group = 'com.zematix.jworldcup'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '14'
+
+bootRun {
+	String activeProfile = System.properties['spring.profiles.active']
+	systemProperty "spring.profiles.active", activeProfile
+}
+
+configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
+	compile {
+		extendsFrom annotationProcessor
+	}
+	all*.exclude group: 'xml-apis' // xml-apis is already included from jdk9 and it must be excluded from dependencies 
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-quartz'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+		
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'org.hsqldb:hsqldb'
+	runtimeOnly 'mysql:mysql-connector-java'
+	
+	// JUnit4 used instead of the native JUnit5
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.jupiter'
+	}
+	
+	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.junit.platform:junit-platform-engine:1.7.0'
+	testImplementation 'org.junit.platform:junit-platform-commons:1.7.0'
+	
+	implementation "com.google.guava:guava:${guavaVersion}"
+	
+	//implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
+	//implementation "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+	implementation "org.springdoc:springdoc-openapi-ui:${openapiVersion}"
+	 
+	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    
+    implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    annotationProcessor(
+        "com.querydsl:querydsl-apt:${queryDslVersion}:jpa",
+        "javax.persistence:javax.persistence-api",
+        "javax.annotation:javax.annotation-api"
+    )
+    
+    // Freemark dependencies
+    implementation "fr.opensagres.xdocreport:fr.opensagres.xdocreport.document.odt:${xdocreportVersion}"
+    implementation "fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.freemarker:${xdocreportVersion}"
+    implementation "fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter.odt.odfdom:${xdocreportVersion}"
+    
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.8.11"
+    
+    // SOAP client
+    implementation "com.sun.xml.ws:rt:2.3.1"
+    
+    // JAX-RS Client with Jersey
+    implementation "org.glassfish.jersey.containers:jersey-container-servlet:2.32"
+    implementation "org.glassfish.jersey.media:jersey-media-json-jackson:2.32"
+    implementation "org.glassfish.jersey.ext:jersey-spring5:2.32"
+    
+    // this Mockito version must be used because at later versions Mockito.when() does not work with  
+    // class.static_method() input using PowerMockito.spy. It does work only on mocked object. We need 
+    // this feature for partial mock on static methods. Although later Mockito versions since 3.4.0 
+    // support MockedStatic, but it is cannot be used for our purpose. 
+    testImplementation "org.mockito:mockito-core:2.26.0"
+    
+    // mostly for static support: partial mock on static methods and Whitebox support
+    testImplementation "org.powermock:powermock-api-mockito2:2.0.7"
+    testImplementation "org.powermock:powermock-module-junit4:2.0.7"
+}
+
+test {
+	useJUnitPlatform()
+}
+
+task downloadFile(type: Download, description: "Download OpenLigaDB WSDL file") {
+    src "https://www.openligadb.de/Webservices/Sportsdata.asmx?wsdl"
+    dest "src/main/resources/wsdl/Sportsdata.wsdl"
+    //onlyIfModified true
+    overwrite false
+}
+
+wsimport {  
+    wsdlSourceRoot = "src/main/resources/wsdl"
+    generatedSourceRoot = "${generatedSourcesRelativePath}/wsdl/main/java"
+    target = "2.0"
+    keep = true
+    extension = true
+
+    wsdl ("Sportsdata.wsdl") {
+        packageName("com.msiggi.openligadb.client")
+    }
+}
+
+task generateTestDatabaseScripts {
+    String generatedResourceRoot = "$buildDir/${generatedSourcesRelativePath}/test/resources/database"
+    String awkSourceDir = "${projectDir}/src/test/resources/database"
+
+    doLast() {
+        mkdir generatedResourceRoot
+
+        exec {
+            workingDir awkSourceDir
+            commandLine 'awk', '-f', 'drop_db.awk', 'worldcup_test.sql'
+            standardOutput new FileOutputStream("${generatedResourceRoot}/worldcup_test_drop.sql")
+        }
+
+        exec {
+        	workingDir awkSourceDir
+            commandLine 'awk', '-f', 'create_db.awk', 'worldcup_test.sql'
+            standardOutput new FileOutputStream("${generatedResourceRoot}/worldcup_test_create.sql")
+        }
+        
+        exec {
+        	workingDir awkSourceDir
+            commandLine 'awk', '-f', 'insert_db.awk', 'worldcup_test.sql'
+            standardOutput new FileOutputStream("${generatedResourceRoot}/worldcup_test_insert.sql")
+        }
+        
+        exec {
+        	workingDir awkSourceDir
+            commandLine 'awk', '-f', 'insert_hsqldb.awk', 'worldcup_test.sql'
+            standardOutput new FileOutputStream("${generatedResourceRoot}/worldcup_test_insert_hsqldb.sql")
+        }
+    }
+}
+
+compileJava {
+	String annotationProcessorPath = "$buildDir/$generatedSourcesRelativePath/annotationProcessor/main/java"  
+	String wsdlPath = wsimport.generatedSourceRoot
+	String testResourcePath = "$buildDir/${generatedSourcesRelativePath}/test/resources"
+
+    sourceSets.main.java { 
+        srcDirs += [annotationProcessorPath, wsdlPath, testResourcePath]
+    }
+
+	//options.annotationProcessorPath = configurations.annotationProcessor
+    //options.compilerArgs += [
+    //'-proc:only',
+    //'-processor', 'com.querydsl.apt.jpa.JPAAnnotationProcessor',
+    //'-Aquerydsl.includedPackages=com.zematix.jworldcup.backend.entity'
+    //]
+	
+    File annotationProcessorPathFile = project.file(annotationProcessorPath)
+    println "Creating and configuring generated annotationProcessor source directory $annotationProcessorPathFile"
+    project.mkdir(annotationProcessorPathFile)
+    options.annotationProcessorGeneratedSourcesDirectory = annotationProcessorPathFile
+    outputs.dir(annotationProcessorPathFile)
+}
+
+tasks.withType(JavaCompile) {
+    dependsOn downloadFile, generateTestDatabaseScripts //, wsimport //, generateJaxb, copyBuildInfo
+    options.compilerArgs += "--enable-preview"
+}
+
+//clean {
+//    delete "${buildDir}/generated"
+//}

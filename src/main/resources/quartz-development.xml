@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<job-scheduling-data
+	xmlns="http://www.quartz-scheduler.org/xml/JobSchedulingData"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.quartz-scheduler.org/xml/JobSchedulingData 
+	http://www.quartz-scheduler.org/xml/job_scheduling_data_1_8.xsd"
+	version="1.8">
+
+	<schedule>
+		<job>
+			<name>RegularMaintenanceJob</name>
+			<description>Regular database maintenance operations</description>
+			<job-class>com.zematix.jworldcup.server.scheduler.RegularMaintenanceJob</job-class>
+		</job>
+
+		<trigger>
+			<simple>
+				<name>RegularMaintenenaceTrigger</name>
+				<description>Run once at startup</description>
+				<job-name>RegularMaintenanceJob</job-name>
+				<misfire-instruction>MISFIRE_INSTRUCTION_SMART_POLICY</misfire-instruction>
+				<repeat-count>0</repeat-count>
+				<repeat-interval>0</repeat-interval>
+			</simple>
+		</trigger>
+	</schedule>
+</job-scheduling-data>

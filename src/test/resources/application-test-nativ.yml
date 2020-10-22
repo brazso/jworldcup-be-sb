@@ -1,0 +1,20 @@
+# --------------------------------------------------------
+# ---------------- Application properties ----------------
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      javax:
+        persistence:
+          schema-generation:
+            database:
+              action: drop-and-create
+            drop-source: script
+            drop-script-source: database/worldcup_test_drop.sql
+            create-source: script
+            create-script-source: database/worldcup_test_create.sql
+          sql-load-script-source: database/worldcup_test_insert.sql
+  datasource:
+    #driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/worldcup_test?useLegacyDatetimeCode=false

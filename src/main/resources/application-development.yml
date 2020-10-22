@@ -1,0 +1,37 @@
+# Contains application parameters for development environment.
+# It overrides the parameter values used in application.yml.
+# It gets activated by giving option "-Dapplication.environment=development" to JVM 
+spring:
+  datasource:
+    #driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
+    username: worldcup
+    password: worldcup.org
+    hikari:
+      maximumPoolSize: 3
+
+# Application
+app:
+  url: http://localhost:8090/jworldcup/
+  #cheat.dateTime = 2019-06-22 19:00
+  #scheduler.enabled = false
+# SMTP parameters - mailtrap email provider used
+mail.smtp:
+  host: smtp.mailtrap.io
+  port: 2525
+  user: 16febbd3b2dff0
+  pass: 4b1dc44f26f800
+# Logging
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.zaxxer.hikari: TRACE
+    #org.springframework.security.ldap: TRACE
+    #org.springframework.ldap: TRACE
+    org:
+      springframework:
+        orm:
+          jpa: trace
+        transaction:
+          interceptor: TRACE

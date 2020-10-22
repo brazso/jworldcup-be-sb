@@ -1,0 +1,65 @@
+# Contains application parameters for production environment. Any value can be overriden 
+# in other application-{profile} files.
+spring:
+  application:
+    name: jw-backend-sb
+  jpa:
+    hibernate:
+      ddl-auto: none
+      connection:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        connection:
+          useUnicode: true
+          characterEncoding: UTF-8
+        jdbc: 
+          time_zone: UTC
+  datasource:
+    #driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
+    username: worldcup
+    password: worldcup.org
+    hikari:
+      maximumPoolSize: 20
+      transactionIsolation: TRANSACTION_READ_COMMITTED
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8090
+  servlet:
+    context-path: "/jworldcup"
+# --- SECURITY ---
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-uri: "http://uaa-dev.dcaasp.secdmz.nav.gov.hu/uaa/oauth/token_key"
+# Application
+app:
+  url: https://worldcup.zematix.hu/
+  key: dummy0sensitive
+  version:
+    number: 0.5.13
+    date: 2019-07-05
+  shortName: JWorldcup
+  emailAddr: jworldcup@zematix.hu
+  user.candidate.expire.days: 3
+
+# Cookie
+cookie.maxAge: 1209600
+
+# SMTP parameters- Zoho email provider used with generated app specific pwd
+mail.smtp:
+  host: smtp.zoho.com
+  port: 465
+  user: branyiczky.zsolt@zematix.hu
+  pass: 94Cmyiyy7bMI
+  auth: true
+  starttls.enable: true
+  socketFactory.class: javax.net.ssl.SSLSocketFactory
+  connectiontimeout: 5000
+  timeout: 5000

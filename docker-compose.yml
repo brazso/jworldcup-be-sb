@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+
+  mysql:
+    build:
+#      context: docker/mysql
+      context: .
+#      dockerfile: Dockerfile
+      dockerfile: docker/mysql/Dockerfile
+    container_name: jworldcup.mysql
+    image: jworldcup.mysql
+    ports:
+      - 3306:3306
+    environment: 
+      MYSQL_ROOT_PASSWORD: osboxes.org
+      MYSQL_USER: worldcup
+      MYSQL_PASSWORD: worldcup.org
+      MYSQL_DATABASE: worldcup
+#    networks:
+#      - php-network
+    volumes:
+      - mysqld:/var/run/mysqld
+#      - ./src/test/resources/database/worldcup_test.sql:/docker-entrypoint-initdb.d/2_worldcup_test.sql
+#    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-time-zone=UTC']
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+    
+  phpmyadmin:
+    build:
+      context: docker/phpmyadmin
+      dockerfile: Dockerfile
+    container_name: jworldcup.phpmyadmin
+    image: jworldcup.phpmyadmin
+    depends_on:
+      - mysql
+    ports:
+      - 8080:80
+#    environment:
+#      PMA_ARBITRARY: 1
+#      PMA_SOCKET: /var/run/mysqld/mysqld.sock
+##      PMA_HOST: localhost
+##      PMA_PORT: 3306
+##      PMA_USER: worldcup
+##      PMA_PASSWORD: worldcup.org
+#    networks:
+#      - php-network
+    volumes:
+      - mysqld:/var/run/mysqld
+      - ./docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+
+## Names our volume
+volumes:
+  mysqld:
