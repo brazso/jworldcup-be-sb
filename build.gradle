@@ -112,6 +112,12 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+    testLogging.showStandardStreams = true
+    
+    /*filter {
+        //specific test method
+        includeTestsMatching "*DaoTest"
+    }*/
 }
 
 task downloadFile(type: Download, description: "Download OpenLigaDB WSDL file") {
@@ -172,7 +178,11 @@ compileJava {
 	String testResourcePath = "$buildDir/${generatedSourcesRelativePath}/test/resources"
 
     sourceSets.main.java { 
-        srcDirs += [annotationProcessorPath, wsdlPath, testResourcePath]
+        srcDirs += [annotationProcessorPath, wsdlPath]
+    }
+
+    sourceSets.main.resources { 
+        srcDirs += [testResourcePath]
     }
 
 	//options.annotationProcessorPath = configurations.annotationProcessor
@@ -192,6 +202,14 @@ compileJava {
 tasks.withType(JavaCompile) {
     dependsOn downloadFile, generateTestDatabaseScripts //, wsimport //, generateJaxb, copyBuildInfo
     options.compilerArgs += "--enable-preview"
+}
+
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
 }
 
 //clean {

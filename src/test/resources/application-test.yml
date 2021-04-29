@@ -1,5 +1,20 @@
 # --------------------------------------------------------
 # ---------------- Application properties ----------------
+
+# hsqldb database usage for automatic tests
+
+# "test" list element inside @ActiveProfiles({"development", "test"})
+# in test files invokes its usage.
+
+# Drop is needed at *.schema-generation.database.action
+# because at suite tests more application contexts might 
+# be started in parallel and the name of the memory database 
+# is everywhere the fixed testdb. The 2nd (and subsequent)
+# app context loading may found the existisg testdb, simple
+# create setting may fail on existing db objects.
+# Note: generate-name, which generates unique db name, might 
+# be an alternative soulution.
+
 spring:
   jpa:
     hibernate:
@@ -11,8 +26,8 @@ spring:
         persistence:
           schema-generation:
             database:
-              action: create
-          create-source: metadata
+              action: drop-and-create
+            create-source: metadata
           sql-load-script-source: database/worldcup_test_insert_hsqldb.sql
   datasource:
     #driver-class-name: org.hsqldb.jdbc.JDBCDriver
