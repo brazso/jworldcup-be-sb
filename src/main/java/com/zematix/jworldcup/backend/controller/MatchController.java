@@ -95,10 +95,10 @@ public class MatchController extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 
-		List<Match> matches = matchService.retrieveMatchesByEvent(event.getEventId());
-		GenericEntity<List<Match>> genericMatches = new GenericEntity<List<Match>>(matches){};
+		List<Round> rounds = matchService.retrieveRoundsByEvent(event.getEventId());
+		GenericEntity<List<Round>> genericRounds = new GenericEntity<List<Round>>(rounds){};
 		
-		return Response.status(Response.Status.OK).entity(genericMatches).build();
+		return Response.status(Response.Status.OK).entity(genericRounds).build();
 	}
 
 	/**
