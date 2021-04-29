@@ -182,8 +182,7 @@ public class ChatServiceTest {
 
 	/**
 	 * Test {@link ChatService#sendChatMessage(UserGroup, Long, String)} method.
-	 * Scenario: throws {@link IllegalStateException} because there is no user
-	 *           belongs to the given {@code userId} parameter in the database 
+	 * Scenario: successfully sends chat message to everybody user group from a user
 	 */
 	@Test
 	public void sendChatMessage_EverybodyUserGroup(/*UserGroup userGroup, Long userId, String message*/) throws ServiceException {
@@ -201,6 +200,6 @@ public class ChatServiceTest {
 		chatService.sendChatMessage(userGroup, userId, message);
 		
 		Chat chat = commonDao.findEntityById(Chat.class, 1L);
-		assertTrue(String.format("Retrieved chat result should have \"%s\" message", message), chat != null && chat.getMessage().equals(message));
+		assertTrue(String.format("Retrieved chat result should have \"%s\" message but it is \"%s\"", message, chat.getMessage()), chat != null && chat.getMessage().equals(message));
 	}
 }

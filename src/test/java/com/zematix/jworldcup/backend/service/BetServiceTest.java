@@ -461,6 +461,7 @@ public class BetServiceTest {
 				ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(),
 				ArgumentMatchers.anyByte(), ArgumentMatchers.anyByte(),
 				ArgumentMatchers.anyByte(), ArgumentMatchers.anyByte())).thenCallRealMethod();
+		Mockito.when(matchService.sign(ArgumentMatchers.anyByte())).thenCallRealMethod();
 
 		int score = betService.retrieveScoreByEventAndUser(eventId, userId);
 		assertEquals("Retrieved score should be the expected one.", expectedScore, score);
@@ -657,6 +658,7 @@ public class BetServiceTest {
 				ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(),
 				ArgumentMatchers.anyByte(), ArgumentMatchers.anyByte(),
 				ArgumentMatchers.anyByte(), ArgumentMatchers.anyByte())).thenCallRealMethod();
+		Mockito.when(matchService.sign(ArgumentMatchers.anyByte())).thenCallRealMethod();
 
 		Map<LocalDateTime, Integer> mapScoreByDate = betService.retrieveScoresByEventAndUser(eventId, userId);
 		assertEquals("Retrieved score map should be the expected one.", expectedMapScoreByDate, mapScoreByDate);
@@ -801,6 +803,7 @@ public class BetServiceTest {
 				ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(),
 				ArgumentMatchers.anyByte(), ArgumentMatchers.anyByte(),
 				ArgumentMatchers.anyByte(), ArgumentMatchers.anyByte())).thenCallRealMethod();
+		Mockito.when(matchService.sign(ArgumentMatchers.anyByte())).thenCallRealMethod();
 
 		int score = betService.retrieveMaximumScoreByEvent(eventId);
 		assertEquals("Retrieved score should be the expected one.", expectedScore, score);
