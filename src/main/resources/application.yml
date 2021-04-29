@@ -37,14 +37,14 @@ security:
   oauth2:
     resource:
       jwt:
-        key-uri: "http://uaa-dev.dcaasp.secdmz.nav.gov.hu/uaa/oauth/token_key"
+        key-uri: "http://zematix.hu/uaa/oauth/token_key"
 # Application
 app:
   url: https://worldcup.zematix.hu/
   key: dummy0sensitive
   version:
-    number: 0.5.13
-    date: 2019-07-05
+    number: 0.6.0
+    date: 2021-04-29
   shortName: JWorldcup
   emailAddr: jworldcup@zematix.hu
   user.candidate.expire.days: 3
