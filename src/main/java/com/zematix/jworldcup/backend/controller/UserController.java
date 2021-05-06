@@ -2,25 +2,28 @@ package com.zematix.jworldcup.backend.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import org.glassfish.jersey.process.internal.RequestScoped;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.base.Strings;
+import com.zematix.jworldcup.backend.dto.GenericResponse;
+import com.zematix.jworldcup.backend.dto.UserDto;
+import com.zematix.jworldcup.backend.dto.UserExtendedDto;
 import com.zematix.jworldcup.backend.entity.User;
+import com.zematix.jworldcup.backend.entity.model.UserExtended;
+import com.zematix.jworldcup.backend.mapper.UserExtendedMapper;
+import com.zematix.jworldcup.backend.mapper.UserMapper;
 import com.zematix.jworldcup.backend.service.ParametrizedMessage;
 import com.zematix.jworldcup.backend.service.ServiceBase;
 import com.zematix.jworldcup.backend.service.ServiceException;
@@ -32,18 +35,22 @@ import io.swagger.v3.oas.annotations.Operation;
  * WS Rest wrapper class of {@link UserService}.
  * Only the necessary public methods of its associated class are in play. 
  */
-@RequestScoped
-@Path("/user")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("users")
 public class UserController extends ServiceBase {
 
 	@Inject
 	private UserService userService;
+	
+	@Inject
+	private UserMapper userMapper;
 
 	@Inject
-	//@Context // although it works without an own producer, but it does not support mocking
-	private UriInfo uriInfo;
+	private UserExtendedMapper userExtendedMapper;
+
+//	@Inject
+//	//@Context // although it works without an own producer, but it does not support mocking
+//	private UriInfo uriInfo;
 	
 	@Value("${app.key}")
 	private String serverAppKey;
@@ -60,20 +67,19 @@ public class UserController extends ServiceBase {
 	 *         in {@link Response}
 	 * @throws ServiceException if the user cannot be authenticated based on the given login data 
 	 */
-	@PreAuthorize("hasAnyRole(['USER', 'ADMIN']")
 	@Operation(summary = "Login a user", description = "Login a user with the given authentication data")
 	@GetMapping(value = "/login")
-	public Response login( @RequestParam("appKey") String appKey, 
+	public ResponseEntity<GenericResponse<UserDto>> login(//@RequestParam("appKey") String appKey,
 			@RequestParam("loginName") String loginName, 
 			@RequestParam("loginPassword") String loginPassword ) throws ServiceException  {
 
-		logger.info("uriInfo="+uriInfo.getAbsolutePath().getPath());
+		//logger.info("uriInfo="+uriInfo.getAbsolutePath().getPath());
 
 		List<ParametrizedMessage> errMsgs = new ArrayList<>();
-
-		if (Strings.isNullOrEmpty(appKey) || !appKey.equals(serverAppKey)) {
-			errMsgs.add(ParametrizedMessage.create("DISALLOWED_TO_CALL_WS"));
-		}
+//
+//		if (Strings.isNullOrEmpty(appKey) || !appKey.equals(serverAppKey)) {
+//			errMsgs.add(ParametrizedMessage.create("DISALLOWED_TO_CALL_WS"));
+//		}
 
 		if (!errMsgs.isEmpty()) {
 			throw new ServiceException(errMsgs);
@@ -81,8 +87,8 @@ public class UserController extends ServiceBase {
 		
 		User user = userService.login(loginName, loginPassword);
 
-		// return Response.ok(user, MediaType.APPLICATION_JSON).build();
-		return Response.status(Response.Status.OK).entity(user).build();
+		//return Response.status(Response.Status.OK).entity(user).build();
+		return new ResponseEntity<>(new GenericResponse<>(userMapper.entityToDto(user)), HttpStatus.OK);
 	}
 
 	/**
@@ -100,37 +106,44 @@ public class UserController extends ServiceBase {
 	 * @throws ServiceException if the user cannot be signed up, its login data is not valid 
 	 *         or the user already exists in the database
 	 */
-	@PreAuthorize("hasRole(['USER']")
 	@Operation(summary = "Sign up a user", description = "Sign up a user with the given data")
 	@PostMapping(value = "/signup")
-	public Response signUp(@RequestParam("appKey") String appKey, 
-			@RequestParam("loginName") String loginName, 
-			@RequestParam("loginPassword") String loginPassword,
-			@RequestParam("loginPasswordAgain") String loginPasswordAgain,
-			@RequestParam("fullName") String fullName,
-			@RequestParam("emailAddr") String emailAddr,
-			@RequestParam("zoneId") String zoneId,
-			@RequestParam("languageTag") String languageTag) throws ServiceException {
+//	public Response signUp(@RequestParam("appKey") String appKey, 
+//			@RequestParam("loginName") String loginName, 
+//			@RequestParam("loginPassword") String loginPassword,
+//			@RequestParam("loginPasswordAgain") String loginPasswordAgain,
+//			@RequestParam("fullName") String fullName,
+//			@RequestParam("emailAddr") String emailAddr,
+//			@RequestParam("zoneId") String zoneId,
+//			@RequestParam("languageTag") String languageTag) throws ServiceException {
+	public ResponseEntity<GenericResponse<UserDto>> signUp(
+			@RequestBody UserExtendedDto userExtendedDto) throws ServiceException {
 
 		List<ParametrizedMessage> errMsgs = new ArrayList<>();
 
-		if (Strings.isNullOrEmpty(appKey) || !appKey.equals(serverAppKey)) {
-			errMsgs.add(ParametrizedMessage.create("DISALLOWED_TO_CALL_WS"));
-		}
+//		if (Strings.isNullOrEmpty(appKey) || !appKey.equals(serverAppKey)) {
+//			errMsgs.add(ParametrizedMessage.create("DISALLOWED_TO_CALL_WS"));
+//		}
 
 		if (!errMsgs.isEmpty()) {
 			throw new ServiceException(errMsgs);
 		}
 
-		Locale locale = null;
-		if (!Strings.isNullOrEmpty(languageTag)) {
-			locale = Locale.forLanguageTag(languageTag);
-		}
+//		Locale locale = null;
+//		if (!Strings.isNullOrEmpty(languageTag)) {
+//			locale = Locale.forLanguageTag(languageTag);
+//		}
+
+		UserExtended userExtended = userExtendedMapper.dtoToEntity(userExtendedDto);
 		
-		User user = userService.signUp(loginName, loginPassword, loginPasswordAgain, 
-				fullName, emailAddr, zoneId, locale);
+//		User user = userService.signUp(loginName, loginPassword, loginPasswordAgain, 
+//				fullName, emailAddr, zoneId, locale);
+		User user = userService.signUp(userExtended.getLoginName(), userExtended.getLoginPassword(), 
+				userExtended.getLoginPasswordAgain(), userExtended.getFullName(), 
+				userExtended.getEmailAddr(), userExtended.getZoneId(), userExtended.getLocale());
 		
-		return Response.status(Response.Status.OK).entity(user).build();
+		//return Response.status(Response.Status.OK).entity(user).build();
+		return new ResponseEntity<>(new GenericResponse<>(userMapper.entityToDto(user)), HttpStatus.OK);
 	}
 
 	/**
@@ -150,38 +163,46 @@ public class UserController extends ServiceBase {
 	 * @return {@link User} entity instance belongs to the modified user wrapped in a {@link Response} 
 	 * @throws ServiceException if the user cannot be identified or modified
 	 */
-	@PreAuthorize("hasAnyRole(['USER', 'ADMIN']")
+//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@Operation(summary = "Modify a user", description = "Modify a user with the given data")
-	@PostMapping(value = "/modify-user")
-	public Response modifyUser(@RequestParam("appKey") String appKey, 
-			@RequestParam("loginName") String loginName, 
-			@RequestParam("loginPasswordActual") String loginPasswordActual,
-			@RequestParam("loginPasswordNew") String loginPasswordNew,
-			@RequestParam("loginPasswordAgain") String loginPasswordAgain,
-			@RequestParam("fullName") String fullName,
-			@RequestParam("emailNew") String emailNew,
-			@RequestParam("emailNewAgain") String emailNewAgain,
-			@RequestParam("zoneId") String zoneId,
-			@RequestParam("languageTag") String languageTag) throws ServiceException {
-
+	@PutMapping(value = "/modify-user")
+//	public Response modifyUser(@RequestParam("appKey") String appKey, 
+//			@RequestParam("loginName") String loginName, 
+//			@RequestParam("loginPasswordActual") String loginPasswordActual,
+//			@RequestParam("loginPasswordNew") String loginPasswordNew,
+//			@RequestParam("loginPasswordAgain") String loginPasswordAgain,
+//			@RequestParam("fullName") String fullName,
+//			@RequestParam("emailNew") String emailNew,
+//			@RequestParam("emailNewAgain") String emailNewAgain,
+//			@RequestParam("zoneId") String zoneId,
+//			@RequestParam("languageTag") String languageTag) throws ServiceException {
+	public ResponseEntity<GenericResponse<UserDto>> modifyUser(
+			@RequestBody UserExtendedDto userExtendedDto) throws ServiceException {
+	
 		List<ParametrizedMessage> errMsgs = new ArrayList<>();
 
-		if (Strings.isNullOrEmpty(appKey) || !appKey.equals(serverAppKey)) {
-			errMsgs.add(ParametrizedMessage.create("DISALLOWED_TO_CALL_WS"));
-		}
+//		if (Strings.isNullOrEmpty(appKey) || !appKey.equals(serverAppKey)) {
+//			errMsgs.add(ParametrizedMessage.create("DISALLOWED_TO_CALL_WS"));
+//		}
 
 		if (!errMsgs.isEmpty()) {
 			throw new ServiceException(errMsgs);
 		}
 		
-		Locale locale = null;
-		if (!Strings.isNullOrEmpty(languageTag)) {
-			locale = Locale.forLanguageTag(languageTag);
-		}
+//		Locale locale = null;
+//		if (!Strings.isNullOrEmpty(userExtendedDto.getLanguageTag())) {
+//			locale = Locale.forLanguageTag(userExtendedDto.getLanguageTag());
+//		}
 		
-		User user = userService.modifyUser(loginName, loginPasswordActual, loginPasswordNew, 
-				loginPasswordAgain, fullName, emailNew, emailNewAgain, zoneId, locale);
+		UserExtended userExtended = userExtendedMapper.dtoToEntity(userExtendedDto);
+		
+		User user = userService.modifyUser(userExtended.getLoginName(), userExtended.getLoginPassword(), 
+				userExtended.getLoginPasswordNew(), userExtended.getLoginPasswordAgain(), 
+				userExtended.getFullName(), userExtended.getEmailNew(), 
+				userExtended.getEmailNewAgain(), userExtended.getZoneId(), 
+				userExtended.getLocale());
 
-		return Response.status(Response.Status.OK).entity(user).build();
+		//return Response.status(Response.Status.OK).entity(user).build();
+		return new ResponseEntity<>(new GenericResponse<>(userMapper.entityToDto(user)), HttpStatus.OK);
 	}
 }
