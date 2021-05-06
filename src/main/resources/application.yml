@@ -33,11 +33,11 @@ server:
   servlet:
     context-path: "/jworldcup"
 # --- SECURITY ---
-security:
-  oauth2:
-    resource:
-      jwt:
-        key-uri: "http://zematix.hu/uaa/oauth/token_key"
+#security:
+#  oauth2:
+#    resource:
+#      jwt:
+#        key-uri: "http://zematix.hu/uaa/oauth/token_key"
 # Application
 app:
   url: https://worldcup.zematix.hu/
