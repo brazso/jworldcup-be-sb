@@ -176,8 +176,7 @@ public class UserService extends ServiceBase {
 			String token = CommonUtil.generateRandomToken();
 			try {
 				String encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword1);
-				user = userDao.saveUser(loginName, 
-						CommonUtil.getEncryptedLoginPassword(loginName, loginPassword1), 
+				user = userDao.saveUser(loginName, encryptedLoginPassword,
 						fullName, emailAddr, /*sRole*/ "USER", /*sStatus*/ "CANDIDATE", token, 
 						zoneId, applicationService.getActualDateTime());
 			}

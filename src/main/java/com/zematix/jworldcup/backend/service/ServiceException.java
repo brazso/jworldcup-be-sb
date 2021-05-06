@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Exception used by service classes.
- * It contains a list of messages, they are mostly come form validation errors.
+ * It contains a list of messages, they are mostly derived from validation errors.
  */
 public class ServiceException extends Exception {
 	private static final long serialVersionUID = 1L;
