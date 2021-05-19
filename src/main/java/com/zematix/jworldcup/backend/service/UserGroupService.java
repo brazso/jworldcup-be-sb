@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.ByteArrayOutputStream;
@@ -17,20 +18,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.UserDao;
 import com.zematix.jworldcup.backend.dao.UserGroupDao;
+import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
+import com.zematix.jworldcup.backend.emun.TemplateId;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Role;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.entity.UserStatus;
-import com.zematix.jworldcup.backend.entity.model.UserCertificate;
-import com.zematix.jworldcup.backend.entity.model.UserPosition;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
+import com.zematix.jworldcup.backend.model.UserCertificate;
+import com.zematix.jworldcup.backend.model.UserPosition;
 
 /**
  * Operations around {@link UserGroup} elements. 
@@ -78,8 +82,8 @@ public class UserGroupService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public UserGroup createVirtualEverybodyUserGroup(Long eventId, Long userId) {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 
 		// create virtual Everybody userGroup
 		UserGroup userGroup = new UserGroup();
@@ -110,6 +114,9 @@ public class UserGroupService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public List<UserGroup> retrieveUserGroups(Long eventId, Long userId, boolean isEverybodyIncluded) throws ServiceException {
+		checkNotNull(eventId);
+		checkNotNull(userId);
+		
 		List<UserGroup> userGroups = userGroupDao.retrieveUserGroups(eventId, userId);
 		
 		if (isEverybodyIncluded) {
@@ -137,6 +144,8 @@ public class UserGroupService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public List<User> retrieveUsersByUserGroup(Long userGroupId) throws ServiceException {
+		checkNotNull(userGroupId);
+
 		return userGroupDao.retrieveUsersByUserGroup(userGroupId);
 	}
 
@@ -151,8 +160,8 @@ public class UserGroupService extends ServiceBase {
 	public List<UserPosition> retrieveUserPositions(Long eventId, Long userGroupId) throws ServiceException {
 		List<UserPosition> userPositions = new ArrayList<>();
 		
-		checkArgument(eventId != null, "Argument \"eventId\" value must not be null.");
-		checkArgument(userGroupId != null, "Argument \"userGroupId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userGroupId);
 		
 		List<User> users = userGroupDao.retrieveUsersWithBetsByUserGroup(userGroupId, eventId);
 		
@@ -217,10 +226,13 @@ public class UserGroupService extends ServiceBase {
 	 * @return persisted UserGroup entity instance
 	 */
 	public UserGroup insertUserGroup(Long eventId, Long userId, String name, boolean isInserConfirmed) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		checkNotNull(eventId);
+		checkNotNull(userId);
+		
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		if (Strings.isNullOrEmpty(name)) {
-			errMsgs.add(ParametrizedMessage.create("USER_GROUP_NAME_EMPTY"));
+			errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_EMPTY"));
 			throw new ServiceException(errMsgs);
 		}
 		
@@ -234,17 +246,17 @@ public class UserGroupService extends ServiceBase {
 			if (!foundUserGroup.getEvent().getEventId().equals(eventId)) {
 				if (!isInserConfirmed) {
 					// userGroup found on earlier event, confirm dialog with either importing or doing insertion?
-					errMsgs.add(ParametrizedMessage.create("USER_GROUP_NAME_OCCUPIED_ON_EARLIER_EVENT", 
-							ParametrizedMessageType.INFO, 
+					errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_OCCUPIED_ON_EARLIER_EVENT", 
+							ParameterizedMessageType.INFO, 
 							foundUserGroup.getEvent().getShortDescWithYear(),
 							foundUserGroup.getUserGroupId()));
 				}
 			}
 			else if (!foundUserGroup.getOwner().getUserId().equals(userId)) {
-				errMsgs.add(ParametrizedMessage.create("USER_GROUP_NAME_OCCUPIED"));
+				errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_OCCUPIED"));
 			}
 			else {
-				errMsgs.add(ParametrizedMessage.create("USER_GROUP_NAME_ALREADY_EXIST"));
+				errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_ALREADY_EXIST"));
 			}
 		}
 
@@ -269,10 +281,13 @@ public class UserGroupService extends ServiceBase {
 	 * @return persisted UserGroup entity instance
 	 */
 	public UserGroup importUserGroup(Long eventId, Long userId, String name) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		checkNotNull(eventId);
+		checkNotNull(userId);
+
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		if (Strings.isNullOrEmpty(name)) {
-			errMsgs.add(ParametrizedMessage.create("USER_GROUP_NAME_EMPTY"));
+			errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_EMPTY"));
 			throw new ServiceException(errMsgs);
 		}
 		
@@ -284,15 +299,15 @@ public class UserGroupService extends ServiceBase {
 		UserGroup foundUserGroup = userGroupDao.findLastUserGroupByName(eventId, name);
 		
 		if (foundUserGroup == null) {
-			errMsgs.add(ParametrizedMessage.create("USER_GROUP_NAME_NOT_EXIST"));
+			errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_NOT_EXIST"));
 		}
 		else {
 			if (foundUserGroup.getEvent().getEventId().equals(eventId)) {
 				if (!foundUserGroup.getOwner().getUserId().equals(userId)) {
-					errMsgs.add(ParametrizedMessage.create("USER_GROUP_NAME_OCCUPIED"));
+					errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_OCCUPIED"));
 				}
 				else {
-					errMsgs.add(ParametrizedMessage.create("USER_GROUP_NAME_ALREADY_EXIST"));
+					errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_ALREADY_EXIST"));
 				}
 			}
 		}
@@ -315,6 +330,8 @@ public class UserGroupService extends ServiceBase {
 	 * @param userGroupId
 	 */
 	public void deleteUserGroup(Long userGroupId) throws ServiceException {
+		checkNotNull(userGroupId);
+
 		userGroupDao.deleteUserGroup(userGroupId);
 	}
 
@@ -332,28 +349,27 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalStateException
 	 */
 	public User findAndAddUserToUserGroup(Long userGroupId, String loginName, String fullName) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
-		checkArgument(userGroupId != null, "Argument \"userGroupId\" cannot be null.");
+		checkNotNull(userGroupId);
 
 		UserGroup userGroup = commonDao.findEntityById(UserGroup.class, userGroupId);
-		if (userGroup == null) {
-			throw new IllegalStateException(String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userGroupId));
-		}
+		checkState(userGroup != null,
+				String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userGroupId));
 
 		if (loginName.isEmpty() && fullName.isEmpty()) {
-			errMsgs.add(ParametrizedMessage.create("USER_GROUP_FIELDS_EMPTY"));
+			errMsgs.add(ParameterizedMessage.create("USER_GROUP_FIELDS_EMPTY"));
 			throw new ServiceException(errMsgs);
 		}
 
 		User user = userDao.findUserByLoginNameOrFullName(loginName, fullName);
 		if (user == null) {
-			errMsgs.add(ParametrizedMessage.create("NO_USER_BELONGS_TO_USER_GROUP"));
+			errMsgs.add(ParameterizedMessage.create("NO_USER_BELONGS_TO_USER_GROUP"));
 			throw new ServiceException(errMsgs);
 		}
 		
 		if (userGroup.getUsers().contains(user)) {
-			errMsgs.add(ParametrizedMessage.create("USER_IS_ALREADY_IN_USER_GROUP", ParametrizedMessageType.WARNING));
+			errMsgs.add(ParameterizedMessage.create("USER_IS_ALREADY_IN_USER_GROUP", ParameterizedMessageType.WARNING));
 			throw new ServiceException(errMsgs);
 		}
 		
@@ -380,13 +396,12 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalStateException
 	 */
 	public void removeUserFromUserGroup(Long userGroupId, Long userId) throws ServiceException {
-		checkArgument(userGroupId != null, "Argument \"userGroupId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" value must not be null.");
+		checkNotNull(userGroupId);
+		checkNotNull(userId);
 
 		UserGroup userGroup = commonDao.findEntityById(UserGroup.class, userGroupId);
-		if (userGroup == null) {
-			throw new IllegalStateException(String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userId));
-		}
+		checkState(userGroup != null,
+				String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userId));
 
 		User user = commonDao.findEntityById(User.class, userId);
 		if (user == null) {
@@ -413,8 +428,8 @@ public class UserGroupService extends ServiceBase {
 	public List<UserCertificate> retrieveUserCertificates(Long eventId, Long userId) throws ServiceException {
 		List<UserCertificate> userCertificates = new ArrayList<>();
 		
-		checkArgument(eventId != null, "Argument \"eventId\" value must not be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 		Event event = commonDao.findEntityById(Event.class, eventId);
 		checkState(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));
 		User user = commonDao.findEntityById(User.class, userId);
@@ -504,7 +519,10 @@ public class UserGroupService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public ByteArrayOutputStream printUserCertificate(UserCertificate userCertificate, Locale locale) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		checkNotNull(userCertificate);
+		checkNotNull(locale);
+		
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		ByteArrayOutputStream pdfOutputStream = null;
 		JavaPropsMapper mapper = new JavaPropsMapper();
@@ -515,7 +533,7 @@ public class UserGroupService extends ServiceBase {
 			//UserCertificate userCertificate = mapper.readValue(properties, UserCertificate.class); // other direction
 			pdfOutputStream = templateService.generatePDFContent(TemplateId.USER_CERTIFICATE_PDF, properties, locale);
 		} catch (IOException e) {
-			errMsgs.add(ParametrizedMessage.create("TEMPLATE_GENERATION_FAILED", TemplateId.USER_CERTIFICATE_PDF));
+			errMsgs.add(ParameterizedMessage.create("TEMPLATE_GENERATION_FAILED", TemplateId.USER_CERTIFICATE_PDF));
 			logger.error(e.getMessage(), e);
 		} catch (ServiceException e) {
 			errMsgs.addAll(e.getMessages());
@@ -581,7 +599,7 @@ public class UserGroupService extends ServiceBase {
 	public List<UserCertificate> retrieveTopUsersByEvent(Long eventId, Integer maxNumberOfEverybodyMembers) throws ServiceException {
 		List<UserCertificate> userCertificates = new ArrayList<>();
 		
-		checkArgument(eventId != null, "Argument \"eventId\" value must not be null.");
+		checkNotNull(eventId);
 		Event event = commonDao.findEntityById(Event.class, eventId);
 		checkState(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));
 		checkState(applicationService.getEventCompletionPercentCache(eventId) == 100, 
@@ -644,13 +662,13 @@ public class UserGroupService extends ServiceBase {
 	 */
 	@Transactional
 	public UserGroup insertUserGroup(Long eventId, Long userId, String name) {
-		Preconditions.checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		Preconditions.checkArgument(userId != null, "Argument \"userId\" cannot be null.");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Argument \"name\" cannot be null nor empty.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
+		checkArgument(!Strings.isNullOrEmpty(name), "Argument \"name\" cannot be null nor empty.");
 		Event event = commonDao.findEntityById(Event.class, eventId);
-		Preconditions.checkArgument(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));			
+		checkState(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));			
 		User user = commonDao.findEntityById(User.class, userId);
-		Preconditions.checkArgument(user != null, String.format("No \"User\" entity belongs to \"userId\"=%d in database.", userId));			
+		checkState(user != null, String.format("No \"User\" entity belongs to \"userId\"=%d in database.", userId));			
 		
 		UserGroup userGroup = new UserGroup();
 		userGroup.setName(name);
@@ -676,15 +694,15 @@ public class UserGroupService extends ServiceBase {
 	 */
 	@Transactional
 	public UserGroup importUserGroup(Long eventId, Long userId, Long importedUserGroupId) {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
-		checkArgument(importedUserGroupId != null, "Argument \"importedUserGroupId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
+		checkNotNull(importedUserGroupId);
 		Event event = commonDao.findEntityById(Event.class, eventId);
-		checkArgument(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));			
+		checkState(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));			
 		User user = commonDao.findEntityById(User.class, userId);
-		checkArgument(user != null, String.format("No \"User\" entity belongs to \"userId\"=%d in database.", userId));			
+		checkState(user != null, String.format("No \"User\" entity belongs to \"userId\"=%d in database.", userId));			
 		UserGroup importedUserGroup = commonDao.findEntityById(UserGroup.class, importedUserGroupId);
-		checkArgument(importedUserGroup != null, String.format("No \"UserGroup\" entity belongs to \"importedUserGroupId\"=%d in database.", importedUserGroupId));			
+		checkState(importedUserGroup != null, String.format("No \"UserGroup\" entity belongs to \"importedUserGroupId\"=%d in database.", importedUserGroupId));			
 		
 		UserGroup userGroup = new UserGroup();
 		userGroup.setName(importedUserGroup.getName());
@@ -703,6 +721,5 @@ public class UserGroupService extends ServiceBase {
 		
 		return userGroup;
 	}
-
 
 }

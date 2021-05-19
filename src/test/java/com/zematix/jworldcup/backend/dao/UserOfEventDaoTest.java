@@ -104,9 +104,9 @@ public class UserOfEventDaoTest {
 
 	/**
 	 * Test {@link UserOfEventDao#deleteUserOfEventsByUser(Long)} method.
-	 * Scenario: Because the given userId is {@code null} {@link IllegalArgumentException} is thrown.
+	 * Scenario: Because the given userId is {@code null} {@link NullPointerException} is thrown.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void deleteUserOfEventsByUserNull(/*Long userId*/) {
 		Long userId = null;
 

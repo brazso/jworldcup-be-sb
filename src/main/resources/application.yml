@@ -1,5 +1,7 @@
 # Contains application parameters for production environment. Any value can be overriden 
 # in other application-{profile} files.
+
+# Spring
 spring:
   application:
     name: jw-backend-sb
@@ -28,26 +30,34 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
   main:
     allow-bean-definition-overriding: true
+    
+# Server
 server:
   port: 8090
   servlet:
     context-path: "/jworldcup"
-# --- SECURITY ---
+    
+# Security
 #security:
 #  oauth2:
 #    resource:
 #      jwt:
 #        key-uri: "http://zematix.hu/uaa/oauth/token_key"
+jwt.secret: jworldcup-sensitive-secret-key # remember to change it in real production environment!
+
 # Application
 app:
   url: https://worldcup.zematix.hu/
-  key: dummy0sensitive
+  key: dummy0sensitive # obsolete
   version:
     number: 0.6.0
     date: 2021-04-29
   shortName: JWorldcup
   emailAddr: jworldcup@zematix.hu
   user.candidate.expire.days: 3
+  api:
+    moduleName: jworldcup
+    version: 1.0
 
 # Cookie
 cookie.maxAge: 1209600

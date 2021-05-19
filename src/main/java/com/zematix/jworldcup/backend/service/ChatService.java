@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.service;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.time.LocalDateTime;
@@ -19,6 +19,8 @@ import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 
 /**
  * Operations around {@link Chat} elements. 
@@ -54,7 +56,7 @@ public class ChatService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public List<Chat> retrieveChats(UserGroup userGroup) throws ServiceException {
-		checkArgument(userGroup != null, "Argument \"userGroup\" cannot be null.");
+		checkNotNull(userGroup);
 		
 		List<Chat> chats = chatDao.retrieveChats(userGroup.getEvent().getEventId(), userGroup.getUserGroupId());
 		
@@ -74,13 +76,13 @@ public class ChatService extends ServiceBase {
 	 */
 	@Transactional
 	public void sendChatMessage(UserGroup userGroup, Long userId, String message) throws ServiceException {
-		checkArgument(userGroup != null, "Argument \"userGroup\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(userGroup);
+		checkNotNull(userId);
 		
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
 		if (Strings.isNullOrEmpty(message)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_MESSAGE"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_MESSAGE"));
 			throw new ServiceException(errMsgs);
 		}
 		
@@ -111,8 +113,8 @@ public class ChatService extends ServiceBase {
 	
 	@Transactional(readOnly = true)
 	public Chat retrieveLatestChat(Long eventId, Long userId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 		
 		Chat chat = chatDao.retrieveLatestChat(eventId, userId);
 		commonDao.detachEntity(chat); // later there might be called setUserGroup at virtual user group

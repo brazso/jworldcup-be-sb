@@ -14,7 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.zematix.jworldcup.backend.service.ServiceException;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
  * Contains test functions of {@link RetrieveMatchResultsJob} class.

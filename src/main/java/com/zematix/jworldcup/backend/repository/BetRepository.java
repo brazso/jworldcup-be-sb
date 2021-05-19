@@ -1,14 +1,15 @@
 package com.zematix.jworldcup.backend.repository;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Preconditions;
+import com.zematix.jworldcup.backend.dao.BetDao;
 import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.entity.User;
 
@@ -44,8 +45,8 @@ public interface BetRepository extends JpaRepository<Bet, Long> {
 	 * @throws IllegalArgumentException if any of the given parameters is null
 	 */
 	default Bet findBetByMatchAndUser(Long matchId, Long userId) {
-		checkArgument(matchId != null, "Argument \"matchId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(matchId);
+		checkNotNull(userId);
 		return this.findByMatchMatchIdAndUserUserId(matchId, userId);
 	}
 
@@ -61,8 +62,8 @@ public interface BetRepository extends JpaRepository<Bet, Long> {
 	 * @throws IllegalArgumentException if any of the given parameters is {@code null}
 	 */
 	default List<Bet> retrieveBetsByEventAndUser(Long eventId, Long userId) {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 		return this.findByEventEventIdAndUserUserId(eventId, userId);
 	}
 	
@@ -77,7 +78,7 @@ public interface BetRepository extends JpaRepository<Bet, Long> {
 	 */
 	@Transactional
 	default void deleteBetsByUser(Long userId) {
-		Preconditions.checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(userId);
 		this.deleteByUserUserId(userId);
 	}
 	

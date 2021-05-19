@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.EventDao;
 import com.zematix.jworldcup.backend.entity.Event;
@@ -51,7 +53,7 @@ public class EventService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public void initEvent(Event event) {
-		checkArgument(event != null, "Argument \"event\" cannot be null.");
+		checkNotNull(event);
 		event.setStartTime(eventDao.getStartTime(event.getEventId()));
 		event.setEndTime(eventDao.getEndTime(event.getEventId()));
 	}
@@ -63,7 +65,7 @@ public class EventService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public Event findEventByEventId(Long eventId) {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		Event event = commonDao.findEntityById(Event.class, eventId);
 		checkState(event != null, "No \"Event\" instance belongs to \"eventId\"=%d in database.", eventId);
 		initEvent(event);
@@ -94,7 +96,7 @@ public class EventService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public Event findEventByShortDescWithYear(String shortDescWithYear) {
-		checkArgument(shortDescWithYear != null, "Argument \"shortDescWithYear\" cannot be null.");
+		checkArgument(!Strings.isNullOrEmpty(shortDescWithYear), "Argument \"shortDescWithYear\" cannot be null nor empty.");
 
 		Event event = eventDao.findEventByShortDescWithYear(shortDescWithYear);
 		initEvent(event);

@@ -1,6 +1,8 @@
 # Contains application parameters for development environment.
 # It overrides the parameter values used in application.yml.
-# It gets activated by giving option "-Dapplication.environment=development" to JVM 
+# It gets activated by giving option "-Dapplication.environment=development" to JVM
+
+# Spring 
 spring:
   datasource:
     #driver-class-name: com.mysql.jdbc.Driver
@@ -15,12 +17,14 @@ app:
   url: http://localhost:8090/jworldcup/
   #cheat.dateTime = 2019-06-22 19:00
   #scheduler.enabled = false
+
 # SMTP parameters - mailtrap email provider used
 mail.smtp:
   host: smtp.mailtrap.io
   port: 2525
   user: 16febbd3b2dff0
   pass: 4b1dc44f26f800
+
 # Logging
 logging:
   level:

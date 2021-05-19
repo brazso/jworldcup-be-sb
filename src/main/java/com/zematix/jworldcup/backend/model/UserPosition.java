@@ -1,4 +1,4 @@
-package com.zematix.jworldcup.backend.entity.model;
+package com.zematix.jworldcup.backend.model;
 
 /**
  * UserPosition class belongs to a user and consists of several fields. 

@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +27,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Range;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.UserDao;
+import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Team;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
@@ -52,6 +57,9 @@ public class UserService extends ServiceBase {
 	@Inject
 	private EmailService emailService;
 	
+	@Inject
+	private PasswordEncoder passwordEncoder;
+	
 	@Value("${app.expiredDays.user.candidate:3}")
 	private String appExpiredDaysUserCandidate;
 		
@@ -74,30 +82,30 @@ public class UserService extends ServiceBase {
 	public User login(String loginName, String loginPassword) throws ServiceException {
 
 		//logger.info("uriInfo="+uriInfo.getAbsolutePath().getPath());
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
 		if (Strings.isNullOrEmpty(loginName) || Strings.isNullOrEmpty(loginPassword)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_USER_OR_PASSWORD"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_USER_OR_PASSWORD"));
 			throw new ServiceException(errMsgs);
 		}
 
 		User user = userDao.findUserByLoginName(loginName);
 		if (user == null) {
-			errMsgs.add(ParametrizedMessage.create("USER_DISALLOWED_TO_LOGIN", loginName));
+			errMsgs.add(ParameterizedMessage.create("USER_DISALLOWED_TO_LOGIN", loginName));
 			throw new ServiceException(errMsgs);
 		}
 		
-		if (!CommonUtil.validateLoginPasswordLength(user.getLoginPassword())) {
-			errMsgs.add(ParametrizedMessage.create("USER_DEPRECATED_PASSWORD_TO_LOGIN")); // due to shift SHA256 to SALT128+SHA384 
+		if (passwordEncoder.upgradeEncoding(user.getLoginPassword())) {
+			errMsgs.add(ParameterizedMessage.create("USER_DEPRECATED_PASSWORD_TO_LOGIN")); // due to shift SHA256 to SALT128+SHA384 
 		}
-		else if (!CommonUtil.validateLoginPassword(loginPassword, user.getLoginPassword())) {
-			errMsgs.add(ParametrizedMessage.create("USER_DISALLOWED_TO_LOGIN", loginName));
+		else if (!passwordEncoder.matches(loginPassword, user.getLoginPassword())) {
+			errMsgs.add(ParameterizedMessage.create("USER_DISALLOWED_TO_LOGIN", loginName));
 		}
 		else if (user.getUserStatus().getStatus().equals("CANDIDATE")) {
-			errMsgs.add(ParametrizedMessage.create("USER_CANDIDATE_DISALLOWED_TO_LOGIN"));
+			errMsgs.add(ParameterizedMessage.create("USER_CANDIDATE_DISALLOWED_TO_LOGIN"));
 		}
 		else if (user.getUserStatus().getStatus().equals("LOCKED")) {
-			errMsgs.add(ParametrizedMessage.create("USER_LOCKED_DISALLOWED_TO_LOGIN"));
+			errMsgs.add(ParameterizedMessage.create("USER_LOCKED_DISALLOWED_TO_LOGIN"));
 		}
 		else if (!user.getUserStatus().getStatus().equals("NORMAL")) {
 			logger.warn(String.format("User with unknown status \"%s\" gained login. Is it really allowed?"), user.getUserStatus().getName());
@@ -132,12 +140,12 @@ public class UserService extends ServiceBase {
 	public User signUp(String loginName, String loginPassword1, String loginPassword2, 
 			String fullName, String emailAddr, String zoneId, Locale locale) throws ServiceException {
 
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
 		if (Strings.isNullOrEmpty(loginName) || Strings.isNullOrEmpty(loginPassword1)
 				|| Strings.isNullOrEmpty(loginPassword2) || Strings.isNullOrEmpty(fullName)
 				|| Strings.isNullOrEmpty(emailAddr)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_USER_PASSWORD_FULL_NAME_OR_EMAIL_ADDRESS"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_USER_PASSWORD_FULL_NAME_OR_EMAIL_ADDRESS"));
 		}
 
 		if (locale == null) {
@@ -150,16 +158,16 @@ public class UserService extends ServiceBase {
 		}
 		
 		if (!loginPassword1.equals(loginPassword2)) {
-			errMsgs.add(ParametrizedMessage.create("GIVEN_PASSWORDS_MISMATCH"));
+			errMsgs.add(ParameterizedMessage.create("GIVEN_PASSWORDS_MISMATCH"));
 		}
 
 		if (!CommonUtil.isEmailValid(emailAddr)) {
-			errMsgs.add(ParametrizedMessage.create("GIVEN_EMAIL_ADDRESS_INVALID", emailAddr));
+			errMsgs.add(ParameterizedMessage.create("GIVEN_EMAIL_ADDRESS_INVALID", emailAddr));
 		}
 		
 		// validate zoneId
 		if (Strings.isNullOrEmpty(zoneId)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_USER_ZONE_ID"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_USER_ZONE_ID"));
 		}
 		ZoneId zone = ZoneId.of(zoneId);
 		checkArgument(zone != null, String.format("Argument \"zoneId\" contains illegal \"%s\" value.", zoneId));
@@ -170,18 +178,18 @@ public class UserService extends ServiceBase {
 		
 		User user = userDao.findUserByLoginNameOrEmailAddress(loginName, emailAddr);
 		if (user != null) {
-			errMsgs.add(ParametrizedMessage.create("USER_EXIST_OR_EMAIL_ADDRESS_OCCUPIED"));
+			errMsgs.add(ParameterizedMessage.create("USER_EXIST_OR_EMAIL_ADDRESS_OCCUPIED"));
 		}
 		else {
 			String token = CommonUtil.generateRandomToken();
 			try {
-				String encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword1);
+				String encryptedLoginPassword = passwordEncoder.encode(loginPassword1);
 				user = userDao.saveUser(loginName, encryptedLoginPassword,
 						fullName, emailAddr, /*sRole*/ "USER", /*sStatus*/ "CANDIDATE", token, 
 						zoneId, applicationService.getActualDateTime());
 			}
 			catch (Exception e) {
-				errMsgs.add(ParametrizedMessage.create("DB_SAVE_FAILED"));
+				errMsgs.add(ParameterizedMessage.create("DB_SAVE_FAILED"));
 				logger.error("Database operation named {} failed.", "userDao.saveUser", e);
 			}
 		}
@@ -225,37 +233,37 @@ public class UserService extends ServiceBase {
 			String fullName, String emailNew, String emailNewAgain,
 			String zoneId, Locale locale) throws ServiceException {
 
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
 		// validate loginName
 		checkArgument(!Strings.isNullOrEmpty(loginName), "Argument \"loginName\" cannot be null nor empty.");
 
 		User user = userDao.findUserByLoginName(loginName);
 		if (user == null) {
-			errMsgs.add(ParametrizedMessage.create("GIVEN_USER_NOT_EXIST", loginName));
+			errMsgs.add(ParameterizedMessage.create("GIVEN_USER_NOT_EXIST", loginName));
 			throw new ServiceException(errMsgs);
 		}
 		
 		// validate mandatory field(s)
 		if (Strings.isNullOrEmpty(fullName)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_USER_FULL_NAME"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_USER_FULL_NAME"));
 		}
 
 		// validate passwords: 0 or 3 passwords must be given
 		if (Range.closed(1, 2).contains((Strings.isNullOrEmpty(loginPasswordActual) ? 0 : 1) +
 				(Strings.isNullOrEmpty(loginPasswordNew) ? 0 : 1) + 
 				(Strings.isNullOrEmpty(loginPasswordAgain) ? 0 : 1))) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_PASSWORDS"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_PASSWORDS"));
 		}
 		if ((!Strings.isNullOrEmpty(loginPasswordNew) && !Strings.isNullOrEmpty(loginPasswordAgain)) 
 				&& !loginPasswordNew.equals(loginPasswordAgain)) {
-			errMsgs.add(ParametrizedMessage.create("GIVEN_NEW_PASSWORDS_MISMATCH"));
+			errMsgs.add(ParameterizedMessage.create("GIVEN_NEW_PASSWORDS_MISMATCH"));
 		}
 
 		if (!Strings.isNullOrEmpty(loginPasswordActual)) {
 			user = userDao.findUserByLoginName(loginName);
-			if (user == null || !CommonUtil.validateLoginPassword(loginPasswordActual, user.getLoginPassword())) {
-				errMsgs.add(ParametrizedMessage.create("OLD_PASSWORD_INVALID"));
+			if (user == null || !passwordEncoder.matches(loginPasswordActual, user.getLoginPassword())) {
+				errMsgs.add(ParameterizedMessage.create("OLD_PASSWORD_INVALID"));
 				throw new ServiceException(errMsgs);
 			}
 		}
@@ -263,27 +271,27 @@ public class UserService extends ServiceBase {
 		String encryptedNewLoginPassword = null; // not modified
 		if (!Strings.isNullOrEmpty(loginPasswordNew) && !Strings.isNullOrEmpty(loginPasswordAgain)
 				&& loginPasswordNew.equals(loginPasswordAgain)) {
-			encryptedNewLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPasswordNew);	
+			encryptedNewLoginPassword = passwordEncoder.encode(loginPasswordNew);	
 		}
 
 		// validate email
 		String newEmailAddr = null; // not modified
 		if (Strings.isNullOrEmpty(emailNew) && !Strings.isNullOrEmpty(emailNewAgain)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_EMAILS"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_EMAILS"));
 		}
 		if (!Strings.isNullOrEmpty(emailNew) && Strings.isNullOrEmpty(emailNewAgain)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_EMAIL_AGAIN"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_EMAIL_AGAIN"));
 		}
 		if (!Strings.isNullOrEmpty(emailNew) && !CommonUtil.isEmailValid(emailNew)) {
-			errMsgs.add(ParametrizedMessage.create("GIVEN_EMAIL_ADDRESS_INVALID", emailNew));
+			errMsgs.add(ParameterizedMessage.create("GIVEN_EMAIL_ADDRESS_INVALID", emailNew));
 		}
 		if (!Strings.isNullOrEmpty(emailNew) && !Strings.isNullOrEmpty(emailNewAgain)) {
 			if (!emailNew.equalsIgnoreCase(emailNewAgain)) {
-				errMsgs.add(ParametrizedMessage.create("GIVEN_NEW_EMAILS_MISMATCH"));
+				errMsgs.add(ParameterizedMessage.create("GIVEN_NEW_EMAILS_MISMATCH"));
 			}
 			else if (!emailNew.equalsIgnoreCase(user.getEmailAddr())) {
 				if (userDao.existUserByEmailAddrExceptUser(loginName, emailNew)) {
-					errMsgs.add(ParametrizedMessage.create("GIVEN_EMAIL_ADDRESS_OCCUPIED", emailNew));
+					errMsgs.add(ParameterizedMessage.create("GIVEN_EMAIL_ADDRESS_OCCUPIED", emailNew));
 				}
 				else {
 					newEmailAddr = emailNew; // can be modified				
@@ -293,7 +301,7 @@ public class UserService extends ServiceBase {
 		
 		// validate zoneId
 		if (Strings.isNullOrEmpty(zoneId)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_USER_ZONE_ID"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_USER_ZONE_ID"));
 		}
 		ZoneId zone = ZoneId.of(zoneId);
 		checkArgument(zone != null, String.format("Argument \"zoneId\" contains illegal \"%s\" value.", zoneId));
@@ -306,7 +314,7 @@ public class UserService extends ServiceBase {
 			user = userDao.modifyUser(user, fullName, newEmailAddr, encryptedNewLoginPassword, zoneId, applicationService.getActualDateTime());
 		}
 		catch (Exception e) {
-			errMsgs.add(ParametrizedMessage.create("DB_SAVE_FAILED"));
+			errMsgs.add(ParameterizedMessage.create("DB_SAVE_FAILED"));
 			logger.error("Database operation named {} failed.", "userDao.modifyUser", e);
 		}
 
@@ -339,25 +347,25 @@ public class UserService extends ServiceBase {
 	 * @throws ServiceException contains only info if process is done
 	 */
 	public void processRegistrationToken(String registrationToken) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		checkArgument(!Strings.isNullOrEmpty(registrationToken), "Argument \"registrationToken\" cannot be null nor empty.");
 		
 		User user = userDao.findUserByToken(registrationToken);
 		if (user == null) {
-			errMsgs.add(ParametrizedMessage.create("REGISTRATION_TOKEN_UNKNOWN"));
+			errMsgs.add(ParameterizedMessage.create("REGISTRATION_TOKEN_UNKNOWN"));
 			throw new ServiceException(errMsgs);
 		}
 		
 		if (user.getUserStatus().getStatus().equals("LOCKED")) {
-			errMsgs.add(ParametrizedMessage.create("REGISTRATION_TOKEN_LOCKED"));
+			errMsgs.add(ParameterizedMessage.create("REGISTRATION_TOKEN_LOCKED"));
 			throw new ServiceException(errMsgs);
 		}
 		else if (user.getUserStatus().getStatus().equals("CANDIDATE")) {
 			// first login after registration
 			userDao.modifyUserStatusToken(user, "NORMAL", applicationService.getActualDateTime());
 
-			errMsgs.add(ParametrizedMessage.create("REGISTRATION_TOKEN_ACKNOWLEDGED", ParametrizedMessageType.INFO));
+			errMsgs.add(ParameterizedMessage.create("REGISTRATION_TOKEN_ACKNOWLEDGED", ParameterizedMessageType.INFO));
 			throw new ServiceException(errMsgs);
 		}
 	}
@@ -372,24 +380,24 @@ public class UserService extends ServiceBase {
 	 * 		
 	 */
 	public void processChangeEmailToken(String userToken) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		checkArgument(!Strings.isNullOrEmpty(userToken), "Argument \"userToken\" cannot be null nor empty.");
 		
 		User user = userDao.findUserByToken(userToken);
 		if (user == null) {
-			errMsgs.add(ParametrizedMessage.create("USER_TOKEN_UNKNOWN"));
+			errMsgs.add(ParameterizedMessage.create("USER_TOKEN_UNKNOWN"));
 			throw new ServiceException(errMsgs);
 		}
 		
 		if (!user.getUserStatus().getStatus().equals("NORMAL")) {
-			errMsgs.add(ParametrizedMessage.create("USER_TOKEN_NOT_NORMAL"));
+			errMsgs.add(ParameterizedMessage.create("USER_TOKEN_NOT_NORMAL"));
 			throw new ServiceException(errMsgs);
 		}
 		
 		boolean isEmailModified = userDao.modifyUserEmailAddr(user, applicationService.getActualDateTime());
 		if (isEmailModified) {
-			errMsgs.add(ParametrizedMessage.create("CHANGE_EMAIL_ACKNOWLEDGED", ParametrizedMessageType.INFO));
+			errMsgs.add(ParameterizedMessage.create("CHANGE_EMAIL_ACKNOWLEDGED", ParameterizedMessageType.INFO));
 			throw new ServiceException(errMsgs);
 		}
 	}
@@ -404,8 +412,8 @@ public class UserService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public UserOfEvent retrieveUserOfEvent(Long eventId, Long userId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" value must not be null.");
-		checkArgument(userId != null, "Argument \"userId\" value must not be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 
 		UserOfEvent userOfEvent = userDao.retrieveUserOfEvent(eventId, userId);
 		if (userOfEvent == null) {
@@ -439,8 +447,8 @@ public class UserService extends ServiceBase {
 	 * @return saved userOfEvent
 	 */
 	public UserOfEvent saveUserOfEvent(Long eventId, Long userId, Long favouriteGroupTeamId, Long favouriteKnockoutTeamId) throws ServiceException {
-		checkArgument(userId != null, "Argument \"userId\" value must not be null.");
-		checkArgument(eventId != null, "Argument \"eventId\" value must not be null.");
+		checkNotNull(userId);
+		checkNotNull(eventId);
 		
 		UserOfEvent userOfEvent = userDao.retrieveUserOfEvent(eventId, userId);
 		if (userOfEvent == null) {
@@ -494,6 +502,8 @@ public class UserService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<String> findUserLoginNamesByLoginNamePrefix(String loginNamePrefix) {
+		checkArgument(!Strings.isNullOrEmpty(loginNamePrefix), "Argument \"loginNamePrefix\" cannot be null nor empty.");
+		
 		List<User> users = userDao.findUsersByLoginNamePrefix(loginNamePrefix);
 		List<String> userLoginNames = users.stream().map(u->u.getLoginName()).collect(Collectors.toList());
 		return userLoginNames;
@@ -509,6 +519,8 @@ public class UserService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<String> findUserFullNamesByFullNameContain(String fullNameContain) {
+		checkArgument(!Strings.isNullOrEmpty(fullNameContain), "Argument \"fullNameContain\" cannot be null nor empty.");
+		
 		List<User> users = userDao.findUsersByFullNameContain(fullNameContain);
 		List<String> userFullNames = users.stream().map(u->u.getFullName()).collect(Collectors.toList());
 		return userFullNames;
@@ -522,11 +534,13 @@ public class UserService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User retrieveUser(Long userId) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		checkNotNull(userId);
+		
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		User user = commonDao.findEntityById(User.class, userId);
 		if (user == null) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_USER"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_USER"));
 			throw new ServiceException(errMsgs);
 		}
 
@@ -581,29 +595,29 @@ public class UserService extends ServiceBase {
 	 * @throws ServiceException if the given email address belongs to no user 
 	 */
 	public void resetPassword(String emailAddr, Locale locale) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
 		if (Strings.isNullOrEmpty(emailAddr)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_RESET_PASSWORD_EMAIL"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_RESET_PASSWORD_EMAIL"));
 			throw new ServiceException(errMsgs);
 		}
 
 		User user = userDao.findUserByEmailAddress(emailAddr);
 		if (user == null) {
-			errMsgs.add(ParametrizedMessage.create("GIVEN_EMAIL_ADDRESS_NOT_EXIST"));
+			errMsgs.add(ParameterizedMessage.create("GIVEN_EMAIL_ADDRESS_NOT_EXIST"));
 			throw new ServiceException(errMsgs);
 		}
 		if (!user.getUserStatus().getStatus().equals("NORMAL")) {
-			errMsgs.add(ParametrizedMessage.create("USER_STATUS_INADEQUATE"));
+			errMsgs.add(ParameterizedMessage.create("USER_STATUS_INADEQUATE"));
 			throw new ServiceException(errMsgs);
 		}
 		
 		String newPassword = CommonUtil.generateRandomPassword();
-		String resetPassword = CommonUtil.getEncryptedLoginPassword(user.getLoginName(), newPassword);
+		String resetPassword = passwordEncoder.encode(newPassword);
 
 		boolean isResetPasswordModified = userDao.modifyUserResetPassword(user, resetPassword, applicationService.getActualDateTime());
 		if (!isResetPasswordModified) {
-			errMsgs.add(ParametrizedMessage.create("DB_SAVE_FAILED"));
+			errMsgs.add(ParameterizedMessage.create("DB_SAVE_FAILED"));
 			throw new ServiceException(errMsgs);
 		}
 		
@@ -631,24 +645,24 @@ public class UserService extends ServiceBase {
 	 * @throws ServiceException if any of the preconditions is not met
 	 */
 	public void processResetPasswordToken(String userToken) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		checkArgument(!Strings.isNullOrEmpty(userToken), "Argument \"userToken\" cannot be null nor empty.");
 		
 		User user = userDao.findUserByToken(userToken);
 		if (user == null) {
-			errMsgs.add(ParametrizedMessage.create("USER_TOKEN_UNKNOWN"));
+			errMsgs.add(ParameterizedMessage.create("USER_TOKEN_UNKNOWN"));
 			throw new ServiceException(errMsgs);
 		}
 		
 		if (!user.getUserStatus().getStatus().equals("NORMAL")) {
-			errMsgs.add(ParametrizedMessage.create("USER_STATUS_INADEQUATE"));
+			errMsgs.add(ParameterizedMessage.create("USER_STATUS_INADEQUATE"));
 			throw new ServiceException(errMsgs);
 		}
 
 		boolean isPasswordModified = userDao.finalizeUserResetPassword(user, applicationService.getActualDateTime());
 		if (isPasswordModified) {
-			errMsgs.add(ParametrizedMessage.create("RESET_PASSWORD_ACKNOWLEDGED", ParametrizedMessageType.INFO));
+			errMsgs.add(ParameterizedMessage.create("RESET_PASSWORD_ACKNOWLEDGED", ParameterizedMessageType.INFO));
 			throw new ServiceException(errMsgs);
 		}
 	}
@@ -659,14 +673,14 @@ public class UserService extends ServiceBase {
 	 * @param loginName
 	 */
 	public void deleteUser(String loginName) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		// validate loginName
 		checkArgument(!Strings.isNullOrEmpty(loginName), "Argument \"loginName\" cannot be null nor empty.");
 
 		User user = userDao.findUserByLoginName(loginName);
 		if (user == null) {
-			errMsgs.add(ParametrizedMessage.create("GIVEN_USER_NOT_EXIST", loginName));
+			errMsgs.add(ParameterizedMessage.create("GIVEN_USER_NOT_EXIST", loginName));
 			throw new ServiceException(errMsgs);
 		}
 		

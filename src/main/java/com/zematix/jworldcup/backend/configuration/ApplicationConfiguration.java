@@ -21,26 +21,17 @@ public class ApplicationConfiguration {
 	@PostConstruct
 	public void init() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-		logger.info("Spring boot application running in UTC timezone: {}", LocalDateTime.now());
+		logger.info("Application runs in UTC timezone: {}", LocalDateTime.now());
 	}
-
-//	@Bean
-//	public TimeZone timeZone() {
-//		TimeZone defaultTimeZone = TimeZone.getTimeZone("UTC");
-//		TimeZone.setDefault(defaultTimeZone);
-//		logger.info("Spring boot application running in UTC timezone: {}", LocalDateTime.now());
-//		return defaultTimeZone;
-//	}
 
 	@Bean
 	public ResourceBundleMessageSource messageSource() {
-
-		var source = new ResourceBundleMessageSource();
+		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
 		String basename = "i18n/messages";
 		source.setBasenames(basename);
 		source.setUseCodeAsDefaultMessage(true);
 		source.setDefaultEncoding(StandardCharsets.UTF_8.name());
-		logger.info("Spring boot application uses resourceBundleMessageSource: {}", basename);
+		logger.info("Application uses resourceBundleMessageSource: {}", basename);
 		return source;
 	}
 }

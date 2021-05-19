@@ -29,11 +29,14 @@ import com.google.common.collect.Sets;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.UserDao;
 import com.zematix.jworldcup.backend.dao.UserGroupDao;
+import com.zematix.jworldcup.backend.emun.TemplateId;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
-import com.zematix.jworldcup.backend.entity.model.UserCertificate;
-import com.zematix.jworldcup.backend.entity.model.UserPosition;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
+import com.zematix.jworldcup.backend.model.UserCertificate;
+import com.zematix.jworldcup.backend.model.UserPosition;
 
 /**
  * Contains test functions of {@link UserGroupService} class.
@@ -182,10 +185,10 @@ public class UserGroupServiceTest {
 	
 	/**
 	 * Test {@link UserGroupService#retrieveUserPositions(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code eventId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<UserPosition>*/ retrieveUserPositions_NullEventId(/*Long eventId, Long userGroupId*/) throws ServiceException {
 		Long eventId = null;
 		Long userGroupId = 1L; // Everybody
@@ -195,10 +198,10 @@ public class UserGroupServiceTest {
 	
 	/**
 	 * Test {@link UserGroupService#retrieveUserPositions(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<UserPosition>*/ retrieveUserPositions_NullUserGroupId(/*Long eventId, Long userGroupId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		Long userGroupId = null;
@@ -469,10 +472,10 @@ public class UserGroupServiceTest {
 	
 	/**
 	 * Test {@link UserGroupService#findAndAddUserToUserGroup(Long, String, String)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*User*/ findAndAddUserToUserGroup_NullUserGroupId(/*Long userGroupId, String loginName, String fullName*/) throws ServiceException {
 		Long userGroupId = null;
 		String loginName = "normal";
@@ -632,10 +635,10 @@ public class UserGroupServiceTest {
 
 	/**
 	 * Test {@link UserGroupService#removeUserFromUserGroup(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void removeUserFromUserGroup_NullUserGroupId(/*Long userGroupId, Long userId*/) throws ServiceException {
 		Long userGroupId = null;
 		Long userId = 2L; // normal
@@ -645,10 +648,10 @@ public class UserGroupServiceTest {
 	
 	/**
 	 * Test {@link UserGroupService#removeUserFromUserGroup(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void removeUserFromUserGroup_NullUserId(/*Long userGroupId, Long userId*/) throws ServiceException {
 		Long userGroupId = 1L; // WC2014/Everybody
 		Long userId = null;
@@ -726,10 +729,10 @@ public class UserGroupServiceTest {
 	
 	/**
 	 * Test {@link UserGroupService#retrieveUserCertificates(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code eventId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<UserCertificate>*/ retrieveUserCertificates_NullEventId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = null;
 		Long userId = 2L; // normal
@@ -739,10 +742,10 @@ public class UserGroupServiceTest {
 
 	/**
 	 * Test {@link UserGroupService#retrieveUserCertificates(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<UserCertificate>*/ retrieveUserCertificates_NullUserId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		Long userId = null;
@@ -789,8 +792,8 @@ public class UserGroupServiceTest {
 //		properties.put("everybody", false);
 //		properties.put("score", 0.1);
 
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
-		errMsgs.add(ParametrizedMessage.create("TEMPLATE_GENERATION_FAILED", TemplateId.USER_CERTIFICATE_PDF));
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
+		errMsgs.add(ParameterizedMessage.create("TEMPLATE_GENERATION_FAILED", TemplateId.USER_CERTIFICATE_PDF));
 		
 		//Mockito.when(templateService.generatePDFContent(TemplateId.USER_CERTIFICATE_PDF, properties, locale)).thenThrow(new ServiceException(null));
 		Mockito.when(templateService.generatePDFContent(ArgumentMatchers.eq(TemplateId.USER_CERTIFICATE_PDF), ArgumentMatchers.any(Properties.class), ArgumentMatchers.eq(locale))).thenThrow(new ServiceException(errMsgs));
@@ -881,11 +884,11 @@ public class UserGroupServiceTest {
 	
 	/**
 	 * Test {@link UserGroupService#retrieveTopUsersByEvent(Long, Integer)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code eventId} parameter
 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<UserCertificate>*/ retrieveTopUsersByEvent_NullEventId(/*Long eventId, Integer maxNumberOfEverybodyMembers*/) throws ServiceException {
 		Long eventId = null;
 		Integer maxNumberOfEverybodyMembers = 100;

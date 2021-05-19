@@ -63,9 +63,9 @@ public class WebServiceDaoTest {
 
 	/**
 	 * Test {@link WebServiceDao#retrieveWebServicesByEvent(Long)} method.
-	 * Scenario: Because the given {@link Event#eventId} is {@code null} {@link IllegalArgumentException} is thrown.
+	 * Scenario: Because the given {@link Event#eventId} is {@code null} {@link NullPointerException} is thrown.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*List<WebService>*/ retrieveWebServicesByEventNull(/*Long eventId*/) {
 		Long eventId = null;
 

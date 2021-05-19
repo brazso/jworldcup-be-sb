@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,9 +25,10 @@ import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Team;
-import com.zematix.jworldcup.backend.entity.model.GroupPosition;
-import com.zematix.jworldcup.backend.entity.model.GroupTeam;
-import com.zematix.jworldcup.backend.entity.model.Pair;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.GroupPosition;
+import com.zematix.jworldcup.backend.model.GroupTeam;
+import com.zematix.jworldcup.backend.model.Pair;
 
 /**
  * Operations around {@link Group} elements. 
@@ -62,7 +64,7 @@ public class GroupService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Group> retrieveGroupsByEvent(Long eventId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		
 		List<Group> groups = groupDao.retrieveGroupsByEvent(eventId);
 		return groups; 
@@ -77,6 +79,8 @@ public class GroupService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<GroupTeam> getRankedGroupTeamsByGroup(Long groupId) throws ServiceException{
+		checkNotNull(groupId);
+		
 		Group group = commonDao.findEntityById(Group.class, groupId);
 		List<GroupTeam> groupTeams = new ArrayList<>();
 		for (Team team : group.getTeams()) {
@@ -99,6 +103,8 @@ public class GroupService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Map<GroupPosition, Team> getTeamByGroupPositionMap(Long eventId) throws ServiceException {
+		checkNotNull(eventId);
+		
 		Map<GroupPosition, Team> teamByGroupPositionMap = new HashMap<>();
 		
 		List<Group> groups = retrieveGroupsByEvent(eventId);
@@ -150,6 +156,8 @@ public class GroupService extends ServiceBase {
 	 */
 	@VisibleForTesting
 	/*private*/ List<GroupTeam> retrieveBestTeamsOnGroupPosition(Long eventId, int positionInGroup, int numberOfTeams) throws ServiceException {
+		checkNotNull(eventId);
+		
 		List<GroupTeam> groupTeams = new ArrayList<>();
 		List<Group> groups = retrieveGroupsByEvent(eventId);
 		boolean isAllGroupsFinished = true;
@@ -183,6 +191,8 @@ public class GroupService extends ServiceBase {
 	 */
 	@VisibleForTesting
 	/*private*/ List<GroupPosition> retrieveGroupPositionsOfParticipantRules(Long eventId) {
+		checkNotNull(eventId);
+		
 		final String PARTICIPANT_RULE_REGEX = "^([WL])([0-9]+)-([WL])([0-9]+)$";
 		List<GroupPosition> groupPositions = new ArrayList<>();
 
@@ -214,8 +224,8 @@ public class GroupService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Group retrieveGroupByName(Long eventId, String name) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(!Strings.isNullOrEmpty(name), "Argument \"name\" cannot be null or empty.");
+		checkNotNull(eventId);
+		checkArgument(!Strings.isNullOrEmpty(name), "Argument \"name\" cannot be null nor empty.");
 		
 		Group group = groupDao.retrieveGroupByName(eventId, name);
 		return group;

@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.entity.UserStatus;
-import com.zematix.jworldcup.backend.util.CommonUtil;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
  * Contains test functions of {@link UserService} class.
@@ -64,6 +65,9 @@ public class UserServiceTest {
 
 	@MockBean
 	private BetService betService;
+
+	@Inject
+	PasswordEncoder passwordEncoder;
 
 	/**
 	 * Test {@link UserService#login()} method.
@@ -251,10 +255,10 @@ public class UserServiceTest {
 		String fullName = "Zsolt Branyiczky";
 		String emailAddr = "zbranyiczky@dummy987.com";
 		Locale locale = new Locale("en");
-		String encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword1);
+//		String encryptedLoginPassword = passwordEncoder.encode(loginPassword1);
 		String sRole = "USER";
 		String sUserStatus = "CANDIDATE";
-		String token = "Y54Fd1fjjegzB0yymkoz";
+//		String token = "Y54Fd1fjjegzB0yymkoz";
 		String zoneId = "CET";
 		LocalDateTime modificationTime = LocalDateTime.now();
 		
@@ -290,10 +294,10 @@ public class UserServiceTest {
 		String fullName = "Zsolt Branyiczky";
 		String emailAddr = "zbranyiczky@dummy987.com";
 		Locale locale = new Locale("en");
-		String encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword1);
+//		String encryptedLoginPassword = passwordEncoder.encode(loginPassword1);
 		String sRole = "USER";
 		String sUserStatus = "CANDIDATE";
-		String token = "Y54Fd1fjjegzB0yymkoz";
+//		String token = "Y54Fd1fjjegzB0yymkoz";
 		String zoneId = "CET";
 		LocalDateTime modificationTime = LocalDateTime.now();
 
@@ -332,7 +336,7 @@ public class UserServiceTest {
 		String zoneId = "UTC";
 		LocalDateTime modificationTime = LocalDateTime.now();
 		Locale locale = new Locale("en");
-		String encryptedNewLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPasswordNew);
+//		String encryptedNewLoginPassword = passwordEncoder.encode(loginPasswordNew);
 
 		Mockito.when(userDao.findUserByLoginNameOrEmailAddress(loginName, emailNew)).thenReturn(null);
 		
@@ -552,10 +556,10 @@ public class UserServiceTest {
 	
 	/**
 	 * Test {@link UserService#retrieveUserOfEvent(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code eventId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*UserOfEvent*/ retrieveUserOfEvent_NullEventId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = null;
 		Long userId = 2L; // normal
@@ -564,10 +568,10 @@ public class UserServiceTest {
 	
 	/**
 	 * Test {@link UserService#retrieveUserOfEvent(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*UserOfEvent*/ retrieveUserOfEvent_NullUserId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		Long userId = null;
@@ -611,10 +615,10 @@ public class UserServiceTest {
 	
 	/**
 	 * Test {@link UserService#saveUserOfEvent(Long, Long, Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code eventId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*UserOfEvent*/ saveUserOfEvent_NullEventId(/*Long eventId, Long userId, Long favouriteGroupTeamId, Long favouriteKnockoutTeamId*/) throws ServiceException {
 		Long eventId = null;
 		Long userId = 2L; // normal
@@ -626,10 +630,10 @@ public class UserServiceTest {
 	
 	/**
 	 * Test {@link UserService#saveUserOfEvent(Long, Long, Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*UserOfEvent*/ saveUserOfEvent_NullUserId(/*Long eventId, Long userId, Long favouriteGroupTeamId, Long favouriteKnockoutTeamId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		Long userId = null;
@@ -941,8 +945,8 @@ public class UserServiceTest {
 		String emailAddr = "normal.dummy@zematix.hu";
 		Locale locale = new Locale("en");
 		User user = commonDao.findEntityById(User.class, 2L); // candidate, not normal
-		String newPassword = "12345678";
-		String resetPassword = "abcdefgh";
+//		String newPassword = "12345678";
+//		String resetPassword = "abcdefgh";
 		LocalDateTime modificationTime = LocalDateTime.now();
 		
 		Mockito.when(userDao.findUserByEmailAddress(emailAddr)).thenReturn(user);
@@ -971,8 +975,8 @@ public class UserServiceTest {
 		String emailAddr = "normal.dummy@zematix.hu";
 		Locale locale = new Locale("en");
 		User user = commonDao.findEntityById(User.class, 2L); // candidate, not normal
-		String newPassword = "12345678";
-		String resetPassword = "abcdefgh";
+//		String newPassword = "12345678";
+//		String resetPassword = "abcdefgh";
 		LocalDateTime modificationTime = LocalDateTime.now();
 		
 		Mockito.when(userDao.findUserByEmailAddress(emailAddr)).thenReturn(user);

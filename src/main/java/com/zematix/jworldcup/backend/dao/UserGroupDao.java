@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.dao;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
@@ -62,8 +63,8 @@ public class UserGroupDao extends DaoBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public UserGroup createVirtualEverybodyUserGroup(Long eventId, Long userId) {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 
 		// create virtual Everybody userGroup
 		UserGroup userGroup = new UserGroup();
@@ -93,10 +94,10 @@ public class UserGroupDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<UserGroup> retrieveUserGroups(Long eventId, Long userId) {
 		List<UserGroup> userGroups;
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 		User user = commonDao.findEntityById(User.class, userId);
-		checkArgument(user != null, String.format("No \"User\" entity belongs to \"userId\"=%d in database.", userId));
+		checkState(user != null, String.format("No \"User\" entity belongs to \"userId\"=%d in database.", userId));
 		
 		QUserGroup qUserGroup = QUserGroup.userGroup;
 		JPAQuery<UserGroup> query = new JPAQuery<>(getEntityManager());
@@ -123,7 +124,7 @@ public class UserGroupDao extends DaoBase {
 	public List<User> retrieveUsersByUserGroup(Long userGroupId) {
 		List<User> users;
 		
-		checkArgument(userGroupId != null, "Argument \"userGroupId\" cannot be null.");
+		checkNotNull(userGroupId);
 		UserGroup userGroup = commonDao.findEntityById(UserGroup.class, userGroupId);
 		checkArgument(userGroup != null || userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID, 
 				String.format("No \"UserGroup\" instance belongs to \"userGroupId\"=%d in database.", userGroupId));
@@ -175,13 +176,13 @@ public class UserGroupDao extends DaoBase {
 	public List<User> retrieveUsersWithBetsByUserGroup(Long userGroupId, Long eventId) {
 		List<User> users;
 		
-		checkArgument(userGroupId != null, "Argument \"userGroupId\" cannot be null.");
+		checkNotNull(userGroupId);
 		UserGroup userGroup = commonDao.findEntityById(UserGroup.class, userGroupId);
 		checkArgument(userGroup != null || userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID, 
 				String.format("No \"UserGroup\" instance belongs to \"userGroupId\"=%d in database.", userGroupId));
 		
 		if (userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID) {
-			checkArgument(eventId != null, 
+			checkNotNull(eventId, 
 					"Argument \"eventId\" cannot be null if \"userGroupId\" belongs to virtual Everybody userGroup.");
 		}
 		
@@ -234,13 +235,13 @@ public class UserGroupDao extends DaoBase {
 	public int retrieveNumberOfUsersWithBetsByUserGroup(Long userGroupId, Long eventId) {
 		int numberOfUsersWithBetsByUserGroup = 0;
 		
-		checkArgument(userGroupId != null, "Argument \"userGroupId\" cannot be null.");
+		checkNotNull(userGroupId);
 		UserGroup userGroup = commonDao.findEntityById(UserGroup.class, userGroupId);
 		checkArgument(userGroup != null || userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID, 
 				String.format("No \"UserGroup\" instance belongs to \"userGroupId\"=%d in database.", userGroupId));
 		
 		if (userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID) {
-			checkArgument(eventId != null, 
+			checkNotNull(eventId, 
 					"Argument \"eventId\" cannot be null if \"userGroupId\" belongs to virtual Everybody userGroup.");
 		}
 		
@@ -286,7 +287,7 @@ public class UserGroupDao extends DaoBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public UserGroup findUserGroupByName(Long eventId, String name) {
-		checkArgument(eventId != null, "Argument \"evenId\" cannot be null.");
+		checkNotNull(eventId);
 		checkArgument(!Strings.isNullOrEmpty(name), "Argument \"name\" cannot be null nor empty.");
 
 		UserGroup userGroup = null;
@@ -313,7 +314,7 @@ public class UserGroupDao extends DaoBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public UserGroup findLastUserGroupByName(Long eventId, String name) {
-		checkArgument(eventId != null, "Argument \"evenId\" cannot be null.");
+		checkNotNull(eventId);
 		checkArgument(!Strings.isNullOrEmpty(name), "Argument \"name\" cannot be null nor empty.");
 
 		UserGroup userGroup = null;
@@ -338,8 +339,8 @@ public class UserGroupDao extends DaoBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	public UserGroup insertUserGroup(Long eventId, Long userId, String name) {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 		checkArgument(!Strings.isNullOrEmpty(name), "Argument \"name\" cannot be null nor empty.");
 		Event event = commonDao.findEntityById(Event.class, eventId);
 		checkArgument(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));			
@@ -369,9 +370,9 @@ public class UserGroupDao extends DaoBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	public UserGroup importUserGroup(Long eventId, Long userId, Long importedUserGroupId) {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
-		checkArgument(importedUserGroupId != null, "Argument \"importedUserGroupId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
+		checkNotNull(importedUserGroupId);
 		Event event = commonDao.findEntityById(Event.class, eventId);
 		checkArgument(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));			
 		User user = commonDao.findEntityById(User.class, userId);
@@ -405,9 +406,9 @@ public class UserGroupDao extends DaoBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	public void deleteUserGroup(Long userGroupId) {
-		checkArgument(userGroupId != null, "Argument \"userGroupId\" cannot be null.");
+		checkNotNull(userGroupId);
 		UserGroup userGroup = commonDao.findEntityById(UserGroup.class, userGroupId);
-		checkArgument(userGroup != null, String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userGroupId));			
+		checkState(userGroup != null, String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userGroupId));			
 		
 		commonDao.removeEntity(userGroup);
 	}

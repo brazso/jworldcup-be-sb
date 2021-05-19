@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.dao;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.QChat;
 import com.zematix.jworldcup.backend.entity.UserGroup;
-import com.zematix.jworldcup.backend.service.ServiceException;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
  * Database operations around {@link UserGroup} entities.
@@ -49,7 +50,7 @@ public class ChatDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Chat> retrieveChats(Long eventId, Long userGroupId) throws ServiceException {
 		List<Chat> chats;
-		checkArgument(userGroupId != null, "Argument \"userGroupId\" cannot be null.");
+		checkNotNull(userGroupId);
 		checkArgument(!(userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID && eventId == null), "Argument \"eventId\" cannot be null if argument \"userGroupId\" is virtual everybody.");
 		
 		if (userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID) {
@@ -82,7 +83,7 @@ public class ChatDao extends DaoBase {
 	 */
 	public boolean truncateChats(Long eventId, Long userGroupId) throws ServiceException {
 		List<Chat> chats;
-		checkArgument(userGroupId != null, "Argument \"userGroupId\" cannot be null.");
+		checkNotNull(userGroupId);
 		checkArgument(!(userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID && eventId == null), "Argument \"eventId\" cannot be null if argument \"userGroupId\" is virtual everybody.");
 
 		QChat qChat = QChat.chat;
@@ -132,8 +133,8 @@ public class ChatDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Chat retrieveLatestChat(Long eventId, Long userId) throws ServiceException {
 		Chat chat = null;
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 
 		QChat qChat = QChat.chat;
 		JPAQuery<Chat> query = new JPAQuery<>(getEntityManager());

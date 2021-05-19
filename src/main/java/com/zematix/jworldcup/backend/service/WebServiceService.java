@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.service;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -16,8 +16,11 @@ import com.google.common.annotations.VisibleForTesting;
 import com.msiggi.openligadb.client.MatchResult;
 import com.msiggi.openligadb.client.Matchdata;
 import com.zematix.jworldcup.backend.dao.WebServiceDao;
+import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.WebService;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 
 /**
  * Operations around {@link WebService} elements. 
@@ -53,8 +56,8 @@ public class WebServiceService extends ServiceBase {
 	 */
 	@VisibleForTesting
 	/*private*/ Matchdata findMatchInMatchdatas(List<Matchdata> matchdatas, Match match) {
-		checkArgument(matchdatas != null, "Argument \"matchdatas\" cannot be null.");
-		checkArgument(match != null, "Argument \"match\" cannot be null.");
+		checkNotNull(matchdatas);
+		checkNotNull(match);
 		
 		for (Matchdata matchdata : matchdatas) {
 			//java.util.Date#equals() is never true, why? additional .getTime() is necessary
@@ -83,14 +86,14 @@ public class WebServiceService extends ServiceBase {
 	public long updateMatchResults(Long eventId) throws ServiceException {
 		long updatedMatches = 0;
 
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		
 		List<WebService> webServices = webServiceDao.retrieveWebServicesByEvent(eventId);
 		if (webServices.isEmpty()) {
-			errMsgs.add(ParametrizedMessage.create("NO_ACTIVE_WEBSERVICE_FOR_EVENT", ParametrizedMessageType.WARNING, eventId));
+			errMsgs.add(ParameterizedMessage.create("NO_ACTIVE_WEBSERVICE_FOR_EVENT", ParameterizedMessageType.WARNING, eventId));
 			throw new ServiceException(errMsgs);
 		}
 		
@@ -101,7 +104,7 @@ public class WebServiceService extends ServiceBase {
 				/*List<Matchdata>*/ matchdatas = openLigaDBService.getMatchdataByLeagueSaison(webService.getLeagueShortcut(), webService.getLeagueSaison());
 			} catch (OpenLigaDBException e) {
 				logger.error(e.getMessage(), e);
-				errMsgs.add(ParametrizedMessage.create("WEBSERVICE_CALL_FAILED_FOR_METHOD", ParametrizedMessageType.ERROR, "getMatchdataByLeagueSaison"));
+				errMsgs.add(ParameterizedMessage.create("WEBSERVICE_CALL_FAILED_FOR_METHOD", ParameterizedMessageType.ERROR, "getMatchdataByLeagueSaison"));
 				throw new ServiceException(errMsgs);
 			}
 			
@@ -135,9 +138,9 @@ public class WebServiceService extends ServiceBase {
 	 */
 	@VisibleForTesting
 	/*private*/ boolean updateMatchByMatchdata(Match match, Matchdata matchdata, WebService webService) throws ServiceException {
-		checkArgument(match != null, "Argument \"match\" cannot be null.");
-		checkArgument(matchdata != null, "Argument \"matchdata\" cannot be null.");
-		checkArgument(webService != null, "Argument \"webService\" cannot be null.");
+		checkNotNull(match);
+		checkNotNull(matchdata);
+		checkNotNull(webService);
 
 		// participant teams
 		// are the teams of matchdata on the same order as in match?

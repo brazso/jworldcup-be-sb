@@ -1,13 +1,13 @@
-package com.zematix.jworldcup.backend.entity.model;
+package com.zematix.jworldcup.backend.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Team;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.MatchService;
 import com.zematix.jworldcup.backend.service.ServerBase;
-import com.zematix.jworldcup.backend.service.ServiceException;
 
 /**
  * Contains a {@link Team} and auxiliary data to calculate its position in the group.

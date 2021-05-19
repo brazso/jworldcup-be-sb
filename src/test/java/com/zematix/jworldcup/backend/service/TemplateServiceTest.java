@@ -17,6 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.zematix.jworldcup.backend.emun.TemplateId;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+
 /**
  * Contains test functions of {@link TemplateService} class.
  */
@@ -52,10 +55,10 @@ public class TemplateServiceTest {
 	
 	/**
 	 * Test {@link TemplateService#generateContent(TemplateId, Properties, Locale)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because input {@code templateId} parameter 
+	 * Scenario: throws {@link NullPointerException} because input {@code templateId} parameter 
 	 *           is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*String*/ generateContent_NullTemplateId(/*TemplateId templateId, Properties properties, Locale locale*/) throws ServiceException {
 		TemplateId templateId = null;
 		Properties properties = new Properties();
@@ -66,10 +69,10 @@ public class TemplateServiceTest {
 
 	/**
 	 * Test {@link TemplateService#generateContent(TemplateId, Properties, Locale)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because input {@code properties} parameter 
+	 * Scenario: throws {@link NullPointerException} because input {@code properties} parameter 
 	 *           is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*String*/ generateContent_NullProperties(/*TemplateId templateId, Properties properties, Locale locale*/) throws ServiceException {
 		TemplateId templateId = TemplateId.REGISTRATION_HTML;
 		Properties properties = null;
@@ -80,10 +83,10 @@ public class TemplateServiceTest {
 
 	/**
 	 * Test {@link TemplateService#generateContent(TemplateId, Properties, Locale)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because input {@code locale} parameter 
+	 * Scenario: throws {@link NullPointerException} because input {@code locale} parameter 
 	 *           is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*String*/ generateContent_NullLocale(/*TemplateId templateId, Properties properties, Locale locale*/) throws ServiceException {
 		TemplateId templateId = TemplateId.REGISTRATION_HTML;
 		Properties properties = new Properties();
@@ -142,10 +145,10 @@ public class TemplateServiceTest {
 
 	/**
 	 * Test {@link TemplateService#generatePDFContent(TemplateId, Properties, Locale)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because input {@code templateId}
+	 * Scenario: throws {@link NullPointerException} because input {@code templateId}
 	 *           parameter is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*ByteArrayOutputStream*/ generatePDFContent_NullTemplateId(/*TemplateId templateId, Properties properties, Locale locale*/) throws ServiceException {
 		TemplateId templateId = null;
 		Properties properties = new Properties();
@@ -156,10 +159,10 @@ public class TemplateServiceTest {
 
 	/**
 	 * Test {@link TemplateService#generatePDFContent(TemplateId, Properties, Locale)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because input {@code properties} 
+	 * Scenario: throws {@link NullPointerException} because input {@code properties} 
 	 *           parameter is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*ByteArrayOutputStream*/ generatePDFContent_NullProperties(/*TemplateId templateId, Properties properties, Locale locale*/) throws ServiceException {
 		TemplateId templateId = TemplateId.USER_CERTIFICATE_PDF;
 		Properties properties = null;
@@ -170,10 +173,10 @@ public class TemplateServiceTest {
 
 	/**
 	 * Test {@link TemplateService#generatePDFContent(TemplateId, Properties, Locale)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because input {@code locale} parameter 
+	 * Scenario: throws {@link NullPointerException} because input {@code locale} parameter 
 	 *           is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*ByteArrayOutputStream*/ generatePDFContent_NullLocale(/*TemplateId templateId, Properties properties, Locale locale*/) throws ServiceException {
 		TemplateId templateId = TemplateId.USER_CERTIFICATE_PDF;
 		Properties properties = new Properties();

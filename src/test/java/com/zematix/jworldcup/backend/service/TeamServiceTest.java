@@ -25,6 +25,7 @@ import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.TeamDao;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Team;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
  * Contains test functions of {@link TeamService} class.
@@ -87,10 +88,9 @@ public class TeamServiceTest {
 
 	/**
 	 * Test {@link Team#retrieveFavouriteGroupTeams(Long)} method.
-	 * Scenario: unsuccessfully retrieves a list of {@link Team} instances because eventId 
-	 *           parameter is {@code null}, throws an exception.
+	 * Scenario: throws {@link NullPointerException} because {@code eventId} parameter is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Team>*/ retrieveFavouriteGroupTeamsNull(/*Long eventId*/) {
 		Long eventId = null;
 		
@@ -139,10 +139,9 @@ public class TeamServiceTest {
 
 	/**
 	 * Test {@link Team#retrieveFavouriteKnockoutTeams(Long)} method.
-	 * Scenario: unsuccessfully retrieves a list of {@link Team} instances because eventId 
-	 *           parameter is {@code null}, throws an exception.
+	 * Scenario: throws {@link NullPointerException} because {@code eventId} parameter is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Team>*/ retrieveFavouriteKnockoutTeamsNull(/*Long eventId*/) {
 		Long eventId = null;
 		
@@ -172,10 +171,9 @@ public class TeamServiceTest {
 
 	/**
 	 * Test {@link Team#retrieveTeamByWsId(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because eventId 
-	 *           parameter is {@code null}.
+	 * Scenario: throws {@link NullPointerException} because {@code eventId} parameter is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Team*/ retrieveTeamByWsIdNullEventId(/*Long eventId, Long wsId*/) {
 		Long eventId = null;
 		Long wsId = 1L;
@@ -185,10 +183,9 @@ public class TeamServiceTest {
 
 	/**
 	 * Test {@link Team#retrieveTeamByWsId(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because wsId 
-	 *           parameter is {@code null}.
+	 * Scenario: throws {@link NullPointerException} because {@code wsId} parameter is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Team*/ retrieveTeamByWsIdNullWsId(/*Long eventId, Long wsId*/) {
 		Long eventId = 1L;
 		Long wsId = null;
@@ -226,10 +223,10 @@ public class TeamServiceTest {
 
 	/**
 	 * Test {@link Team#retrieveTeamsByGroupName(Long, String)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because eventId parameter 
+	 * Scenario: throws {@link NullPointerException} because {@code eventId} parameter 
 	 *           is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Team>*/ retrieveTeamsByGroupName_NullEventId(/*Long eventId, String groupName*/) throws ServiceException {
 		Long eventId = null;
 		String groupName = "ABC";
@@ -239,7 +236,7 @@ public class TeamServiceTest {
 
 	/**
 	 * Test {@link Team#retrieveTeamsByGroupName(Long, String)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because groupName parameter 
+	 * Scenario: throws {@link IllegalArgumentException} because {@code groupName} parameter 
 	 *           is {@code null}.
 	 */
 	@Test(expected=IllegalArgumentException.class)

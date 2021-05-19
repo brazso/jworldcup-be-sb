@@ -1,4 +1,4 @@
-package com.zematix.jworldcup.backend.service;
+package com.zematix.jworldcup.backend.emun;
 
 /**
  * Supported template types used by {@link TemplateId}

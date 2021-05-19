@@ -23,7 +23,7 @@ import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
-import com.zematix.jworldcup.backend.service.ServiceException;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
@@ -55,10 +55,10 @@ public class ChatDaoTest {
 	
 	/**
 	 * Test {@link ChatDao#retrieveChats(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} 
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*List<Chat>*/ retrieveChats_NullUserGroupId(/*Long eventId, Long userGroupId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		Long userGroupId = null;
@@ -159,10 +159,10 @@ public class ChatDaoTest {
 
 	/**
 	 * Test {@link ChatDao#truncateChats(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} 
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*List<Chat>*/ truncateChats_NullUserGroupId(/*Long eventId, Long userGroupId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		Long userGroupId = null;

@@ -7,8 +7,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.stereotype.Component;
 
+import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.ServerBase;
-import com.zematix.jworldcup.backend.service.ServiceException;
 
 /**
  * Regular maintenance operations are called in this scheduler job. 

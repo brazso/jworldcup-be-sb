@@ -30,6 +30,7 @@ import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.WebServiceDao;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.WebService;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
@@ -66,10 +67,10 @@ public class WebServiceServiceTest {
 
 	/**
 	 * Test {@link WebServiceService#findMatchInMatchdatas(List<Matchdata>, Match)} private(!) method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} matchdatas 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} matchdatas 
 	 *           parameter 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*private*/ void /*Matchdata*/ findMatchInMatchdatas_NullMatchdatas(/*List<Matchdata> matchdatas, Match match*/) {
 		List<Matchdata> matchdatas = null;
 		Match match = new Match();
@@ -78,10 +79,10 @@ public class WebServiceServiceTest {
 
 	/**
 	 * Test {@link WebServiceService#findMatchInMatchdatas(List<Matchdata>, Match)} private(!) method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} match 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} match 
 	 *           parameter 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*private*/ void /*Matchdata*/ findMatchInMatchdatas_NullMatch(/*List<Matchdata> matchdatas, Match match*/) {
 		List<Matchdata> matchdatas = new ArrayList<>();
 		Match match = null;
@@ -142,10 +143,10 @@ public class WebServiceServiceTest {
 	
 	/**
 	 * Test {@link WebServiceService#updateMatchResults(Long} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} eventId 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} eventId 
 	 *           parameter 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*long*/ updateMatchResults_NullEventId(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		
@@ -274,10 +275,10 @@ public class WebServiceServiceTest {
 	
 	/**
 	 * Test {@link WebServiceService#updateMatchByMatchdata(Match, Matchdata, WebService)} private(!) method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} match 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} match 
 	 *           parameter 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*private*/ void /*boolean*/ updateMatchByMatchdata_NullMatch(/*Match match, Matchdata matchdata, WebService webService*/) throws ServiceException {
 		Match match = null;
 		Matchdata matchdata = new Matchdata();
@@ -287,10 +288,10 @@ public class WebServiceServiceTest {
 
 	/**
 	 * Test {@link WebServiceService#updateMatchByMatchdata(Match, Matchdata, WebService)} private(!) method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} matchdata 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} matchdata 
 	 *           parameter 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*private*/ void /*boolean*/ updateMatchByMatchdata_NullMatchdata(/*Match match, Matchdata matchdata, WebService webService*/) throws ServiceException {
 		Match match = new Match();
 		Matchdata matchdata = null;
@@ -300,10 +301,10 @@ public class WebServiceServiceTest {
 
 	/**
 	 * Test {@link WebServiceService#updateMatchByMatchdata(Match, Matchdata, WebService)} private(!) method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} webService 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} webService 
 	 *           parameter 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*private*/ void /*boolean*/ updateMatchByMatchdata_NullWebService(/*Match match, Matchdata matchdata, WebService webService*/) throws ServiceException {
 		Match match = new Match();
 		Matchdata matchdata = new Matchdata();

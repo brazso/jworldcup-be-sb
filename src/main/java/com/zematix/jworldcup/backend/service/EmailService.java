@@ -10,7 +10,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
+import com.zematix.jworldcup.backend.emun.TemplateId;
 import com.zematix.jworldcup.backend.entity.User;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
  * Helper class to send emails based on templates. 

@@ -3,16 +3,20 @@ package com.zematix.jworldcup.backend.service;
 import java.text.MessageFormat;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 
 /**
  * Common ancestor of lots of Server classes.
  */
 public abstract class ServerBase {
 
-	@Autowired
+	@Inject
 	protected Logger logger;
 	
 	public ServerBase () {
@@ -29,8 +33,8 @@ public abstract class ServerBase {
 	 * @param e - ServiceException instance to be consumed
 	 */
 	protected void consumeServiceException(ServiceException e) {
-		List<ParametrizedMessage> pMsgs = e.getMessages();
-		for (ParametrizedMessage pMsg : pMsgs) {
+		List<ParameterizedMessage> pMsgs = e.getMessages();
+		for (ParameterizedMessage pMsg : pMsgs) {
 			switch (pMsg.getMsgType()) {
 				case ERROR:
 					logger.error(MessageFormat.format(pMsg.getMsgCode(), pMsg.getMsgParameters()), e);

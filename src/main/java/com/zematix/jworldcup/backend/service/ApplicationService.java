@@ -23,7 +23,7 @@ import com.google.common.cache.LoadingCache;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.UserGroup;
-import com.zematix.jworldcup.backend.entity.model.UserCertificate;
+import com.zematix.jworldcup.backend.model.UserCertificate;
 
 /**
  * Helper class to get values related to the application.

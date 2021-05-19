@@ -12,6 +12,7 @@ plugins {
 	//id "org.hidetake.swagger.generator" version "2.12.0" apply false
 	id "de.undercouch.download" version "4.0.4"
 	id "uk.co.boothen.gradle.wsimport" version "0.16"
+	//id "io.freefair.lombok" version "6.0.0-m2"
 }
 
 //Buildship doesn't use that hooks (https://discuss.gradle.org/t/when-does-buildship-eclipse-customization-run/20781/2)
@@ -56,11 +57,15 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-quartz'
-	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	
-	implementation "org.projectlombok:lombok:${lombokVersion}"
+	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JSON Web Token Support For The JVM
+	
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	annotationProcessor "org.projectlombok:lombok:${lombokVersion}", "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
+	//testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+	//testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}", "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
 		
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.hsqldb:hsqldb'
@@ -81,9 +86,8 @@ dependencies {
 	implementation "org.springdoc:springdoc-openapi-ui:${openapiVersion}"
 	 
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    implementation "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    //testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     
     implementation "com.querydsl:querydsl-core:${queryDslVersion}"
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
@@ -194,13 +198,6 @@ compileJava {
         srcDirs += [testResourcePath]
     }
 
-	//options.annotationProcessorPath = configurations.annotationProcessor
-    //options.compilerArgs += [
-    //'-proc:only',
-    //'-processor', 'com.querydsl.apt.jpa.JPAAnnotationProcessor',
-    //'-Aquerydsl.includedPackages=com.zematix.jworldcup.backend.entity'
-    //]
-
     File annotationProcessorPathFile = project.file(annotationProcessorPath)
     println "Creating and configuring generated annotationProcessor source directory $annotationProcessorPathFile"
     project.mkdir(annotationProcessorPathFile)
@@ -219,17 +216,13 @@ tasks.withType(JavaCompile) {
 
 tasks.withType(Test) {
     jvmArgs += [
-    	"--enable-preview", 
-    	"-Amapstruct.defaultComponentModel=spring",
-    	"-Amapstruct.unmappedTargetPolicy=IGNORE"
+    	"--enable-preview"
     ]
 }
 
 tasks.withType(JavaExec) {
     jvmArgs += [
-    	"--enable-preview", 
-    	"-Amapstruct.defaultComponentModel=spring",
-    	"-Amapstruct.unmappedTargetPolicy=IGNORE"
+    	"--enable-preview"
     ]
 
 }

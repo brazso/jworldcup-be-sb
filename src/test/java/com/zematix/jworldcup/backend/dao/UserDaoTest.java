@@ -20,13 +20,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zematix.jworldcup.backend.crypto.MultiCryptPasswordEncoder;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Role;
 import com.zematix.jworldcup.backend.entity.Team;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.entity.UserStatus;
-import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
  * Contains test functions of {@link UserDao} class. Although a lot of
@@ -49,6 +49,9 @@ public class UserDaoTest {
 
 	@Inject
 	private RoleDao roleDao;
+
+	@Inject
+	private MultiCryptPasswordEncoder passwordEncoder;
 
 	/**
 	 * Test {@link UserDao#getAllUsers()} method.
@@ -78,9 +81,9 @@ public class UserDaoTest {
 
 	/**
 	 * Test {@link UserDao#stripUser(User)} method.
-	 * Scenario: fails because of the given {@code null} user parameter
+	 * Scenario: throws @{link NullPointerException} because of the given {@code null} user parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void stripUserNull(/*User user*/) {
 		User user = null;
 
@@ -111,9 +114,9 @@ public class UserDaoTest {
 	
 	/**
 	 * Test {@link UserDao#findUserByLoginName(String)} method. 
-	 * Scenario: due to null input loginName, {@link IllegalArgumentException} must be thrown.
+	 * Scenario: due to {@code null} input loginName {@link NullPointerException} is thrown.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*User*/ findUserByLoginNameNull(/*String loginName*/) {
 		String loginName = null;
 		
@@ -158,9 +161,9 @@ public class UserDaoTest {
 	
 	/**
 	 * Test {@link UserDao#findUserByLoginNameOrEmailAddress(String, String)} method. 
-	 * Scenario: due to null input loginName, {@link IllegalArgumentException} must be thrown.
+	 * Scenario: due to {@code null} input {@code loginName} {@link NullPointerException} is thrown.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*User*/ findUserByLoginNameOrEmailAddressByLoginNameNull(/*String loginName, String emailAddr*/) {
 		String loginName = null;
 		String emailAddr = "worldcup@zematix.hu";
@@ -170,9 +173,9 @@ public class UserDaoTest {
 	
 	/**
 	 * Test {@link UserDao#findUserByLoginNameOrEmailAddress(String, String)} method. 
-	 * Scenario: due to null input loginName, {@link IllegalArgumentException} must be thrown.
+	 * Scenario: due to {@code null} input {@code loginName} {@link NullPointerException} is thrown.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*User*/ findUserByLoginNameOrEmailAddressByEmailAddrNull(/*String loginName, String emailAddr*/) {
 		String loginName = "admin";
 		String emailAddr = null;
@@ -226,9 +229,9 @@ public class UserDaoTest {
 
 	/**
 	 * Test {@link UserDao#existUserByEmailAddrExceptUser(String, String)} method. 
-	 * Scenario: due to null input loginName, {@link IllegalArgumentException} must be thrown.
+	 * Scenario: due to {@code null} input {@code loginName} {@link NullPointerException} is thrown.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*boolean*/ existUserByEmailAddrExceptUserByLoginNameNull(/*String loginName, String emailAddr*/) {
 		String loginName = null;
 		String emailAddr = "dummy@zematix.hu";
@@ -238,9 +241,9 @@ public class UserDaoTest {
 
 	/**
 	 * Test {@link UserDao#existUserByEmailAddrExceptUser(String, String)} method. 
-	 * Scenario: due to null input loginName, {@link IllegalArgumentException} must be thrown.
+	 * Scenario: due to {@code null} input {@code loginName} {@link NullPointerException} is thrown.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*boolean*/ existUserByEmailAddrExceptUserByLoginEmailAddr(/*String loginName, String emailAddr*/) {
 		String loginName = "dummy";
 		String emailAddr = null;
@@ -249,16 +252,19 @@ public class UserDaoTest {
 	}
 
 	/**
-	 * Test {@link UserDao#saveUser()} method. 
-	 * Scenario: successfully saves of a user given by numerous login/personal data and a role.
+	 * Test {@link UserDao#saveUser(String, String, String, String,	String, String, String, String,
+	 * 		LocalDateTime)} method. 
+	 * Scenario: successfully saves a user given by numerous login/personal data and a role.
 	 */
 	@Test
-	public void saveUserSuccessful() {
+	public void saveUserSuccessful(/*String loginName, String encryptedLoginPassword, String fullName, 
+			String emailAddr, String sRole, String sStatus, String token, String zoneId, 
+			LocalDateTime modificationTime*/) {
 		String loginName = "brazso";
 		String loginPassword = "yell0wsubmarine";
 		String fullName = "Zsolt Branyiczky";
 		String emailAddr = "zbranyiczky@dummy987.com";
-		String encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
+		String encryptedLoginPassword = passwordEncoder.encode(loginPassword);
 		String sRole = "USER";
 		String sUserstatus = "CANDIDATE";
 		String token = "Y54Fd1fjjegzB0yymkoz";
@@ -276,17 +282,20 @@ public class UserDaoTest {
 	}
 
 	/**
-	 * Test {@link UserDao#saveUser()} method. 
+	 * Test {@link UserDao#saveUser(String, String, String, String,	String, String, String, String,
+	 * 		LocalDateTime)} method. 
 	 * Scenario: saving the same user twice causes unique constraint violation at 2nd persist.
 	 *           Due to transaction handler no database change happens.
 	 */
 	@Test(expected = PersistenceException.class)
-	public void saveUserUniqueConstraintViolation() {
+	public void saveUserUniqueConstraintViolation(/*String loginName, String encryptedLoginPassword, 
+			String fullName, String emailAddr, String sRole, String sStatus, String token, String zoneId, 
+			LocalDateTime modificationTime*/) {
 		String loginName = "brazso";
 		String loginPassword = "yell0wsubmarine";
 		String fullName = "Zsolt Branyiczky";
 		String emailAddr = "zbranyiczky@dummy987.com";
-		String encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
+		String encryptedLoginPassword = passwordEncoder.encode(loginPassword);
 		String sRole = "USER";
 		String sUserStatus = "CANDIDATE";
 		String token = "Y54Fd1fjjegzB0yymkoz";
@@ -303,17 +312,18 @@ public class UserDaoTest {
 	}
 
 	/**
-	 * Test {@link UserDao#modifyUser()} method. 
+	 * Test {@link UserDao#modifyUser(User, String, String, String, String, LocalDateTime)} method. 
 	 * Scenario: successful modification of a user
 	 */
 	@Test
-	public void modifyUserSuccessful() {
+	public void modifyUserSuccessful(/*User user, String fullName, String emailNew, String encryptedLoginPassword, 
+			String zoneId, LocalDateTime modificationTime*/) {
 		String loginName = "admin";
 		String loginPasswordNew = "admin_!!";
 		String fullName = "Mr Zsolt Branyiczky";
 		String emailNew = "zbranyiczky@dummy988.com";
 		String zoneId = "CET";
-		String encryptedNewLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPasswordNew);
+		String encryptedNewLoginPassword = passwordEncoder.encode(loginPasswordNew);
 		LocalDateTime modificationTime = LocalDateTime.now();
 		
 		User user = userDao.findUserByLoginName(loginName);
@@ -328,17 +338,18 @@ public class UserDaoTest {
 	}
 
 	/**
-	 * Test {@link UserDao#modifyUser()} method. 
-	 * Scenario: unsuccessful modification of a user due detached given user parameter
+	 * Test {@link UserDao#modifyUser(User, String, String, String, String, LocalDateTime)} method. 
+	 * Scenario: throws {@link IllegalArgumentException} because of detached given user parameter
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void modifyUserFailsWithUnmanagedUser() {
+	public void modifyUserFailsWithUnmanagedUser(/*User user, String fullName, String emailNew, String encryptedLoginPassword, 
+			String zoneId, LocalDateTime modificationTime*/) {
 		String loginName = "admin";
 		String loginPasswordNew = "admin_!!";
 		String fullName = "Mr Zsolt Branyiczky";
 		String emailNew = "zbranyiczky@dummy988.com";
 		String zoneId = "CET";
-		String encryptedNewLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPasswordNew);
+		String encryptedNewLoginPassword = passwordEncoder.encode(loginPasswordNew);
 		LocalDateTime modificationTime = LocalDateTime.now();
 		
 		User user = userDao.findUserByLoginName(loginName);
@@ -349,11 +360,11 @@ public class UserDaoTest {
 	}
 
 	/**
-	 * Test {@link UserDao#findUserByToken()} method. 
+	 * Test {@link UserDao#findUserByToken(String)} method. 
 	 * Scenario: successful retrieval of a user named admin
 	 */
 	@Test
-	public void findUserByTokenSuccessful() {
+	public void findUserByTokenSuccessful(/*String token*/) {
 		String token = "IF2YCcPnNulH8UEEkAIP";
 		
 		User user = userDao.findUserByToken(token);
@@ -361,11 +372,11 @@ public class UserDaoTest {
 	}
 
 	/**
-	 * Test {@link UserDao#findUserByToken()} method. 
+	 * Test {@link UserDao#findUserByToken(String)} method. 
 	 * Scenario: unsuccessful retrieval of a user because of token unknown
 	 */
 	@Test
-	public void findUserByTokenUnsuccessful() {
+	public void findUserByTokenUnsuccessful(/*String token*/) {
 		String token = "dummy";
 		
 		User user = userDao.findUserByToken(token);
@@ -373,22 +384,22 @@ public class UserDaoTest {
 	}
 
 	/**
-	 * Test {@link UserDao#findUserByToken()} method. 
-	 * Scenario: unsuccessful retrieval of a user because of null input token
+	 * Test {@link UserDao#findUserByToken(String)} method. 
+	 * Scenario: throws {@link IllegalArgumentException} because of {@code null} input token
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void findUserByTokenNull() {
+	public void findUserByTokenNull(/*String token*/) {
 		String token = null;
 		
 		userDao.findUserByToken(token);
 	}
 	
 	/**
-	 * test {@link UserDao#modifyUserStatusToken(User, String)} method.
+	 * test {@link UserDao#modifyUserStatusToken(User, String, LocalDateTime)} method.
 	 * Scenario: successfully saves admin user with LOCKED status
 	 */
 	@Test
-	public /*User*/ void modifyUserStatusTokenSucccesful(/*User user, String status, Date modificationTime*/) {
+	public /*User*/ void modifyUserStatusTokenSucccesful(/*User user, String status, LocalDateTime modificationTime*/) {
 		String loginName = "admin";
 		User user = userDao.findUserByLoginName(loginName);
 		assertNotNull(user);
@@ -404,26 +415,26 @@ public class UserDaoTest {
 	}
 
 	/**
-	 * Test {@link UserDao#modifyUserStatusToken(User, String)} method.
-	 * Scenario: unsuccessfully saves admin user with mistyped LOCED status
+	 * Test {@link UserDao#modifyUserStatusToken(User, String, LocalDateTime)} method.
+	 * Scenario: throws {@link IllegalStateException} beause of mistyped LOCED status
 	 */
-	@Test(expected = IllegalArgumentException.class)
-	public /*User*/ void modifyUserStatusTokenWithMistypedStatus(/*User user, String status*/) {
+	@Test(expected = IllegalStateException.class)
+	public /*User*/ void modifyUserStatusTokenWithMistypedStatus(/*User user, String status, LocalDateTime modificationTime*/) {
 		String loginName = "admin";
 		User user = userDao.findUserByLoginName(loginName);
 		assertNotNull(user);
 		LocalDateTime modificationTime = LocalDateTime.now();
-		String status = "LOCED";
+		String status = "LOCED"; // mistyped on purpose
 
 		userDao.modifyUserStatusToken(user, status, modificationTime);
 	}
 
 	/**
-	 * Test {@link UserDao#modifyUserStatusToken(User, String)} method.
-	 * Scenario: unsuccessfully saves null user with LOCKED status
+	 * Test {@link UserDao#modifyUserStatusToken(User, String, LocalDateTime)} method.
+	 * Scenario: throws {@link NullPointerException} because of LOCKED status
 	 */
-	@Test(expected = IllegalArgumentException.class)
-	public /*User*/ void modifyUserStatusTokenWithNullUser(/*User user, String status*/) {
+	@Test(expected = NullPointerException.class)
+	public /*User*/ void modifyUserStatusTokenWithNullUser(/*User user, String status, LocalDateTime modificationTime*/) {
 		User user = null;
 		String status = "LOCKED";
 		LocalDateTime modificationTime = LocalDateTime.now();
@@ -498,7 +509,7 @@ public class UserDaoTest {
 	
 	/**
 	 * Test {@link UserDao#findUserByLoginNameOrFullName(String, String)} method.
-	 * Scenario: unsuccessful retrieval of a user because both input parameters are empty/null
+	 * Scenario: throws {@link IllegalArgumentException} because both input parameters are empty/{@code null}
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void /*User*/ findUserByLoginNameOrFullNameEmptyNull(/*String loginName, String fullName*/) {
@@ -516,7 +527,7 @@ public class UserDaoTest {
 	public void /*List<User>*/ findUsersByLoginNamePrefix(/*String loginNamePrefix*/) {
 		String loginNamePrefix = "aDm";
 		List<User> users = userDao.findUsersByLoginNamePrefix(loginNamePrefix);
-		assertTrue(users.size() == 1);				
+		assertEquals(1, users.size());				
 	}
 
 	/**
@@ -546,7 +557,8 @@ public class UserDaoTest {
 
 	/**
 	 * Test {@link UserDao#findUsersByLoginNamePrefix(String)} method.
-	 * Scenario: unsuccessful retrieval of a list of users because the given prefix is null
+	 * Scenario: throws {@link IllegalArgumentException} because of the given 
+	 * {@code loginNamePrefix} is {@code null}
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void /*List<User>*/ findUsersByLoginNamePrefixNull(/*String loginNamePrefix*/) {
@@ -557,7 +569,8 @@ public class UserDaoTest {
 	
 	/**
 	 * Test {@link UserDao#findUsersByLoginNamePrefix(String)} method.
-	 * Scenario: unsuccessful retrieval of a list of users because the given prefix is empty
+	 * Scenario: throws {@link IllegalArgumentException} because the given {@code loginNamePrefix} 
+	 * is empty
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void /*List<User>*/ findUsersByLoginNamePrefixEmpty(/*String loginNamePrefix*/) {
@@ -579,7 +592,8 @@ public class UserDaoTest {
 
 	/**
 	 * Test {@link UserDao#findUsersByLoginNamePrefix(String)} method.
-	 * Scenario: unsuccessful retrieval of a list of users because given fullNameContain is null
+	 * Scenario: throws {@link IllegalArgumentException} because the given {@code fullNameContain} 
+	 * is {@code null}
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void /*List<User>*/ findUsersByFullNameContainNull(/*String fullNameContain*/) {
@@ -627,9 +641,9 @@ public class UserDaoTest {
 
 	/**
 	 * Test {@link UserDao#modifyUserEmailAddr(User)} method.
-	 * Scenario: unsuccessful modification of the given user
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} user
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*boolean*/ modifyUserEmailAddrNull(/*User user*/) {
 		User user = null;
 		LocalDateTime modificationTime = LocalDateTime.now();
@@ -639,7 +653,8 @@ public class UserDaoTest {
 
 	/**
 	 * Test {@link UserDao#modifyUserEmailAddr(User)} method.
-	 * Scenario: successful modification of the given user because her emailNew field value is null
+	 * Scenario: successful modification of the given {@code user} because her emailNew field value is 
+	 * {@code null}
 	 */
 	@Test
 	public void /*boolean*/ modifyUserEmailAddrEmailNewNull(/*User user*/) {
@@ -652,7 +667,7 @@ public class UserDaoTest {
 
 	/**
 	 * Test {@link UserDao#findFirstAdminUser()} method.
-	 * Scenario: throws {@link IllegalStateException} because there is no user with ADMIN role
+	 * Scenario: throws {@link IllegalStateException} because there is no {@code user} with ADMIN role
 	 *           in the database.
 	 */
 	@Test(expected = IllegalStateException.class)

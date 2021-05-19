@@ -56,10 +56,10 @@ public class UserGroupDaoTest {
 	
 	/**
 	 * Test {@link UserDao#createVirtualEverybodyUserGroup_NullEventId(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} 
 	 *           {@code eventId} parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*UserGroup*/ createVirtualEverybodyUserGroup_NullEventId(/*Long eventId, Long userId*/) {
 		Long eventId = null;
 		Long userId = 2L; // normal
@@ -69,10 +69,10 @@ public class UserGroupDaoTest {
 	
 	/**
 	 * Test {@link UserDao#createVirtualEverybodyUserGroup_NullEventId(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} 
 	 *           {@code userId} parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*UserGroup*/ createVirtualEverybodyUserGroup_NullUserId(/*Long eventId, Long userId*/) {
 		Long eventId = 1L; // WC2014
 		Long userId = null;
@@ -200,9 +200,9 @@ public class UserGroupDaoTest {
 	
 	/**
 	 * Test {@link UserDao#retrieveUserGroups(Long, Long)} method. 
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} eventId parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} eventId parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*List<UserGroup>*/ retrieveUserGroups_NullEventId(/*Long eventId, Long userId*/) {
 		Long eventId = null;
 		Long userId = 1L; // admin
@@ -212,9 +212,9 @@ public class UserGroupDaoTest {
 	
 	/**
 	 * Test {@link UserDao#retrieveUserGroups(Long, Long)} method. 
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} userId parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} userId parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*List<UserGroup>*/ retrieveUserGroups_NullUserId(/*Long eventId, Long userId*/) {
 		Long eventId = 1L; // WC2014; 
 		Long userId = null;
@@ -224,10 +224,10 @@ public class UserGroupDaoTest {
 	
 	/**
 	 * Test {@link UserDao#retrieveUserGroups(Long, Long)} method. 
-	 * Scenario: throws IllegalArgumentException because there is no {@link User} object 
+	 * Scenario: throws {@link IllegalStateException} because there is no {@link User} object 
 	 *           belongs to the given userId parameter in the database
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalStateException.class)
 	public void /*List<UserGroup>*/ retrieveUserGroups_InvalidUserId(/*Long eventId, Long userId*/) {
 		Long eventId = 1L; // WC2014; 
 		Long userId = -1L;
@@ -266,10 +266,10 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#retrieveUsersByUserGroup(Long)} method.
-	 * Scenario: throws {@link illegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public /*List<User>*/ void retrieveUsersByUserGroup_NullUserGroupId(/*Long userGroupId*/) {
 		Long userGroupId = null;
 
@@ -360,10 +360,10 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#retrieveUsersWithBetsByUserGroup(Long, Long)} method.
-	 * Scenario: throws {@link illegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public /*List<User>*/ void retrieveUsersWithBetsByUserGroup_NullUserGroupId(/*Long userGroupId, Long eventId*/) {
 		Long userGroupId = null;
 		Long eventId = 1L; // WC2014
@@ -386,10 +386,10 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#retrieveUsersWithBetsByUserGroup(Long, Long)} method.
-	 * Scenario: throws {@link illegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code eventId} parameter in case of virtual Everybody {@code userGroupId}
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public /*List<User>*/ void retrieveUsersWithBetsByUserGroup_EverybodyUserGroupId_NullEventId(/*Long userGroupId, Long eventId*/) {
 		Long userGroupId = UserGroup.EVERYBODY_USER_GROUP_ID;
 		Long eventId = null;
@@ -469,10 +469,10 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#retrieveNumberOfUsersWithBetsByUserGroup(Long, Long)} method.
-	 * Scenario: throws {@link illegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public /*List<User>*/ void retrieveNumberOfUsersWithBetsByUserGroup_NullUserGroupId(/*Long userGroupId, Long eventId*/) {
 		Long userGroupId = null;
 		Long eventId = 1L; // WC2014
@@ -482,7 +482,7 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#retrieveNumberOfUsersWithBetsByUserGroup(Long, Long)} method.
-	 * Scenario: throws {@link illegalArgumentException} because of the given 
+	 * Scenario: throws {@link IllegalArgumentException} because of the given 
 	 *           {@code userGroupId} parameter does not exist in database
 	 */
 	@Test(expected = IllegalArgumentException.class)
@@ -495,10 +495,10 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#retrieveNumberOfUsersWithBetsByUserGroup(Long, Long)} method.
-	 * Scenario: throws {@link illegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code eventId} parameter in case of virtual Everybody {@code userGroupId}
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public /*List<User>*/ void retrieveNumberOfUsersWithBetsByUserGroup_EverybodyUserGroupId_NullEventId(/*Long userGroupId, Long eventId*/) {
 		Long userGroupId = UserGroup.EVERYBODY_USER_GROUP_ID;
 		Long eventId = null;
@@ -508,9 +508,9 @@ public class UserGroupDaoTest {
 	
 	/**
 	 * Test {@link UserDao#retrieveUsersByUserGroup(Long)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} eventId parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} eventId parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*UserGroup*/ findUserGroupByName_NullEventId(/*Long eventId, String name*/) {
 		Long eventId = null;
 		String name = "DummyUserGroup";
@@ -520,7 +520,7 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#findUserGroupByName(Long, String)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} 
+	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} 
 	 *           {@code name} parameter
 	 */
 	@Test(expected = IllegalArgumentException.class)
@@ -630,9 +630,9 @@ public class UserGroupDaoTest {
 	
 	/**
 	 * Test {@link UserDao#findLastUserGroupByName(Long, String)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} eventId parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} eventId parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*UserGroup*/ findLastUserGroupByName_NullEventId(/*Long eventId, String name*/) {
 		Long eventId = null;
 		String name = "DummyUserGroup";
@@ -642,7 +642,7 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#findLastUserGroupByName(Long, String)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} name parameter
+	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} name parameter
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void /*UserGroup*/ findLastUserGroupByName_NullName(/*Long eventId, String name*/) {
@@ -797,9 +797,9 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#insertUserGroup(Long, Long, String)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} {@code eventId} parameter.
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code eventId} parameter.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*UserGroup*/ insertUserGroup_NullEventId(/*Long eventId, Long userId, String name*/) {
 		Long eventId = null; // WC2014
 		Long userId = 1L; // admin 
@@ -810,9 +810,9 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#insertUserGroup(Long, Long, String)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} {@code userId} parameter.
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code userId} parameter.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*UserGroup*/ insertUserGroup_NullUserId(/*Long eventId, Long userId, String name*/) {
 		Long eventId = 1L; // WC2014
 		Long userId = null; 
@@ -823,7 +823,7 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#insertUserGroup(Long, Long, String)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} {@code name} parameter.
+	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} {@code name} parameter.
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void /*UserGroup*/ insertUserGroup_NullName(/*Long eventId, Long userId, String name*/) {
@@ -836,7 +836,7 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#insertUserGroup(Long, Long, String)} method.
-	 * Scenario: throws IllegalArgumentException because of the given non existing {@code eventId} parameter. 
+	 * Scenario: throws {@link IllegalArgumentException} because of the given non existing {@code eventId} parameter. 
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void /*UserGroup*/ insertUserGroup_UnknownEventId(/*Long eventId, Long userId, String name*/) {
@@ -849,7 +849,7 @@ public class UserGroupDaoTest {
 	
 	/**
 	 * Test {@link UserDao#insertUserGroup(Long, Long, String)} method.
-	 * Scenario: throws IllegalArgumentException because of the given non existing {@code userId} parameter. 
+	 * Scenario: throws {@link IllegalArgumentException} because of the given non existing {@code userId} parameter. 
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void /*UserGroup*/ insertUserGroup_UnknownUserId(/*Long eventId, Long userId, String name*/) {
@@ -862,10 +862,10 @@ public class UserGroupDaoTest {
 	
 	/**
 	 * Test {@link UserDao#deleteUserGroup(Long)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} 
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void deleteUserGroup_NullUserGroupId(/*Long userGroupId*/) {
 		Long userGroupId = null;
 
@@ -874,10 +874,10 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#deleteUserGroup(Long)} method.
-	 * Scenario: throws IllegalArgumentException because the given {@code userGroupId} parameter
+	 * Scenario: throws {@link IllegalStateException} because the given {@code userGroupId} parameter
 	 *           does not exist in database
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalStateException.class)
 	public void deleteUserGroup_UnknownUserGroupId(/*Long userGroupId*/) {
 		Long userGroupId = -1L;
 
@@ -918,9 +918,9 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#deleteUserGroup(Long)} method.
-	 * Scenario: unsuccessful deletion of a user group because of null userGroupId argument.
+	 * Scenario: throws {@link NullPointerException} because of null userGroupId argument.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void deleteUserGroupNull(/*Long userGroupId*/) {
 		Long userGroupId = null; 
 
@@ -929,9 +929,9 @@ public class UserGroupDaoTest {
 
 	/**
 	 * Test {@link UserDao#deleteUserGroup(Long)} method.
-	 * Scenario: unsuccessful deletion of a user group because of non existing userGroupId argument.
+	 * Scenario: throws {@link IllegalStateException} because of non existing userGroupId argument.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalStateException.class)
 	public void deleteUserGroupUnknown(/*Long userGroupId*/) {
 		Long userGroupId = -1L;
 		

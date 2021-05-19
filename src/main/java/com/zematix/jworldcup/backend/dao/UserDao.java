@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.dao;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.time.LocalDateTime;
@@ -68,7 +69,7 @@ public class UserDao extends DaoBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public void stripUser(User user) {
-		checkArgument(user != null, "Argument \"user\" entity cannot be null.");
+		checkNotNull(user);
 		commonDao.detachEntity(user);
 		user.setRoles(null);
 		user.setBets(null);
@@ -87,7 +88,7 @@ public class UserDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User findUserByLoginName(String loginName) {
 		User user = null;
-		checkArgument(loginName != null, "Argument \"loginName\" cannot be null.");
+		checkNotNull(loginName);
 
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
@@ -110,8 +111,8 @@ public class UserDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User findUserByLoginNameAndEncryptedLoginPassword(String loginName, String encryptedLoginPassword) {
 		User user = null;
-		checkArgument(loginName != null, "Argument \"loginName\" cannot be null.");
-		checkArgument(encryptedLoginPassword != null, "Argument \"encryptedLoginPassword\" cannot be null.");
+		checkNotNull(loginName);
+		checkNotNull(encryptedLoginPassword);
 
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
@@ -133,8 +134,8 @@ public class UserDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User findUserByLoginNameOrEmailAddress(String loginName, String emailAddr) {
 		User user = null;
-		checkArgument(loginName != null, "Argument \"loginName\" cannot be null.");
-		checkArgument(emailAddr != null, "Argument \"emailAddr\" cannot be null.");
+		checkNotNull(loginName);
+		checkNotNull(emailAddr);
 
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
@@ -156,7 +157,7 @@ public class UserDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User findUserByEmailAddress(String emailAddr) {
 		User user = null;
-		checkArgument(emailAddr != null, "Argument \"emailAddr\" cannot be null.");
+		checkNotNull(emailAddr);
 
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
@@ -179,8 +180,8 @@ public class UserDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean existUserByEmailAddrExceptUser(String loginName, String emailAddr) {
 		User user = null;
-		checkArgument(loginName != null, "Argument \"loginName\" cannot be null.");
-		checkArgument(emailAddr != null, "Argument \"emailAddr\" cannot be null.");
+		checkNotNull(loginName);
+		checkNotNull(emailAddr);
 
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
@@ -249,7 +250,7 @@ public class UserDao extends DaoBase {
 	 */
 	public User modifyUser(User user, String fullName, String emailNew, String encryptedLoginPassword, String zoneId,
 			LocalDateTime modificationTime) {
-		checkArgument(user != null, "Argument \"user\" entity must exists.");
+		checkNotNull(user);
 		checkArgument(commonDao.containsEntity(user),
 				"Argument \"user\" entity cannot be detached from persitence context.");
 
@@ -299,14 +300,13 @@ public class UserDao extends DaoBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	public User modifyUserStatusToken(User user, String status, LocalDateTime modificationTime) {
-		checkArgument(user != null, "Argument \"user\" entity must exists.");
+		checkNotNull(user);
 		checkArgument(commonDao.containsEntity(user),
 				"Argument \"user\" entity cannot be detached from persitence context.");
 		checkArgument(!Strings.isNullOrEmpty(status), "Argument \"status\" cannot be null nor empty.");
 
 		UserStatus userStatus = userStatusDao.findUserStatusByStatus(status);
-		checkArgument(userStatus != null,
-				String.format("No value belongs to argument \"status\"=%s in database.", status));
+		checkState(userStatus != null, String.format("No value belongs to argument \"status\"=%s in database.", status));
 
 		user.setUserStatus(userStatus);
 		user.setModificationTime(modificationTime);
@@ -327,8 +327,8 @@ public class UserDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public UserOfEvent retrieveUserOfEvent(Long eventId, Long userId) {
 		UserOfEvent userOfEvent = null;
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 
 		QUserOfEvent qUserOfEvent = QUserOfEvent.userOfEvent;
 		JPAQuery<UserOfEvent> query = new JPAQuery<>(getEntityManager());
@@ -430,7 +430,7 @@ public class UserDao extends DaoBase {
 	public boolean modifyUserEmailAddr(User user, LocalDateTime modificationTime) {
 		boolean isModified = false;
 
-		checkArgument(user != null, "Argument \"user\" entity cannot be null.");
+		checkNotNull(user);
 		checkArgument(commonDao.containsEntity(user), "Argument \"user\" entity must exists in persistence context.");
 
 		if (!Strings.isNullOrEmpty(user.getEmailNew())) {
@@ -458,7 +458,7 @@ public class UserDao extends DaoBase {
 	public boolean modifyUserResetPassword(User user, String resetPassword, LocalDateTime modificationTime) {
 		boolean isModified = false;
 
-		checkArgument(user != null, "Argument \"user\" entity cannot be null.");
+		checkNotNull(user);
 		checkArgument(commonDao.containsEntity(user), "Argument \"user\" entity must exists in persistence context.");
 		checkArgument(!Strings.isNullOrEmpty(resetPassword), "Argument \"resetPassword\" cannot be null nor empty.");
 
@@ -484,7 +484,7 @@ public class UserDao extends DaoBase {
 	public boolean finalizeUserResetPassword(User user, LocalDateTime modificationTime) {
 		boolean isModified = false;
 
-		checkArgument(user != null, "Argument \"user\" entity cannot be null.");
+		checkNotNull(user);
 		checkArgument(commonDao.containsEntity(user), "Argument \"user\" entity must exists in persistence context.");
 
 		// do modify reset password
@@ -507,7 +507,7 @@ public class UserDao extends DaoBase {
 	 *                                  {@code null}
 	 */
 	public void deleteUserRolesByUserId(Long userId) {
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(userId);
 
 		Query query = getEntityManager().createNamedQuery("deleteUserRolesByUserId", User.class);
 		query.setParameter(1, userId);
@@ -522,7 +522,7 @@ public class UserDao extends DaoBase {
 	 *                                  {@code null}
 	 */
 	public void deleteUserUserGroupsByUserId(Long userId) {
-		checkArgument(userId != null, "Argument \"userId\" entity cannot be null.");
+		checkNotNull(userId);
 
 		Query query = getEntityManager().createNamedQuery("deleteUserUserGroupsByUserId", User.class);
 		query.setParameter(1, userId);
@@ -530,7 +530,7 @@ public class UserDao extends DaoBase {
 	}
 
 	public void deleteUser(User user) {
-		checkArgument(user != null, "Argument \"user\" entity cannot be null.");
+		checkNotNull(user);
 		checkArgument(commonDao.containsEntity(user), "Argument \"user\" entity must exists in persistence context.");
 
 		// delete all dependencies of user

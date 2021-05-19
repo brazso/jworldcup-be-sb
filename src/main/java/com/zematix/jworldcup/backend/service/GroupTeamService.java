@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +16,10 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.zematix.jworldcup.backend.entity.model.EventShortDescWithYearEnum;
-import com.zematix.jworldcup.backend.entity.model.GroupPosition;
-import com.zematix.jworldcup.backend.entity.model.GroupTeam;
-import com.zematix.jworldcup.backend.entity.model.Pair;
+import com.zematix.jworldcup.backend.model.EventShortDescWithYearEnum;
+import com.zematix.jworldcup.backend.model.GroupPosition;
+import com.zematix.jworldcup.backend.model.GroupTeam;
+import com.zematix.jworldcup.backend.model.Pair;
 
 /**
  * Contains helper methods and comparators around teams of groups of an event. 
@@ -96,7 +97,7 @@ public class GroupTeamService extends ServiceBase {
 		boolean hasEqualRankings = false;
 		checkArgument(groupTeams != null && !groupTeams.isEmpty(), "Argument \"groupTeams\" list must be neither null nor empty.");
 		String eventShortDescWithYear = groupTeams.get(0).getEventShortDescWithYear();
-		checkArgument(eventShortDescWithYear != null);
+		checkNotNull(eventShortDescWithYear);
 		EventShortDescWithYearEnum eventShortDescWithYearEnum = EventShortDescWithYearEnum.valueOf(eventShortDescWithYear); // may throw IllegalArgumentException
 		List<List<GroupTeam>> twinGroupTeamsList = new ArrayList<>();
 		
@@ -223,6 +224,8 @@ public class GroupTeamService extends ServiceBase {
 	 * @return {@code true} if all teams finished their group matches
 	 */
 	public boolean isGroupFinished(List<GroupTeam> groupTeams) {
+		checkArgument(groupTeams != null && !groupTeams.isEmpty(), "Argument \"groupTeams\" list must be neither null nor empty.");
+		
 		boolean isGroupFinished = groupTeams.stream()
 				.map(groupTeam->groupTeam.isTeamInGroupFinished())
 				.reduce((b1, b2) -> b1 && b2).get();
@@ -239,6 +242,8 @@ public class GroupTeamService extends ServiceBase {
 	 * @return team on {@code positionInGroup} position from a team list of a group 
 	 */
 	public GroupTeam getGroupTeamByGroupPosition(List<GroupTeam> groupTeams, int positionInGroup) {
+		checkArgument(groupTeams != null && !groupTeams.isEmpty(), "Argument \"groupTeams\" list must be neither null nor empty.");
+		
 		List<GroupTeam> teams = groupTeams.stream()
 				.filter(groupTeam->groupTeam.getPositionInGroup() == positionInGroup)
 				.collect(Collectors.toList());
@@ -260,7 +265,7 @@ public class GroupTeamService extends ServiceBase {
 		boolean hasEqualRankings = false;
 		checkArgument(groupTeams != null && !groupTeams.isEmpty(), "Argument \"groupTeams\" list must be neither null nor empty.");
 		String eventShortDescWithYear = groupTeams.get(0).getEventShortDescWithYear();
-		checkArgument(eventShortDescWithYear != null);
+		checkNotNull(eventShortDescWithYear);
 		EventShortDescWithYearEnum eventShortDescWithYearEnum = EventShortDescWithYearEnum.valueOf(eventShortDescWithYear); // may throw IllegalArgumentException
 
 		Comparator<GroupTeam> comparator = null;

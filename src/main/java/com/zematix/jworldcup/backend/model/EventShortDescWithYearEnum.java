@@ -1,9 +1,9 @@
-package com.zematix.jworldcup.backend.entity.model;
+package com.zematix.jworldcup.backend.model;
 
 /**
  * Stored and supported football events.
- *
- */
+ * In case of new event it should be expanded.
+  */
 public enum EventShortDescWithYearEnum {
 	/**
 	 * FIFA World Cup 2014

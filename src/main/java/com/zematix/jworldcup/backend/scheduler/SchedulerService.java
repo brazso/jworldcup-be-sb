@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.scheduler;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -25,10 +25,10 @@ import org.springframework.web.context.annotation.ApplicationScope;
 
 import com.google.common.base.Stopwatch;
 import com.zematix.jworldcup.backend.entity.Match;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.ApplicationService;
 import com.zematix.jworldcup.backend.service.MatchService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
-import com.zematix.jworldcup.backend.service.ServiceException;
 import com.zematix.jworldcup.backend.service.UserService;
 import com.zematix.jworldcup.backend.service.WebServiceService;
 import com.zematix.jworldcup.backend.util.CommonUtil;
@@ -101,7 +101,7 @@ public class SchedulerService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	public void scheduleByIncompleteMatch(Match match) throws ServiceException {
-		checkArgument(match!= null, "Argument \"match\" cannot be null.");
+		checkNotNull(match);
 		
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		LocalDateTime triggerStartTime = matchService.getMatchTriggerStartTime(match, actualDateTime);
@@ -150,6 +150,9 @@ public class SchedulerService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	public void retrieveMatchResultsExecution(Long eventId, Long firstIncompleteMatchId) throws ServiceException {
+		checkNotNull(eventId);
+		checkNotNull(firstIncompleteMatchId);
+		
 		long updatedMatches = 0; 
 		try {
 			updatedMatches = webServiceService.updateMatchResults(eventId);
@@ -200,6 +203,10 @@ public class SchedulerService extends ServiceBase {
 	 * @param triggerStartTime
 	 */
 	private boolean createRetrieveMatchResultsJobTrigger(Long eventId, Long firstIncompleteMatchId, LocalDateTime triggerStartTime) {
+		checkNotNull(eventId);
+		checkNotNull(firstIncompleteMatchId);
+		checkNotNull(triggerStartTime);
+
 		boolean createRetrieveMatchResultsJobTrigger = false;
 		// Creating JobDetailImpl and link to our Job class
 		JobDetailImpl jobDetail = new JobDetailImpl();
@@ -244,6 +251,8 @@ public class SchedulerService extends ServiceBase {
 	 * @return {@code true} if there is retrieval math job trigger, {@code false} otherwise
 	 */
 	public boolean isExistsRetrieveMatchResultsJobTrigger(Long eventId) {
+		checkNotNull(eventId);
+		
 		boolean isExistsRetrieveMatchResultsJobTrigger = false;
 		String jobDetailName = String.format("RetrieveMatchResultsForEvent%dJob", eventId);
 		JobKey jobKey = new JobKey(jobDetailName);
@@ -266,6 +275,9 @@ public class SchedulerService extends ServiceBase {
 	 * @return {@code true} if the existing trigger was restarted, {@code false} otherwise 
 	 */
 	public boolean relaunchRetrieveMatchResultsJobTrigger(Long eventId, Long firstIncompleteMatchId) {
+		checkNotNull(eventId);
+		checkNotNull(firstIncompleteMatchId);
+		
 		boolean relaunchRetrieveMatchResultsJobTrigger = false;
 		String jobDetailName = String.format("RetrieveMatchResultsForEvent%dJob", eventId);
 		JobKey jobKey = new JobKey(jobDetailName);

@@ -7,8 +7,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.zematix.jworldcup.backend.service.ParametrizedMessage;
-import com.zematix.jworldcup.backend.service.ServiceException;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 
 /**
  * HTTP responses with ServiceException from REST services has status
@@ -23,7 +23,7 @@ public class ServiceExceptionHttpStatusResolver implements
 		Response.Status httpStatus = Response.Status.BAD_REQUEST;
 		
 		// Lists must be enclosed by GenericEntity for jaxb/json
-		GenericEntity<List<ParametrizedMessage>> list = new GenericEntity<List<ParametrizedMessage>>(exception.getMessages()){};
+		GenericEntity<List<ParameterizedMessage>> list = new GenericEntity<List<ParameterizedMessage>>(exception.getMessages()){};
 		
 		return Response.status(httpStatus).entity(list).build();
 	}

@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.dao;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
@@ -69,8 +69,8 @@ public class BetDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Bet> retrieveBetsByEventAndUser(Long eventId, Long userId) {
 		List<Bet> bets = null;
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 		
 		QBet qBet = QBet.bet;
 		JPAQuery<Bet> query = new JPAQuery<>(getEntityManager());
@@ -90,7 +90,7 @@ public class BetDao extends DaoBase {
 	 * @throws IllegalArgumentException if any of the given parameters is {@code null}
 	 */
 	public void deleteBetsByUser(Long userId) {
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(userId);
 		
 		QBet qBet = QBet.bet;
 		new JPADeleteClause(getEntityManager(), qBet)

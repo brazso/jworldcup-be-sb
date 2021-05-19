@@ -35,6 +35,7 @@ import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Team;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
@@ -86,9 +87,9 @@ public class BetServiceTest {
 
 	/**
 	 * Test {@link BetService#retrieveBetsByEventAndUser(Long, Long)} method.
-	 * Scenario: cannot retrieve the result because of the given {@code null} {@code eventId} value
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code eventId} value
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Bet>*/ retrieveBetsByEventAndUserNullEventId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = null;
 		Long userId = 1L;
@@ -100,9 +101,9 @@ public class BetServiceTest {
 
 	/**
 	 * Test {@link BetService#retrieveBetsByEventAndUser(Long, Long)} method.
-	 * Scenario: cannot retrieve the result because of the given {@code null} {@code userId} value
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code userId} value
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Bet>*/ retrieveBetsByEventAndUserNullUserId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = 1L;
 		Long userId = null;
@@ -495,10 +496,9 @@ public class BetServiceTest {
 
 	/**
 	 * Test {@link BetService#retrieveScoreByEventAndUser(Long, Long)} method.
-	 * Scenario: calculated actual score cannot be retrieved because of then given 
-	 * {@code null} {@code eventId} value. 
+	 * Scenario: throws {@link NullPointerException} because of then given {@code null} {@code eventId} value. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*int*/ retrieveScoreByEventAndUser_NullEventId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = null;
 		Long userId = 1L;
@@ -508,10 +508,9 @@ public class BetServiceTest {
 
 	/**
 	 * Test {@link BetService#retrieveScoreByEventAndUser(Long, Long)} method.
-	 * Scenario: calculated actual score cannot be retrieved because of then given 
-	 * {@code null} {@code userId} value. 
+	 * Scenario: throws {@link NullPointerException} because of then given {@code null} {@code userId} value. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*int*/ retrieveScoreByEventAndUser_NullUserId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = 1L;
 		Long userId = null;
@@ -694,10 +693,9 @@ public class BetServiceTest {
 
 	/**
 	 * Test {@link BetService#retrieveScoresByEventAndUser(Long, Long)} method.
-	 * Scenario: calculated actual score cannot be retrieved because of then given 
-	 * {@code null} {@code eventId} value. 
+	 * Scenario: throws {@link NullPointerException} because of then given {@code null} {@code eventId} value. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Map<Date, Integer>*/ retrieveScoresByEventAndUser_NullEventId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = null;
 		Long userId = 1L; // admin
@@ -707,10 +705,9 @@ public class BetServiceTest {
 
 	/**
 	 * Test {@link BetService#retrieveScoresByEventAndUser(Long, Long)} method.
-	 * Scenario: calculated actual score cannot be retrieved because of then given 
-	 * {@code null} {@code userId} value. 
+	 * Scenario: throws {@link NullPointerException} because of then given {@code null} {@code userId} value. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Map<Date, Integer>*/ retrieveScoresByEventAndUser_NullUserId(/*Long eventId, Long userId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		Long userId = null;
@@ -811,10 +808,9 @@ public class BetServiceTest {
 
 	/**
 	 * Test {@link BetService#retrieveMaximumScoreByEvent(Long)} method.
-	 * Scenario: calculated actual score cannot be retrieved because of then given 
-	 * {@code null} {@code eventId} value. 
+	 * Scenario: throws {@link NullPointerException} because of then given {@code null} {@code eventId} value. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*int*/ retrieveMaximumScoreByEvent_NullEventId(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		

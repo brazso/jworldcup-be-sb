@@ -36,7 +36,8 @@ import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Round;
 import com.zematix.jworldcup.backend.entity.Team;
-import com.zematix.jworldcup.backend.entity.model.GroupPosition;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.GroupPosition;
 import com.zematix.jworldcup.backend.scheduler.SchedulerService;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
@@ -135,9 +136,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveRoundsByEvent(Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of {@code null} input argument
+	 * Scenario: throws {@link NullPointerException} because of {@code null} {@code eventId} argument
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Round>*/ retrieveRoundsByEventNull(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		
@@ -166,9 +167,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveMatchesByEvent(Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of {@code null} input argument
+	 * Scenario: throws {@link NullPointerException} because of {@code null} {@code eventId} argument
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Match>*/ retrieveMatchesByEventNull(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		
@@ -194,9 +195,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveMatchesWithoutParticipantsByEvent(Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of {@code null} input argument
+	 * Scenario: throws {@link NullPointerException} because of {@code null} {@code eventId} argument
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Match>*/ retrieveMatchesWithoutParticipantsByEventNull(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		
@@ -220,9 +221,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveMatch(Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of {@code null} input argument
+	 * Scenario: throws {@link NullPointerException} because of {@code null} {@code matchId} argument
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Match*/ retrieveMatchNull(/*Long matchId*/) throws ServiceException {
 		Long matchId = null;
 		
@@ -1271,10 +1272,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getMatchResult(Match, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input match parameter 
+	 * Scenario: throws {@link NullPointerException} because of the input {@code match} parameter 
 	 * 		is invalid.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*int*/ getMatchResultShortInvalidMatch(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = null;
 		Long teamId = 1L;
@@ -1284,10 +1285,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getMatchResult(Match, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input teamId parameter 
+	 * Scenario: throws {@link NullPointerException} because of the input {@code teamId} parameter 
 	 * 		is invalid.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*int*/ getMatchResultShortInvalidTeamId(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findEntityById(Match.class, 1L);
 		Long teamId = null;
@@ -1514,9 +1515,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#isMatchCompleted(Match} private method.
-	 * Scenario: throws {@link IllegalArgumentException} because the given match is {@code null}
+	 * Scenario: throws {@link NullPointerException} because the given {@code match} parameter is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*boolean*/ isMatchCompleted_NullMatch(/*Match match*/) throws ServiceException {
 		Match match = null;
 		matchService.isMatchCompleted(match);
@@ -1701,10 +1702,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getEndDateTime(Date)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input startTime
-	 * 		parameter is {@code null} value. 
+	 * Scenario: throws {@link NullPointerException} because of the input {@code startTime}
+	 * 		parameter is {@code null}. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Date*/ getEndDateTimeNull(/*LocalDateTime startTime*/) throws ServiceException {
 		LocalDateTime startTime = null;
 
@@ -1728,10 +1729,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getExtraDateTime(Date)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input startTime
-	 * 		parameter is {@code null} value. 
+	 * Scenario: throws {@link NullPointerException} because of the input {@code startTime}
+	 * 		parameter is {@code null}. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Date*/ getExtraDateTimeNull(/*LocalDateTime startTime*/) throws ServiceException {
 		LocalDateTime startTime = null;
 
@@ -1755,10 +1756,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getPenaltyDateTime(Date)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input startTime
+	 * Scenario: throws {@link NullPointerException} because of the input {@code startTime}
 	 * 		parameter is {@code null} value. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Date*/ getPenaltyDateTimeNull(/*LocalDateTime startTime*/) throws ServiceException {
 		LocalDateTime startTime = null;
 
@@ -1782,10 +1783,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveGroupPositionsOfParticipantRules(Long)} private method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input eventId
-	 * 		parameter is {@code null} value. 
+	 * Scenario: throws {@link NullPointerException} because of the input {@code eventId}
+	 * 		parameter is {@code null}. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<GroupPosition>*/ retrieveGroupPositionsOfParticipantRulesNull(/*Long eventId*/) throws /*Service*/Exception {
 		Long eventId = null;
 
@@ -1845,10 +1846,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getTeamByGroupPositionMap(Long)} private method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input eventId
+	 * Scenario: throws {@link NullPointerException} because of the input {@code eventId}
 	 * 		parameter is {@code null} value. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<GroupPosition>*/ getTeamByGroupPositionMapNull(/*Long eventId*/) throws /*Service*/Exception {
 		Long eventId = null;
 
@@ -1906,10 +1907,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#updateMatchParticipants(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input eventId
-	 * 		parameter is {@code null} value and the given updatedmatchid belongs to group match. 
+	 * Scenario: throws {@link NullPointerException} because of the input {@code eventId}
+	 * 		parameter is {@code null} value and the given {@code updatedMatchId} belongs to group match. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*int*/ updateMatchParticipantsGroupMatchEventIdNull(/*Long eventId, Long updatedMatchId*/) throws ServiceException {
 		Long eventId = null;
 		Long updatedMatchId = 1L;	
@@ -1920,10 +1921,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#updateMatchParticipants(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input eventId
-	 * 		parameter is {@code null} value and the given updatedmatchid belongs to knock-out match. 
+	 * Scenario: throws {@link NullPointerException} because of the input {@code eventId}
+	 * 		parameter is {@code null} value and the given {@code updatedMatchId} belongs to knock-out match. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*int*/ updateMatchParticipantsKnockoutMatchEventIdNull(/*Long eventId, Long updatedMatchId*/) throws ServiceException {
 		Long eventId = null;
 		Long updatedMatchId = 50L;	
@@ -1936,10 +1937,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#updateMatchParticipants(Long, Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the input updatedMatchId
-	 * 		parameter is {@code null} value. 
+	 * Scenario: throws {@link NullPointerException} because of the input {@code updatedMatchId}
+	 * 		parameter is {@code null}. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*int*/ updateMatchParticipantsUpdatedMatchIdNull(/*Long eventId, Long updatedMatchId*/) throws ServiceException {
 		Long eventId = 1L;
 		Long updatedMatchId = null;	
@@ -2050,10 +2051,10 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getFinishedMatchEndTime(Match)} private method.
-	 * Scenario: throws {@link IllegalArgumentException} because the given match
-	 *           parameter is null. 
+	 * Scenario: throws {@link NullPointerException} because the given {@code match}
+	 *           parameter is {@code null}. 
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Date*/ getFinishedMatchEndTime_NullMatch(/*Match match*/) throws ServiceException {
 		Match match = null;
 		matchService.getFinishedMatchEndTime(match);
@@ -2134,9 +2135,9 @@ public class MatchServiceTest {
 	
 	/**
 	 * Test {@link MatchService#getMatchResultEscalationTime(Match)} private method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} match parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code match} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Date*/ getMatchResultEscalationTime_NullMatch(/*Match match*/) throws ServiceException {
 		Match match = null;
 		matchService.getMatchResultEscalationTime(match);
@@ -2194,9 +2195,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getMatchParticipantsEscalationTime(Match)} private method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} match parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code match} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Date*/ getMatchParticipantsEscalationTime_NullMatch(/*Match match*/) throws ServiceException {
 		Match match = null;
 		matchService.getMatchParticipantsEscalationTime(match);
@@ -2278,9 +2279,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getMatchTriggerStartTime(Match, Date)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} match parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code match} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Date*/ getMatchTriggerStartTime_NullMatch(/*Match match, LocalDateTime actualDateTime*/) throws ServiceException {
 		Match match = null;
 		LocalDateTime actualDateTime = LocalDateTime.now();
@@ -2290,9 +2291,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#getMatchTriggerStartTime(Match, Date)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} match parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code match} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Date*/ getMatchTriggerStartTime_NullActualDateTime(/*Match match, LocalDateTime actualDateTime*/) throws ServiceException {
 		Long matchId = 1L;
 		Match match = commonDao.findEntityById(Match.class, matchId);
@@ -2420,9 +2421,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveIncompleteMatchesByEvent(Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} eventId parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code eventId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Match>*/ retrieveIncompleteMatchesByEventNull(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		matchService.retrieveIncompleteMatchesByEvent(eventId);
@@ -2501,9 +2502,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveIncompleteEscalatedMatchesByEvent(Long, Date)} method.
-	 * Scenario: throws IllegalArgumentException because the given eventId is {@code null}.
+	 * Scenario: throws {@link NullPointerException} because the given {@code eventId} is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Match>*/ retrieveIncompleteEscalatedMatchesByEvent_NullEventId(/*Long eventId, LocalDateTime actualDateTime*/) throws ServiceException {
 		Long eventId = null;
 		LocalDateTime actualDateTime = LocalDateTime.now();
@@ -2513,9 +2514,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveIncompleteEscalatedMatchesByEvent(Long, Date)} method.
-	 * Scenario: throws IllegalArgumentException because the given actualDateTime is {@code null}.
+	 * Scenario: throws {@link NullPointerException} because the given {@code actualDateTime} is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Match>*/ retrieveIncompleteEscalatedMatchesByEvent_NullActualDateTime(/*Long eventId, LocalDateTime actualDateTime*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		LocalDateTime actualDateTime = null;
@@ -2557,9 +2558,9 @@ public class MatchServiceTest {
 	
 	/**
 	 * Test {@link MatchService#retrieveFirstIncompleteMatchByEvent(Long)} method.
-	 * Scenario: throws IllegalArgumentException because the given eventId parameter is {@code null}.
+	 * Scenario: throws {@link NullPointerException} because the given {@code eventId} parameter is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Match*/ retrieveFirstIncompleteMatchByEvent_NullEventId(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		matchService.retrieveFirstIncompleteMatchByEvent(eventId);
@@ -2614,9 +2615,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveMatchesByGroup(Long)} method.
-	 * Scenario: throws IllegalArgumentException because the given groupId parameter is {@code null}.
+	 * Scenario: throws {@link NullPointerException} because the given {@code groupId} parameter is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Match>*/ retrieveMatchesByGroup_NullGroupId(/*Long groupId*/) throws ServiceException {
 		Long groupId = null;
 		matchService.retrieveMatchesByGroup(groupId);
@@ -2766,9 +2767,9 @@ public class MatchServiceTest {
 	
 	/**
 	 * Test {@link MatchService#isCandidateMatchTeam(Match, long, int)} method.
-	 * Scenario: throws IllegalArgumentException because the given match parameter is {@code null}.
+	 * Scenario: throws {@link NullPointerException} because the given {@code match} parameter is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*boolean*/ isCandidateMatchTeam_NullMatch(/*Match match, long teamWsId, int index*/) throws ServiceException {
 		Match match = null;
 		long teamWsId = 753L; // Brazil
@@ -2792,9 +2793,9 @@ public class MatchServiceTest {
 	
 	/**
 	 * Test {@link MatchService#isCandidateMatchTeam(Match, long, int)} method.
-	 * Scenario: throws IllegalArgumentException because the given matchId is null
+	 * Scenario: throws {@link NullPointerException} because the given {@code matchId} is {@code null}
 	*/
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Match*/ updateMatchByMatchdata_NullMatchId(/*Long matchId, Long team1WsId, Long team2WsId, 
 			Byte goalNormal1, Byte goalExtra1, Byte goalPenalty1,
 			Byte goalNormal2, Byte goalExtra2, Byte goalPenalty2*/) throws ServiceException {
@@ -2975,9 +2976,9 @@ public class MatchServiceTest {
 	
 	/**
 	 * Test {@link MatchService#retrieveMatchStartDatesByEvent(Long)} method.
-	 * Scenario: throws IllegalArgumentException because the given eventId parameter is {@code null}.
+	 * Scenario: throws {@code NullPointerException} because the given eventId parameter is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Date>*/ retrieveMatchStartDatesByEvent_NullEventId(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		matchService.retrieveMatchStartDatesByEvent(eventId);
@@ -3075,9 +3076,9 @@ public class MatchServiceTest {
 
 	/**
 	 * Test {@link MatchService#retrieveIncompleteMatchesByEvent(Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} eventId parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code eventId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Match>*/ retriveMatchesAccomplishedInPercent_NullEventId(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		matchService.retriveMatchesAccomplishedInPercent(eventId);
@@ -3101,9 +3102,9 @@ public class MatchServiceTest {
 	
 	/**
 	 * Test {@link MatchService#refreshMatchesByScheduler(Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} eventId parameter
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} {@code eventId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void refreshMatchesByScheduler_NullEventId(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		matchService.refreshMatchesByScheduler(eventId);

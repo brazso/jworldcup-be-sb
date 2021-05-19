@@ -17,8 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.zematix.jworldcup.backend.cdi.ApplicationEnvironment;
+import com.zematix.jworldcup.backend.crypto.SecureHashing;
 import com.zematix.jworldcup.backend.entity.User;
-import com.zematix.jworldcup.backend.util.SecureHashing;
 
 /**
  * Reset all users' password that they become login name in lower case with "_!" postfix.
@@ -52,7 +52,8 @@ public class ResetUserPasswords {
 			logger.info("User: " + user.getLoginName());
 			// overwrites login password
 			String loginPassword = user.getLoginName().toLowerCase() + "_!";
-			loginPassword = SecureHashing.hashString(loginPassword);
+			SecureHashing secureHashing = new SecureHashing();
+			loginPassword = secureHashing.hashString(loginPassword);
 			user.setLoginPassword(loginPassword);
 			user.setModificationTime(actualDateTime);
 		}

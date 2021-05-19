@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.zematix.jworldcup.backend.dto.UserExtendedDto;
-import com.zematix.jworldcup.backend.entity.model.UserExtended;
+import com.zematix.jworldcup.backend.model.UserExtended;
 
 @Mapper
 public interface UserExtendedMapper extends MapperBase<UserExtendedDto, UserExtended> {

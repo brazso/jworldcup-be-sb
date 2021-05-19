@@ -34,7 +34,7 @@ import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Round;
 import com.zematix.jworldcup.backend.entity.Team;
 import com.zematix.jworldcup.backend.entity.WebService;
-import com.zematix.jworldcup.backend.entity.model.CountryCode;
+import com.zematix.jworldcup.backend.model.CountryCode;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**

@@ -16,14 +16,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import com.zematix.jworldcup.backend.crypto.SecureHashing;
 
 
 /**
@@ -35,7 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class CommonUtilTest {
 	
-	private static final Logger logger = LoggerFactory.getLogger(CommonUtilTest.class);
+//	private static final Logger logger = LoggerFactory.getLogger(CommonUtilTest.class);
 
 	/**
 	 * Test {@link CommonUtilService#isEmailValid()} method.
@@ -71,109 +69,109 @@ public class CommonUtilTest {
 		assertFalse(String.format("Email %s should not be a valid email.", email), isEmailValid);
 	}
 
-	/**
-	 * Test {@link CommonUtilService#getEncryptedLoginPassword()} method.
-	 * Scenario: returns expected result from mocked result
-	 */
-	@Test
-	public void /*static String*/ getEncryptedLoginPassword(/*String loginName, String loginPassword*/) {
-		String loginName = "12345678";
-		String loginPassword = "12345678_!";
-		String expectedEncryptedLoginPassword = "a3a4";
-
-		//PowerMockito.mockStatic(SecureHashing.class); // mocks all static methods of the class
-		PowerMockito.spy(SecureHashing.class); // mocks only those methods of the class which are stubbed out manually later
-		Mockito.when(SecureHashing.hashString(loginPassword)).thenReturn(expectedEncryptedLoginPassword);
-
-		String encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
-		assertEquals("Result should be equal to the expected one.", expectedEncryptedLoginPassword, encryptedLoginPassword);
-		
-		// there is not more test here, it just simply logs hashed passwords of all test users
-		loginName = "admin";
-		loginPassword = "admin_!";
-		//Mockito.when(SecureHashing.hashString(loginPassword)).thenCallRealMethod();
-		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
-		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
-		
-		loginName = "normal";
-		loginPassword = "normal_!";
-		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
-		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
-		
-		loginName = "candidate";
-		loginPassword = "candidate_!";
-		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
-		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
-
-		loginName = "locked";
-		loginPassword = "locked_!";
-		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
-		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
-		
-		loginName = "brazso";
-		loginPassword = "brazso_!";
-		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
-		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
-	}
-	
-	/**
-	 * Test {@link CommonUtilService#validateLoginPassword(String, String)} method.
-	 * Scenario: returns {@code true} from mocked result
-	 */
-	@Test
-	public /*static boolean*/ void validateLoginPassword(/*String loginPassword, String loginPasswordHash*/) {
-		String loginPassword = "12345678";
-		String loginPasswordHash = "a3a4";
-		boolean expectedValid = true;
-		PowerMockito.mockStatic(SecureHashing.class); // mocks all static methods of the class
-		Mockito.when(SecureHashing.validateHash(loginPassword, loginPasswordHash)).thenReturn(expectedValid);
-		
-		boolean valid = CommonUtil.validateLoginPassword(loginPassword, loginPasswordHash);
-		assertEquals("Result should be equal to the expected one.", expectedValid, valid);
-	}
-	
-	/**
-	 * Test {@link CommonUtilService#validateLoginPassword(String, String)} method.
-	 * Scenario: returns {@code false} from mocked result
-	 */
-	@Test
-	public /*static boolean*/ void validateLoginPassword_False(/*String loginPassword, String loginPasswordHash*/) {
-		String loginPassword = "12345678";
-		String loginPasswordHash = "a3a4";
-		boolean expectedValid = false;
-		PowerMockito.mockStatic(SecureHashing.class); // mocks all static methods of the class
-		Mockito.when(SecureHashing.validateHash(loginPassword, loginPasswordHash)).thenReturn(expectedValid);
-		
-		boolean valid = CommonUtil.validateLoginPassword(loginPassword, loginPasswordHash);
-		assertEquals("Result should be equal to the expected one.", expectedValid, valid);
-	}
-	
-	/**
-	 * Test {@link CommonUtilService#validateLoginPasswordLength(String)} method.
-	 * Scenario: returns {@code false} from mocked result
-	 */
-	@Test
-	public /*static boolean*/ void validateLoginPasswordLength(/*String loginPasswordHash*/) {
-		String loginPasswordHash = "a3a4";
-		boolean expectedValid = false;
-		PowerMockito.mockStatic(SecureHashing.class); // mocks all static methods of the class
-		Mockito.when(SecureHashing.getHashLength()).thenReturn(128);
-		
-		boolean valid = CommonUtil.validateLoginPasswordLength(loginPasswordHash);
-		assertEquals("Result should be equal to the expected one.", expectedValid, valid);
-	}
-	
-	/**
-	 * Test {@link CommonUtilService#validateLoginPasswordLength(String)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because the given 
-	 *           loginPasswordHash parameter is {@code null}
-	 */
-	@Test(expected=IllegalArgumentException.class)
-	public /*static boolean*/ void validateLoginPasswordLength_Null(/*String loginPasswordHash*/) {
-		String loginPasswordHash = null;
-		CommonUtil.validateLoginPasswordLength(loginPasswordHash);
-	}
-	
+//	/**
+//	 * Test {@link CommonUtilService#getEncryptedLoginPassword()} method.
+//	 * Scenario: returns expected result from mocked result
+//	 */
+//	@Test
+//	public void /*static String*/ getEncryptedLoginPassword(/*String loginName, String loginPassword*/) {
+//		String loginName = "12345678";
+//		String loginPassword = "12345678_!";
+//		String expectedEncryptedLoginPassword = "a3a4";
+//
+//		//PowerMockito.mockStatic(SecureHashing.class); // mocks all static methods of the class
+//		PowerMockito.spy(SecureHashing.class); // mocks only those methods of the class which are stubbed out manually later
+//		Mockito.when(SecureHashing.hashString(loginPassword)).thenReturn(expectedEncryptedLoginPassword);
+//
+//		String encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
+//		assertEquals("Result should be equal to the expected one.", expectedEncryptedLoginPassword, encryptedLoginPassword);
+//		
+//		// there is not more test here, it just simply logs hashed passwords of all test users
+//		loginName = "admin";
+//		loginPassword = "admin_!";
+//		//Mockito.when(SecureHashing.hashString(loginPassword)).thenCallRealMethod();
+//		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
+//		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
+//		
+//		loginName = "normal";
+//		loginPassword = "normal_!";
+//		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
+//		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
+//		
+//		loginName = "candidate";
+//		loginPassword = "candidate_!";
+//		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
+//		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
+//
+//		loginName = "locked";
+//		loginPassword = "locked_!";
+//		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
+//		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
+//		
+//		loginName = "brazso";
+//		loginPassword = "brazso_!";
+//		encryptedLoginPassword = CommonUtil.getEncryptedLoginPassword(loginName, loginPassword);
+//		logger.info(String.format("EncryptedLoginPassword of test user \"%s/%s\" is %s", loginName, loginPassword, encryptedLoginPassword));
+//	}
+//	
+//	/**
+//	 * Test {@link CommonUtilService#validateLoginPassword(String, String)} method.
+//	 * Scenario: returns {@code true} from mocked result
+//	 */
+//	@Test
+//	public /*static boolean*/ void validateLoginPassword(/*String loginPassword, String loginPasswordHash*/) {
+//		String loginPassword = "12345678";
+//		String loginPasswordHash = "a3a4";
+//		boolean expectedValid = true;
+//		PowerMockito.mockStatic(SecureHashing.class); // mocks all static methods of the class
+//		Mockito.when(SecureHashing.validateHash(loginPassword, loginPasswordHash)).thenReturn(expectedValid);
+//		
+//		boolean valid = CommonUtil.validateLoginPassword(loginPassword, loginPasswordHash);
+//		assertEquals("Result should be equal to the expected one.", expectedValid, valid);
+//	}
+//	
+//	/**
+//	 * Test {@link CommonUtilService#validateLoginPassword(String, String)} method.
+//	 * Scenario: returns {@code false} from mocked result
+//	 */
+//	@Test
+//	public /*static boolean*/ void validateLoginPassword_False(/*String loginPassword, String loginPasswordHash*/) {
+//		String loginPassword = "12345678";
+//		String loginPasswordHash = "a3a4";
+//		boolean expectedValid = false;
+//		PowerMockito.mockStatic(SecureHashing.class); // mocks all static methods of the class
+//		Mockito.when(SecureHashing.validateHash(loginPassword, loginPasswordHash)).thenReturn(expectedValid);
+//		
+//		boolean valid = CommonUtil.validateLoginPassword(loginPassword, loginPasswordHash);
+//		assertEquals("Result should be equal to the expected one.", expectedValid, valid);
+//	}
+//	
+//	/**
+//	 * Test {@link CommonUtilService#validateLoginPasswordLength(String)} method.
+//	 * Scenario: returns {@code false} from mocked result
+//	 */
+//	@Test
+//	public /*static boolean*/ void validateLoginPasswordLength(/*String loginPasswordHash*/) {
+//		String loginPasswordHash = "a3a4";
+//		boolean expectedValid = false;
+//		PowerMockito.mockStatic(SecureHashing.class); // mocks all static methods of the class
+//		Mockito.when(SecureHashing.getHashLength()).thenReturn(128);
+//		
+//		boolean valid = CommonUtil.validateLoginPasswordLength(loginPasswordHash);
+//		assertEquals("Result should be equal to the expected one.", expectedValid, valid);
+//	}
+//	
+//	/**
+//	 * Test {@link CommonUtilService#validateLoginPasswordLength(String)} method.
+//	 * Scenario: throws {@link IllegalArgumentException} because the given 
+//	 *           loginPasswordHash parameter is {@code null}
+//	 */
+//	@Test(expected=IllegalArgumentException.class)
+//	public /*static boolean*/ void validateLoginPasswordLength_Null(/*String loginPasswordHash*/) {
+//		String loginPasswordHash = null;
+//		CommonUtil.validateLoginPasswordLength(loginPasswordHash);
+//	}
+//	
 	/**
 	 * Test {@link CommonUtil#generateRandomToken()} method.
 	 * Test token generation. It must be exactly 20 characters long and 
@@ -273,9 +271,9 @@ public class CommonUtilTest {
 	
 	/**
 	 * Test {@link CommonUtil#plusMinutes(Date, long)} method.
-	 * Scenario: fails with exception because of {@code null} startTime argument
+	 * Scenario: fails with exception because of {@code null} {@code startTime} argument
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*static*/ void /*Date*/ plusMinutesNull(/*Date startTime, long minutes*/) {
 		LocalDateTime startTime = null;
 		long minutes = 0;
@@ -312,9 +310,9 @@ public class CommonUtilTest {
 
 	/**
 	 * Test {@link CommonUtil#plusDays(Date, long)} method.
-	 * Scenario: fails with exception because of {@code null} startTime argument
+	 * Scenario: fails with exception because of {@code null} {@code startTime} argument
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*static*/ void /*Date*/ plusDaysNull(/*Date startTime, long mays*/) {
 		LocalDateTime startTime = null;
 		long days = 0;
@@ -351,9 +349,9 @@ public class CommonUtilTest {
 
 	/**
 	 * Test {@link CommonUtil#truncateDateTime(Date)} method.
-	 * Scenario: fails with exception because of {@code null} dateTime argument
+	 * Scenario: fails with exception because of {@code null} {@code dateTime} argument
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*static*/ void /*Date*/ truncateDateTimeNull(/*Date dateTime*/) {
 		LocalDateTime dateTime = null;
 		CommonUtil.truncateDateTime(dateTime);
@@ -374,9 +372,9 @@ public class CommonUtilTest {
 
 	/**
 	 * Test {@link CommonUtil#daysBetween(Date, Date)} method.
-	 * Scenario: fails with exception because of {@code null} dateTimeStart argument
+	 * Scenario: fails with exception because of {@code null} {@code dateTimeStart} argument
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*static long*/ void daysBetween_NullDateTimeStart(/*Date dateTimeStart, Date dateTimeEnd*/) throws ParseException {
 		LocalDateTime dateTimeStart = null;
 		LocalDateTime dateTimeEnd = LocalDateTime.parse("2017-02-22 11:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
@@ -385,9 +383,9 @@ public class CommonUtilTest {
 
 	/**
 	 * Test {@link CommonUtil#daysBetween(Date, Date)} method.
-	 * Scenario: fails with exception because of {@code null} dateTimeEnd argument
+	 * Scenario: fails with exception because of {@code null} {@code dateTimeEnd} argument
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public /*static long*/ void daysBetween_NullDateTimeEnd(/*Date dateTimeStart, Date dateTimeEnd*/) throws ParseException {
 		LocalDateTime dateTimeStart = LocalDateTime.parse("2017-02-22 11:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 		LocalDateTime dateTimeEnd = null;

@@ -1,4 +1,4 @@
-package com.zematix.jworldcup.backend.entity.model;
+package com.zematix.jworldcup.backend.model;
 
 import java.util.Locale;
 

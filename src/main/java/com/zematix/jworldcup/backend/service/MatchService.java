@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.time.LocalDateTime;
@@ -24,13 +25,16 @@ import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.MatchDao;
 import com.zematix.jworldcup.backend.dao.RoundDao;
+import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Round;
 import com.zematix.jworldcup.backend.entity.Team;
-import com.zematix.jworldcup.backend.entity.model.GroupPosition;
-import com.zematix.jworldcup.backend.entity.model.Pair;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.GroupPosition;
+import com.zematix.jworldcup.backend.model.Pair;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.scheduler.SchedulerService;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 import com.zematix.jworldcup.backend.util.LambdaExceptionUtil;
@@ -86,9 +90,9 @@ public class MatchService extends ServiceBase {
 	@Transactional(readOnly = true)
 	public List<Round> retrieveRoundsByEvent(Long eventId) throws ServiceException {
 
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		
 		List<Round> rounds = roundDao.retrieveRoundsByEvent(eventId);
 		
@@ -122,9 +126,9 @@ public class MatchService extends ServiceBase {
 	@Transactional(readOnly = true)
 	public List<Match> retrieveMatchesByEvent(Long eventId) throws ServiceException {
 
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		
 		List<Match> matches = matchDao.retrieveMatchesByEvent(eventId);
 		
@@ -160,9 +164,9 @@ public class MatchService extends ServiceBase {
 	@Transactional(readOnly = true)
 	public List<Match> retrieveMatchesWithoutParticipantsByEvent(Long eventId) throws ServiceException {
 
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		
 		List<Match> matches = matchDao.retrieveMatchesWithoutParticipantsByEvent(eventId);
 		
@@ -193,11 +197,13 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public Match retrieveMatch(Long matchId) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		checkNotNull(matchId);
+		
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		Match match = commonDao.findEntityById(Match.class, matchId);
 		if (match == null) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_MATCH"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH"));
 			throw new ServiceException(errMsgs);
 		}
 		
@@ -235,18 +241,20 @@ public class MatchService extends ServiceBase {
 			Byte goalNormal1, Byte goalNormal2, Byte goalExtra1, Byte goalExtra2, 
 			Byte goalPenalty1, Byte goalPenalty2) throws ServiceException {
 		
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		Match match = null;
 		
+		checkNotNull(matchId);
 		checkArgument(isGroupmatch || isOvertime != null, "Argument \"isOvertime\" value must not be null if argument \"isGroupmatch\" value is false.");
+		checkNotNull(startTime);
 
 		if (applicationService.getActualDateTime().isBefore(getEndDateTime(startTime))) {
-			errMsgs.add(ParametrizedMessage.create("MATCH_NOT_FINISHED_YET"));
+			errMsgs.add(ParameterizedMessage.create("MATCH_NOT_FINISHED_YET"));
 		} else if (goalNormal1 == null || goalNormal2 == null) {
-			errMsgs.add(ParametrizedMessage
+			errMsgs.add(ParameterizedMessage
 					.create(isGroupmatch ? "MISSING_MATCH_RESULT" : "MISSING_MATCH_AFTER_90_RESULT"));
 		} else if (goalNormal1 < 0 || goalNormal2 < 0) {
-			errMsgs.add(ParametrizedMessage.create("NOT_POSITIVE_VALUE_INVALID"));
+			errMsgs.add(ParameterizedMessage.create("NOT_POSITIVE_VALUE_INVALID"));
 		}
 
 		if (!errMsgs.isEmpty()) {
@@ -255,43 +263,43 @@ public class MatchService extends ServiceBase {
 
 		if (isGroupmatch) {
 			if (goalExtra1 != null || goalExtra2 != null) {
-				errMsgs.add(ParametrizedMessage.create("GROUP_MATCH_WITH_OVERTIME"));
+				errMsgs.add(ParameterizedMessage.create("GROUP_MATCH_WITH_OVERTIME"));
 			}
 			if (goalPenalty1 != null || goalPenalty2 != null) {
-				errMsgs.add(ParametrizedMessage.create("GROUP_MATCH_WITH_PENALTY"));
+				errMsgs.add(ParameterizedMessage.create("GROUP_MATCH_WITH_PENALTY"));
 			}
 		} else /* knockout match */ {
 			if (!isOvertime && (goalExtra1 != null || goalExtra2 != null)) {
-				errMsgs.add(ParametrizedMessage.create("KNOCKOUT_MATCH_WITH_DISALLOWED_OVERTIME"));
+				errMsgs.add(ParameterizedMessage.create("KNOCKOUT_MATCH_WITH_DISALLOWED_OVERTIME"));
 			}
 			else if (!goalNormal1.equals(goalNormal2)) {
 				if (goalExtra1 != null || goalExtra2 != null) {
-					errMsgs.add(ParametrizedMessage.create("MATCH_FINISHED_AFTER_90_MIN_NO_OVERTIME"));
+					errMsgs.add(ParameterizedMessage.create("MATCH_FINISHED_AFTER_90_MIN_NO_OVERTIME"));
 				}
 				if (goalPenalty1 != null || goalPenalty2 != null) {
-					errMsgs.add(ParametrizedMessage.create("MATCH_FINISHED_AFTER_90_MIN_NO_PENALTY"));
+					errMsgs.add(ParameterizedMessage.create("MATCH_FINISHED_AFTER_90_MIN_NO_PENALTY"));
 				}
 			} else {
 				if (isOvertime && (goalExtra1 == null && goalExtra2 == null)) {
-					errMsgs.add(ParametrizedMessage.create("ENTER_RESULT_AFTER_OVERTIME"));
+					errMsgs.add(ParameterizedMessage.create("ENTER_RESULT_AFTER_OVERTIME"));
 				} else if (isOvertime && (goalExtra1 == null || goalExtra2 == null)) {
-					errMsgs.add(ParametrizedMessage.create("PARTIAL_RESULT_AFTER_OVERTIME"));
+					errMsgs.add(ParameterizedMessage.create("PARTIAL_RESULT_AFTER_OVERTIME"));
 				} else if (isOvertime && (goalExtra1 < 0 || goalExtra2 < 0)) {
-					errMsgs.add(ParametrizedMessage.create("NOT_POSITIVE_VALUE_INVALID"));
+					errMsgs.add(ParameterizedMessage.create("NOT_POSITIVE_VALUE_INVALID"));
 				} else {
 					if (isOvertime && (!goalExtra1.equals(goalExtra2))) {
 						if (goalPenalty1 != null || goalPenalty2 != null) {
-							errMsgs.add(ParametrizedMessage.create("MATCH_FINISHED_AFTER_OVERTIME"));
+							errMsgs.add(ParameterizedMessage.create("MATCH_FINISHED_AFTER_OVERTIME"));
 						}
 					} else {
 						if (goalPenalty1 == null && goalPenalty2 == null) {
-							errMsgs.add(ParametrizedMessage.create("ENTER_RESULT_AFTER_PENALTIES"));
+							errMsgs.add(ParameterizedMessage.create("ENTER_RESULT_AFTER_PENALTIES"));
 						} else if (goalPenalty1 == null || goalPenalty2 == null) {
-							errMsgs.add(ParametrizedMessage.create("PARTIAL_RESULT_AFTER_PENALTIES"));
+							errMsgs.add(ParameterizedMessage.create("PARTIAL_RESULT_AFTER_PENALTIES"));
 						} else if (goalPenalty1 < 0 || goalPenalty2 < 0) {
-							errMsgs.add(ParametrizedMessage.create("NOT_POSITIVE_VALUE_INVALID"));
+							errMsgs.add(ParameterizedMessage.create("NOT_POSITIVE_VALUE_INVALID"));
 						} else if (goalPenalty1.equals(goalPenalty2)) {
-							errMsgs.add(ParametrizedMessage.create("PENALTIES_RESULT_CANNOT_BE_DRAWN"));
+							errMsgs.add(ParameterizedMessage.create("PENALTIES_RESULT_CANNOT_BE_DRAWN"));
 						}
 					}
 				}
@@ -306,7 +314,7 @@ public class MatchService extends ServiceBase {
 
 		match = commonDao.findEntityById(Match.class, matchId);
 		if (match == null) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_MATCH"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH"));
 			throw new ServiceException(errMsgs);
 		}
 		match.getEvent().getEventId();
@@ -392,8 +400,8 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public int getMatchResult(Match match, Long teamId) throws ServiceException {
-		checkArgument(match!=null, "Argument \"match\" entity must not be null.");
-		checkArgument(teamId!=null, "Argument \"teamId\" must not be null.");
+		checkNotNull(match);
+		checkNotNull(teamId);
 		checkArgument(match.getTeam1()!=null && match.getTeam2()!=null, 
 				"Argument \"match\" entity must have non-empty \"team1\" and \"team2\" entities.");
 		
@@ -448,7 +456,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@VisibleForTesting
 	/*private*/ boolean isMatchCompleted(Match match) throws ServiceException {
-		checkArgument(match!=null, "Argument \"match\" entity must not be null.");
+		checkNotNull(match);
 
 		return isMatchCompleted(match.getRound().getIsGroupmatchAsBoolean(), 
 				match.getGoalNormalByTeam1(), match.getGoalExtraByTeam1(), 
@@ -503,6 +511,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public LocalDateTime getEndDateTime(LocalDateTime startTime) throws ServiceException {
+		checkNotNull(startTime);
 		return CommonUtil.plusMinutes(startTime, 105);
 	}
 
@@ -517,6 +526,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public LocalDateTime getExtraDateTime(LocalDateTime startTime) throws ServiceException {
+		checkNotNull(startTime);
 		return CommonUtil.plusMinutes(startTime, 140);
 	}
 
@@ -530,6 +540,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public LocalDateTime getPenaltyDateTime(LocalDateTime startTime) throws ServiceException {
+		checkNotNull(startTime);
 		return CommonUtil.plusMinutes(startTime, 150);
 	}
 
@@ -543,6 +554,8 @@ public class MatchService extends ServiceBase {
 	 */
 	@VisibleForTesting
 	/*private*/ List<GroupPosition> retrieveGroupPositionsOfParticipantRules(Long eventId) throws ServiceException {
+		checkNotNull(eventId);
+		
 		final String PARTICIPANT_RULE_REGEX = "^([WL])([0-9]+)-([WL])([0-9]+)$";
 		List<GroupPosition> groupPositions = new ArrayList<>();
 
@@ -573,6 +586,8 @@ public class MatchService extends ServiceBase {
 	 */
 	@VisibleForTesting
 	/*private*/ Map<GroupPosition, Team> getTeamByGroupPositionMap(Long eventId) throws ServiceException {
+		checkNotNull(eventId);
+		
 		Map<GroupPosition, Team> teamByGroupPositionMap = new HashMap<>();
 		
 		for (GroupPosition groupPosition : retrieveGroupPositionsOfParticipantRules(eventId)) {
@@ -614,7 +629,8 @@ public class MatchService extends ServiceBase {
 	 */
 //TODO	@Transactional(txType=TransactionAttributeType.REQUIRES_NEW)
 	public int updateMatchParticipants(Long eventId, Long updatedMatchId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(updatedMatchId);
 
 		int updatedMatches = 0;
 		Match updatedMatch = retrieveMatch(updatedMatchId);
@@ -666,7 +682,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@VisibleForTesting
 	/*private*/ LocalDateTime getFinishedMatchEndTime(Match match) throws ServiceException {
-		checkArgument(match!=null, "Argument \"match\" entity must not be null.");
+		checkNotNull(match);
 		if (!isMatchCompleted(match)) {
 			//throw new IllegalStateException("Match must be finished!");
 			return null;
@@ -699,7 +715,7 @@ public class MatchService extends ServiceBase {
 	@VisibleForTesting
 	/*private*/ LocalDateTime getMatchResultEscalationTime(Match match) throws ServiceException {
 		LocalDateTime matchEscalationTime = null;
-		checkArgument(match!=null, "Argument \"match\" entity must not be null.");
+		checkNotNull(match);
 		
 		if (match.getGoalNormalByTeam1() == null || match.getGoalNormalByTeam2() == null) {
 			matchEscalationTime = getEndDateTime(match.getStartTime());
@@ -738,7 +754,7 @@ public class MatchService extends ServiceBase {
 	/*private*/ LocalDateTime getMatchParticipantsEscalationTime(Match match) throws ServiceException {
 		LocalDateTime matchEscalationTime = null;
 		final String KNOCKOUT_RULE_REGEX = "^([WL])([0-9]+)-([WL])([0-9]+)$";
-		checkArgument(match!=null, "Argument \"match\" entity must not be null.");
+		checkNotNull(match);
 		if (match.getTeam1() != null && match.getTeam2() != null) {
 			return null;
 		}
@@ -803,8 +819,8 @@ public class MatchService extends ServiceBase {
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public LocalDateTime getMatchTriggerStartTime(Match match, LocalDateTime actualDateTime) throws ServiceException {
 		LocalDateTime matchTriggerStartTime = null;
-		checkArgument(match!=null, "Argument \"match\" entity must not be null.");
-		checkArgument(actualDateTime != null, "Argument \"actualDateTime\" cannot be null.");
+		checkNotNull(match);
+		checkNotNull(actualDateTime);
 
 		if (match.getTeam1() == null || match.getTeam2() == null) {
 			if (match.getRound().getIsGroupmatchAsBoolean()) {
@@ -838,7 +854,7 @@ public class MatchService extends ServiceBase {
 	public List<Match> retrieveIncompleteMatchesByEvent(Long eventId) throws ServiceException {
 		List<Match> matches = new ArrayList<>();
 		
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 
 		List<Match> allMatches = retrieveMatchesByEvent(eventId);
 		for (Match match : allMatches) {
@@ -864,8 +880,8 @@ public class MatchService extends ServiceBase {
 	public List<Match> retrieveIncompleteEscalatedMatchesByEvent(Long eventId, LocalDateTime actualDateTime) throws ServiceException {
 		List<Match> matches = new ArrayList<>();
 		
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(actualDateTime != null, "Argument \"actualDateTime\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(actualDateTime);
 
 		List<Match> allMatches = retrieveMatchesByEvent(eventId);
 		for (Match match : allMatches) {
@@ -891,7 +907,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public Match retrieveFirstIncompleteMatchByEvent(Long eventId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		
 		Match firstIncompleteMatch = null;
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
@@ -948,7 +964,8 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public boolean isInsideExpiredModificationTimeByEventId(Long eventId, LocalDateTime actualDateTime) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(actualDateTime);
 		Event event = eventService.findEventByEventId(eventId);
 		checkState(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));
 		
@@ -967,7 +984,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public List<Match> retrieveMatchesByGroup(Long groupId) throws ServiceException {
-		checkArgument(groupId != null, "Argument \"groupId\" cannot be null.");
+		checkNotNull(groupId);
 		
 		List<Match> matches = matchDao.retrieveMatchesByGroup(groupId);
 		
@@ -999,7 +1016,7 @@ public class MatchService extends ServiceBase {
 	@Transactional(readOnly = true)
 	public boolean isCandidateMatchTeam(Match match, long teamWsId, int index) throws ServiceException {
 		boolean isExpected = false;
-		checkArgument(match != null, "Argument \"match\" entity cannot be null.");
+		checkNotNull(match);
 		checkArgument(index == 1 || index == 2, "Argument \"index\" must be either 1 or 2.");
 		
 		Team team = index ==1 ? match.getTeam1() : match.getTeam2();
@@ -1054,16 +1071,16 @@ public class MatchService extends ServiceBase {
 			Byte goalNormal1, Byte goalExtra1, Byte goalPenalty1,
 			Byte goalNormal2, Byte goalExtra2, Byte goalPenalty2) throws ServiceException {
 		
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		Match match = null;
 		boolean isUpdated = false;
-		checkArgument(matchId != null, "Argument \"matchId\" cannot be null.");
+		checkNotNull(matchId);
 		
 		// update match table
 
 		match = commonDao.findEntityById(Match.class, matchId);
 		if (match == null) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_MATCH"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH"));
 			throw new ServiceException(errMsgs);
 		}
 
@@ -1121,7 +1138,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public List<LocalDateTime> retrieveMatchStartDatesByEvent(Long eventId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 
 		List<LocalDateTime> matchDates;
 		List<Match> matches = retrieveMatchesByEvent(eventId);
@@ -1142,7 +1159,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public int retriveMatchesAccomplishedInPercent(Long eventId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		
 		List<Match> matches = retrieveMatchesByEvent(eventId);
 		if (matches.isEmpty()) {
@@ -1161,16 +1178,16 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public void refreshMatchesByScheduler(Long eventId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();		
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();		
 
 		if (!schedulerService.isAppSchedulerEnabled()) {
-			errMsgs.add(ParametrizedMessage.create("SCHEDULER_DISABLED"));
+			errMsgs.add(ParameterizedMessage.create("SCHEDULER_DISABLED"));
 			throw new ServiceException(errMsgs);
 		}
 		if (!schedulerService.isExistsRetrieveMatchResultsJobTrigger(eventId)) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_SCHEDULED_RETRIEVAL_MATCH_RESULTS_JOB"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_SCHEDULED_RETRIEVAL_MATCH_RESULTS_JOB"));
 			throw new ServiceException(errMsgs);
 		}
 		
@@ -1178,14 +1195,14 @@ public class MatchService extends ServiceBase {
 		if (match != null) {
 			boolean isRelaunched = schedulerService.relaunchRetrieveMatchResultsJobTrigger(eventId, match.getMatchId());
 			if (isRelaunched) {
-				errMsgs.add(ParametrizedMessage.create("SCHEDULED_RMRJ_RELAUNCH_DONE", ParametrizedMessageType.INFO));
+				errMsgs.add(ParameterizedMessage.create("SCHEDULED_RMRJ_RELAUNCH_DONE", ParameterizedMessageType.INFO));
 			}
 			else {
-				errMsgs.add(ParametrizedMessage.create("SCHEDULED_RMRJ_RELAUNCH_FAILED"));
+				errMsgs.add(ParameterizedMessage.create("SCHEDULED_RMRJ_RELAUNCH_FAILED"));
 			}
 		}
 		else {
-			errMsgs.add(ParametrizedMessage.create("NO_INCOMPLETE_MATCH", ParametrizedMessageType.INFO));
+			errMsgs.add(ParameterizedMessage.create("NO_INCOMPLETE_MATCH", ParameterizedMessageType.INFO));
 		}
 
 		if (!errMsgs.isEmpty()) {

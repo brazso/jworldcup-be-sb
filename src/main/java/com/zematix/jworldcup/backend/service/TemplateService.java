@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,6 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.zematix.jworldcup.backend.emun.TemplateId;
+import com.zematix.jworldcup.backend.emun.TemplateType;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 
 import fr.opensagres.xdocreport.converter.ConverterTypeTo;
 import fr.opensagres.xdocreport.converter.Options;
@@ -72,6 +77,8 @@ public class TemplateService extends ServiceBase {
 	 */
 	@VisibleForTesting
 	/*private*/ void addDefaultProperties(Properties properties) {
+		checkNotNull(properties);
+		
 		if (!properties.containsKey("app.shortName")) {
 			properties.put("appShortName", appShortName);
 		}
@@ -93,11 +100,11 @@ public class TemplateService extends ServiceBase {
 	 * @throws ServiceException if the template could not be generated
 	 */
 	public String generateContent(TemplateId templateId, Properties properties, Locale locale) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
-		checkArgument(templateId != null, "Argument \"templateId\" cannot be null.");
-		checkArgument(properties != null, "Argument \"properties\" cannot be null.");
-		checkArgument(locale != null, "Argument \"locale\" cannot be null.");
+		checkNotNull(templateId);
+		checkNotNull(properties);
+		checkNotNull(locale);
 		checkArgument(templateId.templateType == TemplateType.EMAIL, "TemplateType from argument \"templateId\" must be EMAIL.");
 		
 		addDefaultProperties(properties);
@@ -112,7 +119,7 @@ public class TemplateService extends ServiceBase {
 			template.process(properties, stringWriter);
 			content = stringWriter.toString();
 		} catch (IOException | TemplateException e) {
-			errMsgs.add(ParametrizedMessage.create("TEMPLATE_GENERATION_FAILED", templateId.toString()));
+			errMsgs.add(ParameterizedMessage.create("TEMPLATE_GENERATION_FAILED", templateId.toString()));
 			throw new ServiceException(errMsgs);
 		}
 
@@ -129,11 +136,11 @@ public class TemplateService extends ServiceBase {
 	 * @throws ServiceException if the template could not be generated
 	 */
 	public ByteArrayOutputStream generatePDFContent(TemplateId templateId, Properties properties, Locale locale) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
-		checkArgument(templateId != null, "Argument \"templateId\" cannot be null.");
-		checkArgument(properties != null, "Argument \"properties\" cannot be null.");
-		checkArgument(locale != null, "Argument \"locale\" cannot be null.");
+		checkNotNull(templateId);
+		checkNotNull(properties);
+		checkNotNull(locale);
 		checkArgument(templateId.templateType == TemplateType.PDF, "TemplateType from argument \"templateId\" must be PDF.");
 		
 		addDefaultProperties(properties);
@@ -168,7 +175,7 @@ public class TemplateService extends ServiceBase {
 			pdfOutputStream.close();
 		}
 		catch (IOException | XDocReportException e) {
-			errMsgs.add(ParametrizedMessage.create("TEMPLATE_GENERATION_FAILED", templateId.toString()));
+			errMsgs.add(ParameterizedMessage.create("TEMPLATE_GENERATION_FAILED", templateId.toString()));
 			throw new ServiceException(errMsgs);
 		}
 		

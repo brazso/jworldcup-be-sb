@@ -1,4 +1,6 @@
-package com.zematix.jworldcup.backend.service;
+package com.zematix.jworldcup.backend.emun;
+
+import com.zematix.jworldcup.backend.service.TemplateService;
 
 /**
  * Supported templates used by {@link TemplateService}

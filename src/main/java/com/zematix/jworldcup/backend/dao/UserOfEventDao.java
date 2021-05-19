@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.dao;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class UserOfEventDao extends DaoBase {
 	 * @throws IllegalArgumentException if any of the given parameters is {@code null}
 	 */
 	public void deleteUserOfEventsByUser(Long userId) {
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(userId);
 		
 		QUserOfEvent qUserOfEvent = QUserOfEvent.userOfEvent;
 		new JPADeleteClause(getEntityManager(), qUserOfEvent)

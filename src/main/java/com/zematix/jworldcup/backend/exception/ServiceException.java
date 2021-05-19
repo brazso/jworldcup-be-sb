@@ -1,25 +1,29 @@
-package com.zematix.jworldcup.backend.service;
+package com.zematix.jworldcup.backend.exception;
 
 import java.util.List;
+
+import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 
 /**
  * Exception used by service classes.
  * It contains a list of messages, they are mostly derived from validation errors.
  */
 public class ServiceException extends Exception {
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * list of {@link ParametrizedMessage} elements as messages
-	 */
-	private final transient List<ParametrizedMessage> messages;
+	private static final long serialVersionUID = 1L;
 	
-	public ServiceException(List<ParametrizedMessage> messages) {
+	/**
+	 * list of {@link ParameterizedMessage} elements as messages
+	 */
+	private final transient List<ParameterizedMessage> messages;
+	
+	public ServiceException(List<ParameterizedMessage> messages) {
 		super();
 		this.messages = messages;
 	}
  
-	public List<ParametrizedMessage> getMessages() {
+	public List<ParameterizedMessage> getMessages() {
 		return messages;
 	}
 	
@@ -33,20 +37,20 @@ public class ServiceException extends Exception {
 	 * 
 	 * @return overall type of the messages contained by the exception object
 	 */
-	public ParametrizedMessageType getOverallType() {
-		ParametrizedMessageType msgType = null;
+	public ParameterizedMessageType getOverallType() {
+		ParameterizedMessageType msgType = null;
 		
-		for (ParametrizedMessage msg : messages) {
+		for (ParameterizedMessage msg : messages) {
 			switch (msg.getMsgType()) {
 				case ERROR:
-					msgType = ParametrizedMessageType.ERROR;
+					msgType = ParameterizedMessageType.ERROR;
 					return msgType;
 				case WARNING:
-					msgType = ParametrizedMessageType.WARNING;
+					msgType = ParameterizedMessageType.WARNING;
 					break;
 				case INFO:
-					if (msgType != ParametrizedMessageType.WARNING) {
-						msgType = ParametrizedMessageType.INFO;
+					if (msgType != ParameterizedMessageType.WARNING) {
+						msgType = ParameterizedMessageType.INFO;
 					}
 					break;
 			}
@@ -61,7 +65,7 @@ public class ServiceException extends Exception {
 	 * @return true if {@link ServiceException#messages} contains message with {@code msgCode}
 	 */
 	public boolean containsMessage(String msgCode) {
-		for (ParametrizedMessage msg : messages) {
+		for (ParameterizedMessage msg : messages) {
 			if (msg.getMsgCode().equals(msgCode)) {
 				return true;
 			}
@@ -75,8 +79,8 @@ public class ServiceException extends Exception {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		List<ParametrizedMessage> pMsgs = this.getMessages();
-		for (ParametrizedMessage pMsg : pMsgs) {
+		List<ParameterizedMessage> pMsgs = this.getMessages();
+		for (ParameterizedMessage pMsg : pMsgs) {
 			if (!pMsgs.get(0).equals(pMsg)) { // not first element?
 				sb.append(", ");
 			}

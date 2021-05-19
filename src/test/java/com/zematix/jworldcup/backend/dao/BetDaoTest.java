@@ -182,10 +182,9 @@ public class BetDaoTest {
 
 	/**
 	 * Test {@link BetDao#retrieveBetsByEventAndUser(Long, Long)} method.
-	 * Scenario: unsuccessfully retrieves a list of {@link Bet} entities because 
-	 *           eventId parameter is null, throws an exception.
+	 * Scenario: throws {@link NullPointerException} because {@code eventId} parameter is {@code null}
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*List<Bet>*/ retrieveBetsByEventAndUserNullEventId(/*Long eventId, Long userId*/) {
 		Long eventId = null;
 		Long userId = 1L;
@@ -195,10 +194,9 @@ public class BetDaoTest {
 
 	/**
 	 * Test {@link BetDao#retrieveBetsByEventAndUser(Long, Long)} method.
-	 * Scenario: unsuccessfully retrieves a list of {@link Bet} entities because 
-	 *           userId parameter is null, throws an exception.
+	 * Scenario: throws {@link NullPointerException} because {@code userId} parameter is {@code null}
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*List<Bet>*/ retrieveBetsByEventAndUserNullUserId(/*Long eventId, Long userId*/) {
 		Long eventId = 1L;
 		Long userId = null;

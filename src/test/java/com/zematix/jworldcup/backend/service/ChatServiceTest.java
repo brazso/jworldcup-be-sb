@@ -23,6 +23,7 @@ import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.UserGroup;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
  * Contains test functions of {@link EventService} class.
@@ -47,10 +48,10 @@ public class ChatServiceTest {
 
 	/**
 	 * Test {@link ChatService#retrieveChats(UserGroup)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} 
 	 *           {@code userGroupId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Chat>*/ retrieveChats_NullUserGroup(/*UserGroup userGroup*/) throws ServiceException {
 		UserGroup userGroup = null;
 		
@@ -79,10 +80,10 @@ public class ChatServiceTest {
 	
 	/**
 	 * Test {@link ChatService#sendChatMessage(UserGroup, Long, String)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} 
 	 *           {@code userGroup} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void sendChatMessage_NullUserGroup(/*UserGroup userGroup, Long userId, String message*/) throws ServiceException {
 		UserGroup userGroup = null;
 		Long userId = 2L; // normal
@@ -93,10 +94,10 @@ public class ChatServiceTest {
 
 	/**
 	 * Test {@link ChatService#sendChatMessage(UserGroup, Long, String)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null} 
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null} 
 	 *           {@code userId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void sendChatMessage_NullUserId(/*UserGroup userGroup, Long userId, String message*/) throws ServiceException {
 		UserGroup userGroup = new UserGroup();
 		Long userId = null;

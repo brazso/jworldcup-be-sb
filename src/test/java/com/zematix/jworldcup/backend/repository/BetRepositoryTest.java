@@ -108,10 +108,9 @@ public class BetRepositoryTest {
 
 	/**
 	 * Test {@link BetRepository#findBetByMatchAndUserMatchIdNull(Long, Long)} method.
-	 * Scenario: unsuccessfully retrieves a {@link Bet} instance because userId
-	 *           parameter is {@code null}, throws exception.
+	 * Scenario: throws exception because {@code userId} parameter is {@code null}
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*Bet*/ findBetByMatchAndUserUserIdNull(/*Long matchId, Long userId*/) {
 		Long matchId = 1L;
 		Long userId = null;
@@ -185,10 +184,9 @@ public class BetRepositoryTest {
 
 	/**
 	 * Test {@link BetRepository#retrieveBetsByEventAndUser(Long, Long)} method.
-	 * Scenario: unsuccessfully retrieves a list of {@link Bet} entities because 
-	 *           eventId parameter is null, throws an exception.
+	 * Scenario: throws exception because {@code eventId} parameter is {@code null}
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*List<Bet>*/ retrieveBetsByEventAndUserNullEventId(/*Long eventId, Long userId*/) {
 		Long eventId = null;
 		Long userId = 1L;
@@ -204,10 +202,9 @@ public class BetRepositoryTest {
 
 	/**
 	 * Test {@link BetRepository#retrieveBetsByEventAndUser(Long, Long)} method.
-	 * Scenario: unsuccessfully retrieves a list of {@link Bet} entities because 
-	 *           userId parameter is null, throws an exception.
+	 * Scenario: throws exception because {@link userId} parameter is {@code null}
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void /*List<Bet>*/ retrieveBetsByEventAndUserNullUserId(/*Long eventId, Long userId*/) {
 		Long eventId = 1L;
 		Long userId = null;

@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.EventDao;
 import com.zematix.jworldcup.backend.entity.Event;
-import com.zematix.jworldcup.backend.entity.model.EventShortDescWithYearEnum;
+import com.zematix.jworldcup.backend.model.EventShortDescWithYearEnum;
 
 /**
  * Contains test functions of {@link EventService} class.
@@ -73,9 +73,9 @@ public class EventServiceTest {
 	
 	/**
 	 * Test {@link EventService#initEvent(Event)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} {@code event} parameter.
+	 * Scenario: throws {@link NullPointerException} because of the given {@code event} parameter is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void initEvent_Null(/*Event event*/) {
 		Event expectedEvent = null;
 		eventService.initEvent(expectedEvent);
@@ -101,9 +101,9 @@ public class EventServiceTest {
 
 	/**
 	 * Test {@link EventService#findEventByEventId(Long)} method.
-	 * Scenario: throws IllegalArgumentException because of the given {@code null} {@code eventId} parameter.
+	 * Scenario: throws {@link NullPointerException} because of the given {@code eventId} parameter is {@code null}.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Event*/ findEventByEventId_NullEventId(/*Long eventId*/) {
 		Long eventId = null;
 		eventService.findEventByEventId(eventId);

@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.dao.TeamDao;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Team;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
  * Operations around {@link Team} elements. 
@@ -42,6 +44,8 @@ public class TeamService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Team> retrieveFavouriteGroupTeams(Long eventId) {
+		checkNotNull(eventId);
+		
 		return teamDao.retrieveFavouriteGroupTeams(eventId);
 	}
 	
@@ -54,6 +58,8 @@ public class TeamService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Team> retrieveFavouriteKnockoutTeams(Long eventId) {
+		checkNotNull(eventId);
+		
 		return teamDao.retrieveFavouriteKnockoutTeams(eventId);
 	}
 
@@ -67,8 +73,8 @@ public class TeamService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Team retrieveTeamByWsId(Long eventId, Long wsId) {
-		checkArgument(eventId !=null, "Parameter \"eventId\" value must not be null.");
-		checkArgument(wsId != null, "Parameter \"wsId\" value must not be null.");
+		checkNotNull(eventId);
+		checkNotNull(wsId);
 
 		return teamDao.retrieveTeamByWsId(eventId, wsId);
 	}
@@ -83,8 +89,8 @@ public class TeamService extends ServiceBase {
 	public List<Team> retrieveTeamsByGroupName(Long eventId, String groupName) throws ServiceException {
 		List<Team> teams = new ArrayList<>();
 		
-		checkArgument(eventId != null, "Parameter \"eventId\" value must not be null.");
-		checkArgument(!Strings.isNullOrEmpty(groupName), "Parameter \"groupName\" must not be empty.");
+		checkNotNull(eventId);
+		checkArgument(!Strings.isNullOrEmpty(groupName), "Parameter \"groupName\" must not be null nor empty.");
 		
 		// groupName may contain more groups, eg. "ABC"
 		for (char c : groupName.toCharArray()) {

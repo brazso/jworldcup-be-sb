@@ -1,4 +1,4 @@
-package com.zematix.jworldcup.backend.entity.model;
+package com.zematix.jworldcup.backend.model;
 
 /**
  * GroupPosition consists of groupName and position. It is a helper class to

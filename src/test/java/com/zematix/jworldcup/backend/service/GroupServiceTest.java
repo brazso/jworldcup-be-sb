@@ -28,8 +28,9 @@ import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Team;
-import com.zematix.jworldcup.backend.entity.model.GroupPosition;
-import com.zematix.jworldcup.backend.entity.model.GroupTeam;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.GroupPosition;
+import com.zematix.jworldcup.backend.model.GroupTeam;
 
 /**
  * Contains test functions of {@link GroupService} class.
@@ -55,10 +56,10 @@ public class GroupServiceTest {
 
 	/**
 	 * Test {@link GroupService#retrieveGroupsByEvent(Long)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because of the given {@code null}
+	 * Scenario: throws {@link NullPointerException} because of the given {@code null}
 	 *           {@code eventId} parameter
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*List<Group>*/ retrieveGroupsByEvent_Null(/*Long eventId*/) throws ServiceException {
 		Long eventId = null;
 		
@@ -666,9 +667,9 @@ public class GroupServiceTest {
 
 	/**
 	 * Test {@link GroupService#retrieveGroupByName(Long, String)} method.
-	 * Scenario: throws {@link IllegalArgumentException} because given {@link Event#eventId} is {@code null}
+	 * Scenario: throws {@link NullPointerException} because given {@link Event#eventId} is {@code null}
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void /*Group*/ retrieveGroupByNameNullEventId(/*Long eventId, String name*/) throws ServiceException {
 		Long eventId = null;
 		String name = "A";

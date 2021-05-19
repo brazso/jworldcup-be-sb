@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.service;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.time.LocalDateTime;
@@ -22,6 +22,8 @@ import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
@@ -59,8 +61,8 @@ public class BetService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public List<Bet> retrieveBetsByEventAndUser(Long eventId, Long userId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 
 		List<Bet> bets = betDao.retrieveBetsByEventAndUser(eventId, userId);
 		return bets;
@@ -73,11 +75,13 @@ public class BetService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public Bet retrieveBet(Long betId) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		checkNotNull(betId);
+		
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		Bet bet = commonDao.findEntityById(Bet.class, betId);
 		if (bet == null) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_TIP"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_TIP"));
 			throw new ServiceException(errMsgs);
 		}
 
@@ -105,21 +109,21 @@ public class BetService extends ServiceBase {
 	 */
 	public Bet saveBet(Long userId, Long matchId, Long betId, LocalDateTime startTime, Byte goalNormal1, Byte goalNormal2)
 			throws ServiceException {
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
-		checkArgument(matchId != null, "Argument \"matchId\" cannot be null.");
-		checkArgument(startTime != null, "Argument \"startTime\" cannot be null.");
+		checkNotNull(userId);
+		checkNotNull(matchId);
+		checkNotNull(startTime);
 		
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		Bet bet = null;
 
 		if (betId != null && goalNormal1 == null && goalNormal2 == null) {
 			// removes bet - see later
 		} else if (goalNormal1 == null || goalNormal2 == null) {
-			errMsgs.add(ParametrizedMessage.create("MISSING_TIP"));
+			errMsgs.add(ParameterizedMessage.create("MISSING_TIP"));
 		} else if (goalNormal1 < 0 || goalNormal2 < 0) {
-			errMsgs.add(ParametrizedMessage.create("NOT_POSITIVE_VALUE_INVALID"));
+			errMsgs.add(ParameterizedMessage.create("NOT_POSITIVE_VALUE_INVALID"));
 		} else if (applicationService.getActualDateTime().isAfter(startTime)) {
-			errMsgs.add(ParametrizedMessage.create("MATCH_ALREADY_STARTED"));
+			errMsgs.add(ParameterizedMessage.create("MATCH_ALREADY_STARTED"));
 		}
 
 		if (!errMsgs.isEmpty()) {
@@ -166,8 +170,8 @@ public class BetService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public int retrieveScoreByEventAndUser(Long eventId, Long userId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 
 		Long favouriteGroupTeamId = null;
 		Long favouriteKnockoutTeamId = null;
@@ -206,8 +210,8 @@ public class BetService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public Map<LocalDateTime, Integer> retrieveScoresByEventAndUser(Long eventId, Long userId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
-		checkArgument(userId != null, "Argument \"userId\" cannot be null.");
+		checkNotNull(eventId);
+		checkNotNull(userId);
 
 		Map<LocalDateTime, Integer> mapScoreByDate = new HashMap<>();
 		Long favouriteGroupTeamId = null;
@@ -248,7 +252,7 @@ public class BetService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public int retrieveMaximumScoreByEvent(Long eventId) throws ServiceException {
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		checkState(applicationService.getEventCompletionPercentCache(eventId) == 100, 
 				String.format("Event with eventId=%d must be completed.", eventId));
 	

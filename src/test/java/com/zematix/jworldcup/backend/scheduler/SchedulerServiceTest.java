@@ -1,7 +1,5 @@
 package com.zematix.jworldcup.backend.scheduler;
 
-import javax.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,8 +21,8 @@ import com.zematix.jworldcup.backend.service.WebServiceService;
 //@Transactional
 public class SchedulerServiceTest {
 
-	@Inject
-	private SchedulerService schedulerService;
+//	@Inject
+//	private SchedulerService schedulerService;
 	
 	@MockBean
 	private ApplicationService applicationService;

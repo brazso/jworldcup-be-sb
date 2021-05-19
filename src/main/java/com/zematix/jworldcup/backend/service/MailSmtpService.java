@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
+
 /**
  * Operations around sending emails 
  */
@@ -113,16 +116,16 @@ public class MailSmtpService extends ServiceBase {
 	 * @throws ServiceException if the email could not be sent 
 	 */
 	public void sendHtmlEmail(String fromAddr, String toAddr, String subject, String htmlContent, String plainContent) throws ServiceException {
-		List<ParametrizedMessage> errMsgs = new ArrayList<>();
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		
 		try {
 			generateAndSendHtmlEmail(fromAddr, toAddr, subject, htmlContent, plainContent);
 		} catch (AddressException e) {
 			logger.error(e.getMessage(), e);
-			errMsgs.add(ParametrizedMessage.create("EMAIL_SEND_RECEIPENT_FAILED", toAddr));
+			errMsgs.add(ParameterizedMessage.create("EMAIL_SEND_RECEIPENT_FAILED", toAddr));
 		} catch (MessagingException e) {
 			logger.error(e.getMessage(), e);
-			errMsgs.add(ParametrizedMessage.create("EMAIL_SEND_FAILED", toAddr));
+			errMsgs.add(ParameterizedMessage.create("EMAIL_SEND_FAILED", toAddr));
 		}
 		
 		if (!errMsgs.isEmpty()) {

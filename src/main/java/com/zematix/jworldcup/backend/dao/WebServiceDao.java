@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.dao;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class WebServiceDao extends DaoBase {
 	public List<WebService> retrieveWebServicesByEvent(Long eventId) {
 		List<WebService> webServices;
 		
-		checkArgument(eventId != null, "Argument \"eventId\" cannot be null.");
+		checkNotNull(eventId);
 		
 		QWebService qWebService = QWebService.webService;
 		JPAQuery<WebService> query = new JPAQuery<>(getEntityManager());
