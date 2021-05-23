@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class ControllerExceptionHandler {
+public class ControllerExceptionHandler implements ApiErrorHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
     
@@ -95,7 +95,4 @@ public class ControllerExceptionHandler {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, msg, e));
     }
     
-    private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity<>(apiError, apiError.getStatus());
-    }
 }

@@ -83,7 +83,7 @@ public class UserDao extends DaoBase {
 	 * 
 	 * @param loginName
 	 * @return user with the given {@code loginName}
-	 * @throws IllegalArgumentException if any of the given parameters is invalid
+	 * @throws NullPointerException if given {@code loginName} is {@code null}
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User findUserByLoginName(String loginName) {

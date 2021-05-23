@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +50,7 @@ public class BetController extends ServiceBase implements ResponseEntityHelper {
 	 * @return list of found {@Bet} instances
 	 * @throws IllegalArgumentException if any of the given parameters is {@code null}
 	 */
-//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
 	@Operation(summary = "Retrieve bets of an event and user", description = "Retrieve all bets of the given event and user")
 	@GetMapping(value = "/bets-by-event-and-user")
 	public ResponseEntity<GenericListResponse<BetDto>> retrieveBetsByEventAndUser(@RequestParam Long eventId, 
@@ -64,7 +65,7 @@ public class BetController extends ServiceBase implements ResponseEntityHelper {
 	 * @param betId
 	 * @return found bet
 	 */
-//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
 	@Operation(summary = "Retrieve bet by its id", description = "Retrieve bet by its id")
 	@GetMapping(value = "/bet/{id}")
 	public ResponseEntity<GenericResponse<BetDto>> retrieveBet(@PathVariable("id") Long betId) throws ServiceException {

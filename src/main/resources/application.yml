@@ -30,7 +30,7 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
   main:
     allow-bean-definition-overriding: true
-    
+
 # Server
 server:
   port: 8090

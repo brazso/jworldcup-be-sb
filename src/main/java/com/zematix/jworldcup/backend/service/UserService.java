@@ -81,7 +81,6 @@ public class UserService extends ServiceBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public User login(String loginName, String loginPassword) throws ServiceException {
 
-		//logger.info("uriInfo="+uriInfo.getAbsolutePath().getPath());
 		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
 		if (Strings.isNullOrEmpty(loginName) || Strings.isNullOrEmpty(loginPassword)) {
@@ -114,10 +113,6 @@ public class UserService extends ServiceBase {
 		if (!errMsgs.isEmpty()) {
 			throw new ServiceException(errMsgs);
 		}
-
-		commonDao.detachEntity(user);
-		userDao.stripUser(user);
-		logger.info("user name="+user.getFullName());
 		
 		return user;
 	}
@@ -493,12 +488,33 @@ public class UserService extends ServiceBase {
 	}
 
 	/**
+	 * Returns found {@link User} instance belongs to the given {@code loginName}.
+	 * It fetches some necessary lazy data as well.
+	 * Otherwise {@code null} is returned.
+	 * 
+	 * @param loginName
+	 * @return user with the given {@code loginName}
+	 * @throws NullPointerException if given {@code loginName} is {@code null}
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public User findUserByLoginName(String loginName) {
+		checkNotNull(loginName);
+		
+		User user = userDao.findUserByLoginName(loginName);
+		user.getRoles().size(); // forced lazy fetch
+		
+		return user;
+	}
+
+
+	/**
 	 * Returns a list of strings containing user loginName values matched by the given 
 	 * loginNamePrefix.
 	 * 
 	 * @param loginNamePrefix
 	 * @return list of strings containing user loginName values matched by the given 
 	 *         loginNamePrefix
+	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<String> findUserLoginNamesByLoginNamePrefix(String loginNamePrefix) {

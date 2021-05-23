@@ -59,6 +59,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-quartz'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JSON Web Token Support For The JVM
 	
@@ -81,6 +82,8 @@ dependencies {
 	testImplementation 'org.junit.platform:junit-platform-engine:1.7.0'
 	testImplementation 'org.junit.platform:junit-platform-commons:1.7.0'
 	
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.0.2'
+	
 	implementation "com.google.guava:guava:${guavaVersion}"
 	
 	implementation "org.springdoc:springdoc-openapi-ui:${openapiVersion}"
@@ -102,7 +105,7 @@ dependencies {
     implementation "fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.freemarker:${xdocreportVersion}"
     implementation "fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter.odt.odfdom:${xdocreportVersion}"
     
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.8.11"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.10.1"
     
     // SOAP client
     implementation "com.sun.xml.ws:rt:2.3.1"

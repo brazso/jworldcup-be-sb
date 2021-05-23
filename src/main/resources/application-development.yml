@@ -36,6 +36,9 @@ logging:
     org:
       springframework:
         orm:
-          jpa: trace
+          jpa: TRACE
         transaction:
           interceptor: TRACE
+    com.zematix.jworldcup.backend: TRACE
+    org.springframework.cache.interceptor: TRACE
+

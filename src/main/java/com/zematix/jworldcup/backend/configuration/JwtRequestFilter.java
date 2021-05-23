@@ -29,9 +29,6 @@ import io.jsonwebtoken.SignatureException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-//	@Inject
-//	private Logger logger;
-
 	@Inject
 	private JwtUserDetailsService jwtUserDetailsService;
 
@@ -42,13 +39,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
 
-		final String requestTokenHeader = request.getHeader("Authorization");
+		final String TOKEN_PREFIX = "Bearer ";
+	    final String HEADER_STRING = "Authorization";
+		final String requestTokenHeader = request.getHeader(HEADER_STRING);
 
 		String username = null;
 		String jwtToken = null;
 		// JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
-		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-			jwtToken = requestTokenHeader.substring(7);
+		if (requestTokenHeader != null && requestTokenHeader.startsWith(TOKEN_PREFIX)) {
+			jwtToken = requestTokenHeader.substring(TOKEN_PREFIX.length());
 			try {
 				username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 			} catch (IllegalArgumentException e) {
@@ -67,10 +66,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 			UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
 
-			// if token is valid configure Spring Security to manually set
-			// authentication
+			// if token is valid configure Spring Security to manually set authentication
 			if (Boolean.TRUE.equals(jwtTokenUtil.validateToken(jwtToken, userDetails))) {
-
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
 				usernamePasswordAuthenticationToken

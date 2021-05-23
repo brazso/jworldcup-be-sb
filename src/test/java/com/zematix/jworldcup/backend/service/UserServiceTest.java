@@ -768,6 +768,41 @@ public class UserServiceTest {
 	}
 	
 	/**
+	 * Test {@link UserService#findUserByLoginName(String)} method. 
+	 * Scenario: successfully retrieves user named admin and its roles are fetched.
+	 */
+	@Test
+	public void /*User*/ findUserByLoginName(/*String loginName*/) {
+		String loginName = "admin";
+		User expectedUser = commonDao.findEntityById(User.class, 1L); // admin
+		Mockito.when(userDao.findUserByLoginName(loginName)).thenReturn(expectedUser);
+		
+		User user = userService.findUserByLoginName(loginName);
+		assertTrue(user!=null && loginName.equals(user.getLoginName()) && user.getRoles().size() > 0);
+	}
+	
+	/**
+	 * Test {@link UserService#findUserByLoginName(String)} method. 
+	 * Scenario: unsuccessfully retrieves non existing user named admin2.
+	 */
+	@Test
+	public void /*User*/ findUserByLoginNameUnknownUser(/*String loginName*/) {
+		String loginName = "admin2";
+		User user = userService.findUserByLoginName(loginName);
+		assertNull(user);
+	}
+	
+	/**
+	 * Test {@link UserService#findUserByLoginName(String)} method. 
+	 * Scenario: due to {@code null} input loginName {@link NullPointerException} is thrown.
+	 */
+	@Test(expected = NullPointerException.class)
+	public void /*User*/ findUserByLoginNameNull(/*String loginName*/) {
+		String loginName = null;
+		
+		/*User user =*/ userService.findUserByLoginName(loginName);
+	}
+	/**
 	 * Test {@link UserService#findUserLoginNamesByLoginNamePrefix(String)} method.
 	 * Scenario: successfully retrieves expected result
 	 */

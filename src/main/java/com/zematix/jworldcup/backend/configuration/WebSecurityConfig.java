@@ -27,7 +27,7 @@ import com.zematix.jworldcup.backend.crypto.MultiCryptPasswordEncoder;
 @Profile("development")
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true/*, securedEnabled = true, jsr250Enabled = true*/)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Inject
@@ -53,6 +53,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// configure AuthenticationManager so that it knows from where to load
 		// user for matching credentials. Use own MultiCryptPasswordEncoder.
 		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+		// caching userDetails returned by loadUserByUsername method needs eraseCredentials off 
+		// otherwise after each successful authentication its password field is erased
+//		auth.eraseCredentials(false);
 	}
 
 	@Bean
@@ -73,8 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		        //.authorizeRequests().antMatchers("/", "/**").permitAll().
 				// all other requests need to be authenticated
 				anyRequest().authenticated().and().
-				// make sure we use stateless session; session won't be used to
-				// store user's state.
+				// make sure we use stateless session; session won't be used to store user's state.
 				exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
