@@ -92,7 +92,9 @@ public class UserDao extends DaoBase {
 
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
-		user = query.from(qUser).where(qUser.loginName.equalsIgnoreCase(loginName)).fetchOne();
+		user = query.from(qUser)
+//				.leftJoin(qUser.roles).fetchJoin()
+				.where(qUser.loginName.equalsIgnoreCase(loginName)).fetchOne();
 
 		return user;
 	}
