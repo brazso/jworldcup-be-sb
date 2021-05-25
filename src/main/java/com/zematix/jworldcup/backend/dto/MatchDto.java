@@ -22,7 +22,7 @@ public class MatchDto {
 	private LocalDateTime startTime;
 //	private List<Bet> bets;
 //	private Event event;
-//	private Round round;
+	private RoundDto round;
 //	private Team team1;
 //	private Team team2;
 

@@ -105,6 +105,7 @@ public class BetService extends ServiceBase {
 	 * @param startTime - match start time, mandatory
 	 * @param goalNormal1 - bet goal scored by team1 during normal match time, optional
 	 * @param goalNormal2 - bet goal scored by team2 during normal match time, optional
+	 * @throws ServiceException - operation failed
 	 * @return saved/updated {@link Bet} instance or {@code null} if deleted
 	 */
 	public Bet saveBet(Long userId, Long matchId, Long betId, LocalDateTime startTime, Byte goalNormal1, Byte goalNormal2)

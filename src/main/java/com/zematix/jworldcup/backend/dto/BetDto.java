@@ -17,7 +17,7 @@ public class BetDto {
 	private Byte goalNormalByTeam1;
 	private Byte goalNormalByTeam2;
 //	private Event event;
-//	private Match match;
-//	private User user;
+	private MatchDto match;
+	private UserDto user;
 
 }

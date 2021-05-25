@@ -35,11 +35,11 @@ public class JaxbValidator {
      * Validates the required fields on the given{@code target} objects. If {@code target}
      * is an instance of {@link java.util.List}, then it checks its elements as well. With the given
      * {@code isDeep} parameter additional validation can be also forced, when it gets {@code true} value. 
-     * In this case when the analysed field is not {@code null}, then it validates that object as well. 
+     * In this case when the analyzed field is not {@code null}, then it validates that object as well. 
      * If the latter is an instance of {@link java.util.List}, then those elements are validated as well.
      * Avoiding the circular process, in the given {@code processedClassNames} list there are the so far
      * process field types on the different level depth. With the given {@code constraintGroups}
-     * parameter the vlaidation groups can be filtered. In case of {@code null} value the Default group is 
+     * parameter the validation groups can be filtered. In case of {@code null} value the Default group is 
      * used. 
      * 
      * @param <T> type of the object to be validated

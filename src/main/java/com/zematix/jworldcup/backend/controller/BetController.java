@@ -1,19 +1,24 @@
 package com.zematix.jworldcup.backend.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zematix.jworldcup.backend.dto.BetDto;
 import com.zematix.jworldcup.backend.dto.GenericListResponse;
+import com.zematix.jworldcup.backend.dto.GenericMapResponse;
 import com.zematix.jworldcup.backend.dto.GenericResponse;
 import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.exception.ServiceException;
@@ -56,7 +61,6 @@ public class BetController extends ServiceBase implements ResponseEntityHelper {
 	public ResponseEntity<GenericListResponse<BetDto>> retrieveBetsByEventAndUser(@RequestParam Long eventId, 
 			@RequestParam Long userId) throws ServiceException {
 		List<Bet> bets = betService.retrieveBetsByEventAndUser(eventId, userId);
-		//return new ResponseEntity<>(new GenericListResponse<>(betMapper.entityListToDtoList(bets)), HttpStatus.OK);
 		return buildResponseEntityWithOK(new GenericListResponse<>(betMapper.entityListToDtoList(bets)));
 	}
 
@@ -69,9 +73,67 @@ public class BetController extends ServiceBase implements ResponseEntityHelper {
 	@Operation(summary = "Retrieve bet by its id", description = "Retrieve bet by its id")
 	@GetMapping(value = "/bet/{id}")
 	public ResponseEntity<GenericResponse<BetDto>> retrieveBet(@PathVariable("id") Long betId) throws ServiceException {
-		Bet bet = betService.retrieveBet(betId);
-		//return new ResponseEntity<>(new GenericResponse<>(betMapper.entityToDto(bet)), HttpStatus.OK);
+		var bet = betService.retrieveBet(betId);
 		return buildResponseEntityWithOK(new GenericResponse<>(betMapper.entityToDto(bet)));
+	}
+	
+	/**
+	 * Creates / updates a new bet or deletes an existing bet.
+	 * Creates a new bet if given {@code betId} is {@code null} and both given 
+	 * {@code goalNormal} parameters are non negative numbers. Updates a bet if given 
+	 * {@code betId} is not {@code null} and both given {@code goalNormal} parameters 
+	 * are non negative numbers. Deletes a bet if {@code betId} is not {@code null} and 
+	 * both {@code goalNormal} parameters have {@code null} values.
+	 * Bet cannot be created or modified if application time is over the given startTime. 
+	 * 
+	 * @param userId - user belongs to the bet, mandatory
+	 * @param matchId - match belongs to the bet, mandatory
+	 * @param betId - optional
+	 * @param startTime - match start time, mandatory
+	 * @param goalNormal1 - bet goal scored by team1 during normal match time, optional
+	 * @param goalNormal2 - bet goal scored by team2 during normal match time, optional
+	 * @throws ServiceException - operation failed
+	 * @return saved/updated {@link Bet} instance or {@code null} if deleted
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Save a bet", description = "Insert a new bet or update / delete an existing bet")
+	@PutMapping(value = "/save-bet")
+	public ResponseEntity<GenericResponse<BetDto>> saveBet(@RequestBody BetDto betDto)
+			throws ServiceException {
+		var bet = betService.saveBet(betDto.getUser().getUserId(), betDto.getMatch().getMatchId(), 
+				betDto.getBetId(), betDto.getMatch().getStartTime(), betDto.getGoalNormalByTeam1(), 
+				betDto.getGoalNormalByTeam2());
+		return buildResponseEntityWithOK(new GenericResponse<>(betMapper.entityToDto(bet)));
+	}
+	
+	/**
+	 * Returns a map containing calculated score gained by given {@code userId} user on given 
+	 * {@code eventID} event on days of the event. The latter one are the keys of the map and
+	 * those are the dates of the bets wagered by the user.
+	 *  @param eventId
+	 *  @param userId
+	 *  @return date-score map  
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
+	@Operation(summary = "Retrieve score by date map of an event and user", description = "Retrieve score by date map of an event and user")
+	@GetMapping(value = "/date-score-map-by-event-and-user")
+	public ResponseEntity<GenericMapResponse<LocalDateTime, Integer>> retrieveScoresByEventAndUser(@RequestParam Long eventId, @RequestParam Long userId) throws ServiceException {
+		var mapScoreByDate = betService.retrieveScoresByEventAndUser(eventId, userId);
+		return buildResponseEntityWithOK(new GenericMapResponse<>(mapScoreByDate));
+	}
+	
+	/**
+	 * Returns calculated score gained by given {@code userId} user on given {@code eventID} event.
+	 * 
+	 *  @param eventId
+	 *  @param userId
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
+	@Operation(summary = "Return calculated score by event and user", description = "Return calculated score by event and user")
+	@GetMapping(value = "/find-score-by-event-and-user")
+	public ResponseEntity<GenericResponse<Integer>> retrieveScoreByEventAndUser(@RequestParam Long eventId, @RequestParam Long userId) throws ServiceException {
+		var score = betService.retrieveScoreByEventAndUser(eventId, userId);
+		return buildResponseEntityWithOK(new GenericResponse<>(score));
 	}
 	
 }

@@ -1,27 +1,34 @@
 package com.zematix.jworldcup.backend.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zematix.jworldcup.backend.dto.CommonResponse;
+import com.zematix.jworldcup.backend.dto.GenericListResponse;
+import com.zematix.jworldcup.backend.dto.GenericMapResponse;
 import com.zematix.jworldcup.backend.dto.GenericResponse;
 import com.zematix.jworldcup.backend.dto.UserDto;
 import com.zematix.jworldcup.backend.dto.UserExtendedDto;
+import com.zematix.jworldcup.backend.dto.UserOfEventDto;
 import com.zematix.jworldcup.backend.entity.User;
+import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.mapper.UserExtendedMapper;
 import com.zematix.jworldcup.backend.mapper.UserMapper;
-import com.zematix.jworldcup.backend.model.ParameterizedMessage;
+import com.zematix.jworldcup.backend.mapper.UserOfEventMapper;
 import com.zematix.jworldcup.backend.model.UserExtended;
 import com.zematix.jworldcup.backend.service.ServiceBase;
 import com.zematix.jworldcup.backend.service.UserService;
@@ -30,11 +37,12 @@ import io.swagger.v3.oas.annotations.Operation;
 
 /**
  * WS Rest wrapper class of {@link UserService}.
- * Only the necessary public methods of its associated service class are in play. 
+ * Only the necessary public methods of its associated service class are in play.
+ * Both login and signup methods were moved to {@link JwtAuthenticationController}.
  */
 @RestController
 @RequestMapping("users")
-public class UserController extends ServiceBase {
+public class UserController extends ServiceBase implements ResponseEntityHelper {
 
 	@Inject
 	private UserService userService;
@@ -45,152 +53,23 @@ public class UserController extends ServiceBase {
 	@Inject
 	private UserExtendedMapper userExtendedMapper;
 
-//	@Inject
-//	//@Context // although it works without an own producer, but it does not support mocking
-//	private UriInfo uriInfo;
-	
-	@Value("${app.key}")
-	private String serverAppKey;
+	@Inject
+	private UserOfEventMapper userOfEventMapper;
 
-//	/**
-//	 * Returns an User instance wrapped in Response if the given user is authenticated.
-//	 * Otherwise it throws ServiceException. It is a simple wrapper to the same
-//	 * method in {@link UserService}.
-//	 *  
-//	 * @param appKey - key belongs to the application
-//	 * @param loginName - login name of the user to be authenticated
-//	 * @param loginPassword - login password of the user to be authenticated
-//	 * @return authenticated {@link com.zematix.jworldcup.server.entity.User} instance wrapped
-//	 *         in {@link Response}
-//	 * @throws ServiceException if the user cannot be authenticated based on the given login data 
-//	 */
-//	@Operation(summary = "Login a user", description = "Login a user with the given authentication data")
-//	@GetMapping(value = "/login")
-//	public ResponseEntity<GenericResponse<UserDto>> login(//@RequestParam("appKey") String appKey,
-//			@RequestParam("loginName") String loginName, 
-//			@RequestParam("loginPassword") String loginPassword ) throws ServiceException {
-//
-//		//logger.info("uriInfo="+uriInfo.getAbsolutePath().getPath());
-//
-//		List<ParametrizedMessage> errMsgs = new ArrayList<>();
-////
-////		if (Strings.isNullOrEmpty(appKey) || !appKey.equals(serverAppKey)) {
-////			errMsgs.add(ParametrizedMessage.create("DISALLOWED_TO_CALL_WS"));
-////		}
-//
-//		if (!errMsgs.isEmpty()) {
-//			throw new ServiceException(errMsgs);
-//		}
-//		
-//		User user = userService.login(loginName, loginPassword);
-//
-//		//return Response.status(Response.Status.OK).entity(user).build();
-//		return new ResponseEntity<>(new GenericResponse<>(userMapper.entityToDto(user)), HttpStatus.OK);
-//	}
-//
-//	/**
-//	 * Registers a new user with USER role, store her personal data into database.
-//	 * It is a simple wrapper to the same method in {@link UserService}.
-//	 * 
-//	 * @param appKey - key belongs to the application
-//	 * @param loginName
-//	 * @param loginPassword
-//	 * @param loginPasswordAgain - repeated login password for confirmation
-//	 * @param fullName
-//	 * @param emailAddr - email address
-//	 * @param languageTag - well-formed IETF BCP 47 language tag representing a locale
-//	 * @return stored new {@link User} entity instance wrapped in a {@link Response}
-//	 * @throws ServiceException if the user cannot be signed up, its login data is not valid 
-//	 *         or the user already exists in the database
-//	 */
-//	@Operation(summary = "Sign up a user", description = "Sign up a user with the given data")
-//	@PostMapping(value = "/signup")
-////	public Response signUp(@RequestParam("appKey") String appKey, 
-////			@RequestParam("loginName") String loginName, 
-////			@RequestParam("loginPassword") String loginPassword,
-////			@RequestParam("loginPasswordAgain") String loginPasswordAgain,
-////			@RequestParam("fullName") String fullName,
-////			@RequestParam("emailAddr") String emailAddr,
-////			@RequestParam("zoneId") String zoneId,
-////			@RequestParam("languageTag") String languageTag) throws ServiceException {
-//	public ResponseEntity<GenericResponse<UserDto>> signUp(
-//			@RequestBody UserExtendedDto userExtendedDto) throws ServiceException {
-//
-//		List<ParametrizedMessage> errMsgs = new ArrayList<>();
-//
-////		if (Strings.isNullOrEmpty(appKey) || !appKey.equals(serverAppKey)) {
-////			errMsgs.add(ParametrizedMessage.create("DISALLOWED_TO_CALL_WS"));
-////		}
-//
-//		if (!errMsgs.isEmpty()) {
-//			throw new ServiceException(errMsgs);
-//		}
-//
-////		Locale locale = null;
-////		if (!Strings.isNullOrEmpty(languageTag)) {
-////			locale = Locale.forLanguageTag(languageTag);
-////		}
-//
-//		UserExtended userExtended = userExtendedMapper.dtoToEntity(userExtendedDto);
-//		
-////		User user = userService.signUp(loginName, loginPassword, loginPasswordAgain, 
-////				fullName, emailAddr, zoneId, locale);
-//		User user = userService.signUp(userExtended.getLoginName(), userExtended.getLoginPassword(), 
-//				userExtended.getLoginPasswordAgain(), userExtended.getFullName(), 
-//				userExtended.getEmailAddr(), userExtended.getZoneId(), userExtended.getLocale());
-//		
-//		//return Response.status(Response.Status.OK).entity(user).build();
-//		return new ResponseEntity<>(new GenericResponse<>(userMapper.entityToDto(user)), HttpStatus.OK);
-//	}
-//
 	/**
 	 * Modifies registration data of an existing user. It is a simple wrapper to
 	 * the same method in {@link UserService}.
 	 * 
-	 * @param appKey - key belongs to the application
-	 * @param loginName
-	 * @param loginPasswordActual - actual login password
-	 * @param loginPasswordNew - new login password
-	 * @param loginPasswordAgain - new repeated login password for confirmation
-	 * @param fullName
-	 * @param emailNew - new email address
-	 * @param emailNewAgain - new repeated email address for confirmation
-	 * @param zoneId - time zone id
-	 * @param languageTag - well-formed IETF BCP 47 language tag representing a locale
-	 * @return {@link User} entity instance belongs to the modified user wrapped in a {@link Response} 
+	 * @param userExtendedDto - user to be modified
+	 * @return modified user wrapped in 
 	 * @throws ServiceException if the user cannot be identified or modified
 	 */
-//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@Operation(summary = "Modify a user", description = "Modify a user with the given data")
 	@PutMapping(value = "/modify-user")
-//	public Response modifyUser(@RequestParam("appKey") String appKey, 
-//			@RequestParam("loginName") String loginName, 
-//			@RequestParam("loginPasswordActual") String loginPasswordActual,
-//			@RequestParam("loginPasswordNew") String loginPasswordNew,
-//			@RequestParam("loginPasswordAgain") String loginPasswordAgain,
-//			@RequestParam("fullName") String fullName,
-//			@RequestParam("emailNew") String emailNew,
-//			@RequestParam("emailNewAgain") String emailNewAgain,
-//			@RequestParam("zoneId") String zoneId,
-//			@RequestParam("languageTag") String languageTag) throws ServiceException {
 	public ResponseEntity<GenericResponse<UserDto>> modifyUser(
 			@RequestBody UserExtendedDto userExtendedDto) throws ServiceException {
-	
-		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
-//		if (Strings.isNullOrEmpty(appKey) || !appKey.equals(serverAppKey)) {
-//			errMsgs.add(ParametrizedMessage.create("DISALLOWED_TO_CALL_WS"));
-//		}
-
-		if (!errMsgs.isEmpty()) {
-			throw new ServiceException(errMsgs);
-		}
-		
-//		Locale locale = null;
-//		if (!Strings.isNullOrEmpty(userExtendedDto.getLanguageTag())) {
-//			locale = Locale.forLanguageTag(userExtendedDto.getLanguageTag());
-//		}
-		
 		UserExtended userExtended = userExtendedMapper.dtoToEntity(userExtendedDto);
 		
 		User user = userService.modifyUser(userExtended.getLoginName(), userExtended.getLoginPassword(), 
@@ -199,7 +78,136 @@ public class UserController extends ServiceBase {
 				userExtended.getEmailNewAgain(), userExtended.getZoneId(), 
 				userExtended.getLocale());
 
-		//return Response.status(Response.Status.OK).entity(user).build();
-		return new ResponseEntity<>(new GenericResponse<>(userMapper.entityToDto(user)), HttpStatus.OK);
+		return buildResponseEntityWithOK(new GenericResponse<>(userMapper.entityToDto(user)));
+	}
+	
+	/**
+	 * Returns a wrapped list of strings containing user loginName values matched by the given 
+	 * loginNamePrefix.
+	 * 
+	 * @param loginNamePrefix
+	 * @return list of strings containing user loginName values matched by the given 
+	 *         loginNamePrefix
+	 * @throws IllegalArgumentException if any of the given parameters is invalid
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Find user loginNames by prefix", description = "Find user loginNames by loginName prefix")
+	@GetMapping(value = "/find-user-login-names-by-prefix")
+	public ResponseEntity<GenericListResponse<String>> findUserLoginNamesByLoginNamePrefix(@RequestParam String loginNamePrefix) {
+		var loginNames = userService.findUserLoginNamesByLoginNamePrefix(loginNamePrefix);
+		return buildResponseEntityWithOK(new GenericListResponse<>(loginNames));
+	}
+	
+	/**
+	 * Returns a list of strings containing user fullName values matched by the given 
+	 * fullNameContain.
+	 * 
+	 * @param fullNameContain
+	 * @return Returns a list of strings containing user fullName values matched by the given 
+	 *         fullNameContain.
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Find user fullNames by contain", description = "Find user fullNames by fullName contain")
+	@GetMapping(value = "/find-user-full-names-by-contain")
+	public ResponseEntity<GenericListResponse<String>> findUserFullNamesByFullNameContain(@RequestParam String fullNameContain) {
+		var fullNames = userService.findUserFullNamesByFullNameContain(fullNameContain);
+		return buildResponseEntityWithOK(new GenericListResponse<>(fullNames));
+	}
+
+	/**
+	 * Retrieves {@link UserOfEvent} instance by its given eventId and userId or {@code null}
+	 * unless found. Returned entity is detached from PU.
+	 * 
+	 * @param eventId
+	 * @param userId
+	 * @return found {@link UserOfEvent} detached object or {@code null}
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Find user-of-event belongs to event and user", description = "Find user-of-event belongs to the given event and user")
+	@GetMapping(value = "/find-user-of-event-by-event-and-user")
+	public ResponseEntity<GenericResponse<UserOfEventDto>> retrieveUserOfEvent(@RequestParam Long eventId, @RequestParam Long userId) throws ServiceException {
+		var userOfEvent = userService.retrieveUserOfEvent(eventId, userId);
+		return buildResponseEntityWithOK(new GenericResponse<>(userOfEventMapper.entityToDto(userOfEvent)));
+	}
+	
+	/**
+	 * Saves given favourite teams of {@link UserOfEvent} instance by its given 
+	 * userId and eventId. It creates a new database row or it just modifies that.
+	 * 
+	 * @param eventId
+	 * @param userId
+	 * @param favouriteGroupTeamId - favourite group team id
+	 * @param favouriteKnockoutTeamId - favourite knockout team id 
+	 * @return saved userOfEvent
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Save favourite teams of user-of-event by event and user", description = "Save favourite teams of user-of-event by event and user")
+	@PostMapping(value = "/save-user-of-event")	
+	public ResponseEntity<GenericResponse<UserOfEventDto>> saveUserOfEvent(@RequestParam Long eventId, @RequestParam Long userId, 
+			@RequestParam Long favouriteGroupTeamId, @RequestParam Long favouriteKnockoutTeamId) throws ServiceException {
+		var userOfEvent = userService.saveUserOfEvent(eventId, userId, favouriteGroupTeamId, favouriteKnockoutTeamId);
+		return buildResponseEntityWithOK(new GenericResponse<>(userOfEventMapper.entityToDto(userOfEvent)));
+	}
+	
+	/**
+	 * Resets user password by the given email address. 
+	 * After verification of the email address, if it belongs to
+	 * an existing user, an email is being sent there containing 
+	 * an url with a new temporary password and a token linked 
+	 * to the user. 
+	 * 
+	 * @param emailAddr - belongs to the user with forgotten password or username
+	 * @param languageTag
+	 * @throws ServiceException if the given email address belongs to no user 
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Reset user password by email address", description = "Reset user password by the given email address")
+	@PutMapping(value = "/reset-password")
+	public ResponseEntity<CommonResponse> resetPassword(@RequestParam String emailAddr, @RequestParam String languageTag) throws ServiceException {
+		Locale locale = languageTag == null ? Locale.getDefault() : Locale.forLanguageTag( languageTag );
+		userService.resetPassword(emailAddr, locale);
+		return buildResponseEntityWithOK(new CommonResponse());
+	}
+	
+	/**
+	 * Returns all possible time zone key/value pairs in a map, for example
+	 * [<"Europe/Berlin", "+02:00">, <"Africa/Algiers", "+01:00">, ...].
+	 * The result map is sorted by its key.
+	 * 
+	 * @return a map containing all supported time zone key/value pairs
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Find supported timezone ids", description = "Find supported timezone ids")
+	@GetMapping(value = "/find-time-zone-ids")
+	public ResponseEntity<GenericMapResponse<String, String>> getAllSupportedTimeZoneIds() {
+		var timeZoneIds = userService.getAllSupportedTimeZoneIds();
+		return buildResponseEntityWithOK(new GenericMapResponse<>(timeZoneIds));
+	}
+	
+	/**
+	 * Returns detached {@link User} instance with the provided {@link User#userId}.
+	 * 
+	 * @param userId
+	 * @return found user
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Find user by her id", description = "Find user by her id")
+	@GetMapping(value = "/user/{id}")
+	public ResponseEntity<GenericResponse<UserDto>> retrieveUser(@PathVariable("id") Long userId) throws ServiceException {
+		var user = userService.retrieveUser(userId);
+		return buildResponseEntityWithOK(new GenericResponse<>(userMapper.entityToDto(user)));
+	}
+	
+	/**
+	 * Deletes a user given by loginName parameter.
+	 * 
+	 * @param loginName
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Delete a user by her login name", description = "Delete a user by the given login name")
+	@DeleteMapping(value = "/delete-user-by-login-name")
+	public ResponseEntity<CommonResponse> deleteUser(@RequestParam String loginName) throws ServiceException {
+		userService.deleteUser(loginName);
+		return buildResponseEntityWithOK(new CommonResponse());
 	}
 }

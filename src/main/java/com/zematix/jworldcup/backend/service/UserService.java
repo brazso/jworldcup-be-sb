@@ -107,7 +107,7 @@ public class UserService extends ServiceBase {
 			errMsgs.add(ParameterizedMessage.create("USER_LOCKED_DISALLOWED_TO_LOGIN"));
 		}
 		else if (!user.getUserStatus().getStatus().equals("NORMAL")) {
-			logger.warn(String.format("User with unknown status \"%s\" gained login. Is it really allowed?"), user.getUserStatus().getName());
+			logger.warn(String.format("User with unknown status '%s' gained login. Is it really allowed?"), user.getUserStatus().getName());
 		}
 
 		if (!errMsgs.isEmpty()) {

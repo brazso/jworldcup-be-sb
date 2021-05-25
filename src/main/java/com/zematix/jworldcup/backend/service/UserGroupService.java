@@ -277,7 +277,7 @@ public class UserGroupService extends ServiceBase {
 	 * 
 	 * @param eventId
 	 * @param userId - creator/owner
-	 * @param importedUserGroup - userGroupId to be imported
+	 * @param name - name of the user group to be imported
 	 * @return persisted UserGroup entity instance
 	 */
 	public UserGroup importUserGroup(Long eventId, Long userId, String name) throws ServiceException {

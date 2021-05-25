@@ -50,7 +50,7 @@ public class JwtAuthenticationController {
 	@Inject
 	private UserMapper userMapper;
 
-	@PostMapping(value = "/authenticate")
+	@PostMapping(value = "/login")
 	public ResponseEntity<JwtResponse> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws ServiceException {
 //		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword()); // authenticated by login yet
 //		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
@@ -62,7 +62,7 @@ public class JwtAuthenticationController {
 		return ResponseEntity.ok(new JwtResponse(token));
 	}
 
-	@PostMapping(value = "/register")
+	@PostMapping(value = "/signup")
 	public ResponseEntity<GenericResponse<UserDto>> saveUser(@RequestBody UserExtendedDto userExtendedDto) throws ServiceException {
 		UserExtended userExtended = userExtendedMapper.dtoToEntity(userExtendedDto);
 		User newUser = userDetailsService.signup(userExtended);

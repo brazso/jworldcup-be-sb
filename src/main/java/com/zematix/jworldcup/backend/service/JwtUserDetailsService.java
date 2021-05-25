@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,4 +51,17 @@ public class JwtUserDetailsService implements UserDetailsService {
 				userExtended.getZoneId(), userExtended.getLocale());
 	}
 
+	/**
+	 * Returns authenticated user if exists. It might be called from controller or its injected objects.
+	 * Note: to get only the token from a request header in a controller: @RequestHeader (name="Authorization") String token
+	 * @return authenticated user
+	 */
+	public org.springframework.security.core.userdetails.User getAuthenticatedUser() {
+		org.springframework.security.core.userdetails.User user = null;
+	    var authentication = SecurityContextHolder.getContext().getAuthentication();
+	    if (authentication != null && authentication.isAuthenticated()) {
+	    	user = (org.springframework.security.core.userdetails.User)authentication.getPrincipal();
+	    }
+	    return user;
+	}
 }
