@@ -7,7 +7,9 @@ JWorldcup soccer bet game backend created on Java / Spring Boot
 In order to start development of the project, some tools must be installed on the developer machine.
 * docker
 
+```
 $ sudo snap install docker
+```
 
 ### Project database
 
@@ -19,15 +21,21 @@ There are more docker images in the project which must be started by developers 
 
 This is how to start the images from command prompt. It should be executed from the docker folder.
 
+```
 $ docker-compose up
+```
 
 It is recommended to shutdown the running images if the work is over. It should be executed from the docker folder.
 
+```
 $ docker-compose down
+```
 
 If you have to update docker mysql images in docker/mysql folder, the docker images must be rebuilt again. It should be executed from the docker folder.
 
+```
 $ docker-compose build
+```
 
 ### PhpMyAdmin
 
@@ -39,6 +47,16 @@ There are 2 databases enlisted
 * worldcup_test - unit tests may use it unless the test phase is configured to use only memory
 
 ### Gradle usage
+
+#### Gradle wrapper upgrade
+
+Later spring boot versions needs at least Gradle 6.8.x. If you have an earlier version, upgrade it!
+
+```
+brazso@mars:~/work/jworldcup/jworldcup-be-sb$ ./gradlew wrapper --gradle-version=6.9 --distribution-type=bin
+```
+
+#### Gradle test
 
 After gradle test (or build if test is not disabled there) the result can be checked here:
 

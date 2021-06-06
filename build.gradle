@@ -5,8 +5,8 @@ buildscript {
 }
 
 plugins {
-	id 'org.springframework.boot' version '2.2.4.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id "org.springframework.boot" version "2.5.0"
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'eclipse'
 	//id "org.hidetake.swagger.generator" version "2.12.0" apply false
@@ -60,7 +60,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
-	
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JSON Web Token Support For The JVM
 	
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
@@ -108,7 +109,7 @@ dependencies {
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.10.1"
     
     // SOAP client
-    implementation "com.sun.xml.ws:rt:2.3.1"
+    implementation "com.sun.xml.ws:jaxws-rt:2.3.1"
     
     // JAX-RS Client with Jersey
     implementation "org.glassfish.jersey.containers:jersey-container-servlet:2.32"
@@ -188,6 +189,12 @@ task generateTestDatabaseScripts {
     }
 }
 
+// Eclipse IDE looks for the bootBuildInfo generated properties file during application boot under bin/main/META-INF folder
+task copyBuildInfo(type: Copy) {
+    from file("$buildDir/resources/main/META-INF/build-info.properties")
+    into file("bin/main/META-INF")
+}
+
 compileJava {
 	String annotationProcessorPath = "$buildDir/$generatedSourcesRelativePath/annotationProcessor/main/java"  
 	String wsdlPath = wsimport.generatedSourceRoot
@@ -209,7 +216,7 @@ compileJava {
 }
 
 tasks.withType(JavaCompile) {
-    dependsOn downloadFile, generateTestDatabaseScripts //, wsimport //, generateJaxb, copyBuildInfo
+    dependsOn downloadFile, generateTestDatabaseScripts, copyBuildInfo //, wsimport //, generateJaxb
     options.compilerArgs += [
     	"--enable-preview",
     	"-Amapstruct.defaultComponentModel=spring",
@@ -227,9 +234,13 @@ tasks.withType(JavaExec) {
     jvmArgs += [
     	"--enable-preview"
     ]
-
 }
 
 //clean {
 //    delete "${buildDir}/generated"
 //}
+
+springBoot {
+	mainClassName = 'com.zematix.jworldcup.backend.Application'
+    buildInfo()
+}

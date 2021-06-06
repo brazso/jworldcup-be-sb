@@ -1,10 +1,16 @@
 package com.zematix.jworldcup.backend.tool;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceException;
+import javax.persistence.PersistenceUnit;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Imports all matches and other data of a new event from OpeLigaDB. 
@@ -12,25 +18,25 @@ import javax.persistence.PersistenceException;
  * Run its {@link ImportOpenLigaDBEvent#main(String[]) method to start the import
  * after your {@link ImportOpenLigaDBEventFactory} has the implementation.
   */
-public class ImportOpenLigaDBEvent {
+@SpringBootApplication
+@EntityScan(basePackages = "com.zematix.jworldcup.backend.entity")
+public class ImportOpenLigaDBEvent implements CommandLineRunner {
 
 	//private static final Logger logger = LoggerFactory.getLogger(ImportOpenLigaDBEvent.class);
-
+	
+	@PersistenceUnit
+	private EntityManagerFactory emf; // application managed transaction 
+	
+	@Inject
+    private ConfigurableApplicationContext context;
+	
 	/**
 	 * @param eventShortDescWithYear
 	 * @param persistenceUnitName
+	 * @param isTestMode - if true changes are not committed back to the database
 	 */
-	public void importOpenLigaDBEvent(String eventShortDescWithYear, String persistenceUnitName) {
-		// Obtains an entity manager and a transaction
-		EntityManagerFactory emf = null;
-		try {
-			emf = Persistence.createEntityManagerFactory(persistenceUnitName);
-		}
-		catch (PersistenceException e) {
-			System.err.println(String.format("Not found %s persistence unit name.", persistenceUnitName));
-			System.exit(1);
-			return;			
-		}
+	public void importOpenLigaDBEvent(String eventShortDescWithYear, boolean isTestMode) {
+		// Obtains an entity manager (with application managed transaction) and a transaction
 		EntityManager em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		
@@ -39,7 +45,7 @@ public class ImportOpenLigaDBEvent {
 		ImportOpenLigaDBEventFactory factory = new ImportOpenLigaDBEventFactory(eventShortDescWithYear);
 		OpenLigaDBEvent openLigaDBEvent = factory.createOpenLigaDBEvent();
 		openLigaDBEvent.setParams("EntityManager", em);
-		//openLigaDBEvent.setParams("TestMode", true); // does not commit changes to database
+		openLigaDBEvent.setParams("TestMode", isTestMode);
 		boolean isCommitable = openLigaDBEvent.importEvent();
 		
 		if (isCommitable) {
@@ -49,27 +55,27 @@ public class ImportOpenLigaDBEvent {
 			tx.rollback();
 		}
 		
-		// Closes the entity manager and the factory
+		// Closes the entity manager
 		em.close();
-		emf.close();
 	}
 	
+	public static void main(String[] args) {
+        SpringApplication.run(ImportOpenLigaDBEvent.class, args);
+    }
+
 	/**
 	 * Starts import. Hard coded parameters are used for the time being.
 	 * 
 	 * @param args
 	 */
-	public static void main(String[] args) {
-//		if (args.length != 1) {
-//			System.out.println("Wrong usage, exactly 1 parameter is expected, eventShortDescWithYear.");
-//			System.exit(1);
-//			return;
-//		}
+    @Override
+    public void run(String... args) {
+//		final String eventShortDescWithYear = "CA2021";
+		final String eventShortDescWithYear = "EC2020";
+		final boolean isTestMode = false; // flag that changes are not committed back to the database
 
-//		final String eventShortDescWithYear = args[0];
-		final String eventShortDescWithYear = "CA2019";
-		final String persistenceUnitName = "jworldcupDevelopment";
+		importOpenLigaDBEvent(eventShortDescWithYear, isTestMode);
 
-		new ImportOpenLigaDBEvent().importOpenLigaDBEvent(eventShortDescWithYear, persistenceUnitName);
-	}
+		System.exit(SpringApplication.exit(context));
+    }
 }

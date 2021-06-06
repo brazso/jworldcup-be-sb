@@ -502,10 +502,10 @@ public class UserService extends ServiceBase {
 		
 		User user = userDao.findUserByLoginName(loginName);
 		user.getRoles().size(); // forced lazy fetch
+//		user.getUserStatus();
 		
 		return user;
 	}
-
 
 	/**
 	 * Returns a list of strings containing user loginName values matched by the given 

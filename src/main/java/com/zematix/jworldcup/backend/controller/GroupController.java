@@ -20,7 +20,6 @@ import com.zematix.jworldcup.backend.mapper.GroupMapper;
 import com.zematix.jworldcup.backend.mapper.GroupTeamMapper;
 import com.zematix.jworldcup.backend.model.GroupTeam;
 import com.zematix.jworldcup.backend.service.GroupService;
-import com.zematix.jworldcup.backend.service.MatchService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
 
 import io.swagger.v3.oas.annotations.Operation;

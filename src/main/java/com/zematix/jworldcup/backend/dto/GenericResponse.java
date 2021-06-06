@@ -2,7 +2,7 @@ package com.zematix.jworldcup.backend.dto;
 
 import java.util.Objects;
 
-public class GenericResponse<T> extends CommonResponse{
+public class GenericResponse<T> extends CommonResponse {
 
     private T data;
     

@@ -1,6 +1,8 @@
 package com.zematix.jworldcup.backend.dto;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,7 +24,9 @@ public class UserDto {
     private LocalDateTime modificationTime;
 //	private List<Bet> bets;
 //	private Set<Role> roles;
+    private Set<String> authorities = new HashSet<>(); // similar to roles, but contains ("ROLE_" + role.getRole()) elements
 //	private UserStatus userStatus;
+    private String userStatus;
 //	private Set<UserGroup> userGroups;
 //	private List<UserGroup> ownerUserGroups;
 //	private List<UserOfEvent> userOfEvents;

@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.controller;
 
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,7 @@ import com.zematix.jworldcup.backend.mapper.UserExtendedMapper;
 import com.zematix.jworldcup.backend.mapper.UserMapper;
 import com.zematix.jworldcup.backend.mapper.UserOfEventMapper;
 import com.zematix.jworldcup.backend.model.UserExtended;
+import com.zematix.jworldcup.backend.service.JwtUserDetailsService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
 import com.zematix.jworldcup.backend.service.UserService;
 
@@ -46,6 +48,9 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 
 	@Inject
 	private UserService userService;
+	
+	@Inject
+	private JwtUserDetailsService userDetailsService;
 	
 	@Inject
 	private UserMapper userMapper;
@@ -193,7 +198,7 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@Operation(summary = "Find user by her id", description = "Find user by her id")
 	@GetMapping(value = "/user/{id}")
-	public ResponseEntity<GenericResponse<UserDto>> retrieveUser(@PathVariable("id") Long userId) throws ServiceException {
+	public ResponseEntity<GenericResponse<UserDto>> fundUser(@PathVariable("id") Long userId) throws ServiceException {
 		var user = userService.retrieveUser(userId);
 		return buildResponseEntityWithOK(new GenericResponse<>(userMapper.entityToDto(user)));
 	}
@@ -209,5 +214,21 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 	public ResponseEntity<CommonResponse> deleteUser(@RequestParam String loginName) throws ServiceException {
 		userService.deleteUser(loginName);
 		return buildResponseEntityWithOK(new CommonResponse());
+	}
+
+	/**
+	 * Returns detached {@link User} instance with the provided {@link User#userId}.
+	 * 
+	 * @param userId
+	 * @return found user
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Find authenticated user", description = "Find authenticated user")
+	@GetMapping(value = "/whoami")
+	public ResponseEntity<GenericResponse<UserDto>> whoami() throws ServiceException {
+		var authenticatedUser = userDetailsService.getAuthenticatedUser();
+		var user = userService.findUserByLoginName(authenticatedUser.getUsername()); // user.getRoles() also fetched
+		var authorities = authenticatedUser.getAuthorities().stream().map(e -> e.getAuthority()).collect(Collectors.toSet());
+		return buildResponseEntityWithOK(new GenericResponse<>(userMapper.entityToDto(user, authorities)));
 	}
 }

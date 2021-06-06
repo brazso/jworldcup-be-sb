@@ -4,17 +4,13 @@ import javax.inject.Inject;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zematix.jworldcup.backend.dao.EventDao;
 import com.zematix.jworldcup.backend.dto.EventDto;
 import com.zematix.jworldcup.backend.dto.GenericListResponse;
-import com.zematix.jworldcup.backend.dto.GenericResponse;
-import com.zematix.jworldcup.backend.dto.MatchDto;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.mapper.EventMapper;
 import com.zematix.jworldcup.backend.service.EventService;
