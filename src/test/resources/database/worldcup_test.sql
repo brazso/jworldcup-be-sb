@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
+-- version 5.0.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 14, 2019 at 02:20 PM
--- Server version: 5.7.26
--- PHP Version: 7.2.14
+-- Generation Time: Jun 07, 2021 at 12:02 PM
+-- Server version: 8.0.19
+-- PHP Version: 7.4.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -29,12 +29,12 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `bet` (
-  `bet_id` int(11) NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `match_id` int(11) NOT NULL,
-  `goal_normal_by_team1` tinyint(4) NOT NULL,
-  `goal_normal_by_team2` tinyint(4) NOT NULL
+  `bet_id` int NOT NULL,
+  `event_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `match_id` int NOT NULL,
+  `goal_normal_by_team1` tinyint NOT NULL,
+  `goal_normal_by_team2` tinyint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -44,12 +44,12 @@ CREATE TABLE `bet` (
 --
 
 CREATE TABLE `chat` (
-  `chat_id` int(11) NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `user_group_id` int(11) DEFAULT NULL,
+  `chat_id` int NOT NULL,
+  `event_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `user_group_id` int DEFAULT NULL,
   `modification_time` datetime NOT NULL COMMENT 'UTC timezone used',
-  `message` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL
+  `message` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -59,12 +59,12 @@ CREATE TABLE `chat` (
 --
 
 CREATE TABLE `event` (
-  `event_id` int(11) NOT NULL,
-  `location` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Host country of the event',
-  `year` smallint(6) NOT NULL,
-  `description` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `short_desc` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `organizer` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL
+  `event_id` int NOT NULL,
+  `location` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Host country of the event',
+  `year` smallint NOT NULL,
+  `description` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `short_desc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `organizer` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -78,7 +78,9 @@ INSERT INTO `event` (`event_id`, `location`, `year`, `description`, `short_desc`
 (4, 'Russia', 2018, 'World Cup', 'WC', 'FIFA'),
 (5, 'United Arab Emirates', 2019, 'Asian Cup', 'AFC', 'AFC'),
 (6, 'Brazil', 2019, 'Copa America', 'CA', 'CONMEBOL'),
-(7, 'Egypt', 2019, 'Africa Cup of Nations', 'CAF', 'CAF');
+(7, 'Egypt', 2019, 'Africa Cup of Nations', 'CAF', 'CAF'),
+(8, 'England and others', 2020, 'Euro Cup', 'EC', 'UEFA'),
+(9, 'Brazil', 2021, 'Copa America', 'CA', 'CONMEBOL');
 
 -- --------------------------------------------------------
 
@@ -87,11 +89,11 @@ INSERT INTO `event` (`event_id`, `location`, `year`, `description`, `short_desc`
 --
 
 CREATE TABLE `group_` (
-  `group_id` int(11) NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `name` enum('A','B','C','D','E','F','G','H') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `team1_id` int(11) DEFAULT NULL COMMENT 'final winner of the team',
-  `team2_id` int(11) DEFAULT NULL COMMENT 'final 2nd position in team'
+  `group_id` int NOT NULL,
+  `event_id` int NOT NULL,
+  `name` enum('A','B','C','D','E','F','G','H') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `team1_id` int DEFAULT NULL COMMENT 'final winner of the team',
+  `team2_id` int DEFAULT NULL COMMENT 'final 2nd position in team'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -139,7 +141,15 @@ INSERT INTO `group_` (`group_id`, `event_id`, `name`, `team1_id`, `team2_id`) VA
 (38, 7, 'C', NULL, NULL),
 (39, 7, 'D', NULL, NULL),
 (40, 7, 'E', NULL, NULL),
-(41, 7, 'F', NULL, NULL);
+(41, 7, 'F', NULL, NULL),
+(42, 8, 'A', NULL, NULL),
+(43, 8, 'B', NULL, NULL),
+(44, 8, 'C', NULL, NULL),
+(45, 8, 'D', NULL, NULL),
+(46, 8, 'E', NULL, NULL),
+(47, 8, 'F', NULL, NULL),
+(48, 9, 'A', NULL, NULL),
+(49, 9, 'B', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -148,20 +158,20 @@ INSERT INTO `group_` (`group_id`, `event_id`, `name`, `team1_id`, `team2_id`) VA
 --
 
 CREATE TABLE `match_` (
-  `match_id` int(11) NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `match_n` smallint(6) NOT NULL,
-  `team1_id` int(11) DEFAULT NULL,
-  `team2_id` int(11) DEFAULT NULL,
+  `match_id` int NOT NULL,
+  `event_id` int NOT NULL,
+  `match_n` smallint NOT NULL,
+  `team1_id` int DEFAULT NULL,
+  `team2_id` int DEFAULT NULL,
   `start_time` datetime NOT NULL COMMENT 'UTC timezone used',
-  `round_id` int(11) NOT NULL,
-  `goal_normal_by_team1` tinyint(4) DEFAULT NULL,
-  `goal_normal_by_team2` tinyint(4) DEFAULT NULL,
-  `goal_extra_by_team1` tinyint(4) DEFAULT NULL,
-  `goal_extra_by_team2` tinyint(4) DEFAULT NULL,
-  `goal_penalty_by_team1` tinyint(4) DEFAULT NULL,
-  `goal_penalty_by_team2` tinyint(4) DEFAULT NULL,
-  `participants_rule` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'format: A1-B2 (group.name, position) or [WL]49-50 (match_id, match_id)'
+  `round_id` int NOT NULL,
+  `goal_normal_by_team1` tinyint DEFAULT NULL,
+  `goal_normal_by_team2` tinyint DEFAULT NULL,
+  `goal_extra_by_team1` tinyint DEFAULT NULL,
+  `goal_extra_by_team2` tinyint DEFAULT NULL,
+  `goal_penalty_by_team1` tinyint DEFAULT NULL,
+  `goal_penalty_by_team2` tinyint DEFAULT NULL,
+  `participants_rule` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'format: A1-B2 (group.name, position) or [WL]49-50 (match_id, match_id)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -508,7 +518,86 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (337, 7, 49, NULL, NULL, '2019-07-14 16:00:00', 50, NULL, NULL, NULL, NULL, NULL, NULL, 'W45-W46'),
 (338, 7, 50, NULL, NULL, '2019-07-14 19:00:00', 50, NULL, NULL, NULL, NULL, NULL, NULL, 'W47-W48'),
 (339, 7, 51, NULL, NULL, '2019-07-17 19:00:00', 51, NULL, NULL, NULL, NULL, NULL, NULL, 'L49-L50'),
-(340, 7, 52, NULL, NULL, '2019-07-19 19:00:00', 52, NULL, NULL, NULL, NULL, NULL, NULL, 'W49-W50');
+(340, 7, 52, NULL, NULL, '2019-07-19 19:00:00', 52, NULL, NULL, NULL, NULL, NULL, NULL, 'W49-W50'),
+(341, 8, 1, 185, 171, '2021-06-11 19:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(342, 8, 2, 188, 181, '2021-06-12 13:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(343, 8, 3, 166, 169, '2021-06-12 16:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(344, 8, 4, 165, 178, '2021-06-12 19:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(345, 8, 5, 168, 172, '2021-06-13 13:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(346, 8, 6, 175, 174, '2021-06-13 16:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(347, 8, 7, 173, 186, '2021-06-13 19:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(348, 8, 8, 179, 184, '2021-06-14 13:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(349, 8, 9, 176, 182, '2021-06-14 16:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(350, 8, 10, 183, 180, '2021-06-14 19:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(351, 8, 11, 187, 177, '2021-06-15 16:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(352, 8, 12, 170, 167, '2021-06-15 19:00:00', 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(353, 8, 13, 169, 178, '2021-06-16 13:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(354, 8, 14, 185, 188, '2021-06-16 16:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(355, 8, 15, 171, 181, '2021-06-16 19:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(356, 8, 16, 186, 174, '2021-06-17 13:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(357, 8, 17, 166, 165, '2021-06-17 16:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(358, 8, 18, 173, 175, '2021-06-17 19:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(359, 8, 19, 180, 182, '2021-06-18 13:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(360, 8, 20, 172, 184, '2021-06-18 16:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(361, 8, 21, 168, 179, '2021-06-18 19:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(362, 8, 22, 187, 170, '2021-06-19 13:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(363, 8, 23, 177, 167, '2021-06-19 16:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(364, 8, 24, 183, 176, '2021-06-19 19:00:00', 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(365, 8, 25, 171, 188, '2021-06-20 16:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(366, 8, 26, 181, 185, '2021-06-20 16:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(367, 8, 27, 186, 175, '2021-06-21 16:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(368, 8, 28, 174, 173, '2021-06-21 16:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(369, 8, 29, 178, 166, '2021-06-21 19:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(370, 8, 30, 169, 165, '2021-06-21 19:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(371, 8, 31, 184, 168, '2021-06-22 19:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(372, 8, 32, 172, 179, '2021-06-22 19:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(373, 8, 33, 180, 176, '2021-06-23 16:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(374, 8, 34, 182, 183, '2021-06-23 16:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(375, 8, 35, 177, 170, '2021-06-23 19:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(376, 8, 36, 167, 187, '2021-06-23 19:00:00', 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(377, 8, 37, NULL, NULL, '2021-06-26 19:00:00', 56, NULL, NULL, NULL, NULL, NULL, NULL, 'A1-C2'),
+(378, 8, 38, NULL, NULL, '2021-06-26 16:00:00', 56, NULL, NULL, NULL, NULL, NULL, NULL, 'A2-B2'),
+(379, 8, 39, NULL, NULL, '2021-06-27 19:00:00', 56, NULL, NULL, NULL, NULL, NULL, NULL, 'B1-ADEF3'),
+(380, 8, 40, NULL, NULL, '2021-06-27 16:00:00', 56, NULL, NULL, NULL, NULL, NULL, NULL, 'C1-DEF3'),
+(381, 8, 41, NULL, NULL, '2021-06-28 19:00:00', 56, NULL, NULL, NULL, NULL, NULL, NULL, 'F1-ABC3'),
+(382, 8, 42, NULL, NULL, '2021-06-28 16:00:00', 56, NULL, NULL, NULL, NULL, NULL, NULL, 'D2-E2'),
+(383, 8, 43, NULL, NULL, '2021-06-29 19:00:00', 56, NULL, NULL, NULL, NULL, NULL, NULL, 'E1-ABCD3'),
+(384, 8, 44, NULL, NULL, '2021-06-29 16:00:00', 56, NULL, NULL, NULL, NULL, NULL, NULL, 'D12-F2'),
+(385, 8, 45, NULL, NULL, '2021-07-02 16:00:00', 57, NULL, NULL, NULL, NULL, NULL, NULL, 'W41-W42'),
+(386, 8, 46, NULL, NULL, '2021-07-02 19:00:00', 57, NULL, NULL, NULL, NULL, NULL, NULL, 'W39-W37'),
+(387, 8, 47, NULL, NULL, '2021-07-03 16:00:00', 57, NULL, NULL, NULL, NULL, NULL, NULL, 'W40-W38'),
+(388, 8, 48, NULL, NULL, '2021-06-27 16:00:00', 57, NULL, NULL, NULL, NULL, NULL, NULL, 'W43-W44'),
+(389, 8, 49, NULL, NULL, '2021-07-06 19:00:00', 58, NULL, NULL, NULL, NULL, NULL, NULL, 'W46-W45'),
+(390, 8, 50, NULL, NULL, '2021-07-07 19:00:00', 58, NULL, NULL, NULL, NULL, NULL, NULL, 'W48-W47'),
+(391, 8, 51, NULL, NULL, '2021-07-11 19:00:00', 59, NULL, NULL, NULL, NULL, NULL, NULL, 'W49-W50'),
+(392, 9, 1, 191, 198, '2021-06-13 21:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(393, 9, 2, 194, 193, '2021-06-14 00:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(394, 9, 3, 189, 192, '2021-06-14 21:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(395, 9, 4, 195, 190, '2021-06-15 00:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(396, 9, 5, 194, 198, '2021-06-17 21:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(397, 9, 6, 191, 196, '2021-06-18 00:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(398, 9, 7, 192, 190, '2021-06-18 20:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(399, 9, 8, 189, 197, '2021-06-19 00:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(400, 9, 9, 198, 193, '2021-06-20 21:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(401, 9, 10, 194, 196, '2021-06-21 00:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(402, 9, 11, 197, 192, '2021-06-21 20:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(403, 9, 12, 189, 195, '2021-06-22 00:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(404, 9, 13, 193, 196, '2021-06-23 21:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(405, 9, 14, 191, 194, '2021-06-24 00:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(406, 9, 15, 190, 197, '2021-06-24 20:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(407, 9, 16, 192, 195, '2021-06-25 00:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(408, 9, 17, 191, 193, '2021-06-27 21:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(409, 9, 18, 198, 196, '2021-06-27 21:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(410, 9, 19, 190, 189, '2021-06-28 23:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(411, 9, 20, 197, 195, '2021-06-29 00:00:00', 60, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(412, 9, 21, NULL, NULL, '2021-07-02 21:00:00', 61, NULL, NULL, NULL, NULL, NULL, NULL, 'B2-A3'),
+(413, 9, 22, NULL, NULL, '2021-07-03 00:00:00', 61, NULL, NULL, NULL, NULL, NULL, NULL, 'B1-A4'),
+(414, 9, 23, NULL, NULL, '2021-07-03 22:00:00', 61, NULL, NULL, NULL, NULL, NULL, NULL, 'A2-B3'),
+(415, 9, 24, NULL, NULL, '2021-07-04 00:00:00', 61, NULL, NULL, NULL, NULL, NULL, NULL, 'A1-B4'),
+(416, 9, 25, NULL, NULL, '2021-07-05 23:00:00', 62, NULL, NULL, NULL, NULL, NULL, NULL, 'W22-W21'),
+(417, 9, 26, NULL, NULL, '2021-07-07 01:00:00', 62, NULL, NULL, NULL, NULL, NULL, NULL, 'W24-W23'),
+(418, 9, 27, NULL, NULL, '2021-07-10 00:00:00', 63, NULL, NULL, NULL, NULL, NULL, NULL, 'L26-L25'),
+(419, 9, 28, NULL, NULL, '2021-07-11 00:00:00', 64, NULL, NULL, NULL, NULL, NULL, NULL, 'W26-W25');
 
 -- --------------------------------------------------------
 
@@ -517,9 +606,9 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 --
 
 CREATE TABLE `role` (
-  `role_id` int(11) NOT NULL,
-  `role` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL
+  `role_id` int NOT NULL,
+  `role` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -537,9 +626,9 @@ INSERT INTO `role` (`role_id`, `role`, `name`) VALUES
 --
 
 CREATE TABLE `round` (
-  `round_id` int(11) NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `round_id` int NOT NULL,
+  `event_id` int NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_groupmatch` tinyint(1) NOT NULL COMMENT '1 if the matches belongs to this round are group-matches, 0 otherwise',
   `is_overtime` tinyint(1) DEFAULT NULL COMMENT '0/1 if there is/not overtime in case of non-group-matches belongs to this round, NULL in case of group-matches'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -600,7 +689,19 @@ INSERT INTO `round` (`round_id`, `event_id`, `name`, `is_groupmatch`, `is_overti
 (49, 7, 'Quarter-finals', 0, 1),
 (50, 7, 'Semi-finals', 0, 1),
 (51, 7, 'Third place play-off', 0, 1),
-(52, 7, 'Final', 0, 1);
+(52, 7, 'Final', 0, 1),
+(53, 8, '1st round', 1, NULL),
+(54, 8, '2nd round', 1, NULL),
+(55, 8, '3rd round', 1, NULL),
+(56, 8, 'Round of 16', 0, NULL),
+(57, 8, 'Quarter-finals', 0, NULL),
+(58, 8, 'Semi-finals', 0, NULL),
+(59, 8, 'Final', 0, NULL),
+(60, 9, 'Preliminary round', 1, NULL),
+(61, 9, 'Quarter-finals', 0, NULL),
+(62, 9, 'Semi-finals', 0, NULL),
+(63, 9, 'Third place play-off', 0, NULL),
+(64, 9, 'Final', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -609,13 +710,13 @@ INSERT INTO `round` (`round_id`, `event_id`, `name`, `is_groupmatch`, `is_overti
 --
 
 CREATE TABLE `team` (
-  `team_id` int(11) NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `flag` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `group_id` int(11) NOT NULL,
-  `fifa_points` smallint(6) DEFAULT '0',
-  `ws_id` int(11) DEFAULT NULL
+  `team_id` int NOT NULL,
+  `event_id` int NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `flag` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `group_id` int NOT NULL,
+  `fifa_points` smallint DEFAULT '0',
+  `ws_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -786,7 +887,41 @@ INSERT INTO `team` (`team_id`, `event_id`, `name`, `flag`, `group_id`, `fifa_poi
 (161, 7, 'South Africa', 'RSA', 39, 0, 677),
 (162, 7, 'Tanzania', 'TAN', 38, 0, 5000),
 (163, 7, 'Tunisia', 'TUN', 40, 0, 1391),
-(164, 7, 'Uganda', 'UGA', 36, 0, 4986);
+(164, 7, 'Uganda', 'UGA', 36, 0, 4986),
+(165, 8, 'Belgium', 'BEL', 43, 0, 2673),
+(166, 8, 'Denmark', 'DEN', 43, 0, 758),
+(167, 8, 'Germany', 'GER', 47, 0, 3196),
+(168, 8, 'England', 'ENG', 45, 0, 3197),
+(169, 8, 'Finland', 'FIN', 43, 0, 2425),
+(170, 8, 'France', 'FRA', 47, 0, 3202),
+(171, 8, 'Italy', 'ITA', 42, 0, 3203),
+(172, 8, 'Croatia', 'CRO', 45, 0, 146),
+(173, 8, 'Netherlands', 'NED', 44, 0, 4353),
+(174, 8, 'North Macedonia', 'MKD', 44, 0, 2006),
+(175, 8, 'Austria', 'AUT', 44, 0, 4354),
+(176, 8, 'Poland', 'POL', 46, 0, 1410),
+(177, 8, 'Portugal', 'POR', 47, 0, 3198),
+(178, 8, 'Russia', 'RUS', 43, 0, 150),
+(179, 8, 'Scotland', 'SCO', 45, 0, 5271),
+(180, 8, 'Sweden', 'SWE', 46, 0, 2691),
+(181, 8, 'Switzerland', 'SUI', 42, 0, 38),
+(182, 8, 'Slovakia', 'SVK', 46, 0, 3201),
+(183, 8, 'Spain', 'ESP', 46, 0, 170),
+(184, 8, 'Czech Republic', 'CZE', 45, 0, 141),
+(185, 8, 'Turkey', 'TUR', 42, 0, 3205),
+(186, 8, 'Ukraine', 'UKR', 44, 0, 3204),
+(187, 8, 'Hungary', 'HUN', 47, 0, 1395),
+(188, 8, 'Wales', 'WAL', 42, 0, 5101),
+(189, 9, 'Argentina', 'ARG', 48, 0, 764),
+(190, 9, 'Bolivia', 'BOL', 48, 0, 3178),
+(191, 9, 'Brazil', 'BRA', 49, 0, 753),
+(192, 9, 'Chile', 'CHI', 48, 0, 760),
+(193, 9, 'Ecuador', 'ECU', 49, 0, 2670),
+(194, 9, 'Colombia', 'COL', 49, 0, 1469),
+(195, 9, 'Paraguay', 'PAR', 48, 0, 756),
+(196, 9, 'Peru', 'PER', 49, 0, 3177),
+(197, 9, 'Uruguay', 'URU', 48, 0, 849),
+(198, 9, 'Venezuela', 'VEN', 49, 0, 3179);
 
 -- --------------------------------------------------------
 
@@ -795,16 +930,16 @@ INSERT INTO `team` (`team_id`, `event_id`, `name`, `flag`, `group_id`, `fifa_poi
 --
 
 CREATE TABLE `user` (
-  `user_id` int(11) NOT NULL,
-  `full_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `login_name` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `login_password` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Default user''s password is ${login_name}_! Remember to change it!',
-  `reset_password` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Temporary password in case of password reset',
-  `email_addr` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email_new` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_status_id` int(11) NOT NULL,
-  `token` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `zone_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Time zone id',
+  `user_id` int NOT NULL,
+  `full_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `login_name` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `login_password` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Default user''s password is ${login_name}_! Remember to change it!',
+  `reset_password` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Temporary password in case of password reset',
+  `email_addr` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_new` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_status_id` int NOT NULL,
+  `token` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `zone_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Time zone id',
   `modification_time` datetime NOT NULL COMMENT 'UTC timezone used'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -826,11 +961,11 @@ INSERT INTO `user` (`user_id`, `full_name`, `login_name`, `login_password`, `res
 --
 
 CREATE TABLE `user_group` (
-  `user_group_id` int(11) NOT NULL,
+  `user_group_id` int NOT NULL,
   `priority` tinyint(1) NOT NULL DEFAULT '2',
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `owner` int(11) NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `event_id` int NOT NULL,
+  `owner` int NOT NULL,
   `is_public_visible` tinyint(1) NOT NULL,
   `is_public_editable` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -842,11 +977,11 @@ CREATE TABLE `user_group` (
 --
 
 CREATE TABLE `user_of_event` (
-  `user_of_event_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `fav_group_team_id` int(11) DEFAULT NULL COMMENT 'Favourite team among the group teams',
-  `fav_knockout_team_id` int(11) DEFAULT NULL COMMENT 'Favourite team among the knockout teams'
+  `user_of_event_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `event_id` int NOT NULL,
+  `fav_group_team_id` int DEFAULT NULL COMMENT 'Favourite team among the group teams',
+  `fav_knockout_team_id` int DEFAULT NULL COMMENT 'Favourite team among the knockout teams'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -856,9 +991,9 @@ CREATE TABLE `user_of_event` (
 --
 
 CREATE TABLE `user_status` (
-  `user_status_id` int(11) NOT NULL,
-  `status` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL
+  `user_status_id` int NOT NULL,
+  `status` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -877,8 +1012,8 @@ INSERT INTO `user_status` (`user_status_id`, `status`, `name`) VALUES
 --
 
 CREATE TABLE `user__role` (
-  `user_id` int(11) NOT NULL,
-  `role_id` int(11) NOT NULL
+  `user_id` int NOT NULL,
+  `role_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -899,8 +1034,8 @@ INSERT INTO `user__role` (`user_id`, `role_id`) VALUES
 --
 
 CREATE TABLE `user__user_group` (
-  `user_id` int(11) NOT NULL,
-  `user_group_id` int(11) NOT NULL DEFAULT '1'
+  `user_id` int NOT NULL,
+  `user_group_id` int NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -910,15 +1045,15 @@ CREATE TABLE `user__user_group` (
 --
 
 CREATE TABLE `web_service` (
-  `web_service_id` int(11) NOT NULL,
-  `event_id` int(11) NOT NULL,
+  `web_service_id` int NOT NULL,
+  `event_id` int NOT NULL,
   `priority` tinyint(1) NOT NULL,
-  `league_shortcut` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `league_saison` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `result_normal_label` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `result_normal_extra_label` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `result_extra_label` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `result_penalty_label` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `league_shortcut` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `league_saison` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `result_normal_label` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `result_normal_extra_label` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `result_extra_label` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `result_penalty_label` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -935,7 +1070,9 @@ INSERT INTO `web_service` (`web_service_id`, `event_id`, `priority`, `league_sho
 (7, 4, 2, 'wmrussland', '2018', 'Endergebnis', '90min', 'Verlaengerung', NULL),
 (8, 5, 1, 'AFC2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
 (9, 6, 1, 'CA2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
-(10, 7, 1, 'CAF2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen');
+(10, 7, 1, 'CAF2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
+(11, 8, 1, 'em20', '2020', 'Ergebnis90', NULL, 'Ergebnis120', 'Ergebnis11'),
+(12, 9, 1, 'CA2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen');
 
 --
 -- Indexes for dumped tables
@@ -1074,79 +1211,79 @@ ALTER TABLE `web_service`
 -- AUTO_INCREMENT for table `bet`
 --
 ALTER TABLE `bet`
-  MODIFY `bet_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `bet_id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `chat_id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `event`
 --
 ALTER TABLE `event`
-  MODIFY `event_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `event_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `group_`
 --
 ALTER TABLE `group_`
-  MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `match_`
 --
 ALTER TABLE `match_`
-  MODIFY `match_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=341;
+  MODIFY `match_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=420;
 
 --
 -- AUTO_INCREMENT for table `role`
 --
 ALTER TABLE `role`
-  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `role_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `round`
 --
 ALTER TABLE `round`
-  MODIFY `round_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `round_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `team`
 --
 ALTER TABLE `team`
-  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
+  MODIFY `team_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=199;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `user_group`
 --
 ALTER TABLE `user_group`
-  MODIFY `user_group_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_group_id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `user_of_event`
 --
 ALTER TABLE `user_of_event`
-  MODIFY `user_of_event_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_of_event_id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `user_status`
 --
 ALTER TABLE `user_status`
-  MODIFY `user_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_status_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `web_service`
 --
 ALTER TABLE `web_service`
-  MODIFY `web_service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `web_service_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
@@ -1244,3 +1381,4 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+

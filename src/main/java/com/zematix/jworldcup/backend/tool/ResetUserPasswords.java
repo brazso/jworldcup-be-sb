@@ -1,22 +1,25 @@
 package com.zematix.jworldcup.backend.tool;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceException;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import com.zematix.jworldcup.backend.cdi.ApplicationEnvironment;
 import com.zematix.jworldcup.backend.crypto.SecureHashing;
 import com.zematix.jworldcup.backend.entity.User;
 
@@ -25,7 +28,15 @@ import com.zematix.jworldcup.backend.entity.User;
  * It makes testing easier. It runs only with -Dapplication.environment=development
  * VM setting.
   */
-public class ResetUserPasswords {
+@EnableAutoConfiguration
+@EntityScan(basePackages = "com.zematix.jworldcup.backend.entity")
+public class ResetUserPasswords implements CommandLineRunner {
+
+	@PersistenceUnit
+	private EntityManagerFactory emf; // application managed transaction 
+	
+	@Inject
+	private ConfigurableApplicationContext context;
 
 	private static final Logger logger = LoggerFactory.getLogger(ResetUserPasswords.class);
 	
@@ -66,22 +77,10 @@ public class ResetUserPasswords {
 	 */
 	public void main() {
 
-		final String persistenceUnitName = "jworldcupDevelopment";
-
-		String environment = System.getProperty(ApplicationEnvironment.APP_ENV_PARAMETER_NAME);
-		checkNotNull(environment);
-		checkState(environment.equalsIgnoreCase(ApplicationEnvironment.DEVELOPMENT.name()));
+//		String environment = System.getProperty(ApplicationEnvironment.APP_ENV_PARAMETER_NAME);
+//		checkNotNull(environment);
+//		checkState(environment.equalsIgnoreCase(ApplicationEnvironment.DEVELOPMENT.name()));
 		
-		// Obtains an entity manager and a transaction
-		EntityManagerFactory emf = null;
-		try {
-			emf = Persistence.createEntityManagerFactory(persistenceUnitName);
-		}
-		catch (PersistenceException e) {
-			System.err.println(String.format("Not found %s persistence unit name.", persistenceUnitName));
-			System.exit(1);
-			return;			
-		}
 		/*EntityManager*/ em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		
@@ -98,14 +97,22 @@ public class ResetUserPasswords {
 		
 		// Closes the entity manager and the factory
 		em.close();
-		emf.close();
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(ResetUserPasswords.class, args);
 	}
 
 	/**
+	 * Starts import. Hard coded parameters are used for the time being.
+	 * 
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	@Override
+	public void run(String... args) {
+		main();
 
-		new ResetUserPasswords().main();
+		System.exit(SpringApplication.exit(context));
 	}
+
 }

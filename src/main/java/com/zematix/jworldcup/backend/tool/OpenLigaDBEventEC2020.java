@@ -3,6 +3,8 @@ package com.zematix.jworldcup.backend.tool;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +17,6 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.google.common.collect.ImmutableMap;
 import com.msiggi.openligadb.client.ArrayOfGroup;
 import com.msiggi.openligadb.client.ArrayOfLeague;
 import com.msiggi.openligadb.client.ArrayOfMatchdata;
@@ -270,20 +271,13 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 			//throw new OpenLigaDBException(e.getMessage());
 		}
 
-		Map<Team, Integer> teamOccurenceMap = new HashMap<>();
 		for (int i=0; i < matchdatas.size(); i++) {
 			Matchdata matchdata = matchdatas.get(i);
 			Match match = new Match();
 			match.setEvent(event);
 			match.setMatchN((short)(i+1));
 			match.setTeam1(teamMapByWsId.get(matchdata.getIdTeam1()));
-			if (match.getTeam1() != null) {
-				teamOccurenceMap.put(match.getTeam1(), teamOccurenceMap.get(match.getTeam1()) == null ? 1 : teamOccurenceMap.get(match.getTeam1())+1);
-			}
 			match.setTeam2(teamMapByWsId.get(matchdata.getIdTeam2()));
-			if (match.getTeam2() != null) {
-				teamOccurenceMap.put(match.getTeam2(), teamOccurenceMap.get(match.getTeam2()) == null ? 1 : teamOccurenceMap.get(match.getTeam2())+1);
-			}
 			match.setStartTime(new Timestamp(matchdata.getMatchDateTime().toGregorianCalendar().getTimeInMillis()).toLocalDateTime());
 			match.setRound(roundMap.get(matchdata.getGroupID()));
 
@@ -300,6 +294,9 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 		webService.setResultPenaltyLabel("Ergebnis11");
 		em.persist(webService);
 
+		addMissingMatches(event, roundList.stream().filter(e -> Boolean.FALSE.equals(e.getIsGroupmatchAsBoolean())).collect(Collectors.toList()),
+				matchdatas.size(), teamMapByWsId);
+		
 		if (params.containsKey("TestMode") && (boolean)params.get("TestMode")) {
 			logger.warn("Because TestMode is on, changes are not commited to the database.");
 			return false; // changes are not to be committed in test mode
@@ -307,6 +304,148 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 		
 		return true;
 
+	}
+	
+	private void addMissingMatches(Event event, List<Round> roundList, int matchesSize, Map<Integer, Team> teamMapByWsId) {
+		EntityManager em = (EntityManager) params.get("EntityManager");
+		checkNotNull(em, "Parameter named EntityManager is not set, its value cannot be null.");
+		final DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		
+		for (Round round : roundList) {
+			switch (round.getName()) {
+				case "Round of 16": {
+					Match match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-06-26 21:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("A1-C2");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-06-26 18:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("A2-B2");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-06-27 21:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("B1-ADEF3");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-06-27 18:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("C1-DEF3");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-06-28 21:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("F1-ABC3");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-06-28 18:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("D2-E2");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-06-29 21:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("E1-ABCD3");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-06-29 18:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("D12-F2");
+					em.persist(match);
+					break;
+				}
+				case "Quarter-finals": {
+					Match match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-07-02 18:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("W41-W42");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-07-02 21:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("W39-W37");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-07-03 18:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("W40-W38");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-06-27 18:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("W43-W44");
+					em.persist(match);
+					break;
+				}
+				case "Semi-finals": {
+					Match match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-07-06 21:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("W46-W45");
+					em.persist(match);
+					
+					/*Match*/ match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-07-07 21:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("W48-W47");
+					em.persist(match);
+					break;
+				}
+				case "Final": {
+					Match match = new Match();
+					match.setEvent(event);
+					match.setMatchN((short)(++matchesSize));
+					match.setStartTime(LocalDateTime.parse("2021-07-11 21:00", sdf));
+					match.setRound(round);
+					match.setParticipantsRule("W49-W50");
+					em.persist(match);
+					break;
+				}
+				default:
+					break;
+			}
+			
+		}
 	}
 	
 	/**

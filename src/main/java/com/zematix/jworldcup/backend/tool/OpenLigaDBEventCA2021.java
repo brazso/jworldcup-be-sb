@@ -62,7 +62,7 @@ public class OpenLigaDBEventCA2021 extends OpenLigaDBEvent {
 		final String LEAGUE_SHORTCUT = "CA2021";
 		final String LEAGUE_SAISON = "2021";
 		final int TEAMS_IN_GROUP = 5; // number of teams in a group
-		final List<String> ORDNUNGZAHLEN = Arrays.asList("Sieger", "Zweiter", "Dritter");
+		final List<String> ORDNUNGZAHLEN = Arrays.asList("Sieger", "Zweiter", "Dritter", "Vierter");
 		
 		Map<String, String> fifaCodeByCountryNameMap = retrieveFifaCodeByCountryNameMap();
 		checkNotNull(fifaCodeByCountryNameMap, "Retrieved fifaCodeByCountryNameMap cannot be null.");

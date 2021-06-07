@@ -8,7 +8,7 @@ import javax.persistence.PersistenceUnit;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -18,7 +18,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * Run its {@link ImportOpenLigaDBEvent#main(String[]) method to start the import
  * after your {@link ImportOpenLigaDBEventFactory} has the implementation.
   */
-@SpringBootApplication
+@EnableAutoConfiguration
 @EntityScan(basePackages = "com.zematix.jworldcup.backend.entity")
 public class ImportOpenLigaDBEvent implements CommandLineRunner {
 
@@ -28,7 +28,7 @@ public class ImportOpenLigaDBEvent implements CommandLineRunner {
 	private EntityManagerFactory emf; // application managed transaction 
 	
 	@Inject
-    private ConfigurableApplicationContext context;
+	private ConfigurableApplicationContext context;
 	
 	/**
 	 * @param eventShortDescWithYear
@@ -60,22 +60,22 @@ public class ImportOpenLigaDBEvent implements CommandLineRunner {
 	}
 	
 	public static void main(String[] args) {
-        SpringApplication.run(ImportOpenLigaDBEvent.class, args);
-    }
+		SpringApplication.run(ImportOpenLigaDBEvent.class, args);
+	}
 
 	/**
 	 * Starts import. Hard coded parameters are used for the time being.
 	 * 
 	 * @param args
 	 */
-    @Override
-    public void run(String... args) {
-//		final String eventShortDescWithYear = "CA2021";
-		final String eventShortDescWithYear = "EC2020";
+	@Override
+	public void run(String... args) {
+//		final String eventShortDescWithYear = "EC2020";
+		final String eventShortDescWithYear = "CA2021";
 		final boolean isTestMode = false; // flag that changes are not committed back to the database
 
 		importOpenLigaDBEvent(eventShortDescWithYear, isTestMode);
 
 		System.exit(SpringApplication.exit(context));
-    }
+	}
 }
