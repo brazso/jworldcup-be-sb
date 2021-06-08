@@ -36,6 +36,32 @@ If you have to update docker mysql images in docker/mysql folder, the docker ima
 ```
 $ docker-compose build
 ```
+### Run application from Gradle
+
+full build
+```
+gradle clean
+gradle build
+```
+build without test
+```
+gradle build -x test
+'''
+
+run app using development profile
+```
+gradle -Dspring.profiles.active=development bootRun
+```
+
+run app using production profile, ie. without any profile
+```
+gradle bootRun
+```
+
+stop app
+```
+gradle -stop
+```
 
 ### PhpMyAdmin
 
