@@ -2,12 +2,10 @@ package com.zematix.jworldcup.backend.configuration;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,18 +34,15 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException {
 
-//		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-		ResponseEntity<Object> responseEntity = buildResponseEntity(new ApiError(HttpStatus.UNAUTHORIZED, new UnauthorizedException(null)));
-		
-		response.setContentType(MediaType.APPLICATION_JSON);
-		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		ResponseEntity<Object> responseEntity = buildResponseEntity(
+				new ApiError(HttpStatus.UNAUTHORIZED, new UnauthorizedException(null)));
 
-//		ObjectMapper mapper = new ObjectMapper();
-//		mapper.registerModule(new JavaTimeModule());
-//		mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-		
-	    String json = mapper.writeValueAsString(responseEntity.getBody());
-	    response.getWriter().write(json);
-	    response.flushBuffer();
+		response.setStatus(responseEntity.getStatusCodeValue());
+
+//		response.setContentType(MediaType.APPLICATION_JSON);
+//		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
+		String json = mapper.writeValueAsString(responseEntity.getBody());
+		response.getWriter().write(json);
 	}
 }
