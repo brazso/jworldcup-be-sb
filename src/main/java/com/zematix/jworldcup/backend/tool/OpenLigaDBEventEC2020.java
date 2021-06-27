@@ -407,7 +407,7 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 					/*Match*/ match = new Match();
 					match.setEvent(event);
 					match.setMatchN((short)(++matchesSize));
-					match.setStartTime(LocalDateTime.parse("2021-06-27 18:00", sdf));
+					match.setStartTime(LocalDateTime.parse("2021-07-03 21:00", sdf));
 					match.setRound(round);
 					match.setParticipantsRule("W43-W44");
 					em.persist(match);

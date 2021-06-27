@@ -2249,7 +2249,7 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (385, 8, 45, NULL, NULL, '2021-07-02 16:00:00', 57, NULL, NULL, NULL, NULL, NULL, NULL, 'W41-W42'),
 (386, 8, 46, NULL, NULL, '2021-07-02 19:00:00', 57, NULL, NULL, NULL, NULL, NULL, NULL, 'W39-W37'),
 (387, 8, 47, NULL, NULL, '2021-07-03 16:00:00', 57, NULL, NULL, NULL, NULL, NULL, NULL, 'W40-W38'),
-(388, 8, 48, NULL, NULL, '2021-06-27 16:00:00', 57, NULL, NULL, NULL, NULL, NULL, NULL, 'W43-W44'),
+(388, 8, 48, NULL, NULL, '2021-07-03 19:00:00', 57, NULL, NULL, NULL, NULL, NULL, NULL, 'W43-W44'),
 (389, 8, 49, NULL, NULL, '2021-07-06 19:00:00', 58, NULL, NULL, NULL, NULL, NULL, NULL, 'W46-W45'),
 (390, 8, 50, NULL, NULL, '2021-07-07 19:00:00', 58, NULL, NULL, NULL, NULL, NULL, NULL, 'W48-W47'),
 (391, 8, 51, NULL, NULL, '2021-07-11 19:00:00', 59, NULL, NULL, NULL, NULL, NULL, NULL, 'W49-W50'),
@@ -2885,7 +2885,7 @@ INSERT INTO `web_service` (`web_service_id`, `event_id`, `priority`, `league_sho
 (8, 5, 1, 'AFC2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
 (9, 6, 1, 'CA2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
 (10, 7, 1, 'CAF2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
-(11, 8, 1, 'em20', '2020', 'Ergebnis90', NULL, 'Ergebnis120', 'Ergebnis11'),
+(11, 8, 1, 'em20', '2020', 'Endergebnis', NULL, 'nach Verlängerung', 'nach Elfmeterscheißen'),
 (12, 9, 1, 'CA2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen');
 
 --
