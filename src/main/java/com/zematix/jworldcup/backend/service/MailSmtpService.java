@@ -43,6 +43,9 @@ public class MailSmtpService extends ServiceBase {
 	@Value("${mail.smtp.starttls.enable:#{null}}") 
 	private String smtpStartTlsEnable;
 
+	@Value("${mail.smtp.ssl.enable:#{null}}") 
+	private String smtpSslEnable;
+
 	@Value("${mail.smtp.connectiontimeout:#{null}}") 
 	private String smtpConnectionTimeout;
 
@@ -64,6 +67,9 @@ public class MailSmtpService extends ServiceBase {
 	@Value("${mail.smtp.socketFactory.port:#{null}}")
 	private String smtpSocketFactoryPort;
 	
+	@Value("${mail.smtp.debug:#{null}}")
+	private String smtpDebug;
+
 	private final Properties mailServerProperties = System.getProperties();
 	
 	/**
@@ -86,7 +92,10 @@ public class MailSmtpService extends ServiceBase {
 			mailServerProperties.put("mail.smtp.auth", smtpAuth);
 		}
 		if (smtpStartTlsEnable != null) {
-			mailServerProperties.put("mail.smtp.starttls.enable", "true");
+			mailServerProperties.put("mail.smtp.starttls.enable", smtpStartTlsEnable);
+		}
+		if (smtpSslEnable != null) {
+			mailServerProperties.put("mail.smtp.ssl.enable", smtpSslEnable);
 		}
 		if (smtpConnectionTimeout != null) {
 			mailServerProperties.put("mail.smtp.connectiontimeout", smtpConnectionTimeout);
@@ -102,6 +111,9 @@ public class MailSmtpService extends ServiceBase {
 		}
 		if (smtpSocketFactoryPort != null) {
 			mailServerProperties.put("mail.smtp.socketFactory.port", smtpSocketFactoryPort);
+		}
+		if (smtpDebug != null) {
+			mailServerProperties.put("mail.smtp.debug", smtpDebug);
 		}
 	}
 
