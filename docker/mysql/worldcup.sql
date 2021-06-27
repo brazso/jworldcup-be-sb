@@ -2376,15 +2376,15 @@ INSERT INTO `round` (`round_id`, `event_id`, `name`, `is_groupmatch`, `is_overti
 (53, 8, '1st round', 1, NULL),
 (54, 8, '2nd round', 1, NULL),
 (55, 8, '3rd round', 1, NULL),
-(56, 8, 'Round of 16', 0, NULL),
-(57, 8, 'Quarter-finals', 0, NULL),
-(58, 8, 'Semi-finals', 0, NULL),
-(59, 8, 'Final', 0, NULL),
+(56, 8, 'Round of 16', 0, 1),
+(57, 8, 'Quarter-finals', 0, 1),
+(58, 8, 'Semi-finals', 0, 1),
+(59, 8, 'Final', 0, 1),
 (60, 9, 'Preliminary round', 1, NULL),
-(61, 9, 'Quarter-finals', 0, NULL),
-(62, 9, 'Semi-finals', 0, NULL),
-(63, 9, 'Third place play-off', 0, NULL),
-(64, 9, 'Final', 0, NULL);
+(61, 9, 'Quarter-finals', 0, 0),
+(62, 9, 'Semi-finals', 0, 0),
+(63, 9, 'Third place play-off', 0, 0),
+(64, 9, 'Final', 0, 1);
 
 -- --------------------------------------------------------
 
