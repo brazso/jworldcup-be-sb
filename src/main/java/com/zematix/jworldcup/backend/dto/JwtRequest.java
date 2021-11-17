@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  * Default constructor is a must for JSON Parsing.
  */
 @NoArgsConstructor @Getter
-public class JwtRequest extends CommonResponse implements Serializable {
+public class JwtRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
