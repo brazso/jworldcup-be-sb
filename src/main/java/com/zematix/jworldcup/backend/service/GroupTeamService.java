@@ -62,7 +62,8 @@ public class GroupTeamService extends ServiceBase {
 
 	/**
 	 * First level sorting of teams in a group based on the following tie-breaking criterion.
-	 * <li>Higher number of points obtained in the group</li>
+	 * <li>Superior goal difference resulting from the matches played between the teams in question</li>
+	 * <li>Higher number of goals scored in the matches played between the teams in question</li>
 	 */
 	private Comparator<GroupTeam> groupTeamComparatorGdGf = new Comparator<GroupTeam>() {
 		@Override
@@ -107,7 +108,9 @@ public class GroupTeamService extends ServiceBase {
 				EventShortDescWithYearEnum.EC2016, 
 				EventShortDescWithYearEnum.WC2018,
 				EventShortDescWithYearEnum.AFC2019,
-				EventShortDescWithYearEnum.CAF2019).contains(eventShortDescWithYearEnum)) {
+				EventShortDescWithYearEnum.CAF2019,
+				EventShortDescWithYearEnum.EC2020
+				).contains(eventShortDescWithYearEnum)) {
 			switch (level) {
 				case 0:
 					comparator = groupTeamComparatorPoints; // globally in group
@@ -122,8 +125,12 @@ public class GroupTeamService extends ServiceBase {
 					return true;
 			}
 		}
-		else if (Arrays.asList(EventShortDescWithYearEnum.CA2016,
-				EventShortDescWithYearEnum.CA2019).contains(eventShortDescWithYearEnum)) {
+		else if (Arrays.asList(
+				EventShortDescWithYearEnum.CA2016,
+				EventShortDescWithYearEnum.CA2019, 
+				EventShortDescWithYearEnum.CA2021,
+				EventShortDescWithYearEnum.ABC2021
+				).contains(eventShortDescWithYearEnum)) {
 			switch (level) {
 				case 0:
 					comparator = groupTeamComparatorPGdGf;// globally in group
@@ -169,11 +176,14 @@ public class GroupTeamService extends ServiceBase {
 				int nextLevel = level + 1;
 				boolean isAgainstEachOther = false;
 				
-				if (Arrays.asList(EventShortDescWithYearEnum.WC2014, 
+				if (Arrays.asList(
+						EventShortDescWithYearEnum.WC2014, 
 						EventShortDescWithYearEnum.EC2016, 
 						EventShortDescWithYearEnum.WC2018,
 						EventShortDescWithYearEnum.AFC2019,
-						EventShortDescWithYearEnum.CAF2019).contains(eventShortDescWithYearEnum)) {
+						EventShortDescWithYearEnum.CAF2019,
+						EventShortDescWithYearEnum.EC2020
+						).contains(eventShortDescWithYearEnum)) {
 					if (level == 1 && twinGroupTeams.size() < groupTeams.size()) {
 						// Level sorting must be repeated to the matches between the teams
 						// who are still level to determine their final rankings.
@@ -181,8 +191,12 @@ public class GroupTeamService extends ServiceBase {
 					}
 					isAgainstEachOther = (nextLevel == 1);
 				}
-				else if (Arrays.asList(EventShortDescWithYearEnum.CA2016,
-						EventShortDescWithYearEnum.CA2019).contains(eventShortDescWithYearEnum)) {
+				else if (Arrays.asList(
+						EventShortDescWithYearEnum.CA2016,
+						EventShortDescWithYearEnum.CA2019,
+						EventShortDescWithYearEnum.CA2021,
+						EventShortDescWithYearEnum.ABC2021
+						).contains(eventShortDescWithYearEnum)) {
 					if (level == 1 && twinGroupTeams.size() < groupTeams.size()) {
 						// Level sorting must be repeated to the matches between the teams
 						// who are still level to determine their final rankings.
@@ -274,7 +288,9 @@ public class GroupTeamService extends ServiceBase {
 				EventShortDescWithYearEnum.EC2016,
 				EventShortDescWithYearEnum.AFC2019,
 				EventShortDescWithYearEnum.CA2019,
-				EventShortDescWithYearEnum.CAF2019
+				EventShortDescWithYearEnum.CAF2019,
+				EventShortDescWithYearEnum.EC2020,
+				EventShortDescWithYearEnum.CA2021
 				).contains(eventShortDescWithYearEnum)) {
 			comparator = groupTeamComparatorPGdGf;
 		}

@@ -38,5 +38,20 @@ public enum EventShortDescWithYearEnum {
 	/**
 	 * Africa Cup of Nations 2019
 	 */
-	CAF2019
+	CAF2019,
+
+	/**
+	 * UEFA European Championship 2016
+	 */
+	EC2020,
+	
+	/**
+	 * Copa America 2021
+	 */
+	CA2021,
+	
+	/**
+	 * FIFA Arab Cup 2021
+	 */
+	ABC2021
 }

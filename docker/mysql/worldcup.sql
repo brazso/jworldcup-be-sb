@@ -2233,7 +2233,8 @@ INSERT INTO `event` (`event_id`, `location`, `year`, `description`, `short_desc`
 (6, 'Brazil', 2019, 'Copa America', 'CA', 'CONMEBOL'),
 (7, 'Egypt', 2019, 'Africa Cup of Nations', 'CAF', 'CAF'),
 (8, 'England and others', 2020, 'Euro Cup', 'EC', 'UEFA'),
-(9, 'Brazil', 2021, 'Copa America', 'CA', 'CONMEBOL');
+(9, 'Brazil', 2021, 'Copa America', 'CA', 'CONMEBOL'),
+(10, 'Qatar', 2021, 'Arab Cup', 'ABC', 'FIFA');
 
 -- --------------------------------------------------------
 
@@ -2302,7 +2303,11 @@ INSERT INTO `group_` (`group_id`, `event_id`, `name`, `team1_id`, `team2_id`) VA
 (46, 8, 'E', NULL, NULL),
 (47, 8, 'F', NULL, NULL),
 (48, 9, 'A', NULL, NULL),
-(49, 9, 'B', NULL, NULL);
+(49, 9, 'B', NULL, NULL),
+(50, 10, 'A', NULL, NULL),
+(51, 10, 'B', NULL, NULL),
+(52, 10, 'C', NULL, NULL),
+(53, 10, 'D', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2750,7 +2755,39 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (416, 9, 25, 191, 196, '2021-07-05 23:00:00', 62, 1, 0, NULL, NULL, NULL, NULL, 'W22-W21'),
 (417, 9, 26, 189, 194, '2021-07-07 01:00:00', 62, 1, 1, NULL, NULL, 4, 3, 'W24-W23'),
 (418, 9, 27, 194, 196, '2021-07-10 00:00:00', 63, 3, 2, NULL, NULL, NULL, NULL, 'L26-L25'),
-(419, 9, 28, 189, 191, '2021-07-11 00:00:00', 64, 1, 0, NULL, NULL, NULL, NULL, 'W26-W25');
+(419, 9, 28, 189, 191, '2021-07-11 00:00:00', 64, 1, 0, NULL, NULL, NULL, NULL, 'W26-W25'),
+(420, 10, 1, 209, 200, '2021-11-30 16:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(421, 10, 2, 213, 205, '2021-11-30 10:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(422, 10, 3, 202, 207, '2021-11-30 13:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(423, 10, 4, 214, 212, '2021-11-30 19:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(424, 10, 5, 199, 211, '2021-12-01 10:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(425, 10, 6, 201, 204, '2021-12-01 13:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(426, 10, 7, 206, 208, '2021-12-01 16:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(427, 10, 8, 210, 203, '2021-12-01 19:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(428, 10, 9, 200, 202, '2021-12-03 10:00:00', 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(429, 10, 10, 207, 209, '2021-12-03 13:00:00', 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(430, 10, 11, 205, 214, '2021-12-03 16:00:00', 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(431, 10, 12, 212, 213, '2021-12-03 19:00:00', 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(432, 10, 13, 203, 206, '2021-12-04 10:00:00', 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(433, 10, 14, 204, 199, '2021-12-04 13:00:00', 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(434, 10, 15, 211, 201, '2021-12-04 16:00:00', 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(435, 10, 16, 208, 210, '2021-12-04 19:00:00', 66, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(436, 10, 17, 212, 205, '2021-12-06 15:00:00', 67, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(437, 10, 18, 213, 214, '2021-12-06 15:00:00', 67, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(438, 10, 19, 207, 200, '2021-12-06 19:00:00', 67, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(439, 10, 20, 209, 202, '2021-12-06 19:00:00', 67, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(440, 10, 21, 206, 210, '2021-12-07 15:00:00', 67, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(441, 10, 22, 203, 208, '2021-12-07 15:00:00', 67, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(442, 10, 23, 199, 201, '2021-12-07 19:00:00', 67, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(443, 10, 24, 204, 211, '2021-12-07 19:00:00', 67, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(444, 10, 25, NULL, NULL, '2021-12-10 15:00:00', 68, NULL, NULL, NULL, NULL, NULL, NULL, 'B1-A2'),
+(445, 10, 26, NULL, NULL, '2021-12-10 19:00:00', 68, NULL, NULL, NULL, NULL, NULL, NULL, 'A1-B2'),
+(446, 10, 27, NULL, NULL, '2021-12-11 15:00:00', 68, NULL, NULL, NULL, NULL, NULL, NULL, 'D1-C2'),
+(447, 10, 28, NULL, NULL, '2021-12-11 19:00:00', 68, NULL, NULL, NULL, NULL, NULL, NULL, 'C1-D2'),
+(448, 10, 29, NULL, NULL, '2021-12-15 15:00:00', 69, NULL, NULL, NULL, NULL, NULL, NULL, 'W25-W27'),
+(449, 10, 30, NULL, NULL, '2021-12-15 19:00:00', 69, NULL, NULL, NULL, NULL, NULL, NULL, 'W26-W28'),
+(450, 10, 31, NULL, NULL, '2021-12-18 10:00:00', 70, NULL, NULL, NULL, NULL, NULL, NULL, 'L26-L28'),
+(451, 10, 32, NULL, NULL, '2021-12-18 15:00:00', 71, NULL, NULL, NULL, NULL, NULL, NULL, 'W26-W28');
 
 -- --------------------------------------------------------
 
@@ -2854,7 +2891,14 @@ INSERT INTO `round` (`round_id`, `event_id`, `name`, `is_groupmatch`, `is_overti
 (61, 9, 'Quarter-finals', 0, 0),
 (62, 9, 'Semi-finals', 0, 0),
 (63, 9, 'Third place play-off', 0, 0),
-(64, 9, 'Final', 0, 1);
+(64, 9, 'Final', 0, 1),
+(65, 10, '1st round', 1, NULL),
+(66, 10, '2nd round', 1, NULL),
+(67, 10, '3rd round', 1, NULL),
+(68, 10, 'Quarter-finals', 0, 1),
+(69, 10, 'Semi-finals', 0, 1),
+(70, 10, 'Third place play-off', 0, 1),
+(71, 10, 'Final', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -3074,7 +3118,23 @@ INSERT INTO `team` (`team_id`, `event_id`, `name`, `flag`, `group_id`, `fifa_poi
 (195, 9, 'Paraguay', 'PAR', 48, 0, 756),
 (196, 9, 'Peru', 'PER', 49, 0, 3177),
 (197, 9, 'Uruguay', 'URU', 48, 0, 849),
-(198, 9, 'Venezuela', 'VEN', 49, 0, 3179);
+(198, 9, 'Venezuela', 'VEN', 49, 0, 3179),
+(199, 10, 'Algeria', 'ALG', 53, 0, NULL),
+(200, 10, 'Bahrain', 'BHR', 50, 0, NULL),
+(201, 10, 'Egypt', 'EGY', 53, 0, NULL),
+(202, 10, 'Iraq', 'IRQ', 50, 0, NULL),
+(203, 10, 'Jordan', 'JOR', 52, 0, NULL),
+(204, 10, 'Lebanon', 'LBN', 53, 0, NULL),
+(205, 10, 'Mauritania', 'MTN', 51, 0, NULL),
+(206, 10, 'Morocco', 'MAR', 52, 0, NULL),
+(207, 10, 'Oman', 'OMA', 50, 0, NULL),
+(208, 10, 'Palestine', 'PLE', 52, 0, NULL),
+(209, 10, 'Qatar', 'QAT', 50, 0, NULL),
+(210, 10, 'Saud Arabia', 'KSA', 52, 0, NULL),
+(211, 10, 'Sudan', 'SDN', 53, 0, NULL),
+(212, 10, 'Syria', 'SYR', 51, 0, NULL),
+(213, 10, 'Tunisia', 'TUN', 51, 0, NULL),
+(214, 10, 'United Arab Emirates', 'UAE', 51, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -3536,19 +3596,19 @@ ALTER TABLE `chat`
 -- AUTO_INCREMENT for table `event`
 --
 ALTER TABLE `event`
-  MODIFY `event_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `event_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `group_`
 --
 ALTER TABLE `group_`
-  MODIFY `group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `match_`
 --
 ALTER TABLE `match_`
-  MODIFY `match_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=420;
+  MODIFY `match_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=452;
 
 --
 -- AUTO_INCREMENT for table `role`
@@ -3560,13 +3620,13 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT for table `round`
 --
 ALTER TABLE `round`
-  MODIFY `round_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `round_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `team`
 --
 ALTER TABLE `team`
-  MODIFY `team_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=199;
+  MODIFY `team_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
 
 --
 -- AUTO_INCREMENT for table `user`
