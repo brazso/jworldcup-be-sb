@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-	id "org.springframework.boot" version "2.5.0"
+	id "org.springframework.boot" version "2.5.7"
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'eclipse'
@@ -23,7 +23,6 @@ eclipse.jdt.file.withProperties { props ->
 
 eclipse { // id 'eclipse'
 	synchronizationTasks eclipseJdt
-	//autoBuildTasks generateCode
 }
 
 lombok { // id "io.freefair.lombok"

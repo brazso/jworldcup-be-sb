@@ -90,10 +90,10 @@ file://{$buildDir}/reports/tests/test/index.html
 
 ### Eclipse IDE
 If you use Eclipse IDE it is recommended to install the following items in Eclipse Marketplace
+* Java 17 Support for Eclipse 2021-09 (unsupported natively)
 * Spring Tools 4 (Spring tool, e.g. running application easily as Spring Boot App)
-* DBeaver 21.0.3 (if you want a more convenient database tool than PhpMyAdmin included in docker image)
-* Buildship Grandle Integration 3.0 (usually it is included with Eclipse, already installed)
-* SonarLint 5.9 (sourcecode analyser tool)
+* DBeaver 21.2.5 (if you want a more convenient database tool than PhpMyAdmin included in docker image)
+* SonarLint 7.1 (sourcecode analyser tool)
 
 ### Rest API
 * Swagger UI page is [http://localhost:8090/jworldcup/swagger-ui.html](http://localhost:8090/jworldcup/swagger-ui.html)

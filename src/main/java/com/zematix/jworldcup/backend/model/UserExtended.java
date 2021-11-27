@@ -15,6 +15,7 @@ public class UserExtended extends User {
 	private String emailNewAgain;
     private String loginPasswordNew;
     private String loginPasswordAgain;
-    private Locale locale; //private String languageTag;
+    private Locale locale;
+//    private String languageTag;
 
 }
