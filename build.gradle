@@ -23,6 +23,7 @@ eclipse.jdt.file.withProperties { props ->
 
 eclipse { // id 'eclipse'
 	synchronizationTasks eclipseJdt
+	//autoBuildTasks generateCode
 }
 
 lombok { // id "io.freefair.lombok"
@@ -30,8 +31,8 @@ lombok { // id "io.freefair.lombok"
 }
 
 group = 'com.zematix.jworldcup'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '14'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = '17'
 
 bootRun {
 	String activeProfile = System.properties['spring.profiles.active']
@@ -189,8 +190,8 @@ task generateTestDatabaseScripts {
 
 // Eclipse IDE looks for the bootBuildInfo generated properties file during application boot under bin/main/META-INF folder
 task copyBuildInfo(type: Copy) {
-	from file("$buildDir/resources/main/META-INF/build-info.properties")
-	into file("bin/main/META-INF")
+	from "$buildDir/resources/main/META-INF/build-info.properties"
+	into "bin/main/META-INF"
 }
 
 compileJava {
@@ -216,7 +217,7 @@ compileJava {
 tasks.withType(JavaCompile) {
 	dependsOn downloadFile, generateTestDatabaseScripts, copyBuildInfo //, wsimport //, generateJaxb
 	options.compilerArgs += [
-		"--enable-preview",
+		//"--enable-preview",
 		"-Amapstruct.defaultComponentModel=spring",
 		"-Amapstruct.unmappedTargetPolicy=IGNORE"
 	]
