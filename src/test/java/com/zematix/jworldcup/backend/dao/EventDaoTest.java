@@ -50,11 +50,11 @@ public class EventDaoTest {
 	
 	/**
 	 * Test {@link EventDao#findLastEvent()} method.
-	 * Scenario: successfully retrieves the last event in time
+	 * Scenario: successfully retrieves the last event
 	 */
 	@Test
 	public void /*Event*/ findLastEvent() {
-		Event expectedLastEvent = commonDao.findEntityById(Event.class, 7L);
+		Event expectedLastEvent = commonDao.findEntityById(Event.class, 10L);
 		Event lastEvent = eventDao.findLastEvent();
 		
 		assertEquals(expectedLastEvent, lastEvent);

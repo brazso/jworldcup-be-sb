@@ -75,6 +75,7 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.jupiter'
 	}
+	testImplementation('org.junit.vintage:junit-vintage-engine:5.8.1')
 	
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
 	testImplementation 'org.springframework.security:spring-security-test'
@@ -224,19 +225,19 @@ tasks.withType(JavaCompile) {
 
 tasks.withType(Test) {
 	jvmArgs += [
-		"--enable-preview"
+		//"--enable-preview"
 	]
 }
 
 tasks.withType(JavaExec) {
 	jvmArgs += [
-		"--enable-preview"
+		//"--enable-preview"
 	]
 }
 
-//clean {
-//	delete "${buildDir}/generated"
-//}
+clean {
+	delete "bin/main/META-INF"
+}
 
 springBoot {
 	mainClassName = 'com.zematix.jworldcup.backend.Application'

@@ -501,8 +501,9 @@ public class UserService extends ServiceBase {
 		checkNotNull(loginName);
 		
 		User user = userDao.findUserByLoginName(loginName);
-		user.getRoles().size(); // forced lazy fetch
-//		user.getUserStatus();
+		if (user != null) {
+			user.getRoles().size(); // forced lazy fetch
+		}
 		
 		return user;
 	}

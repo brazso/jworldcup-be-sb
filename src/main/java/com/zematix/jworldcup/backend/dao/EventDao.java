@@ -37,7 +37,7 @@ public class EventDao extends DaoBase {
 	}
 	
 	/**
-	 * Retrieves the last {@link Event} instance ordered by its year. Returns
+	 * Retrieves the last {@link Event} instance ordered by its id. Returns
 	 * {@code null} if not found.
 	 *  
 	 * @return found last {@link Event} instance or {@code null} if not found 
@@ -49,7 +49,7 @@ public class EventDao extends DaoBase {
 		QEvent qEvent = QEvent.event;
 		JPAQuery<Event> query = new JPAQuery<>(getEntityManager());
 		event = query.from(qEvent)
-			.orderBy(qEvent.year.desc())
+			.orderBy(qEvent.eventId.desc())
 			.fetchFirst();
 		
 		return event;
