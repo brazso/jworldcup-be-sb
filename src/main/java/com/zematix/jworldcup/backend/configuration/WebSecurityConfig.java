@@ -76,19 +76,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
 				.authorizeRequests()
-				//.logout().permitAll().logoutSuccessHandler((request, response, authentication) -> {
-                //    response.setStatus(HttpServletResponse.SC_OK);
-                //})
-				.antMatchers(Stream.concat(Stream.of(ACTUATOR_WHITELIST), Stream.of(SWAGGER_WHITELIST)).toArray(String[]::new)).permitAll()
-		        //.antMatchers("/", "/**").permitAll()
-				//.antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // browser (angular) uses
+				.antMatchers(Stream.concat(Stream.of(ACTUATOR_WHITELIST), Stream.of(SWAGGER_WHITELIST))
+						.toArray(String[]::new))
+				.permitAll()
+				// .antMatchers("/", "/**").permitAll()
+				// .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // browser (angular) uses
 				// all other requests need to be authenticated
-				.anyRequest().authenticated()
-				.and().
-				// make sure we use stateless session; session won't be used to store user's state.
+				.anyRequest().authenticated().and().
+				// make sure we use stateless session; session won't be used to store user's
+				// state.
 				exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+		httpSecurity.logout().permitAll().logoutSuccessHandler((request, response, authentication) -> {
+			response.setStatus(HttpServletResponse.SC_OK);
+		});
+		
 		// Add a filter to validate the tokens with every request
 		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		
