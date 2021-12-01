@@ -21,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.zematix.jworldcup.backend.crypto.MultiCryptPasswordEncoder;
 
 /**
@@ -74,12 +76,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
 				.authorizeRequests()
-				//.antMatchers("/login").permitAll()
+				//.logout().permitAll().logoutSuccessHandler((request, response, authentication) -> {
+                //    response.setStatus(HttpServletResponse.SC_OK);
+                //})
 				.antMatchers(Stream.concat(Stream.of(ACTUATOR_WHITELIST), Stream.of(SWAGGER_WHITELIST)).toArray(String[]::new)).permitAll()
 		        //.antMatchers("/", "/**").permitAll()
 				//.antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // browser (angular) uses
 				// all other requests need to be authenticated
-				.anyRequest().authenticated().and().
+				.anyRequest().authenticated()
+				.and().
 				// make sure we use stateless session; session won't be used to store user's state.
 				exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
