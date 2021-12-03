@@ -20,7 +20,6 @@ public abstract class ParameterizedMessageMapper {
 
 	private final MessageSource msgs = StaticContextAccessor.getBean(MessageSource.class);
 	
-	//@Mapping(target = "msgBuilt", expression = "java( parameterizedMessage.buildMessage() )")
 	@Mapping(target = "msgBuilt", source = "parameterizedMessage")
 	public abstract ParameterizedMessageDto entityToDto(ParameterizedMessage parameterizedMessage);
 	

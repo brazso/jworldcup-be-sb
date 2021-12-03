@@ -37,13 +37,13 @@ public abstract class ServerBase {
 		for (ParameterizedMessage pMsg : pMsgs) {
 			switch (pMsg.getMsgType()) {
 				case ERROR:
-					logger.error(MessageFormat.format(pMsg.getMsgCode(), pMsg.getMsgParameters()), e);
+					logger.error(MessageFormat.format(pMsg.getMsgCode(), pMsg.getMsgParams()), e);
 					break;
 				case WARNING:
-					logger.warn(MessageFormat.format(pMsg.getMsgCode(), pMsg.getMsgParameters()), e);
+					logger.warn(MessageFormat.format(pMsg.getMsgCode(), pMsg.getMsgParams()), e);
 					break;
 				case INFO:
-					logger.info(MessageFormat.format(pMsg.getMsgCode(), pMsg.getMsgParameters()), e);
+					logger.info(MessageFormat.format(pMsg.getMsgCode(), pMsg.getMsgParams()), e);
 					break;
 				default:
 					break;

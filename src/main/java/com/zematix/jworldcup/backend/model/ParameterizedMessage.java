@@ -37,11 +37,11 @@ public class ParameterizedMessage {
 		this(msgCode, msgType, new Object[]{});
 	}
 
-	private ParameterizedMessage(String msgCode, Object... msgParameters) {
-		this(msgCode, ParameterizedMessageType.ERROR, msgParameters);
+	private ParameterizedMessage(String msgCode, Object... msgParams) {
+		this(msgCode, ParameterizedMessageType.ERROR, msgParams);
 	}
 	
-	private ParameterizedMessage(String msgCode, ParameterizedMessageType msgType, Object... msgParameters) {
+	private ParameterizedMessage(String msgCode, ParameterizedMessageType msgType, Object... msgParams) {
 		checkNotNull(msgCode);
 		this.msgCode = msgCode;
 		
@@ -50,10 +50,10 @@ public class ParameterizedMessage {
 		}
 		this.setMsgType(msgType);
 		
-		if (msgParameters == null) {
-			msgParameters = new Object[]{};
+		if (msgParams == null) {
+			msgParams = new Object[]{};
 		}
-		this.msgParams = msgParameters;
+		this.msgParams = msgParams;
 	}
 	
 	public static ParameterizedMessage create(String msgCode) {
@@ -64,12 +64,12 @@ public class ParameterizedMessage {
 		return new ParameterizedMessage(msgCode, msgType);
 	}
 
-	public static ParameterizedMessage create(String msgCode, Object... msgParameters) {
-		return new ParameterizedMessage(msgCode, msgParameters);
+	public static ParameterizedMessage create(String msgCode, Object... msgParams) {
+		return new ParameterizedMessage(msgCode, msgParams);
 	}
 
-	public static ParameterizedMessage create(String msgCode, ParameterizedMessageType msgType, Object... msgParameters) {
-		return new ParameterizedMessage(msgCode, msgType, msgParameters);
+	public static ParameterizedMessage create(String msgCode, ParameterizedMessageType msgType, Object... msgParams) {
+		return new ParameterizedMessage(msgCode, msgType, msgParams);
 	}
 
 	public String getMsgCode() {
@@ -88,7 +88,7 @@ public class ParameterizedMessage {
 		this.msgType = msgType;
 	}
 
-	public Object[] getMsgParameters() {
+	public Object[] getMsgParams() {
 		return msgParams;
 	}
 
@@ -102,7 +102,7 @@ public class ParameterizedMessage {
 
 	public String buildMessage(MessageSource msgs, Locale locale) {
 		checkNotNull(msgs);
-		return msgs.getMessage(this.getMsgCode(), this.getMsgParameters(), locale == null ? Locale.getDefault() : locale);
+		return msgs.getMessage(this.getMsgCode(), this.getMsgParams(), locale == null ? Locale.getDefault() : locale);
 	}
 	
 	/**
