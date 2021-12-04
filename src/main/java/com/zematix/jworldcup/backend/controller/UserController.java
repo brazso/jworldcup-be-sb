@@ -198,7 +198,7 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@Operation(summary = "Find user by her id", description = "Find user by her id")
 	@GetMapping(value = "/user/{id}")
-	public ResponseEntity<GenericResponse<UserDto>> fundUser(@PathVariable("id") Long userId) throws ServiceException {
+	public ResponseEntity<GenericResponse<UserDto>> findUser(@PathVariable("id") Long userId) throws ServiceException {
 		var user = userService.retrieveUser(userId);
 		return buildResponseEntityWithOK(new GenericResponse<>(userMapper.entityToDto(user)));
 	}

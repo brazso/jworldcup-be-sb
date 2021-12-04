@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Match;
+import com.zematix.jworldcup.backend.entity.QBet;
 import com.zematix.jworldcup.backend.entity.QEvent;
 import com.zematix.jworldcup.backend.entity.QMatch;
 
@@ -150,5 +151,25 @@ public class EventDao extends DaoBase {
 				.fetchFirst();
 		
 		return match!=null ? match.getStartTime() : null;
+	}
+
+	/**
+	 * Retrieves that event which belongs to the last bet of the input user. If the user
+	 * has no bet at all, {@code null} is retrieved.
+	 * @return event belongs to last bet of the given user 
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Event findEventOfLastBetByUserId(Long userId) {
+		Event event = null;
+		
+		QEvent qEvent = QEvent.event;
+		QBet qBet = QBet.bet;
+		JPAQuery<Event> query = new JPAQuery<>(getEntityManager());
+		event = query.from(qEvent).join(qBet).on(qEvent.eventId.eq(qBet.event.eventId))
+				.where(qBet.user.userId.eq(userId))
+				.orderBy(qBet.betId.desc())
+				.fetchFirst();
+		
+		return event;
 	}
 }

@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zematix.jworldcup.backend.dao.EventDao;
 import com.zematix.jworldcup.backend.dto.EventDto;
 import com.zematix.jworldcup.backend.dto.GenericListResponse;
+import com.zematix.jworldcup.backend.dto.GenericResponse;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.mapper.EventMapper;
 import com.zematix.jworldcup.backend.service.EventService;
@@ -46,5 +48,19 @@ public class EventController extends ServiceBase implements ResponseEntityHelper
 	public ResponseEntity<GenericListResponse<EventDto>> findAllEvents() {
 		var events = eventService.findAllEvents();
 		return buildResponseEntityWithOK(new GenericListResponse<>(eventMapper.entityListToDtoList(events)));
+	}
+
+	/**
+	/**
+	 * Retrieves that event which belongs to the last bet of the input user. If the user
+	 * has no bet at all, the last event is retrieved.
+	 * @return event proposed to the given user 
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Find event of the given user", description = "Find event which belongs to the last bet of the input user. If the user has no bet at all, the last event is retrieved.")
+	@GetMapping(value = "/find-event-by-user")
+	public ResponseEntity<GenericResponse<EventDto>> findEventByUserId(@RequestParam Long userId) {
+		var event = eventService.findEventByUserId(userId);
+		return buildResponseEntityWithOK(new GenericResponse<>(eventMapper.entityToDto(event)));
 	}
 }

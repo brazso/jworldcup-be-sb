@@ -104,7 +104,7 @@ public class EventService extends ServiceBase {
 	}
 	
 	/**
-	 * Retrieves completed event and also loads all their transitive field.
+	 * Retrieves completed events and also loads all their transitive fields.
 	 * @return list of all completed Event entities
 	 */
 	@Transactional(readOnly = true)
@@ -114,5 +114,21 @@ public class EventService extends ServiceBase {
 				.collect(Collectors.toList());
 		events.stream().forEach(e -> initEvent(e));
 		return events;
+	}
+	
+	/**
+	 * Retrieves that event which belongs to the last bet of the input user. If the user
+	 * has no bet at all, the last event is retrieved.
+	 * @return event proposed to the given user 
+	 */
+	@Transactional(readOnly = true)
+	public Event findEventByUserId(Long userId) {
+		checkNotNull(userId);
+		Event event = eventDao.findEventOfLastBetByUserId(userId);
+		if (event == null) {
+			event = eventDao.findLastEvent();
+		}
+		initEvent(event);
+		return event;
 	}
 }
