@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.zematix.jworldcup.backend.dto.SessionInfo;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
@@ -33,6 +35,8 @@ import com.zematix.jworldcup.backend.model.UserCertificate;
 @Service
 @Configuration
 public class SessionService extends ServiceBase {
+	private final String id = UUID.randomUUID().toString();
+	
 	@Inject
 	private ApplicationService applicationService;
 
@@ -107,6 +111,19 @@ public class SessionService extends ServiceBase {
 		}
 	}
 
+	public SessionInfo findSessionInfo() {
+		SessionInfo sessionInfo = new SessionInfo(id);
+		sessionInfo.setAppShortName(getAppShortName());
+		sessionInfo.setAppVersionNumber(getAppVersionNumber());
+		sessionInfo.setAppVersionDate(getActualDateTime());
+		sessionInfo.setAppCheatDateTime(getAppCheatDateTime());
+		sessionInfo.setAppEmailAddr(getAppEmailAddr());
+		sessionInfo.setUser(getUser());
+		sessionInfo.setEvent(getEvent());
+		sessionInfo.setUserOfEvent(getUserOfEvent());
+		return sessionInfo;
+	}
+	
 	/**
 	 * @return application short name
 	 */
