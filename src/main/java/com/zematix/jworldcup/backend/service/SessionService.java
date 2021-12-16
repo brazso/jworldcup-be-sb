@@ -83,7 +83,7 @@ public class SessionService extends ServiceBase {
 	@PostConstruct
 	public void initApplicationSession() {
 		logger.info("");
-//		locale = getExternalContext().getRequestLocale(); // TODO
+		locale = Locale.getDefault();
 		event = eventService.findLastEvent();
 		// user cannot be initialized here, see getUser cached method
 	}
@@ -188,7 +188,6 @@ public class SessionService extends ServiceBase {
 
 	public void setLanguage(String language) {
 		locale = new Locale(language);
-//		getViewRoot().setLocale(locale); // TODO
 	}
 
 	/**
@@ -211,23 +210,6 @@ public class SessionService extends ServiceBase {
 	 * @return cached/database user
 	 */
 	public User getUser() {
-//		Subject subject = conversationController.getCurrentUser(); // this subject might have principal value
-//		if (subject == null || subject.getPrincipal() == null /*!subject.isAuthenticated()*/) {
-//			this.user = null;
-//		}
-//		else {
-//			String loginName = (String)subject.getPrincipal();
-//			if (this.user == null || !loginName.equals(this.user.getLoginName())) {
-//				User user = userDao.findUserByLoginName(loginName);
-//				if (user == null) {
-//					 // authenticated user must be in the database, so this is supposed to be a dead code
-//					throw new IllegalStateException(String.format("User with loginName \"%s\" is not found in the database.", loginName));
-//				}
-//				this.user = user;
-//				
-//				initApplicationSessionAfterUserInitialized();
-//			}
-//		}
 		var authenticatedUser = userDetailsService.getAuthenticatedUser();
 		if (authenticatedUser == null) {
 			this.user = null;

@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.dto;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
@@ -21,7 +22,7 @@ public class SessionInfo {
     private LocalDateTime appCheatDateTime;
     private String appEmailAddr;
     
-//    private Locale locale;
+    private Locale locale;
     private User user;
     private Event event;
     private UserOfEvent userOfEvent;

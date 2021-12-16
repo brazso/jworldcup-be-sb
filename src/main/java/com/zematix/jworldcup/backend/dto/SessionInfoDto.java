@@ -17,7 +17,7 @@ public class SessionInfoDto {
     private LocalDateTime appCheatDateTime;
     private String appEmailAddr;
     
-//    private Locale locale;
+    private String localeId;
     private UserDto user;
     private EventDto event;
     private UserOfEventDto userOfEvent;
