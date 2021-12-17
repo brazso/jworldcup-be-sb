@@ -82,15 +82,12 @@ public class SessionService extends ServiceBase {
 	 */
 	@PostConstruct
 	public void initApplicationSession() {
-		logger.info("");
 		locale = Locale.getDefault();
 		event = eventService.findLastEvent();
 		// user cannot be initialized here, see getUser cached method
 	}
 
 	private void initApplicationSessionAfterUserInitialized() {
-		logger.info("");
-		
 		// refresh userOfEvent
 		this.getUserOfEvent();
 
@@ -118,6 +115,7 @@ public class SessionService extends ServiceBase {
 		sessionInfo.setAppVersionDate(getActualDateTime());
 		sessionInfo.setAppCheatDateTime(getAppCheatDateTime());
 		sessionInfo.setAppEmailAddr(getAppEmailAddr());
+		sessionInfo.setLocale(getLocale());
 		sessionInfo.setUser(getUser());
 		sessionInfo.setEvent(getEvent());
 		sessionInfo.setUserOfEvent(getUserOfEvent());
@@ -182,6 +180,10 @@ public class SessionService extends ServiceBase {
 		return locale;
 	}
 
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+	
 	public String getLanguage() {
 		return locale.getLanguage();
 	}

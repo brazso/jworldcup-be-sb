@@ -123,7 +123,6 @@ public class SchedulerService extends ServiceBase {
 	 * It deletes expired objects and refreshes {@link ApplicationService#topUsersCache}.
 	 */
 	public void regularMaintenanceExecution() throws ServiceException {
-		logger.info("");
 		try {
 			int n = userService.deleteExpiredCandidateUsers();
 			logger.info(String.format("Scheduled deleteExpiredCandidateUsers deleted %d elements.", n));
