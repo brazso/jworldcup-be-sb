@@ -13,14 +13,17 @@ public interface UserMapper extends MapperBase<UserDto, User> {
 
     @Override
     @Mapping(source = "userStatus.status", target = "userStatus", ignore = true)
+    @Mapping(source = "loginPassword", target = "loginPassword", ignore = true) // for security reasons
     UserDto entityToDto(User user);
 
     @Override
     @Mapping(source = "userStatus", target = "userStatus.status", ignore = true)
+    @Mapping(source = "loginPassword", target = "loginPassword", ignore = true) // for security reasons
     User dtoToEntity(UserDto userDto);
 	
-	@Mapping(source = "authorities", target = "authorities")
 	@Mapping(source = "user.userStatus.status", target = "userStatus")
+	@Mapping(source = "user.loginPassword", target = "loginPassword", ignore = true) // for security reasons
+	@Mapping(source = "authorities", target = "authorities")
 	UserDto entityToDto(User user, Set<String> authorities);
 
 }
