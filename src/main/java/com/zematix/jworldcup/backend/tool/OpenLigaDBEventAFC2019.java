@@ -2,8 +2,6 @@ package com.zematix.jworldcup.backend.tool;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,10 +16,6 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 import com.msiggi.openligadb.client.ArrayOfGroup;
 import com.msiggi.openligadb.client.ArrayOfLeague;
 import com.msiggi.openligadb.client.ArrayOfMatchdata;
@@ -34,7 +28,6 @@ import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Round;
 import com.zematix.jworldcup.backend.entity.Team;
 import com.zematix.jworldcup.backend.entity.WebService;
-import com.zematix.jworldcup.backend.model.CountryCode;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**

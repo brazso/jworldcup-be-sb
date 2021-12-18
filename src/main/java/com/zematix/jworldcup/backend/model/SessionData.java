@@ -1,4 +1,4 @@
-package com.zematix.jworldcup.backend.dto;
+package com.zematix.jworldcup.backend.model;
 
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -11,7 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class SessionInfo {
+public class SessionData {
     
     @EqualsAndHashCode.Include
     private String id;
@@ -28,7 +28,7 @@ public class SessionInfo {
     private UserOfEvent userOfEvent;
     private String newsLine;
 
-    public SessionInfo(String id) {
+    public SessionData(String id) {
     	super();
     	this.id = id;
     }

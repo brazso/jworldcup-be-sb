@@ -4,13 +4,15 @@ import javax.inject.Inject;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zematix.jworldcup.backend.dto.GenericResponse;
-import com.zematix.jworldcup.backend.dto.SessionInfoDto;
-import com.zematix.jworldcup.backend.mapper.SessionInfoMapper;
+import com.zematix.jworldcup.backend.dto.SessionDataDto;
+import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.mapper.SessionDataMapper;
 import com.zematix.jworldcup.backend.service.ServiceBase;
 import com.zematix.jworldcup.backend.service.SessionService;
 
@@ -28,49 +30,22 @@ public class SessionController extends ServiceBase implements ResponseEntityHelp
 	private SessionService sessionService;
 
 	@Inject
-	private SessionInfoMapper sessionInfoMapper;
-
-
-//	/**
-//	 * Modifies registration data of an existing user. It is a simple wrapper to
-//	 * the same method in {@link UserService}.
-//	 * 
-//	 * @param userExtendedDto - user to be modified
-//	 * @return modified user wrapped in 
-//	 * @throws ServiceException if the user cannot be identified or modified
-//	 */
-//	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-//	@Operation(summary = "Modify a user", description = "Modify a user with the given data")
-//	@PutMapping(value = "/modify-user")
-//	public ResponseEntity<GenericResponse<UserDto>> modifyUser(
-//			@RequestBody UserExtendedDto userExtendedDto) throws ServiceException {
-//
-//		UserExtended userExtended = userExtendedMapper.dtoToEntity(userExtendedDto);
-//		
-//		User user = userService.modifyUser(userExtended.getLoginName(), userExtended.getLoginPassword(), 
-//				userExtended.getLoginPasswordNew(), userExtended.getLoginPasswordAgain(), 
-//				userExtended.getFullName(), userExtended.getEmailNew(), 
-//				userExtended.getEmailNewAgain(), userExtended.getZoneId(), 
-//				userExtended.getLocale());
-//
-//		return buildResponseEntityWithOK(new GenericResponse<>(userMapper.entityToDto(user)));
-//	}
+	private SessionDataMapper sessionDataMapper;
 	
 	/**
-	 * Returns a wrapped list of strings containing user loginName values matched by the given 
-	 * loginNamePrefix.
+	 * Refreshes session data storing locale, user and event.
 	 * 
-	 * @param loginNamePrefix
-	 * @return list of strings containing user loginName values matched by the given 
-	 *         loginNamePrefix
-	 * @throws IllegalArgumentException if any of the given parameters is invalid
+	 * @param sessionDataDto
+	 * @return refreshed session data
+	 * @throws ServiceException if the session data cannot be refreshed
 	 */
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-	@Operation(summary = "Find session info", description = "Find session info")
-	@GetMapping(value = "/find-session-info")
-	public ResponseEntity<GenericResponse<SessionInfoDto>> findSessionInfo() {
-		var sessionInfo = sessionService.findSessionInfo();
-		return buildResponseEntityWithOK(new GenericResponse<>(sessionInfoMapper.entityToDto(sessionInfo)));
+	@Operation(summary = "Refreah session info", description = "Refresh session info")
+	@PutMapping(value = "/refresh-session-data")
+	public ResponseEntity<GenericResponse<SessionDataDto>> refreshSessionData(
+			@RequestBody SessionDataDto sessionDataDto) throws ServiceException {
+		var sessionData = sessionService.refreshSessionData(sessionDataMapper.dtoToEntity(sessionDataDto));
+		return buildResponseEntityWithOK(new GenericResponse<>(sessionDataMapper.entityToDto(sessionData)));
 	}
 	
 }

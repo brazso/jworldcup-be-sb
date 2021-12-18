@@ -16,13 +16,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
-import com.zematix.jworldcup.backend.dto.SessionInfo;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.SessionData;
 import com.zematix.jworldcup.backend.model.UserCertificate;
 
 /**
@@ -108,18 +108,40 @@ public class SessionService extends ServiceBase {
 		}
 	}
 
-	public SessionInfo findSessionInfo() {
-		SessionInfo sessionInfo = new SessionInfo(id);
-		sessionInfo.setAppShortName(getAppShortName());
-		sessionInfo.setAppVersionNumber(getAppVersionNumber());
-		sessionInfo.setAppVersionDate(getActualDateTime());
-		sessionInfo.setAppCheatDateTime(getAppCheatDateTime());
-		sessionInfo.setAppEmailAddr(getAppEmailAddr());
-		sessionInfo.setLocale(getLocale());
-		sessionInfo.setUser(getUser());
-		sessionInfo.setEvent(getEvent());
-		sessionInfo.setUserOfEvent(getUserOfEvent());
-		return sessionInfo;
+	public SessionData refreshSessionData(SessionData sessionData) {
+		if (sessionData == null) {
+			sessionData = new SessionData(id);
+		}
+		sessionData.setId(id);
+		sessionData.setAppShortName(getAppShortName());
+		sessionData.setAppVersionNumber(getAppVersionNumber());
+		sessionData.setAppVersionDate(getActualDateTime());
+		sessionData.setAppCheatDateTime(getAppCheatDateTime());
+		sessionData.setAppEmailAddr(getAppEmailAddr());
+		
+		// locale normally comes from client (input)
+		if (sessionData.getLocale() != null) {
+			setLocale(sessionData.getLocale());
+		}
+		else { // but if missing it comes from local 
+			sessionData.setLocale(getLocale());
+		}
+
+		// user may come only from local
+		sessionData.setUser(getUser());
+		
+		sessionData.setEvent(sessionData.getEvent() != null ? sessionData.getEvent() : getEvent());
+		// event normally comes from client (input)
+		if (sessionData.getEvent() != null) {
+			setEvent(sessionData.getEvent());
+		}
+		else { // but if missing it comes from local 
+			sessionData.setEvent(getEvent());
+		}
+		
+		sessionData.setUserOfEvent(getUserOfEvent());
+		
+		return sessionData;
 	}
 	
 	/**

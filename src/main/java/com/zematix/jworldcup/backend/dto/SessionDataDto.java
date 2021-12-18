@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class SessionInfoDto {
+public class SessionDataDto {
     
     @EqualsAndHashCode.Include
     private String id;
