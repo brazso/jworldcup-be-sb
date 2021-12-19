@@ -117,14 +117,20 @@ public class EventService extends ServiceBase {
 	}
 	
 	/**
-	 * Retrieves that event which belongs to the last bet of the input user. If the user
+	 * Retrieves that incomplete event which belongs to the last bet of the input user. If the user
 	 * has no bet at all, the last event is retrieved.
 	 * @return event proposed to the given user 
 	 */
 	@Transactional(readOnly = true)
-	public Event findEventByUserId(Long userId) {
+	public Event findLastEventByUserId(Long userId) {
 		checkNotNull(userId);
 		Event event = eventDao.findEventOfLastBetByUserId(userId);
+		if (event != null) {
+			Integer percent = applicationService.getEventCompletionPercentCache(event.getEventId());
+			if (percent == null || percent.equals(100)) {
+				event = null;
+			}
+		}
 		if (event == null) {
 			event = eventDao.findLastEvent();
 		}

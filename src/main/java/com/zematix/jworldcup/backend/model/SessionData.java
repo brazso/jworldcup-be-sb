@@ -27,6 +27,8 @@ public class SessionData {
     private Event event;
     private UserOfEvent userOfEvent;
     private String newsLine;
+    
+    private Integer eventCompletionPercent;
 
     public SessionData(String id) {
     	super();

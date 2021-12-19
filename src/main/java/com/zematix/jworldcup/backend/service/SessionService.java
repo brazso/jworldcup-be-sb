@@ -83,11 +83,14 @@ public class SessionService extends ServiceBase {
 	@PostConstruct
 	public void initApplicationSession() {
 		locale = Locale.getDefault();
-		event = eventService.findLastEvent();
+//		event = eventService.findLastEvent();
 		// user cannot be initialized here, see getUser cached method
 	}
 
 	private void initApplicationSessionAfterUserInitialized() {
+		// refresh event
+		event = eventService.findLastEventByUserId(user.getUserId());
+		
 		// refresh userOfEvent
 		this.getUserOfEvent();
 
@@ -130,7 +133,6 @@ public class SessionService extends ServiceBase {
 		// user may come only from local
 		sessionData.setUser(getUser());
 		
-		sessionData.setEvent(sessionData.getEvent() != null ? sessionData.getEvent() : getEvent());
 		// event normally comes from client (input)
 		if (sessionData.getEvent() != null) {
 			setEvent(sessionData.getEvent());
@@ -140,6 +142,8 @@ public class SessionService extends ServiceBase {
 		}
 		
 		sessionData.setUserOfEvent(getUserOfEvent());
+		
+		sessionData.setEventCompletionPercent(getEventCompletionPercent());
 		
 		return sessionData;
 	}

@@ -60,7 +60,7 @@ public class EventController extends ServiceBase implements ResponseEntityHelper
 	@Operation(summary = "Find event of the given user", description = "Find event which belongs to the last bet of the input user. If the user has no bet at all, the last event is retrieved.")
 	@GetMapping(value = "/find-event-by-user")
 	public ResponseEntity<GenericResponse<EventDto>> findEventByUserId(@RequestParam Long userId) {
-		var event = eventService.findEventByUserId(userId);
+		var event = eventService.findLastEventByUserId(userId);
 		return buildResponseEntityWithOK(new GenericResponse<>(eventMapper.entityToDto(event)));
 	}
 }
