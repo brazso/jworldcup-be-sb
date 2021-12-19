@@ -211,7 +211,7 @@ public class GroupTeamService extends ServiceBase {
 					// who are still level to determine their final rankings.
 					List<Long> filterTeamIds = twinGroupTeams.stream()
 							.map(e->e.getTeam().getTeamId())
-							.collect(Collectors.toList());
+							.toList();
 					twinGroupTeams.forEach(item->item.setFilterTeamIds(filterTeamIds));
 				}
 				else {
@@ -260,7 +260,7 @@ public class GroupTeamService extends ServiceBase {
 		
 		List<GroupTeam> teams = groupTeams.stream()
 				.filter(groupTeam->groupTeam.getPositionInGroup() == positionInGroup)
-				.collect(Collectors.toList());
+				.toList();
 		if (teams.size() != 1) {
 			return null; // unambiguous rank
 		}

@@ -58,7 +58,7 @@ public class GroupDaoTest {
 		Long eventId = 1L; // WC2014
 		List<Long> expectedGroupIds = Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L);
 		List<Group> groups = groupDao.retrieveGroupsByEvent(eventId);
-		List<Long> groupIds = groups.stream().map(e -> e.getGroupId()).collect(Collectors.toList());
+		List<Long> groupIds = groups.stream().map(e -> e.getGroupId()).toList();
 		
 		assertEquals(expectedGroupIds, groupIds);
 	}

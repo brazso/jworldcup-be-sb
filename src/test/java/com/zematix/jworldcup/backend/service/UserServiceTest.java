@@ -812,7 +812,7 @@ public class UserServiceTest {
 		User user = commonDao.findEntityById(User.class, 2L); // normal
 		List<User> expectedUsers = Arrays.asList(user);
 		List<String> expectedUserLoginNames = expectedUsers.stream().map(e -> e.getLoginName())
-				.collect(Collectors.toList());
+				.toList();
 		Mockito.when(userDao.findUsersByLoginNamePrefix(loginNamePrefix)).thenReturn(expectedUsers);
 		
 		List<String> userLoginNames = userService.findUserLoginNamesByLoginNamePrefix(loginNamePrefix);
@@ -831,7 +831,7 @@ public class UserServiceTest {
 		User user = commonDao.findEntityById(User.class, 2L); // normal
 		List<User> expectedUsers = Arrays.asList(user);
 		List<String> expectedUserLoginNames = expectedUsers.stream().map(e -> e.getFullName())
-				.collect(Collectors.toList());
+				.toList();
 		Mockito.when(userDao.findUsersByFullNameContain(fullNameContain)).thenReturn(expectedUsers);
 		
 		List<String> userLoginNames = userService.findUserFullNamesByFullNameContain(fullNameContain);

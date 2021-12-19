@@ -386,7 +386,7 @@ public class MatchDaoTest {
 		List<Long> expectedMatchIds = Arrays.asList(1L, 2L, 16L, 20L, 35L, 36L); // ordered list
 		List<Match> matches = matchDao.retrieveMatchesByGroup(groupId);
 		assertEquals(expectedMatchIds, 
-				matches.stream().map(m -> m.getMatchId()).sorted().collect(Collectors.toList()));
+				matches.stream().map(m -> m.getMatchId()).sorted().toList());
 	}
 
 	/**

@@ -57,7 +57,7 @@ public class WebServiceDaoTest {
 		Long eventId = 1L; // WC2014
 		List<Long> expectedWebServiceIds = Arrays.asList(1L, 2L, 3L);
 		List<WebService> webServices = webServiceDao.retrieveWebServicesByEvent(eventId);
-		List<Long> webServiceIds = webServices.stream().map(e -> e.getWebServiceId()).collect(Collectors.toList());
+		List<Long> webServiceIds = webServices.stream().map(e -> e.getWebServiceId()).toList();
 		assertEquals(new HashSet<>(expectedWebServiceIds), new HashSet<>(webServiceIds));
 	}
 

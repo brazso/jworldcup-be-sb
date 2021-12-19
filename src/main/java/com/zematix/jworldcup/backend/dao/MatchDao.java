@@ -128,7 +128,7 @@ public class MatchDao extends DaoBase {
 			.orderBy(qMatch.matchN.asc())
 			.fetch();
 		
-		return matches.stream().map(match->match.getParticipantsRule()).collect(Collectors.toList());
+		return matches.stream().map(match->match.getParticipantsRule()).toList();
 	}
 
 	/**

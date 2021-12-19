@@ -522,7 +522,7 @@ public class UserService extends ServiceBase {
 		checkArgument(!Strings.isNullOrEmpty(loginNamePrefix), "Argument \"loginNamePrefix\" cannot be null nor empty.");
 		
 		List<User> users = userDao.findUsersByLoginNamePrefix(loginNamePrefix);
-		List<String> userLoginNames = users.stream().map(u->u.getLoginName()).collect(Collectors.toList());
+		List<String> userLoginNames = users.stream().map(u->u.getLoginName()).toList();
 		return userLoginNames;
 	}
 	
@@ -539,7 +539,7 @@ public class UserService extends ServiceBase {
 		checkArgument(!Strings.isNullOrEmpty(fullNameContain), "Argument \"fullNameContain\" cannot be null nor empty.");
 		
 		List<User> users = userDao.findUsersByFullNameContain(fullNameContain);
-		List<String> userFullNames = users.stream().map(u->u.getFullName()).collect(Collectors.toList());
+		List<String> userFullNames = users.stream().map(u->u.getFullName()).toList();
 		return userFullNames;
 	}
 

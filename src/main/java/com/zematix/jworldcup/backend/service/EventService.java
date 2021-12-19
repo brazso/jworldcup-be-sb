@@ -111,7 +111,7 @@ public class EventService extends ServiceBase {
 	public List<Event> findCompletedEvents() {
 		List<Event> events = eventDao.findAllEvents().stream()
 				.filter(e -> applicationService.getEventCompletionPercentCache(e.getEventId()) == 100)
-				.collect(Collectors.toList());
+				.toList();
 		events.stream().forEach(e -> initEvent(e));
 		return events;
 	}

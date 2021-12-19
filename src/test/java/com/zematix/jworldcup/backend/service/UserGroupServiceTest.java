@@ -243,10 +243,10 @@ public class UserGroupServiceTest {
 		
 		List<UserPosition> userPositions = userGroupService.retrieveUserPositions(eventId, userGroupId);
 		assertEquals("Retrieved list should be equal to the expected one.", 
-				expectedUserIds, userPositions.stream().map(e -> e.getUserId()).collect(Collectors.toList()));
+				expectedUserIds, userPositions.stream().map(e -> e.getUserId()).toList());
 		assertEquals("Retrieved position list should be equal to the expected one.", 
 				Arrays.asList(1, 2, 3), 
-				userPositions.stream().map(e -> e.getPosition()).collect(Collectors.toList()));
+				userPositions.stream().map(e -> e.getPosition()).toList());
 	}
 	
 	/**

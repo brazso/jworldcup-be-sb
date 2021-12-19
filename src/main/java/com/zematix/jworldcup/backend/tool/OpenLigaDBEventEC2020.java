@@ -294,7 +294,7 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 		webService.setResultPenaltyLabel("Ergebnis11");
 		em.persist(webService);
 
-		addMissingMatches(event, roundList.stream().filter(e -> Boolean.FALSE.equals(e.getIsGroupmatchAsBoolean())).collect(Collectors.toList()),
+		addMissingMatches(event, roundList.stream().filter(e -> Boolean.FALSE.equals(e.getIsGroupmatchAsBoolean())).toList(),
 				matchdatas.size(), teamMapByWsId);
 		
 		if (params.containsKey("TestMode") && (boolean)params.get("TestMode")) {

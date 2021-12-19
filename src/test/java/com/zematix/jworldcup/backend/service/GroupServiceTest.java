@@ -96,7 +96,7 @@ public class GroupServiceTest {
 		List<Match> matches = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean() && m.getTeam1().getGroup().getGroupId().equals(groupId))
 				.sorted(byMatchNr)
-				.collect(Collectors.toList());
+				.toList();
 		Map<Long, List<Match>> playedMatchByTeamIdMap = new HashMap<>();
 		
 		// match1: team1 x team2
@@ -192,8 +192,8 @@ public class GroupServiceTest {
 //		expectedGroupTeams.stream().forEach(gt -> System.out.println(gt.getTeam().getTeamId().toString()));
 //		groupTeams.stream().forEach(gt -> System.out.println(gt.getTeam().getTeamId().toString()));
 		assertEquals("Result groupTeams list should be equal to the expected one.",
-				expectedGroupTeams.stream().map(g -> g.getTeam().getTeamId()).collect(Collectors.toList()),
-				groupTeams.stream().map(g -> g.getTeam().getTeamId()).collect(Collectors.toList()));
+				expectedGroupTeams.stream().map(g -> g.getTeam().getTeamId()).toList(),
+				groupTeams.stream().map(g -> g.getTeam().getTeamId()).toList());
 	}	
 
 	/**
@@ -209,7 +209,7 @@ public class GroupServiceTest {
 		List<Match> matches = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean() && m.getTeam1().getGroup().getGroupId().equals(groupId))
 				.sorted(byMatchNr)
-				.collect(Collectors.toList());
+				.toList();
 		Map<Long, List<Match>> playedMatchByTeamIdMap = new HashMap<>();
 		
 		// match1: team1 x team2
@@ -277,8 +277,8 @@ public class GroupServiceTest {
 		List<GroupTeam> groupTeams = groupService.getRankedGroupTeamsByGroup(groupId);
 		
 		assertEquals("Result groupTeams list should be equal to the expected one.",
-				expectedGroupTeams.stream().map(g -> g.getTeam().getTeamId()).collect(Collectors.toList()),
-				groupTeams.stream().map(g -> g.getTeam().getTeamId()).collect(Collectors.toList()));
+				expectedGroupTeams.stream().map(g -> g.getTeam().getTeamId()).toList(),
+				groupTeams.stream().map(g -> g.getTeam().getTeamId()).toList());
 				
 	}	
 
@@ -293,7 +293,7 @@ public class GroupServiceTest {
 		// retrieve groups belong to the given eventId
 		List<Group> groups = commonDao.findAllEntities(Group.class).stream()
 				.filter(g -> g.getEvent().getEventId().equals(eventId))
-				.collect(Collectors.toList());
+				.toList();
 		
 		Group group = groups.get(0);
 		Comparator<Match> byMatchNr = (m1, m2) -> Short.compare(
@@ -301,7 +301,7 @@ public class GroupServiceTest {
 		List<Match> matches = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean() && m.getTeam1().getGroup().getGroupId().equals(group.getGroupId()))
 				.sorted(byMatchNr)
-				.collect(Collectors.toList());
+				.toList();
 		
 		// match1: team1 x team2
 		// ------W-D-L-GF-GA-PT
@@ -403,7 +403,7 @@ public class GroupServiceTest {
 		List<Group> groups = commonDao.findAllEntities(Group.class).stream()
 				.filter(g -> g.getEvent().getEventId().equals(eventId))
 				.sorted(byGroupName)
-				.collect(Collectors.toList());
+				.toList();
 		
 		Group groupA = groups.get(0);
 		Comparator<Match> byMatchNr = (m1, m2) -> Short.compare(
@@ -412,7 +412,7 @@ public class GroupServiceTest {
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean() 
 						&& m.getTeam1().getGroup().getGroupId().equals(groupA.getGroupId()))
 				.sorted(byMatchNr)
-				.collect(Collectors.toList());
+				.toList();
 
 		Map<Long, List<Match>> playedMatchByTeamIdMap = new HashMap<>();
 		
@@ -507,7 +507,7 @@ public class GroupServiceTest {
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean() 
 						&& m.getTeam1().getGroup().getGroupId().equals(groupB.getGroupId()))
 				.sorted(byMatchNr)
-				.collect(Collectors.toList());
+				.toList();
 		
 		// match1: teamB1 x teamB2
 		// -------W-D-L-GF-GA-PT
@@ -607,8 +607,8 @@ public class GroupServiceTest {
 //		groupTeams.stream().forEach(m -> System.out.println(m.getTeam().getTeamId()));
 		
 		assertEquals("Result groupTeams list should be equal to the expected one.",
-				expectedGroupTeams.stream().map(g -> g.getTeam()).collect(Collectors.toList()),
-				groupTeams.stream().map(g -> g.getTeam()).collect(Collectors.toList()));
+				expectedGroupTeams.stream().map(g -> g.getTeam()).toList(),
+				groupTeams.stream().map(g -> g.getTeam()).toList());
 	}	
 
 	/**

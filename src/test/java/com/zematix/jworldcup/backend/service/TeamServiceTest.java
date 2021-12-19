@@ -66,7 +66,7 @@ public class TeamServiceTest {
 		
 		assertEquals("Retrieved list of Team instances must have the same as the expected one.", expectedTeams, teams);
 
-		boolean isSorted = Ordering.natural().isOrdered(teams.stream().map(t -> t.getName()).collect(Collectors.toList()));
+		boolean isSorted = Ordering.natural().isOrdered(teams.stream().map(t -> t.getName()).toList());
 		assertTrue("Retrieved list of Team entites should be sorted by its name field.", isSorted);
 	}
 
@@ -117,7 +117,7 @@ public class TeamServiceTest {
 		
 		assertEquals("Retrieved list of Team instances must have the same as the expected one.", expectedTeams, teams);
 
-		boolean isSorted = Ordering.natural().isOrdered(teams.stream().map(t -> t.getName()).collect(Collectors.toList()));
+		boolean isSorted = Ordering.natural().isOrdered(teams.stream().map(t -> t.getName()).toList());
 		assertTrue("Retrieved list of Team entites should be sorted by its name field.", isSorted);
 	}
 
@@ -204,8 +204,8 @@ public class TeamServiceTest {
 		Long eventId = 1L;
 		String groupName = "ABC";
 		
-		List<Group> expectedGroups = Arrays.asList(groupName.split("")).stream().map(e -> {Group g = new Group(); g.setName(e); g.setTeams(Arrays.asList(new Team(), new Team())); return g;}).collect(Collectors.toList());
-		List<Team> expectedTeams = expectedGroups.stream().flatMap(e -> e.getTeams().stream()).collect(Collectors.toList());
+		List<Group> expectedGroups = Arrays.asList(groupName.split("")).stream().map(e -> {Group g = new Group(); g.setName(e); g.setTeams(Arrays.asList(new Team(), new Team())); return g;}).toList();
+		List<Team> expectedTeams = expectedGroups.stream().flatMap(e -> e.getTeams().stream()).toList();
 		
 		expectedGroups.stream().forEach(e -> {
 			try {
@@ -270,7 +270,7 @@ public class TeamServiceTest {
 		Long eventId = -1L;
 		String groupName = "ABC";
 		
-		List<String> expectedGroupNames = Arrays.asList(groupName.split("")).stream().collect(Collectors.toList());
+		List<String> expectedGroupNames = Arrays.asList(groupName.split("")).stream().toList();
 
 		expectedGroupNames.stream().forEach(e -> {
 			try {

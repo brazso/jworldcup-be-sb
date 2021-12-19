@@ -195,7 +195,7 @@ public class OpenLigaDBEventCAF2019 extends OpenLigaDBEvent {
 		
 		// among teams there are Gruppe, Sieger, Verlierer ones. The latter ones have no icon.
 		List<com.msiggi.openligadb.client.Team> oldbRealTeams = 
-				oldbTeams.stream().filter(e->e.getTeamIconURL()!=null && !e.getTeamIconURL().isEmpty()).collect(Collectors.toList());
+				oldbTeams.stream().filter(e->e.getTeamIconURL()!=null && !e.getTeamIconURL().isEmpty()).toList();
 		
 		List<Group> groupList = new ArrayList<>();
 		for (int i=0; i < oldbRealTeams.size()/4; i++) {

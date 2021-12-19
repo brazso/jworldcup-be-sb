@@ -1024,12 +1024,12 @@ public class MatchServiceTest {
 		Match match = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> !m.getRound().getIsGroupmatchAsBoolean())
 				.sorted(byMatchNr)
-				.collect(Collectors.toList())
+				.toList()
 				.get(0);
 		Long matchId = match.getMatchId();
 		List<Team> teams = commonDao.findAllEntities(Team.class).stream()
 				.filter(t -> t.getGroup().getGroupId().equals(groupId))
-				.collect(Collectors.toList());
+				.toList();
 		
 		match.setTeam1(teams.get(0));
 		match.setTeam2(teams.get(1));
@@ -1305,7 +1305,7 @@ public class MatchServiceTest {
 	public void /*int*/ getMatchResultShortWithoutTeam(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> !m.getRound().getIsGroupmatchAsBoolean())
-				.collect(Collectors.toList())
+				.toList()
 				.get(0);
 		Long teamId = 1L;
 
@@ -1321,7 +1321,7 @@ public class MatchServiceTest {
 	public void /*int*/ getMatchResultUnknownTeam(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean())
-				.collect(Collectors.toList())
+				.toList()
 				.get(0);
 		Long teamId = -1L;
 
@@ -1338,7 +1338,7 @@ public class MatchServiceTest {
 	public void /*int*/ getMatchResultShortWinner1(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean())
-				.collect(Collectors.toList())
+				.toList()
 				.get(0);
 		Long teamId = match.getTeam1().getTeamId();
 		
@@ -1369,7 +1369,7 @@ public class MatchServiceTest {
 	public void /*int*/ getMatchResultShortDefeat2(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean())
-				.collect(Collectors.toList())
+				.toList()
 				.get(0);
 		Long teamId = match.getTeam2().getTeamId();
 		
@@ -2242,7 +2242,7 @@ public class MatchServiceTest {
 
 		Long groupId = 1L; // group A
 		List<Long> matchIds = Arrays.asList(1L, 2L, 16L, 20L, 35L, 36L); // group A
-		List<Match> matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).collect(Collectors.toList()) ;
+		List<Match> matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).toList() ;
 		Mockito.when(matchDao.retrieveMatchesByGroup(groupId)).thenReturn(matches);
 		
 		// match with greatest id from the lists contains the latest datetime
@@ -2250,7 +2250,7 @@ public class MatchServiceTest {
 		
 		groupId = 2L; // group B
 		matchIds = Arrays.asList(3L, 4L, 18L, 19L, 33L, 34L); // group B
-		matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).collect(Collectors.toList()) ;
+		matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).toList() ;
 		Mockito.when(matchDao.retrieveMatchesByGroup(groupId)).thenReturn(matches);
 		
 		LocalDateTime matchEscalationTime = matchService.getMatchParticipantsEscalationTime(match);
@@ -2339,12 +2339,12 @@ public class MatchServiceTest {
 		// stubbed methods used by helper methods of the tested method
 		Long groupId = 1L;
 		List<Long> matchIds = Arrays.asList(1L, 2L, 16L, 20L, 35L, 36L); // group A
-		List<Match> matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).collect(Collectors.toList()) ;
+		List<Match> matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).toList() ;
 		Mockito.when(matchDao.retrieveMatchesByGroup(groupId)).thenReturn(matches);
 		
 		groupId = 2L; // group B
 		matchIds = Arrays.asList(3L, 4L, 18L, 19L, 33L, 34L); // group B
-		matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).collect(Collectors.toList()) ;
+		matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).toList() ;
 		Mockito.when(matchDao.retrieveMatchesByGroup(groupId)).thenReturn(matches);
 		
 		LocalDateTime matchTriggerStartTime = matchService.getMatchTriggerStartTime(match, actualDateTime);
@@ -2369,12 +2369,12 @@ public class MatchServiceTest {
 		// stubbed methods used by helper methods of the tested method
 		Long groupId = 1L;
 		List<Long> matchIds = Arrays.asList(1L, 2L, 16L, 20L, 35L, 36L); // group A
-		List<Match> matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).collect(Collectors.toList()) ;
+		List<Match> matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).toList() ;
 		Mockito.when(matchDao.retrieveMatchesByGroup(groupId)).thenReturn(matches);
 		
 		groupId = 2L; // group B
 		matchIds = Arrays.asList(3L, 4L, 18L, 19L, 33L, 34L); // group B
-		matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).collect(Collectors.toList()) ;
+		matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).toList() ;
 		Mockito.when(matchDao.retrieveMatchesByGroup(groupId)).thenReturn(matches);
 		
 		LocalDateTime matchTriggerStartTime = matchService.getMatchTriggerStartTime(match, actualDateTime);
@@ -2439,7 +2439,7 @@ public class MatchServiceTest {
 		Long eventId = 1L; // WC2014
 		
 		List <Match> expectedMatches = commonDao.findAllEntities(Match.class);
-		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).collect(Collectors.toList());
+		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).toList();
 		
 		Mockito.when(matchDao.retrieveMatchesByEvent(eventId)).thenReturn(expectedMatches);
 		
@@ -2458,7 +2458,7 @@ public class MatchServiceTest {
 		Long eventId = 1L; // WC2014
 		
 		List <Match> expectedMatches = commonDao.findAllEntities(Match.class);
-		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).collect(Collectors.toList());
+		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).toList();
 		Mockito.when(matchDao.retrieveMatchesByEvent(eventId)).thenReturn(expectedMatches);
 
 		Match firstExpectedMatch = Iterables.firstOf(expectedMatches);
@@ -2483,14 +2483,14 @@ public class MatchServiceTest {
 
 
 		final List<Match> allMatches = commonDao.findAllEntities(Match.class).stream()
-				.filter(e -> e.getEvent().getEventId().equals(eventId)).collect(Collectors.toList());
+				.filter(e -> e.getEvent().getEventId().equals(eventId)).toList();
 		Mockito.when(matchDao.retrieveMatchesByEvent(eventId)).thenReturn(allMatches);
 
-		List<Match> expectedMatches = allMatches.stream().filter(e -> e.getStartTime().isBefore(actualDateTime)).collect(Collectors.toList());
+		List<Match> expectedMatches = allMatches.stream().filter(e -> e.getStartTime().isBefore(actualDateTime)).toList();
 		
 //		Long groupId = 1L; // group A
 //		List<Long> matchIds = Arrays.asList(1L, 2L, 16L, 20L, 35L, 36L); // group A
-//		List<Match> matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).collect(Collectors.toList()) ;
+//		List<Match> matches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).toList() ;
 //		Mockito.when(matchDao.retrieveMatchesByGroup(groupId)).thenReturn(matches);
 //		
 		LongStream.rangeClosed(49L, 62L).forEach(m -> {Match match = allMatches.stream().filter(e -> e.getMatchId().equals(m)).findFirst().get(); Mockito.when(matchDao.retrieveMatchByMatchN(eventId, (short)m)).thenReturn(match);});
@@ -2538,7 +2538,7 @@ public class MatchServiceTest {
 		Mockito.when(applicationService.getActualDateTime()).thenReturn(actualDateTime);
 		
 		final List<Match> allMatches = commonDao.findAllEntities(Match.class).stream()
-				.filter(e -> e.getEvent().getEventId().equals(eventId)).collect(Collectors.toList());
+				.filter(e -> e.getEvent().getEventId().equals(eventId)).toList();
 
 		// set results to the matches before the expected one
 		allMatches.stream().filter(e -> e.getMatchId() < expectedMatchId).forEach(e -> {
@@ -2580,7 +2580,7 @@ public class MatchServiceTest {
 		Mockito.when(applicationService.getActualDateTime()).thenReturn(actualDateTime);
 		
 		final List<Match> allMatches = commonDao.findAllEntities(Match.class).stream()
-				.filter(e -> e.getEvent().getEventId().equals(eventId)).collect(Collectors.toList());
+				.filter(e -> e.getEvent().getEventId().equals(eventId)).toList();
 
 		// set results to the matches before the expected one
 		allMatches.stream().filter(e -> e.getMatchId() < expectedMatchId).forEach(e -> {
@@ -2591,7 +2591,7 @@ public class MatchServiceTest {
 		
 		LongStream.rangeClosed(49L, 62L).forEach(m -> {Match match = allMatches.stream().filter(e -> e.getMatchId().equals(m)).findFirst().get(); Mockito.when(matchDao.retrieveMatchByMatchN(eventId, (short)m)).thenReturn(match);});
 		
-		List<Match> expectedMatches = allMatches.stream().filter(e -> e.getMatchId().equals(expectedMatchId)).collect(Collectors.toList());
+		List<Match> expectedMatches = allMatches.stream().filter(e -> e.getMatchId().equals(expectedMatchId)).toList();
 
 		List<Match> matches = matchService.retrieveFirstIncompleteMatchesOfEvents();
 		
@@ -2606,7 +2606,7 @@ public class MatchServiceTest {
 	public void /*List<Match>*/ retrieveMatchesByGroup(/*Long groupId*/) throws ServiceException {
 		Long groupId = 1L; // group A
 		List<Long> matchIds = Arrays.asList(1L, 2L, 16L, 20L, 35L, 36L); // group A
-		List<Match> expectedMatches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).collect(Collectors.toList()) ;
+		List<Match> expectedMatches = matchIds.stream().map(e -> commonDao.findEntityById(Match.class, e)).toList() ;
 		Mockito.when(matchDao.retrieveMatchesByGroup(groupId)).thenReturn(expectedMatches);
 		
 		List<Match> matches = matchService.retrieveMatchesByGroup(groupId);
@@ -2995,7 +2995,7 @@ public class MatchServiceTest {
 		
 		// stubbed out methods called by tested method
 		List <Match> expectedMatches = commonDao.findAllEntities(Match.class);
-		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).collect(Collectors.toList());
+		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).toList();
 		Mockito.when(matchDao.retrieveMatchesByEvent(eventId)).thenReturn(expectedMatches);
 		
 		int matchesAccomplishedInPercent = matchService.retriveMatchesAccomplishedInPercent(eventId);
@@ -3015,7 +3015,7 @@ public class MatchServiceTest {
 		
 		// stubbed out methods called by tested method
 		List <Match> expectedMatches = commonDao.findAllEntities(Match.class);
-		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).collect(Collectors.toList());
+		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).toList();
 		Match firstExpectedMatch = Iterables.firstOf(expectedMatches);
 		firstExpectedMatch.setGoalNormalByTeam1((byte)1);
 		firstExpectedMatch.setGoalNormalByTeam2((byte)0);
@@ -3039,7 +3039,7 @@ public class MatchServiceTest {
 		
 		// stubbed out methods called by tested method
 		List <Match> expectedMatches = commonDao.findAllEntities(Match.class);
-		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).collect(Collectors.toList());
+		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).toList();
 		expectedMatches.stream().filter(e -> e.getRound().getIsGroupmatchAsBoolean()).forEach(e -> { e.setGoalNormalByTeam1((byte)1); e.setGoalNormalByTeam2((byte)1);});
 		Match firstExpectedMatch = Iterables.firstOf(expectedMatches);
 		firstExpectedMatch.setGoalNormalByTeam1((byte)1);
@@ -3065,7 +3065,7 @@ public class MatchServiceTest {
 		// stubbed out methods called by tested method
 		Team team = commonDao.findEntityById(Team.class, 1L);
 		List <Match> expectedMatches = commonDao.findAllEntities(Match.class);
-		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).collect(Collectors.toList());
+		expectedMatches = expectedMatches.stream().filter(e -> e.getEvent().getEventId().equals(eventId)).toList();
 		expectedMatches.stream().forEach(e -> {e.setGoalNormalByTeam1((byte)1); e.setGoalNormalByTeam2((byte)0); e.setTeam1(team); e.setTeam2(team);});
 		Mockito.when(matchDao.retrieveMatchesByEvent(eventId)).thenReturn(expectedMatches);
 

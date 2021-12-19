@@ -565,7 +565,7 @@ public class MatchService extends ServiceBase {
 		// filter non-group rules, e.g. "W34-W35", "L32-L33"
 		participantRules = participantRules.stream()
 				.filter(rule->rule.matches(PARTICIPANT_RULE_REGEX))
-				.collect(Collectors.toList());
+				.toList();
 		
 		for (String participantRule : participantRules) {
 			Pair<GroupPosition> groupPositionPair = groupTeamService.convertParticipantRuleToGroupPositionPair(participantRule);
@@ -784,7 +784,7 @@ public class MatchService extends ServiceBase {
 			// collect the unique group names from the participant rule
 			String groupPositionNames = groupPositions.getValue1().getGroupName() + groupPositions.getValue2().getGroupName();
 			List<String> groupNames = groupPositionNames.chars().mapToObj(e -> String.valueOf((char) e)).distinct()
-					.collect(Collectors.toList());
+					.toList();
 			// collect all group matches belong to the group names
 			List<Match> allGroupMatches = new ArrayList<>();
 			for (String groupName : groupNames) {
@@ -1144,7 +1144,7 @@ public class MatchService extends ServiceBase {
 		List<Match> matches = retrieveMatchesByEvent(eventId);
 		
 		matchDates = matches.stream().map(e -> CommonUtil.truncateDateTime(e.getStartTime())).distinct()
-				.collect(Collectors.toList());
+				.toList();
 		return matchDates;
 	}
 	

@@ -271,7 +271,7 @@ public class ApplicationService extends ServiceBase {
 	public List<Long> getCompletedEventIds() {
 		List<Long> eventIds = new ArrayList<>();
 		eventIds.addAll(this.eventCompletionPercentCache.asMap().keySet());
-		eventIds = eventIds.stream().filter(e -> this.eventCompletionPercentCache.getUnchecked(e) == 100).collect(Collectors.toList());
+		eventIds = eventIds.stream().filter(e -> this.eventCompletionPercentCache.getUnchecked(e) == 100).toList();
 		return eventIds;
 	}
 }

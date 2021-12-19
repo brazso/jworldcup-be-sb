@@ -62,7 +62,7 @@ public class TeamDaoTest {
 		
 		assertEquals(32, teams.size());
 
-		boolean isSorted = Ordering.natural().isOrdered(teams.stream().map(t -> t.getName()).collect(Collectors.toList()));
+		boolean isSorted = Ordering.natural().isOrdered(teams.stream().map(t -> t.getName()).toList());
 		assertTrue("Retrieved list of Team entites should be sorted by its name field.", isSorted);
 	}
 
@@ -115,7 +115,7 @@ public class TeamDaoTest {
 		
 		assertEquals(3, teams.size());
 
-		boolean isSorted = Ordering.natural().isOrdered(teams.stream().map(t -> t.getName()).collect(Collectors.toList()));
+		boolean isSorted = Ordering.natural().isOrdered(teams.stream().map(t -> t.getName()).toList());
 		assertTrue("Retrieved list of Team entites should be sorted by its name field.", isSorted);
 	}
 

@@ -202,7 +202,7 @@ public class GroupService extends ServiceBase {
 		// filter out non group rules, e.g. "W34-W35", "L32-L33"
 		participantRules = participantRules.stream()
 				.filter(rule->!rule.matches(PARTICIPANT_RULE_REGEX))
-				.collect(Collectors.toList());
+				.toList();
 		
 		for (String participantRule : participantRules) {
 			Pair<GroupPosition> groupPositionPair = groupTeamService.convertParticipantRuleToGroupPositionPair(participantRule);

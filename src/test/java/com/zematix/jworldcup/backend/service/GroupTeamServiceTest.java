@@ -183,8 +183,8 @@ public class GroupTeamServiceTest {
 		
 		assertFalse("There should not be equality in the result.", isEquality);
 		assertEquals("Result groupTeams list should be equal to the expected one.",
-				expectedTeams.stream().map(t -> t.getTeamId()).collect(Collectors.toList()),
-				groupTeams.stream().map(g -> g.getTeam().getTeamId()).collect(Collectors.toList()));
+				expectedTeams.stream().map(t -> t.getTeamId()).toList(),
+				groupTeams.stream().map(g -> g.getTeam().getTeamId()).toList());
 	}
 
 	/**
@@ -578,7 +578,7 @@ public class GroupTeamServiceTest {
 		List<Group> groups = commonDao.findAllEntities(Group.class).stream()
 				.filter(g -> g.getEvent().getEventId().equals(eventId))
 				.sorted(byGroupName)
-				.collect(Collectors.toList());
+				.toList();
 		
 		Group groupA = groups.get(0);
 		Comparator<Match> byMatchNr = (m1, m2) -> Short.compare(
@@ -587,7 +587,7 @@ public class GroupTeamServiceTest {
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean() 
 						&& m.getTeam1().getGroup().getGroupId().equals(groupA.getGroupId()))
 				.sorted(byMatchNr)
-				.collect(Collectors.toList());
+				.toList();
 
 		Map<Long, List<Match>> playedMatchByTeamIdMap = new HashMap<>();
 		
@@ -682,7 +682,7 @@ public class GroupTeamServiceTest {
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean() 
 						&& m.getTeam1().getGroup().getGroupId().equals(groupB.getGroupId()))
 				.sorted(byMatchNr)
-				.collect(Collectors.toList());
+				.toList();
 		
 		// match1: teamB1 x teamB2
 		// -------W-D-L-GF-GA-PT
@@ -784,8 +784,8 @@ public class GroupTeamServiceTest {
 		boolean isEquality = groupTeamService.sortGroupTeamsOnPosition(groupTeams);
 		assertFalse("There should not be equality in the result.", isEquality);
 		assertEquals("Result groupTeams list should be equal to the expected one.",
-				expectedGroupTeams.stream().map(g -> g.getTeam()).collect(Collectors.toList()),
-				groupTeams.stream().map(g -> g.getTeam()).collect(Collectors.toList()));
+				expectedGroupTeams.stream().map(g -> g.getTeam()).toList(),
+				groupTeams.stream().map(g -> g.getTeam()).toList());
 	}
 
 	/**
@@ -801,7 +801,7 @@ public class GroupTeamServiceTest {
 		List<Group> groups = commonDao.findAllEntities(Group.class).stream()
 				.filter(g -> g.getEvent().getEventId().equals(eventId))
 				.sorted(byGroupName)
-				.collect(Collectors.toList());
+				.toList();
 		
 		Group groupA = groups.get(0);
 		Comparator<Match> byMatchNr = (m1, m2) -> Short.compare(
@@ -810,7 +810,7 @@ public class GroupTeamServiceTest {
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean() 
 						&& m.getTeam1().getGroup().getGroupId().equals(groupA.getGroupId()))
 				.sorted(byMatchNr)
-				.collect(Collectors.toList());
+				.toList();
 
 		Map<Long, List<Match>> playedMatchByTeamIdMap = new HashMap<>();
 		
@@ -836,7 +836,7 @@ public class GroupTeamServiceTest {
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean() 
 						&& m.getTeam1().getGroup().getGroupId().equals(groupB.getGroupId()))
 				.sorted(byMatchNr)
-				.collect(Collectors.toList());
+				.toList();
 		
 		// match1: teamB1 x teamB2
 		// -------W-D-L-GF-GA-PT
@@ -869,8 +869,8 @@ public class GroupTeamServiceTest {
 		boolean isEquality = groupTeamService.sortGroupTeamsOnPosition(groupTeams);
 		assertTrue("There should be equality in the result.", isEquality);
 		assertEquals("Result groupTeams list should be equal to the expected one.",
-				expectedGroupTeams.stream().map(g -> g.getTeam()).collect(Collectors.toList()),
-				groupTeams.stream().map(g -> g.getTeam()).collect(Collectors.toList()));
+				expectedGroupTeams.stream().map(g -> g.getTeam()).toList(),
+				groupTeams.stream().map(g -> g.getTeam()).toList());
 	}
 
 	/**
