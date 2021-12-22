@@ -3,6 +3,7 @@ package com.zematix.jworldcup.backend.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -12,6 +13,7 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
@@ -22,6 +24,7 @@ import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.model.SessionData;
 import com.zematix.jworldcup.backend.model.UserCertificate;
 
@@ -51,6 +54,9 @@ public class SessionService extends ServiceBase {
 	
 	@Inject
 	private ChatService chatService;
+
+	@Inject
+	private MessageSource msgs;
 
 	/**
 	 * {@Link Local} object used in the application
@@ -88,6 +94,9 @@ public class SessionService extends ServiceBase {
 	}
 
 	private void initApplicationSessionAfterUserInitialized() {
+		String message = ParameterizedMessage.create("header.label.welcome", user.getLoginName()).buildMessage(msgs, locale);
+//		String message = msgs.getMessage("header.label.welcome", new String[]{user.getLoginName()}, locale); // same result
+		
 		// refresh event
 		event = eventService.findLastEventByUserId(user.getUserId());
 		
@@ -104,11 +113,12 @@ public class SessionService extends ServiceBase {
 		}
 		if (chat != null) {
 			String userGroupName = chat.getUserGroup().isEverybody() ? /*msgs.getString("userGroups.name.Everybody")*/ UserGroup.EVERYBODY_NAME: chat.getUserGroup().getName();
-			String message = String.format("[%s -> %s] %s", chat.getUser().getLoginName(), 
+			message = String.format("[%s -> %s] %s", chat.getUser().getLoginName(), 
 					userGroupName, chat.getMessage());
-			logger.info("newsLineChatMessage {}", message);
-			this.setNewsLine(message);
 		}
+
+		logger.info("newsLineChatMessage {}", message);
+		this.setNewsLine(message);
 	}
 
 	public SessionData refreshSessionData(SessionData sessionData) {
@@ -144,6 +154,7 @@ public class SessionService extends ServiceBase {
 		sessionData.setUserOfEvent(getUserOfEvent());
 		
 		sessionData.setEventCompletionPercent(getEventCompletionPercent());
+		sessionData.setNewsLine(getNewsLine());
 		
 		return sessionData;
 	}
