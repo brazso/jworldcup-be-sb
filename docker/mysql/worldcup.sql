@@ -3130,7 +3130,7 @@ INSERT INTO `team` (`team_id`, `event_id`, `name`, `flag`, `group_id`, `fifa_poi
 (207, 10, 'Oman', 'OMA', 50, 0, NULL),
 (208, 10, 'Palestine', 'PLE', 52, 0, NULL),
 (209, 10, 'Qatar', 'QAT', 50, 0, NULL),
-(210, 10, 'Saud Arabia', 'KSA', 52, 0, NULL),
+(210, 10, 'Saudi Arabia', 'KSA', 52, 0, NULL),
 (211, 10, 'Sudan', 'SDN', 53, 0, NULL),
 (212, 10, 'Syria', 'SYR', 51, 0, NULL),
 (213, 10, 'Tunisia', 'TUN', 51, 0, NULL),
