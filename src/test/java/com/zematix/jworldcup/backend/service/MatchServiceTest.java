@@ -1276,11 +1276,11 @@ public class MatchServiceTest {
 	 * 		is invalid.
 	 */
 	@Test(expected=NullPointerException.class)
-	public void /*int*/ getMatchResultShortInvalidMatch(/*Match match, Long teamId*/) throws ServiceException {
+	public void /*Integer*/ getMatchResultShortInvalidMatch(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = null;
 		Long teamId = 1L;
 
-		/*int result =*/ matchService.getMatchResult(match, teamId);
+		/*Integer result =*/ matchService.getMatchResult(match, teamId);
 	}
 
 	/**
@@ -1289,11 +1289,11 @@ public class MatchServiceTest {
 	 * 		is invalid.
 	 */
 	@Test(expected=NullPointerException.class)
-	public void /*int*/ getMatchResultShortInvalidTeamId(/*Match match, Long teamId*/) throws ServiceException {
+	public void /*Integer*/ getMatchResultShortInvalidTeamId(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findEntityById(Match.class, 1L);
 		Long teamId = null;
 
-		/*int result =*/ matchService.getMatchResult(match, teamId);
+		/*Integer result =*/ matchService.getMatchResult(match, teamId);
 	}
 
 	/**
@@ -1302,14 +1302,14 @@ public class MatchServiceTest {
 	 * 		is invalid.
 	 */
 	@Test(expected=IllegalArgumentException.class)
-	public void /*int*/ getMatchResultShortWithoutTeam(/*Match match, Long teamId*/) throws ServiceException {
+	public void /*Integer*/ getMatchResultShortWithoutTeam(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> !m.getRound().getIsGroupmatchAsBoolean())
 				.toList()
 				.get(0);
 		Long teamId = 1L;
 
-		/*int result =*/ matchService.getMatchResult(match, teamId);
+		/*Integer result =*/ matchService.getMatchResult(match, teamId);
 	}
 	
 	/**
@@ -1318,15 +1318,15 @@ public class MatchServiceTest {
 	 * 		belong to the input {@code match}.
 	 */
 	@Test
-	public void /*int*/ getMatchResultUnknownTeam(/*Match match, Long teamId*/) throws ServiceException {
+	public void /*Integer*/ getMatchResultUnknownTeam(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean())
 				.toList()
 				.get(0);
 		Long teamId = -1L;
 
-		int result = matchService.getMatchResult(match, teamId);
-		assertEquals("Result should be equal to the expected one.", -2, result);
+		Integer result = matchService.getMatchResult(match, teamId);
+		assertNull("Result should be equal to the expected one.", result);
 	}
 	
 	/**
@@ -1335,7 +1335,7 @@ public class MatchServiceTest {
 	 * 		determine winner on #1.
 	 */
 	@Test
-	public void /*int*/ getMatchResultShortWinner1(/*Match match, Long teamId*/) throws ServiceException {
+	public void /*Integer*/ getMatchResultShortWinner1(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean())
 				.toList()
@@ -1355,9 +1355,9 @@ public class MatchServiceTest {
 		match.setGoalPenaltyByTeam1(goal_penalty1);
 		match.setGoalPenaltyByTeam2(goal_penalty2);
 		
-		int result = matchService.getMatchResult(match, teamId);
+		Integer result = matchService.getMatchResult(match, teamId);
 
-		assertEquals("Result should be equal to the expected one.", 1, result);
+		assertEquals("Result should be equal to the expected one.", Integer.valueOf(1), result);
 	}
 
 	/**
@@ -1366,7 +1366,7 @@ public class MatchServiceTest {
 	 * 		determine defeat on #2.
 	 */
 	@Test
-	public void /*int*/ getMatchResultShortDefeat2(/*Match match, Long teamId*/) throws ServiceException {
+	public void /*Integer*/ getMatchResultShortDefeat2(/*Match match, Long teamId*/) throws ServiceException {
 		Match match = commonDao.findAllEntities(Match.class).stream()
 				.filter(m -> m.getRound().getIsGroupmatchAsBoolean())
 				.toList()
@@ -1386,9 +1386,9 @@ public class MatchServiceTest {
 		match.setGoalPenaltyByTeam1(goal_penalty1);
 		match.setGoalPenaltyByTeam2(goal_penalty2);
 		
-		int result = matchService.getMatchResult(match, teamId);
+		Integer result = matchService.getMatchResult(match, teamId);
 
-		assertEquals("Result should be equal to the expected one.", -1, result);
+		assertEquals("Result should be equal to the expected one.", Integer.valueOf(-1), result);
 	}
 
 	/**

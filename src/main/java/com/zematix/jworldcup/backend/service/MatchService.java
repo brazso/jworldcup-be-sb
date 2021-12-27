@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -141,6 +140,11 @@ public class MatchService extends ServiceBase {
 			if (match.getTeam2() != null) {
 				match.getTeam2().getTeamId();
 			}
+			if (match.getTeam1() != null && match.getTeam2() != null) {
+				match.setResultByTeam1(getMatchResult(match, match.getTeam1().getTeamId()));
+				match.setResultByTeam2(getMatchResult(match, match.getTeam2().getTeamId()));
+			}
+			
 		}
 		
 		if (!errMsgs.isEmpty()) {
@@ -395,23 +399,27 @@ public class MatchService extends ServiceBase {
 	 * 
 	 * @param match
 	 * @param teamId
-	 * @return given team 1 is winner, 0 is draw, -1 is defeat, -2 is unknown
+	 * @return given team 1 is winner, 0 is draw, -1 is defeat, null is unknown
 	 * @throws ServiceException
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getMatchResult(Match match, Long teamId) throws ServiceException {
+	public Integer getMatchResult(Match match, Long teamId) throws ServiceException {
 		checkNotNull(match);
 		checkNotNull(teamId);
 		checkArgument(match.getTeam1()!=null && match.getTeam2()!=null, 
 				"Argument \"match\" entity must have non-empty \"team1\" and \"team2\" entities.");
 		
 		if (!teamId.equals(match.getTeam1().getTeamId()) && !teamId.equals(match.getTeam2().getTeamId())) {
-			return -2;
+			return null;
 		}
 		int side = teamId.equals(match.getTeam1().getTeamId()) ? 1 : 2;
-		return getMatchResult(side, match.getGoalNormalByTeam1(), match.getGoalExtraByTeam1(), 
+		Integer matchResult = getMatchResult(side, match.getGoalNormalByTeam1(), match.getGoalExtraByTeam1(), 
 				match.getGoalPenaltyByTeam1(), match.getGoalNormalByTeam2(), 
 				match.getGoalExtraByTeam2(), match.getGoalPenaltyByTeam2());
+		if (matchResult.equals(-2)) {
+			matchResult = null;
+		}
+		return matchResult;
 	}
 
 	/**
