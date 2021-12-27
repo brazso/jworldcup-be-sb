@@ -3,8 +3,6 @@ package com.zematix.jworldcup.backend.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -128,8 +126,8 @@ public class SessionService extends ServiceBase {
 		sessionData.setId(id);
 		sessionData.setAppShortName(getAppShortName());
 		sessionData.setAppVersionNumber(getAppVersionNumber());
-		sessionData.setAppVersionDate(getActualDateTime());
-		sessionData.setAppCheatDateTime(getAppCheatDateTime());
+		sessionData.setAppVersionDate(getAppVersionDate());
+		sessionData.setActualDateTime(getActualDateTime());
 		sessionData.setAppEmailAddr(getAppEmailAddr());
 		
 		// locale normally comes from client (input)
@@ -154,6 +152,7 @@ public class SessionService extends ServiceBase {
 		sessionData.setUserOfEvent(getUserOfEvent());
 		
 		sessionData.setEventCompletionPercent(getEventCompletionPercent());
+		sessionData.setEventTriggerStartTimes(getCachedRetrieveMatchResultsJobTriggerStartTimes());
 		sessionData.setNewsLine(getNewsLine());
 		
 		return sessionData;
@@ -493,7 +492,7 @@ public class SessionService extends ServiceBase {
 	 * belongs to the actual event.
 	 * @return list containing scheduled retrieval match result job trigger start times of actual event
 	 */
-	public List<Date> getCachedRetrieveMatchResultsJobTriggerStartTimes() {
+	public List<LocalDateTime> getCachedRetrieveMatchResultsJobTriggerStartTimes() {
 		return applicationService.getRetrieveMatchResultsJobTriggerStartTimesCache().getIfPresent(this.event.getEventId());
 	}
 	

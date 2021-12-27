@@ -236,7 +236,7 @@ public class SchedulerService extends ServiceBase {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			logger.info(String.format("Added scheduler with job %s triggered on %s.", 
 					jobDetail.getName(), sdf.format(simpleTrigger.getStartTime())));
-			applicationService.getRetrieveMatchResultsJobTriggerStartTimesCache().getIfPresent(eventId).add(Timestamp.valueOf(triggerStartTime));
+			applicationService.getRetrieveMatchResultsJobTriggerStartTimesCache().getIfPresent(eventId).add(triggerStartTime);
 		}
 		
 		return createRetrieveMatchResultsJobTrigger;

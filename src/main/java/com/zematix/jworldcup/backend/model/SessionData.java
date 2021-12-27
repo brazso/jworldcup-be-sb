@@ -1,6 +1,8 @@
 package com.zematix.jworldcup.backend.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 
 import com.zematix.jworldcup.backend.entity.Event;
@@ -18,8 +20,8 @@ public class SessionData {
         
     private String appShortName;
     private String appVersionNumber;
-    private LocalDateTime appVersionDate;
-    private LocalDateTime appCheatDateTime;
+    private LocalDate appVersionDate;
+    private LocalDateTime actualDateTime;
     private String appEmailAddr;
     
     private Locale locale;
@@ -29,6 +31,7 @@ public class SessionData {
     private String newsLine;
     
     private Integer eventCompletionPercent;
+    private List<LocalDateTime> eventTriggerStartTimes;
 
     public SessionData(String id) {
     	super();

@@ -1,6 +1,8 @@
 package com.zematix.jworldcup.backend.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,8 +15,8 @@ public class SessionDataDto {
         
     private String appShortName;
     private String appVersionNumber;
-    private LocalDateTime appVersionDate;
-    private LocalDateTime appCheatDateTime;
+    private LocalDate appVersionDate;
+    private LocalDateTime actualDateTime;
     private String appEmailAddr;
     
     private String localeId;
@@ -24,5 +26,6 @@ public class SessionDataDto {
     private String newsLine;
     
     private Integer eventCompletionPercent;
+    private List<LocalDateTime> eventTriggerStartTimes;
 
 }

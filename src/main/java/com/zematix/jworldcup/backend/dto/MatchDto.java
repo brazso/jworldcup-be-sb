@@ -23,7 +23,7 @@ public class MatchDto {
 //	private List<Bet> bets;
 //	private Event event;
 	private RoundDto round;
-//	private Team team1;
-//	private Team team2;
+	private TeamDto team1;
+	private TeamDto team2;
 
 }

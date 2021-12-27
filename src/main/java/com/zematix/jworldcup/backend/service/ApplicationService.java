@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -89,9 +88,9 @@ public class ApplicationService extends ServiceBase {
 	 * Cached list of used trigger date values belongs to scheduled retrieveMatchResultsJob by eventId as key.
 	 * Adding elements to the cache takes place manually.
 	 */
-	private LoadingCache<Long, List<Date>> retrieveMatchResultsJobTriggerStartTimesCache = CacheBuilder.newBuilder()
-			.build(new CacheLoader<Long, List<Date>>() {
-				public List<Date> load(Long eventId) throws Exception {
+	private LoadingCache<Long, List<LocalDateTime>> retrieveMatchResultsJobTriggerStartTimesCache = CacheBuilder.newBuilder()
+			.build(new CacheLoader<Long, List<LocalDateTime>>() {
+				public List<LocalDateTime> load(Long eventId) throws Exception {
 					return new ArrayList<>(); // refresh makes the list empty
 				}
 			});
@@ -234,7 +233,7 @@ public class ApplicationService extends ServiceBase {
 	/**
 	 * Gets or loads topUsers list in cache.
 	 */
-	public LoadingCache<Long, List<Date>> getRetrieveMatchResultsJobTriggerStartTimesCache() {
+	public LoadingCache<Long, List<LocalDateTime>> getRetrieveMatchResultsJobTriggerStartTimesCache() {
 		return retrieveMatchResultsJobTriggerStartTimesCache;
 	}
 
