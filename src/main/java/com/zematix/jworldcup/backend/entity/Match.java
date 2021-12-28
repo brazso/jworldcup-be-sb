@@ -95,16 +95,10 @@ public class Match implements Serializable {
 	private Team team2;
 	
 	/**
-	 * Result of the match by team1: 1 - if won, 0 - if draw, -1 if lost
+	 * Result sign of the match by team1: 1 - if won, 0 - if draw, -1 if lost, null if not valuable
 	 */
 	@Transient
-	private Integer resultByTeam1;
-	
-	/**
-	 * Result of the match by team2: 1 - if won, 0 - if draw, -1 if lost
-	 */	@Transient
-	private Integer resultByTeam2;
-	
+	private Integer resultSignByTeam1;
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -271,20 +265,12 @@ public class Match implements Serializable {
 		this.team2 = team2;
 	}
 
-	public Integer getResultByTeam1() {
-		return resultByTeam1;
+	public Integer getResultSignByTeam1() {
+		return resultSignByTeam1;
 	}
 
-	public void setResultByTeam1(Integer resultByTeam1) {
-		this.resultByTeam1 = resultByTeam1;
-	}
-
-	public Integer getResultByTeam2() {
-		return resultByTeam2;
-	}
-
-	public void setResultByTeam2(Integer resultByTeam2) {
-		this.resultByTeam2 = resultByTeam2;
+	public void setResultSignByTeam1(Integer resultSignByTeam1) {
+		this.resultSignByTeam1 = resultSignByTeam1;
 	}
 
 }

@@ -25,7 +25,6 @@ public class MatchDto {
 	private RoundDto round;
 	private TeamDto team1;
 	private TeamDto team2;
-	private Integer resultByTeam1;
-	private Integer resultByTeam2;
+	private Integer resultSignByTeam1;
 
 }

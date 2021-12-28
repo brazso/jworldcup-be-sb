@@ -141,8 +141,7 @@ public class MatchService extends ServiceBase {
 				match.getTeam2().getTeamId();
 			}
 			if (match.getTeam1() != null && match.getTeam2() != null) {
-				match.setResultByTeam1(getMatchResult(match, match.getTeam1().getTeamId()));
-				match.setResultByTeam2(getMatchResult(match, match.getTeam2().getTeamId()));
+				match.setResultSignByTeam1(getMatchResult(match, match.getTeam1().getTeamId()));
 			}
 			
 		}
