@@ -211,7 +211,7 @@ public class GroupTeamService extends ServiceBase {
 					// who are still level to determine their final rankings.
 					List<Long> filterTeamIds = twinGroupTeams.stream()
 							.map(e->e.getTeam().getTeamId())
-							.toList();
+							.collect(Collectors.toList()); // mutable List is a must here
 					twinGroupTeams.forEach(item->item.setFilterTeamIds(filterTeamIds));
 				}
 				else {
