@@ -14,10 +14,16 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
+import org.springframework.lang.NonNull;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -37,6 +43,7 @@ import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.scheduler.SchedulerService;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 import com.zematix.jworldcup.backend.util.LambdaExceptionUtil;
+import com.zematix.jworldcup.backend.util.UpdateEntityEvent;
 
 /**
  * Operations around {@link Match} elements. 
@@ -74,6 +81,9 @@ public class MatchService extends ServiceBase {
 	
 	@Inject
 	private SchedulerService schedulerService;
+	
+	@Inject
+    private ApplicationEventPublisher applicationEventPublisher;
 	
 	@Value("${app.expiredDays.event:30}")
 	private String appExpiredDaysEvent;
@@ -313,13 +323,18 @@ public class MatchService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 
-		// update match table
-
+		// retrieve match from table and validate it
 		match = commonDao.findEntityById(Match.class, matchId);
 		if (match == null) {
 			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH"));
 			throw new ServiceException(errMsgs);
 		}
+		if (match.getTeam1() == null || match.getTeam2() == null) {
+			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH_TEAMS"));
+			throw new ServiceException(errMsgs);
+		}
+
+		// update match table
 		match.getEvent().getEventId();
 		match.setGoalNormalByTeam1(goalNormal1);
 		match.setGoalNormalByTeam2(goalNormal2);
@@ -329,17 +344,40 @@ public class MatchService extends ServiceBase {
 			match.setGoalPenaltyByTeam1(goalPenalty1);
 			match.setGoalPenaltyByTeam2(goalPenalty2);
 		}
-		commonDao.flushEntityManager();
+		match.setResultSignByTeam1(getMatchResult(match, match.getTeam1().getTeamId()));
 		
-		// Update additional matches setting teams on them.
-		// TODO - In fact it should be called in a new transaction, independently 
-		//        on this thread, only after completing actual transaction.
-		updateMatchParticipants(match.getEvent().getEventId(), match.getMatchId());
+		// After successful transaction commit after the end of this method a new transaction
+		// is called asynchronously by event handler, which might update the upcoming matches. 
+		// A wrapper service method calling this method and the mentioned asynchronous method 
+		// might be easier, but it needs an extra service. 
+		final Match finalMatch = match;
+		executeAfterTransactionCommits(() -> {
+			UpdateEntityEvent<Match> event = new UpdateEntityEvent<>(finalMatch, true);
+			applicationEventPublisher.publishEvent(event);			
+		});
 		
-		// update cached value
-		applicationService.refreshEventCompletionPercentCache(match.getEvent().getEventId());
-
 		return match;
+	}
+	
+	private void executeAfterTransactionCommits(Runnable task) {
+		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+			@Override
+			public void afterCommit() {
+				task.run();
+			}
+		});
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Async
+	@EventListener(condition = "#event.success")
+	public void onUpdateMatchEvent(@NonNull UpdateEntityEvent/*<Match>*/ event) throws ServiceException {
+		Match match = (Match)event.getEntity();
+		logger.info("onUpdateMatchEvent matchId: {}", match.getMatchId());
+		
+		updateMatchParticipants(match.getEvent().getEventId(), match.getMatchId());
+		// update cached value
+		applicationService.refreshEventCompletionPercentCache(match.getEvent().getEventId());			
 	}
 	
 	/**
@@ -351,6 +389,58 @@ public class MatchService extends ServiceBase {
 	@VisibleForTesting
 	/*private*/ byte sign(byte number) {
 		return (byte) (number == 0 ? 0 : (number < 0 ? -1 : +1));
+	}
+	
+	/**
+	 * Resets result of a {@link Match} instance belongs to the given matchId.
+	 *
+	 * @param matchId
+	 * @return updated {@link Match} instance
+	 * @throws ServiceException mostly if any validation error happens 
+	 */
+	public Match resetMatch(Long matchId) throws ServiceException {
+		
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
+		Match match = null;
+		
+		checkNotNull(matchId);
+
+		if (!errMsgs.isEmpty()) {
+			throw new ServiceException(errMsgs);
+		}
+
+		// retrieve match from table and validate it
+		match = commonDao.findEntityById(Match.class, matchId);
+		if (match == null) {
+			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH"));
+			throw new ServiceException(errMsgs);
+		}
+		if (match.getTeam1() == null || match.getTeam2() == null) {
+			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH_TEAMS"));
+			throw new ServiceException(errMsgs);
+		}
+
+		// update match table
+		match.getEvent().getEventId();
+		match.setGoalNormalByTeam1(null);
+		match.setGoalNormalByTeam2(null);
+		match.setGoalExtraByTeam1(null);
+		match.setGoalExtraByTeam2(null);
+		match.setGoalPenaltyByTeam1(null);
+		match.setGoalPenaltyByTeam2(null);
+		match.setResultSignByTeam1(getMatchResult(match, match.getTeam1().getTeamId()));
+		
+		// After successful transaction commit after the end of this method a new transaction
+		// is called asynchronously by event handler, which might update the upcoming matches. 
+		// A wrapper service method calling this method and the mentioned asynchronous method 
+		// might be easier, but it needs an extra service. 
+		final Match finalMatch = match;
+		executeAfterTransactionCommits(() -> {
+			UpdateEntityEvent<Match> event = new UpdateEntityEvent<>(finalMatch, true);
+			applicationEventPublisher.publishEvent(event);			
+		});
+		
+		return match;
 	}
 	
 	/**

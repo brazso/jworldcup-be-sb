@@ -32,32 +32,26 @@ public class GroupTeamService extends ServiceBase {
 	 * First level sorting of teams in a group based on the following tie-breaking criterion.
 	 * <li>Higher number of points obtained in the group</li>
 	 */
-	private Comparator<GroupTeam> groupTeamComparatorPoints = new Comparator<GroupTeam>() {
-		@Override
-		public int compare(GroupTeam team1, GroupTeam team2) {
-			if (team1.getPoints() != team2.getPoints())
-				return team1.getPoints() < team2.getPoints() ? +1 : -1;
-			return 0;
-		}
+	private Comparator<GroupTeam> groupTeamComparatorPoints = (team1, team2) -> {
+		if (team1.getPoints() != team2.getPoints())
+			return team1.getPoints() < team2.getPoints() ? +1 : -1;
+		return 0;
 	};
-
+        
 	/**
 	 * Second level sorting of teams in a group based on the following tie-breaking criteria.
 	 * <li>Higher number of points obtained in the matches played between the teams in question</li>
 	 * <li>Superior goal difference resulting from the matches played between the teams in question</li>
 	 * <li>Higher number of goals scored in the matches played between the teams in question</li>
 	 */
-	private Comparator<GroupTeam> groupTeamComparatorPGdGf = new Comparator<GroupTeam>() {
-		@Override
-		public int compare(GroupTeam team1, GroupTeam team2) {
-			if (team1.getPoints() != team2.getPoints())
-				return team1.getPoints() < team2.getPoints() ? +1 : -1;
-			if (team1.getGoalDifference() != team2.getGoalDifference())
-				return team1.getGoalDifference() < team2.getGoalDifference() ? +1 : -1;
-			if (team1.getGoalsFor() != team2.getGoalsFor())
-				return team1.getGoalsFor() < team2.getGoalsFor() ? +1 : -1;
-			return 0;
-		}
+	private Comparator<GroupTeam> groupTeamComparatorPGdGf = (team1, team2) -> {
+		if (team1.getPoints() != team2.getPoints())
+			return team1.getPoints() < team2.getPoints() ? +1 : -1;
+		if (team1.getGoalDifference() != team2.getGoalDifference())
+			return team1.getGoalDifference() < team2.getGoalDifference() ? +1 : -1;
+		if (team1.getGoalsFor() != team2.getGoalsFor())
+			return team1.getGoalsFor() < team2.getGoalsFor() ? +1 : -1;
+		return 0;
 	};
 
 	/**
@@ -65,15 +59,12 @@ public class GroupTeamService extends ServiceBase {
 	 * <li>Superior goal difference resulting from the matches played between the teams in question</li>
 	 * <li>Higher number of goals scored in the matches played between the teams in question</li>
 	 */
-	private Comparator<GroupTeam> groupTeamComparatorGdGf = new Comparator<GroupTeam>() {
-		@Override
-		public int compare(GroupTeam team1, GroupTeam team2) {
-			if (team1.getGoalDifference() != team2.getGoalDifference())
-				return team1.getGoalDifference() < team2.getGoalDifference() ? +1 : -1;
-			if (team1.getGoalsFor() != team2.getGoalsFor())
-				return team1.getGoalsFor() < team2.getGoalsFor() ? +1 : -1;
-			return 0;
-		}
+	private Comparator<GroupTeam> groupTeamComparatorGdGf = (team1, team2) -> {
+		if (team1.getGoalDifference() != team2.getGoalDifference())
+			return team1.getGoalDifference() < team2.getGoalDifference() ? +1 : -1;
+		if (team1.getGoalsFor() != team2.getGoalsFor())
+			return team1.getGoalsFor() < team2.getGoalsFor() ? +1 : -1;
+		return 0;
 	};
 
 	/**
@@ -241,8 +232,8 @@ public class GroupTeamService extends ServiceBase {
 		checkArgument(groupTeams != null && !groupTeams.isEmpty(), "Argument \"groupTeams\" list must be neither null nor empty.");
 		
 		boolean isGroupFinished = groupTeams.stream()
-				.map(groupTeam->groupTeam.isTeamInGroupFinished())
-				.reduce((b1, b2) -> b1 && b2).get();
+				.map(GroupTeam::isTeamInGroupFinished)
+				.reduce((b1, b2) -> b1 && b2).orElse(false);
 		return isGroupFinished;
 	}
 	

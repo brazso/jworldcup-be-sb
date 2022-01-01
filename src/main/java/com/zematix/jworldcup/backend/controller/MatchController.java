@@ -100,7 +100,7 @@ public class MatchController extends ServiceBase implements ResponseEntityHelper
 	 * @return updated match wrapped in 
 	 * @throws ServiceException if the given match cannot be saved
 	 */
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@Operation(summary = "Save a match", description = "Updates the end result of a match with the given data")
 	@PutMapping(value = "/save-match")
 	public ResponseEntity<GenericResponse<MatchDto>> saveMatch(
@@ -111,6 +111,21 @@ public class MatchController extends ServiceBase implements ResponseEntityHelper
 				matchDto.getGoalPenaltyByTeam1(), matchDto.getGoalPenaltyByTeam2());
 		return buildResponseEntityWithOK(new GenericResponse<>(matchMapper.entityToDto(match)));
 	}
+	
+	/**
+	 * Resets result of a {@link Match} instance belongs to the given matchId.
+	 *
+	 * @param matchId
+	 * @return updated {@link Match} instance
+	 * @throws ServiceException mostly if any validation error happens 
+	 */
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@Operation(summary = "Reset a match", description = "Resets the end result of a match by its id")
+	@PutMapping(value = "/reset-match/{id}")
+	public ResponseEntity<GenericResponse<MatchDto>> resetMatch(@PathVariable("id") Long matchId) throws ServiceException {
+		Match match = matchService.resetMatch(matchId);
+		return buildResponseEntityWithOK(new GenericResponse<>(matchMapper.entityToDto(match)));
+	}	
 	
 	/**
 	 * Returns a list of {@link Match} instances wrapped in {@link Response} belongs to the given
