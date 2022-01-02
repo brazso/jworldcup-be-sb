@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zematix.jworldcup.backend.dto.BetDto;
+import com.zematix.jworldcup.backend.dto.CommonResponse;
 import com.zematix.jworldcup.backend.dto.GenericListResponse;
 import com.zematix.jworldcup.backend.dto.GenericMapResponse;
 import com.zematix.jworldcup.backend.dto.GenericResponse;
@@ -94,7 +96,7 @@ public class BetController extends ServiceBase implements ResponseEntityHelper {
 	 * @throws ServiceException - operation failed
 	 * @return saved/updated {@link Bet} instance or {@code null} if deleted
 	 */
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("hasAnyRole('USER')")
 	@Operation(summary = "Save a bet", description = "Insert a new bet or update / delete an existing bet")
 	@PutMapping(value = "/save-bet")
 	public ResponseEntity<GenericResponse<BetDto>> saveBet(@RequestBody BetDto betDto)
@@ -105,6 +107,19 @@ public class BetController extends ServiceBase implements ResponseEntityHelper {
 		return buildResponseEntityWithOK(new GenericResponse<>(betMapper.entityToDto(bet)));
 	}
 	
+	/**
+	 * Deletes a bet given by its id.
+	 * 
+	 * @param loginName
+	 */
+	@PreAuthorize("hasAnyRole('USER')")
+	@Operation(summary = "Delete a bet by its id", description = "Delete a bet by its id")
+	@DeleteMapping(value = "/delete-bet/{id}")
+	public ResponseEntity<CommonResponse> deleteBet(@PathVariable("id") Long betId) throws ServiceException {
+		betService.deleteBet(betId);
+		return buildResponseEntityWithOK(new CommonResponse());
+	}
+
 	/**
 	 * Returns a map containing calculated score gained by given {@code userId} user on given 
 	 * {@code eventID} event on days of the event. The latter one are the keys of the map and

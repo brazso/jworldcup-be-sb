@@ -153,7 +153,6 @@ public class MatchService extends ServiceBase {
 			if (match.getTeam1() != null && match.getTeam2() != null) {
 				match.setResultSignByTeam1(getMatchResult(match, match.getTeam1().getTeamId()));
 			}
-			
 		}
 		
 		if (!errMsgs.isEmpty()) {

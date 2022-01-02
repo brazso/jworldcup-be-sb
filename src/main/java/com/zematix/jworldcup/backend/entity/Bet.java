@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -57,6 +58,9 @@ public class Bet implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="user_id", nullable=false)
 	private User user;
+	
+	@Transient
+	private Integer score;
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -135,6 +139,14 @@ public class Bet implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Integer getScore() {
+		return score;
+	}
+
+	public void setScore(Integer score) {
+		this.score = score;
 	}
 
 }

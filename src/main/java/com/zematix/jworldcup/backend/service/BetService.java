@@ -23,6 +23,7 @@ import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.Pair;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
@@ -65,6 +66,15 @@ public class BetService extends ServiceBase {
 		checkNotNull(userId);
 
 		List<Bet> bets = betDao.retrieveBetsByEventAndUser(eventId, userId);
+		Pair<Long> favouriteTeamIds = null;
+		for (Bet bet: bets) {
+			// setScore
+			if (favouriteTeamIds == null) {
+				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
+			}
+			bet.setScore(retrieveScoreByBet(bet, favouriteTeamIds));
+			
+		}
 		return bets;
 	}
 	
@@ -85,8 +95,11 @@ public class BetService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 
-		commonDao.detachEntity(bet);
+		// setScore
+		bet.setScore(retrieveScoreByBet(bet, null));
 		
+		commonDao.detachEntity(bet);
+	
 		return bet;
 	}
 	
@@ -163,6 +176,91 @@ public class BetService extends ServiceBase {
 	}
 
 	/**
+	 * Delete {@link Bet} instance belongs to the given betId.
+	 *
+	 * @param betId
+	 * @throws ServiceException mostly if any validation error happens 
+	 */
+	public void deleteBet(Long betId) throws ServiceException {
+		
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
+		Bet bet = null;
+		
+		checkNotNull(betId);
+
+		if (!errMsgs.isEmpty()) {
+			throw new ServiceException(errMsgs);
+		}
+
+		// retrieve bet from table
+		bet = commonDao.findEntityById(Bet.class, betId);
+		if (bet == null) {
+			errMsgs.add(ParameterizedMessage.create("MISSING_BET"));
+			throw new ServiceException(errMsgs);
+		}
+
+		// update match table
+		commonDao.removeEntity(bet);
+	}
+	
+	/**
+	 * Returns favouriteTeamId pair belongs to the user of the given bet.
+	 * 
+	 *  @param bet
+	 *  @return favouriteTeamId belong to the given bet.
+	 */
+	private Pair<Long> retrieveFavouriteTeamIdsByBet(Bet bet) throws ServiceException {
+		checkNotNull(bet);
+		
+		Long favouriteGroupTeamId = null;
+		Long favouriteKnockoutTeamId = null;
+		
+		UserOfEvent userOfEvent = userDao.retrieveUserOfEvent(bet.getEvent().getEventId(), bet.getUser().getUserId());
+		if (userOfEvent != null) {
+			if (userOfEvent.getFavouriteGroupTeam() != null) {
+				favouriteGroupTeamId = userOfEvent.getFavouriteGroupTeam().getTeamId();
+			}
+			if (userOfEvent.getFavouriteKnockoutTeam() != null) {
+				favouriteKnockoutTeamId = userOfEvent.getFavouriteKnockoutTeam().getTeamId();
+			}
+		}
+		
+		return new Pair<>(favouriteGroupTeamId, favouriteKnockoutTeamId);
+	}
+	
+	/**
+	 * Returns calculated score gained by given {@code bet} and {@code favouriteTeamId}.
+	 * If latter one is not given, its value is retrieved from database.
+	 * 
+	 *  @param bet
+	 *  @param favouriteTeamId
+	 */
+	private int retrieveScoreByBet(Bet bet, Pair<Long> favouriteTeamIds) throws ServiceException {
+		checkNotNull(bet);
+		
+		Long favouriteGroupTeamId = null;
+		Long favouriteKnockoutTeamId = null;
+		if (favouriteTeamIds == null) {
+			favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
+		}
+		if (favouriteTeamIds != null) { 
+			favouriteGroupTeamId = favouriteTeamIds.getValue1();
+			favouriteKnockoutTeamId = favouriteTeamIds.getValue2();
+		}
+		
+		Match match = bet.getMatch();
+		checkNotNull(match);
+		Long favouriteTeamId = match.getRound().getIsGroupmatchAsBoolean() ? favouriteGroupTeamId : favouriteKnockoutTeamId;
+		int score = matchService.getScore(favouriteTeamId, 
+				match.getTeam1() != null ? match.getTeam1().getTeamId() : null, 
+				match.getTeam2() != null ? match.getTeam2().getTeamId() : null, 
+				match.getGoalNormalByTeam1(), match.getGoalNormalByTeam2(), 
+				bet.getGoalNormalByTeam1(), bet.getGoalNormalByTeam2());
+
+		return score;
+	}
+
+	/**
 	 * Returns calculated score gained by given {@code userId} user on given 
 	 * {@code eventID} event.
 	 * 
@@ -174,29 +272,14 @@ public class BetService extends ServiceBase {
 		checkNotNull(eventId);
 		checkNotNull(userId);
 
-		Long favouriteGroupTeamId = null;
-		Long favouriteKnockoutTeamId = null;
-
-		UserOfEvent userOfEvent = userDao.retrieveUserOfEvent(eventId, userId);
-		if (userOfEvent != null) {
-			if (userOfEvent.getFavouriteGroupTeam() != null) {
-				favouriteGroupTeamId = userOfEvent.getFavouriteGroupTeam().getTeamId();
-			}
-			if (userOfEvent.getFavouriteKnockoutTeam() != null) {
-				favouriteKnockoutTeamId = userOfEvent.getFavouriteKnockoutTeam().getTeamId();
-			}
-		}
-		
 		int score = 0;
 		List<Bet> bets = betDao.retrieveBetsByEventAndUser(eventId, userId);
+		Pair<Long> favouriteTeamIds = null;
 		for (Bet bet : bets) {
-			Match match = bet.getMatch();
-			Long favouriteTeamId = match.getRound().getIsGroupmatchAsBoolean() ? favouriteGroupTeamId : favouriteKnockoutTeamId;
-			score += matchService.getScore(favouriteTeamId, 
-					match.getTeam1() != null ? match.getTeam1().getTeamId() : null, 
-					match.getTeam2() != null ? match.getTeam2().getTeamId() : null, 
-					match.getGoalNormalByTeam1(), match.getGoalNormalByTeam2(), 
-					bet.getGoalNormalByTeam1(), bet.getGoalNormalByTeam2());
+			if (favouriteTeamIds == null) {
+				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
+			}
+			score += retrieveScoreByBet(bet, favouriteTeamIds);
 		}
 		return score;
 	}
@@ -215,31 +298,15 @@ public class BetService extends ServiceBase {
 		checkNotNull(userId);
 
 		Map<LocalDateTime, Integer> mapScoreByDate = new HashMap<>();
-		Long favouriteGroupTeamId = null;
-		Long favouriteKnockoutTeamId = null;
-
-		UserOfEvent userOfEvent = userDao.retrieveUserOfEvent(eventId, userId);
-		if (userOfEvent != null) {
-			if (userOfEvent.getFavouriteGroupTeam() != null) {
-				favouriteGroupTeamId = userOfEvent.getFavouriteGroupTeam().getTeamId();
-			}
-			if (userOfEvent.getFavouriteKnockoutTeam() != null) {
-				favouriteKnockoutTeamId = userOfEvent.getFavouriteKnockoutTeam().getTeamId();
-			}
-		}
-		
 		int score = 0;
 		List<Bet> bets = betDao.retrieveBetsByEventAndUser(eventId, userId);
+		Pair<Long> favouriteTeamIds = null;
 		for (Bet bet : bets) {
-			Match match = bet.getMatch();
-			LocalDateTime matchDate = CommonUtil.truncateDateTime(match.getStartTime());
-			Long favouriteTeamId = match.getRound().getIsGroupmatchAsBoolean() ? favouriteGroupTeamId : favouriteKnockoutTeamId;
-			score += matchService.getScore(favouriteTeamId, 
-					match.getTeam1() != null ? match.getTeam1().getTeamId() : null, 
-					match.getTeam2() != null ? match.getTeam2().getTeamId() : null, 
-					match.getGoalNormalByTeam1(), match.getGoalNormalByTeam2(), 
-					bet.getGoalNormalByTeam1(), bet.getGoalNormalByTeam2());
-			
+			if (favouriteTeamIds == null) {
+				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
+			}
+			LocalDateTime matchDate = CommonUtil.truncateDateTime(bet.getMatch().getStartTime());
+			score += retrieveScoreByBet(bet, favouriteTeamIds);
 			mapScoreByDate.put(matchDate, score);
 		}
 		return mapScoreByDate;
