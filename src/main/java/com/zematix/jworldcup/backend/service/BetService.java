@@ -168,6 +168,10 @@ public class BetService extends ServiceBase {
 			}
 		}
 
+		if (bet != null) {
+			bet.setScore(this.retrieveScoreByBet(bet, null));
+		}
+		
 		if (!errMsgs.isEmpty()) {
 			throw new ServiceException(errMsgs);
 		}

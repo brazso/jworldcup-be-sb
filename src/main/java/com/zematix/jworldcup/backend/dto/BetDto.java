@@ -19,5 +19,5 @@ public class BetDto {
 //	private Event event;
 	private MatchDto match;
 	private UserDto user;
-
+	private Integer score;
 }

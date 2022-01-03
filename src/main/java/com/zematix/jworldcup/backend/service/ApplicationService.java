@@ -53,7 +53,7 @@ public class ApplicationService extends ServiceBase {
 	@Value("${app.version.date}")
 	private String appVersionDateString;
 
-	@Value("${app.cheat.dateTime:#{null}}}")
+	@Value("${app.cheat.dateTime:#{null}}")
 	private String appCheatDateTimeString;
 	
 	@Value("${app.emailAddr}")
@@ -169,7 +169,7 @@ public class ApplicationService extends ServiceBase {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 			try {
-				LocalDateTime.parse(appCheatDateTimeString, formatter);
+				appCheatDateTime = LocalDateTime.parse(appCheatDateTimeString, formatter);
 			} catch (DateTimeParseException e) {
 				logger.error(String.format("Unsupported date value as app.cheat.dateTime = %s in configuration file.", appCheatDateTimeString));
 			}
