@@ -11,7 +11,7 @@ public class UserOfEventDto {
 
 //	private User user;
 //	private Event event;
-//	private Team favouriteGroupTeam;
-//	private Team favouriteKnockoutTeam;
+	private Team favouriteGroupTeam;
+	private Team favouriteKnockoutTeam;
 
 }
