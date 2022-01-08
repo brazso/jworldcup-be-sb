@@ -26,6 +26,7 @@ public class EventDto {
 //	private List<UserGroup> userGroups;
 //	private List<Chat> chats;
 	private LocalDateTime startTime;
+	private LocalDateTime knockoutStartTime;
 	private LocalDateTime endTime;
 
 }

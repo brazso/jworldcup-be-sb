@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -55,6 +54,7 @@ public class EventService extends ServiceBase {
 	public void initEvent(Event event) {
 		checkNotNull(event);
 		event.setStartTime(eventDao.getStartTime(event.getEventId()));
+		event.setKnockoutStartTime(eventDao.getKnockoutStartTime(event.getEventId()));
 		event.setEndTime(eventDao.getEndTime(event.getEventId()));
 	}
 	

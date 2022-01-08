@@ -83,10 +83,16 @@ public class Event implements Serializable {
 	private List<Chat> chats;
 	
 	/**
-	 * Start datetime of the first match belongs to the event.
+	 * Start datetime of the first (group) match belongs to the event.
 	 */
 	@Transient
 	private LocalDateTime startTime;
+
+	/**
+	 * Start datetime of the first knockout match belongs to the event.
+	 */
+	@Transient
+	private LocalDateTime knockoutStartTime;
 
 	/**
 	 * Start datetime of the last match belongs to the event.
@@ -383,6 +389,14 @@ public class Event implements Serializable {
 	 */
 	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
+	}
+
+	public LocalDateTime getKnockoutStartTime() {
+		return knockoutStartTime;
+	}
+
+	public void setKnockoutStartTime(LocalDateTime knockoutStartTime) {
+		this.knockoutStartTime = knockoutStartTime;
 	}
 
 	/**

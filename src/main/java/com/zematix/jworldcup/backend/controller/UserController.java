@@ -149,7 +149,7 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 	@Operation(summary = "Save favourite teams of user-of-event by event and user", description = "Save favourite teams of user-of-event by event and user")
 	@PostMapping(value = "/save-user-of-event")	
 	public ResponseEntity<GenericResponse<UserOfEventDto>> saveUserOfEvent(@RequestParam Long eventId, @RequestParam Long userId, 
-			@RequestParam Long favouriteGroupTeamId, @RequestParam Long favouriteKnockoutTeamId) throws ServiceException {
+			@RequestParam(required = false) Long favouriteGroupTeamId, @RequestParam(required = false) Long favouriteKnockoutTeamId) throws ServiceException {
 		var userOfEvent = userService.saveUserOfEvent(eventId, userId, favouriteGroupTeamId, favouriteKnockoutTeamId);
 		return buildResponseEntityWithOK(new GenericResponse<>(userOfEventMapper.entityToDto(userOfEvent)));
 	}
