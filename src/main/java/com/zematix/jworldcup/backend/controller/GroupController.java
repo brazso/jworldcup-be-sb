@@ -75,4 +75,18 @@ public class GroupController extends ServiceBase implements ResponseEntityHelper
 		return buildResponseEntityWithOK(new GenericListResponse<>(groupTeamMapper.entityListToDtoList(groupTeams)));
 	}
 	
+	/**
+	 * Returns a list of {@link GroupTeam} instances belongs to the provided
+	 * {@link Event#getEventId() event. The list is sorted by its group and position inside its group.
+	 *
+	 * @param eventId
+	 * @return a list of ranked teams belongs to the provided event
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
+	@Operation(summary = "Retrieve group teams by event", description = "Retrieve group teams by event")
+	@GetMapping(value = "/group-teams-by-event")
+	public ResponseEntity<GenericListResponse<GroupTeamDto>> getRankedGroupTeamsByEvent(@RequestParam Long eventId) throws ServiceException{
+		var groupTeams = groupService.getRankedGroupTeamsByEvent(eventId);
+		return buildResponseEntityWithOK(new GenericListResponse<>(groupTeamMapper.entityListToDtoList(groupTeams)));
+	}
 }

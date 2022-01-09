@@ -94,6 +94,33 @@ public class GroupService extends ServiceBase {
 	}
 	
 	/**
+	 * Returns a list of {@link GroupTeam} instances belongs to the provided
+	 * {@link Event#getEventId() event. The list is sorted by its group and position inside its group.
+	 *
+	 * @param groupId
+	 * @return a list of ranked teams belongs to the provided group
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<GroupTeam> getRankedGroupTeamsByEvent(Long eventId) throws ServiceException{
+		checkNotNull(eventId);
+		List<GroupTeam> result = new ArrayList<>();
+		
+		List<Group> groups = groupDao.retrieveGroupsByEvent(eventId);
+		for (Group group: groups) {
+			List<GroupTeam> groupTeams = new ArrayList<>();
+			for (Team team : group.getTeams()) {
+				team.getEvent().getEventId();
+				List<Match> playedMatches = matchDao.retrieveFinishedGroupMatchesByTeam(team.getTeamId());
+				GroupTeam groupTeam = new GroupTeam(team, playedMatches);
+				groupTeams.add(groupTeam);
+			}
+			groupTeamService.sortGroupTeams(groupTeams);
+			result.addAll(groupTeams);
+		}
+		return result;
+	}
+	
+	/**
 	 * Returns a constructed map containing all {@link Team} instances of the provided 
 	 * {@link Event#getEventId()} where the key are {@link GroupPosition} instances.
 	 * If on a position there are more teams, those teams are not included in the map.
