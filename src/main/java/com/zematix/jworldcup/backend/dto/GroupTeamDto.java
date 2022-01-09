@@ -13,4 +13,12 @@ public class GroupTeamDto {
 	private List<Long> filterTeamIds;
 	private int positionInGroup;
 	private boolean isTeamInGroupFinished;
+	private int matchesPlayed;
+	private int won;
+	private int draw;
+	private int lost;
+	private int goalsFor;
+	private int goalsAgainst;
+	private int goalDifference;
+	private int points;
 }

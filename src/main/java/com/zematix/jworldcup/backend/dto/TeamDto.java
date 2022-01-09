@@ -18,6 +18,5 @@ public class TeamDto {
 //	private List<Match> matches1;
 //	private List<Match> matches2;
 //	private Event event;
-//	private Group group;
-
+	private GroupDto group;
 }
