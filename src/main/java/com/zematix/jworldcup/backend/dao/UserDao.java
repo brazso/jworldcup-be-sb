@@ -188,7 +188,8 @@ public class UserDao extends DaoBase {
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
 		user = query.from(qUser)
-				.where(qUser.loginName.notEqualsIgnoreCase(loginName), qUser.emailAddr.equalsIgnoreCase(emailAddr))
+				.where(qUser.loginName.notEqualsIgnoreCase(loginName),
+						qUser.emailAddr.equalsIgnoreCase(emailAddr).or(qUser.emailNew.equalsIgnoreCase(emailAddr)))
 				.fetchFirst();
 		return user != null;
 	}
