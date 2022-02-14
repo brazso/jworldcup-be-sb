@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 import com.zematix.jworldcup.backend.dto.UserGroupDto;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 
-@Mapper
+@Mapper(uses = {UserMapper.class})
 public interface UserGroupMapper extends MapperBase<UserGroupDto, UserGroup> {
 
 	@Override

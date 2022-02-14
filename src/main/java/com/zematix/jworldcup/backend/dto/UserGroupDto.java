@@ -19,7 +19,7 @@ public class UserGroupDto {
 
 //	private Set<User> users;
 
-//	private User owner;
+	private UserDto owner;
 	
 //	private List<Chat> chats;
 	
