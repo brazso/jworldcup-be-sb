@@ -324,6 +324,7 @@ public class UserGroupDao extends DaoBase {
 		userGroup = query.from(qUserGroup)
 		  .where(qUserGroup.name.equalsIgnoreCase(name)
 				  .and(qUserGroup.event.eventId.loe(eventId)))
+		  .orderBy(qUserGroup.userGroupId.desc())
 		  .fetchFirst();
 		
 		return userGroup;

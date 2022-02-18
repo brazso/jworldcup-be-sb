@@ -132,8 +132,8 @@ public class UserGroupController extends ServiceBase implements ResponseEntityHe
 	@Operation(summary = "Create given user group", description = "Insert given user group into database")
 	@PostMapping(value = "/insert-user-group")
 	public ResponseEntity<GenericResponse<UserGroupDto>> insertUserGroup(@RequestParam Long eventId, 
-			@RequestParam Long userId, @RequestParam String name, @RequestParam boolean isInserConfirmed) throws ServiceException {
-		var userGroup = userGroupService.insertUserGroup(eventId, userId, name, isInserConfirmed);
+			@RequestParam Long userId, @RequestParam String name, @RequestParam boolean isInsertConfirmed) throws ServiceException {
+		var userGroup = userGroupService.insertUserGroup(eventId, userId, name, isInsertConfirmed);
 		return buildResponseEntityWithOK(new GenericResponse<>(userGroupMapper.entityToDto(userGroup)));
 	}
 

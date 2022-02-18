@@ -225,7 +225,7 @@ public class UserGroupService extends ServiceBase {
 	 * @param isInsertConfirmed
 	 * @return persisted UserGroup entity instance
 	 */
-	public UserGroup insertUserGroup(Long eventId, Long userId, String name, boolean isInserConfirmed) throws ServiceException {
+	public UserGroup insertUserGroup(Long eventId, Long userId, String name, boolean isInsertConfirmed) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userId);
 		
@@ -244,7 +244,7 @@ public class UserGroupService extends ServiceBase {
 		UserGroup foundUserGroup = userGroupDao.findLastUserGroupByName(eventId, name);
 		if (foundUserGroup != null) {
 			if (!foundUserGroup.getEvent().getEventId().equals(eventId)) {
-				if (!isInserConfirmed) {
+				if (!isInsertConfirmed) {
 					// userGroup found on earlier event, confirm dialog with either importing or doing insertion?
 					errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_OCCUPIED_ON_EARLIER_EVENT", 
 							ParameterizedMessageType.INFO, 
