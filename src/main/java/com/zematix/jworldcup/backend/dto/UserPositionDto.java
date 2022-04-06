@@ -13,4 +13,6 @@ public class UserPositionDto {
 	
 	private int score = 0;
 	
+	private int position = 1;
+	
 }
