@@ -1,10 +1,15 @@
 package com.zematix.jworldcup.backend.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -232,10 +237,16 @@ public class UserGroupController extends ServiceBase implements ResponseEntityHe
 	 */
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
 	@Operation(summary = "Print user certificate", description = "Print user certificate")
-	@GetMapping(value = "/print-user-certificate")
-	public ResponseEntity<GenericResponse<ByteArrayOutputStream>> printUserCertificate(@RequestBody UserCertificateExtendedDto userCertificateExtendedDto) throws ServiceException {
+	@PostMapping(value = "/print-user-certificate")
+	public ResponseEntity<InputStreamResource> printUserCertificate(@RequestBody UserCertificateExtendedDto userCertificateExtendedDto) throws ServiceException {
 		Locale locale = userCertificateExtendedDto.getLanguageTag() == null ? Locale.getDefault() : Locale.forLanguageTag( userCertificateExtendedDto.getLanguageTag() );
 		ByteArrayOutputStream stream = userGroupService.printUserCertificate(userCertificateExtendedMapper.dtoToEntity(userCertificateExtendedDto), locale);
-		return buildResponseEntityWithOK(new GenericResponse<>(stream));
+		InputStream tmp = new ByteArrayInputStream(stream.toByteArray());
+		InputStreamResource resource = new InputStreamResource(tmp);
+		return ResponseEntity.ok()
+			.contentType(MediaType.APPLICATION_PDF)
+// 			.contentLength(fileSize)
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=dummy.pdf")
+			.body(resource);
 	}
 }
