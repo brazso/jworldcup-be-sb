@@ -6,10 +6,13 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -26,15 +29,18 @@ import com.zematix.jworldcup.backend.dao.UserDao;
 import com.zematix.jworldcup.backend.dao.UserGroupDao;
 import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
 import com.zematix.jworldcup.backend.emun.TemplateId;
+import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Role;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.entity.UserStatus;
 import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.Pair;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.model.UserCertificate;
 import com.zematix.jworldcup.backend.model.UserPosition;
+import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
  * Operations around {@link UserGroup} elements. 
@@ -70,6 +76,9 @@ public class UserGroupService extends ServiceBase {
 	
 	@Inject
 	private EventService eventService;
+	
+	@Inject
+	private MatchService matchService;
 
 	/**
 	 * Returns a new virtual Everybody userGroup object belongs to the given 
@@ -721,5 +730,40 @@ public class UserGroupService extends ServiceBase {
 		
 		return userGroup;
 	}
+
+	/**
+	 * Returns a map containing calculated score gained by given {@code userId} user on given 
+	 * {@code eventID} event on days of the event. The latter one are the keys of the map and
+	 * those are the dates of the bets wagered by the user.
+	 * 
+	 *  @param eventId
+	 *  @param userId
+	 */
+	@Transactional(readOnly = true)
+	public Map<LocalDateTime, Integer> retrieveScoresByEventAndUserGroup(Long eventId, Long userGroupId) throws ServiceException {
+		checkNotNull(eventId);
+		checkNotNull(userGroupId);
+
+		Map<LocalDateTime, Integer> mapScoreByDate = new HashMap<>();
+		
+		List<LocalDateTime> matchDates = matchService.retrieveMatchStartDatesByEvent(eventId); // labels
+		List<UserPosition> userPositions = retrieveUserPositions(eventId, userGroupId);
+		for (UserPosition userPosition : userPositions) {
+			Map<LocalDateTime, Integer> map = betService.retrieveScoresByEventAndUser(eventId, userPosition.getUserId());
+		}
+		
+//		List<Bet> bets = betService.retrieveBetsByEventAndUser(eventId, userId);
+//		Pair<Long> favouriteTeamIds = null;
+//		for (Bet bet : bets) {
+//			if (favouriteTeamIds == null) {
+//				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
+//			}
+//			LocalDateTime matchDate = CommonUtil.truncateDateTime(bet.getMatch().getStartTime());
+//			score += retrieveScoreByBet(bet, favouriteTeamIds);
+//			mapScoreByDate.put(matchDate, score);
+//		}
+		return mapScoreByDate;
+	}
+
 
 }
