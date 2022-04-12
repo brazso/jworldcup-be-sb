@@ -1,7 +1,6 @@
 package com.zematix.jworldcup.backend.dao;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.TypedQuery;
 

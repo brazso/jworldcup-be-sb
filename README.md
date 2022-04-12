@@ -89,11 +89,12 @@ After gradle test (or build if test is not disabled there) the result can be che
 file://{$buildDir}/reports/tests/test/index.html
 
 ### Eclipse IDE
-If you use Eclipse IDE it is recommended to install the following items in Eclipse Marketplace
+If you use Eclipse IDE (4.23 2022-03) it is recommended to install the following items in Eclipse Marketplace
+* Install lombok.jar (v1.18.22), see also [https://www.baeldung.com/lombok-ide#eclipse](https://www.baeldung.com/lombok-ide#eclipse)
 * Java 17 Support for Eclipse 2021-09 (unsupported natively)
 * Spring Tools 4 (Spring tool, e.g. running application easily as Spring Boot App)
 * DBeaver 21.2.5 (if you want a more convenient database tool than PhpMyAdmin included in docker image)
-* SonarLint 7.1 (sourcecode analyser tool)
+* SonarLint 7.3.1 (sourcecode analyser tool)
 
 ### Rest API
 * Swagger UI page is [http://localhost:8090/jworldcup/swagger-ui.html](http://localhost:8090/jworldcup/swagger-ui.html)
