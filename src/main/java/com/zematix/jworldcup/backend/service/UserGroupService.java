@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,18 +28,17 @@ import com.zematix.jworldcup.backend.dao.UserDao;
 import com.zematix.jworldcup.backend.dao.UserGroupDao;
 import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
 import com.zematix.jworldcup.backend.emun.TemplateId;
-import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Role;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.entity.UserStatus;
 import com.zematix.jworldcup.backend.exception.ServiceException;
-import com.zematix.jworldcup.backend.model.Pair;
+import com.zematix.jworldcup.backend.model.LineChartData;
+import com.zematix.jworldcup.backend.model.LineChartDataset;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.model.UserCertificate;
 import com.zematix.jworldcup.backend.model.UserPosition;
-import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
  * Operations around {@link UserGroup} elements. 
@@ -732,38 +730,41 @@ public class UserGroupService extends ServiceBase {
 	}
 
 	/**
-	 * Returns a map containing calculated score gained by given {@code userId} user on given 
-	 * {@code eventID} event on days of the event. The latter one are the keys of the map and
-	 * those are the dates of the bets wagered by the user.
+	 * Returns line chart scores data by given {@code userGroupId} user group 
+	 * and given {@code eventID} event on days of the event. The latter one are the keys of 
+	 * the map and those are the dates of the bets wagered by the user group.
 	 * 
 	 *  @param eventId
-	 *  @param userId
+	 *  @param userGroupId
 	 */
 	@Transactional(readOnly = true)
-	public Map<LocalDateTime, Integer> retrieveScoresByEventAndUserGroup(Long eventId, Long userGroupId) throws ServiceException {
+	public LineChartData retrieveScoresByEventAndUserGroup(Long eventId, Long userGroupId) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userGroupId);
 
-		Map<LocalDateTime, Integer> mapScoreByDate = new HashMap<>();
-		
+		LineChartData data = new LineChartData();
+
 		List<LocalDateTime> matchDates = matchService.retrieveMatchStartDatesByEvent(eventId); // labels
+		data.setMatchDates(matchDates);
+		
 		List<UserPosition> userPositions = retrieveUserPositions(eventId, userGroupId);
 		for (UserPosition userPosition : userPositions) {
 			Map<LocalDateTime, Integer> map = betService.retrieveScoresByEventAndUser(eventId, userPosition.getUserId());
+			Integer prevScore = 0;
+			LineChartDataset dataset = new LineChartDataset();
+			dataset.setLabel(userPosition.getLoginName());
+			for (LocalDateTime matchDate: matchDates) {
+				Integer score = prevScore;
+				if (map.containsKey(matchDate)) {
+					score = map.get(matchDate);
+					prevScore = score;
+				}
+				dataset.getData().add(score);
+			}
+			data.getDatasets().add(dataset);
 		}
 		
-//		List<Bet> bets = betService.retrieveBetsByEventAndUser(eventId, userId);
-//		Pair<Long> favouriteTeamIds = null;
-//		for (Bet bet : bets) {
-//			if (favouriteTeamIds == null) {
-//				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
-//			}
-//			LocalDateTime matchDate = CommonUtil.truncateDateTime(bet.getMatch().getStartTime());
-//			score += retrieveScoreByBet(bet, favouriteTeamIds);
-//			mapScoreByDate.put(matchDate, score);
-//		}
-		return mapScoreByDate;
+		return data;
 	}
-
 
 }

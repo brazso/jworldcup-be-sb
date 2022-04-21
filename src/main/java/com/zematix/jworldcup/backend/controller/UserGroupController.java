@@ -40,6 +40,7 @@ import com.zematix.jworldcup.backend.mapper.UserCertificateMapper;
 import com.zematix.jworldcup.backend.mapper.UserGroupMapper;
 import com.zematix.jworldcup.backend.mapper.UserMapper;
 import com.zematix.jworldcup.backend.mapper.UserPositionMapper;
+import com.zematix.jworldcup.backend.model.LineChartData;
 import com.zematix.jworldcup.backend.model.UserCertificate;
 import com.zematix.jworldcup.backend.model.UserPosition;
 import com.zematix.jworldcup.backend.service.ServiceBase;
@@ -249,4 +250,22 @@ public class UserGroupController extends ServiceBase implements ResponseEntityHe
 			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=dummy.pdf")
 			.body(resource);
 	}
+	
+	/**
+	 * Returns line chart scores data by given {@code userGroupId} user group 
+	 * and given {@code eventID} event on days of the event. The latter one are the keys of 
+	 * the map and those are the dates of the bets wagered by the user group.
+	 * 
+	 *  @param eventId
+	 *  @param userGroupId
+	 *  @return line chart scores data  
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
+	@Operation(summary = "Retrieve line chart scores of an event and user group", description = "Retrieve line chart scores by date map of an event and user")
+	@GetMapping(value = "/find-line-chart-data-by-event-and-user-group")
+	public ResponseEntity<GenericResponse<LineChartData>> retrieveScoresByEventAndUserGroup(@RequestParam Long eventId, @RequestParam Long userGroupId) throws ServiceException {
+		var lineChartData = userGroupService.retrieveScoresByEventAndUserGroup(eventId, userGroupId);
+		return buildResponseEntityWithOK(new GenericResponse<>(lineChartData));
+	}
+	
 }
