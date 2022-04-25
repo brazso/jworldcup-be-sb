@@ -554,12 +554,9 @@ public class UserGroupService extends ServiceBase {
 	}
 
 	/**
-	 * Returns a sorted list of {@link UserCertificate} instances which belong to the given {@link Event#eventId}
-	 * and {@link User#userId}.
+	 * Returns a sorted list of {@link UserCertificate} instances from all events.
 	 * 
-	 * @param eventId - filter for {@link Event}
-	 * @param userId - filter for {@link User}
-	 * @return list of sorted userCertificate objects which belongs to the given eventId and userId
+	 * @return list of sorted userCertificate objects from all events
 	 */
 	@Transactional(readOnly = true)
 	public List<UserCertificate> retrieveTopUsers() throws ServiceException {

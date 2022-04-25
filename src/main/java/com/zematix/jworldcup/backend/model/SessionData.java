@@ -31,6 +31,7 @@ public class SessionData {
     private String newsLine;
     
     private Integer eventCompletionPercent;
+    private List<Long> completedEventIds;
     private List<LocalDateTime> eventTriggerStartTimes;
 
     public SessionData(String id) {

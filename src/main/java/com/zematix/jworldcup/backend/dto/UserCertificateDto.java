@@ -21,5 +21,6 @@ public class UserCertificateDto {
 	private int userGroupLastPosition = 1;
 	private boolean everybody = false;
 	private int position = 1;
+	private double score;
 
 }

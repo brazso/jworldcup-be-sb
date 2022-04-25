@@ -152,6 +152,7 @@ public class SessionService extends ServiceBase {
 		sessionData.setUserOfEvent(getUserOfEvent());
 		
 		sessionData.setEventCompletionPercent(getEventCompletionPercent());
+		sessionData.setCompletedEventIds(getCompletedEventIds());
 		sessionData.setEventTriggerStartTimes(getCachedRetrieveMatchResultsJobTriggerStartTimes());
 		sessionData.setNewsLine(getNewsLine());
 		

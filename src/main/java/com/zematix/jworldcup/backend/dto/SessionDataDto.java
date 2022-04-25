@@ -26,6 +26,7 @@ public class SessionDataDto {
     private String newsLine;
     
     private Integer eventCompletionPercent;
+    private List<Long> completedEventIds;
     private List<LocalDateTime> eventTriggerStartTimes;
 
 }
