@@ -231,4 +231,48 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 		var authorities = authenticatedUser.getAuthorities().stream().map(e -> e.getAuthority()).collect(Collectors.toSet());
 		return buildResponseEntityWithOK(new GenericResponse<>(userMapper.entityToDto(user, authorities)));
 	}
+
+	/**
+	 * Processes user registration token. If the input registrationToken specifies 
+	 * an user and this user has CANDIDATE userStatus, then alter her userStatus
+	 * to NORMAL.
+	 *  
+	 * @param userToken - token for first login after registration
+	 */
+	@Operation(summary = "Processes user registration token", description = "Processes user registration token")
+	@PutMapping(value = "/process-registration-token")
+	public ResponseEntity<CommonResponse> processRegistrationToken(@RequestParam String userToken) throws ServiceException {
+		userService.processRegistrationToken(userToken);
+		return buildResponseEntityWithOK(new CommonResponse());
+	}
+
+	/**
+	 * Processes token from a user initiated email change request. If the input 
+	 * userToken specifies an user and this user has NORMAL userStatus, 
+	 * then this function changes her email address.
+	 *  
+	 * @param userToken - token linked to the user
+	 */
+	@Operation(summary = "Processes token from a user initiated email change request", description = "Processes token from a user initiated email change request")
+	@PutMapping(value = "/process-change-email-token")
+	public ResponseEntity<CommonResponse> processChangeEmailToken(@RequestParam String userToken) throws ServiceException {
+		userService.processChangeEmailToken(userToken);
+		return buildResponseEntityWithOK(new CommonResponse());
+	}
+
+	/**
+	 * Processes token from a user initiated password reset request. If the input 
+	 * userToken specifies an user, this user has NORMAL userStatus and there is
+	 * a reset password of the user then this function updates the reset password 
+	 * for the user.
+	 *  
+	 * @param userToken - token linked to the user
+	 */
+	@Operation(summary = "Processes token from a user initiated password reset request", description = "Processes token from a user initiated password reset request")
+	@PutMapping(value = "/process-reset-password-token")
+	public ResponseEntity<CommonResponse> processResetPasswordToken(@RequestParam String userToken) throws ServiceException {
+		userService.processResetPasswordToken(userToken);
+		return buildResponseEntityWithOK(new CommonResponse());
+	}
+
 }
