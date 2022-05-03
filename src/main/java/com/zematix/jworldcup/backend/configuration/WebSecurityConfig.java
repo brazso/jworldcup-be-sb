@@ -49,7 +49,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new MultiCryptPasswordEncoder();
 	}
 
-	protected static final String[] ACTUATOR_WHITELIST = { "/login", "/signup", "/backend-version" };
+	protected static final String[] ACTUATOR_WHITELIST = { "/login", "/signup", "/backend-version",
+			"/users/process-registration-token", "/users/process-change-email-token",
+			"/users/process-reset-password-token" };
 
 	protected static final String[] SWAGGER_WHITELIST = { "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", };
 

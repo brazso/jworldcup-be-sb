@@ -42,6 +42,17 @@ public class EmailService extends ServiceBase {
 	@Value("${app.emailAddr}") 
 	private String appEmailAddr;
 
+	@Value("${app.email.enabled:true}")
+	private String appEmailEnabled;
+
+	/**
+	 * Returns {@code true} if application email sending is enabled, {@code false} otherwise.
+	 * @return {@code true} if application email sending is enabled, {@code false} otherwise
+	 */
+	public boolean isAppEmailEnabled() {
+		return Boolean.valueOf(appEmailEnabled);
+	}
+
 	/**
 	 * Sends registration email where the user must confirm her account.
 	 * 
@@ -50,6 +61,9 @@ public class EmailService extends ServiceBase {
 	 * @throws ServiceException if the email could not be sent 
 	 */
 	public void sendRegistrationMail(User user, Locale locale) throws ServiceException {
+		if (!isAppEmailEnabled()) {
+			return;
+		}
 		Properties properties = new Properties();
 		properties.put("toEmailAddr", user.getEmailAddr());
 		properties.put("userFullName", user.getFullName());
@@ -70,6 +84,9 @@ public class EmailService extends ServiceBase {
 	 * @throws ServiceException if the email could not be sent 
 	 */
 	public void sendEmailChangedMail(User user, Locale locale) throws ServiceException {
+		if (!isAppEmailEnabled()) {
+			return;
+		}
 		Properties properties = new Properties();
 		properties.put("toEmailAddr", user.getEmailNew());
 		properties.put("userFullName", user.getFullName());
@@ -91,6 +108,9 @@ public class EmailService extends ServiceBase {
 	 * @throws ServiceException if the email could not be sent 
 	 */
 	public void sendResetPasswordMail(User user, String resetPassword, Locale locale) throws ServiceException {
+		if (!isAppEmailEnabled()) {
+			return;
+		}
 		Properties properties = new Properties();
 		properties.put("toEmailAddr", user.getEmailAddr());
 		properties.put("userFullName", user.getFullName());
