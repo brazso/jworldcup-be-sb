@@ -171,13 +171,16 @@ public class UserService extends ServiceBase {
 		}
 		
 		User user = userDao.findUserByLoginNameOrEmailAddress(loginName, emailAddr);
-		if (user != null) {
+		if (user != null && !user.getUserStatus().getStatus().equals("CANDIDATE")) {
 			errMsgs.add(ParameterizedMessage.create("USER_EXIST_OR_EMAIL_ADDRESS_OCCUPIED"));
 		}
 		else {
 			String token = CommonUtil.generateRandomToken();
 			try {
 				String encryptedLoginPassword = passwordEncoder.encode(loginPassword1);
+				if (user != null) { // CANDIDATE
+					this.deleteUser(user.getLoginName());
+				}
 				user = userDao.saveUser(loginName, encryptedLoginPassword,
 						fullName, emailAddr, /*sRole*/ "USER", /*sStatus*/ "CANDIDATE", token, 
 						zoneId, applicationService.getActualDateTime());
@@ -748,3 +751,4 @@ public class UserService extends ServiceBase {
 		return users.size();
 	}
 }
+
