@@ -165,7 +165,6 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 	 * @param languageTag
 	 * @throws ServiceException if the given email address belongs to no user 
 	 */
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@Operation(summary = "Reset user password by email address", description = "Reset user password by the given email address")
 	@PutMapping(value = "/reset-password")
 	public ResponseEntity<CommonResponse> resetPassword(@RequestParam String emailAddr, @RequestParam String languageTag) throws ServiceException {
