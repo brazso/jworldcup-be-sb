@@ -1,9 +1,11 @@
 package com.zematix.jworldcup.backend.dao;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
@@ -13,8 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.entity.Bet;
+import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.QBet;
+import com.zematix.jworldcup.backend.entity.QUserGroup;
 import com.zematix.jworldcup.backend.entity.User;
+import com.zematix.jworldcup.backend.entity.UserGroup;
+import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
  * Database operations around {@link Bet} entities.
@@ -22,6 +28,9 @@ import com.zematix.jworldcup.backend.entity.User;
 @Component
 @Transactional
 public class BetDao extends DaoBase {
+
+	@Inject
+	private CommonDao commonDao;
 
 	/**
 	 * Returns a list of all {@link Bet} entities from database.
@@ -83,6 +92,29 @@ public class BetDao extends DaoBase {
 		return bets;
 	}
 
+	/**
+	 * Returns {@link Bet} instances belongs to the provided {@link Match#matchId} and {@link UserGroup#userGroupId}.
+	 * @param matchId
+	 * @param userGroupId
+	 * @return found bets
+	 */
+	@Transactional(readOnly = true)
+	public List<Bet>  retrieveBetsByMatchAndUserGroup(Long matchId, Long userGroupId) throws ServiceException {
+		List<Bet> bets = null;
+		checkNotNull(matchId);
+		checkNotNull(userGroupId);
+		
+		QBet qBet = QBet.bet;
+		JPAQuery<Bet> query = new JPAQuery<>(getEntityManager());
+		bets = query.from(qBet)
+				.where(qBet.match.matchId.eq(matchId),
+						qBet.user.userGroups.any().userGroupId.eq(userGroupId))
+				.orderBy(qBet.user.loginName.asc())
+				.fetch();
+
+		return bets;		
+	}
+	
 	/**
 	 * Delete all bets of the given user.
 	 * 

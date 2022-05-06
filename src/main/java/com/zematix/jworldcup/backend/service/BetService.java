@@ -104,6 +104,30 @@ public class BetService extends ServiceBase {
 	}
 	
 	/**
+	 * Returns {@link Bet} instances belongs to the provided {@link Match#matchId} and {@link UserGroup#userGroupId}.
+	 * @param matchId
+	 * @param userGroupId
+	 * @return found bets
+	 */
+	@Transactional(readOnly = true)
+	public List<Bet> retrieveBetsByMatchAndUserGroup(Long matchId, Long userGroupId) throws ServiceException {
+		checkNotNull(matchId);
+		checkNotNull(userGroupId);
+		
+		List<Bet> bets = betDao.retrieveBetsByMatchAndUserGroup(matchId, userGroupId);
+		Pair<Long> favouriteTeamIds = null;
+		for (Bet bet: bets) {
+			// setScore
+			if (favouriteTeamIds == null) {
+				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
+			}
+			bet.setScore(retrieveScoreByBet(bet, favouriteTeamIds));
+			
+		}
+		return bets;
+	}
+	
+	/**
 	 * Creates / updates a new bet or deletes an existing bet.
 	 * Creates a new bet if given {@code betId} is {@code null} and both given 
 	 * {@code goalNormal} parameters are non negative numbers. Updates a bet if given 

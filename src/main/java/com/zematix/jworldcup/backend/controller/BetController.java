@@ -22,6 +22,8 @@ import com.zematix.jworldcup.backend.dto.GenericListResponse;
 import com.zematix.jworldcup.backend.dto.GenericMapResponse;
 import com.zematix.jworldcup.backend.dto.GenericResponse;
 import com.zematix.jworldcup.backend.entity.Bet;
+import com.zematix.jworldcup.backend.entity.Match;
+import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.mapper.BetMapper;
 import com.zematix.jworldcup.backend.service.BetService;
@@ -62,6 +64,21 @@ public class BetController extends ServiceBase implements ResponseEntityHelper {
 	public ResponseEntity<GenericListResponse<BetDto>> retrieveBetsByEventAndUser(@RequestParam Long eventId, 
 			@RequestParam Long userId) throws ServiceException {
 		List<Bet> bets = betService.retrieveBetsByEventAndUser(eventId, userId);
+		return buildResponseEntityWithOK(new GenericListResponse<>(betMapper.entityListToDtoList(bets)));
+	}
+
+	/**
+	 * Returns {@link Bet} instances belongs to the provided {@link Match#matchId} and {@link UserGroup#userGroupId}.
+	 * @param matchId
+	 * @param userGroupId
+	 * @return found bets
+	 */
+	@PreAuthorize("hasAnyRole('USER')")	
+	@Operation(summary = "Retrieve bets of a match and userGroup", description = "Retrieve all bets of the given match and userGroup")
+	@GetMapping(value = "/bets-by-match-and-userGroup")
+	public ResponseEntity<GenericListResponse<BetDto>> retrieveBetsByMatchAndUserGroup(@RequestParam Long matchId,
+			@RequestParam Long userGroupId) throws ServiceException {
+		List<Bet> bets = betService.retrieveBetsByMatchAndUserGroup(matchId, userGroupId);
 		return buildResponseEntityWithOK(new GenericListResponse<>(betMapper.entityListToDtoList(bets)));
 	}
 
