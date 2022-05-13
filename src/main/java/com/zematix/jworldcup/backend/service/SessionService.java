@@ -3,6 +3,7 @@ package com.zematix.jworldcup.backend.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
@@ -119,42 +121,67 @@ public class SessionService extends ServiceBase {
 		this.setNewsLine(message);
 	}
 
-	public SessionData refreshSessionData(SessionData sessionData) {
-		if (sessionData == null) {
-			sessionData = new SessionData(id);
-		}
-		sessionData.setId(id);
+	public SessionData refreshSessionData(SessionData sessionDataClient) {
+		SessionData sessionData = new SessionData(id);
+		
 		sessionData.setAppShortName(getAppShortName());
 		sessionData.setAppVersionNumber(getAppVersionNumber());
 		sessionData.setAppVersionDate(getAppVersionDate());
-		sessionData.setActualDateTime(getActualDateTime());
 		sessionData.setAppEmailAddr(getAppEmailAddr());
 		
-		// locale normally comes from client (input)
-		if (sessionData.getLocale() != null) {
-			setLocale(sessionData.getLocale());
+		sessionData.setActualDateTime(getActualDateTime());
+		if (sessionDataClient == null || !sessionData.getActualDateTime().equals(sessionDataClient.getActualDateTime())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.ACTUAL_DATE_TIME);
 		}
-		else { // but if missing it comes from local 
-			sessionData.setLocale(getLocale());
+		
+		// locale normally comes from client (input)
+		if (sessionDataClient != null && sessionDataClient.getLocale() != null) {
+			setLocale(sessionDataClient.getLocale());
+		}
+		sessionData.setLocale(getLocale());
+		if (sessionDataClient == null || !sessionData.getLocale().equals(sessionDataClient.getLocale())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.LOCALE);
 		}
 
 		// user may come only from local
 		sessionData.setUser(getUser());
+		if (sessionDataClient == null || !sessionData.getUser().equals(sessionDataClient.getUser())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.USER);
+		}
 		
 		// event normally comes from client (input)
-		if (sessionData.getEvent() != null) {
-			setEvent(sessionData.getEvent());
+		if (sessionDataClient != null && sessionDataClient.getEvent() != null) {
+			setEvent(sessionDataClient.getEvent());
 		}
-		else { // but if missing it comes from local 
-			sessionData.setEvent(getEvent());
+		sessionData.setEvent(getEvent());
+		if (sessionDataClient == null || !sessionData.getUser().equals(sessionDataClient.getUser())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT);
 		}
 		
-		sessionData.setUserOfEvent(getUserOfEvent());
+		sessionData.setUserOfEvent(getUserOfEvent()); // UserOfEventDto has no user and event fields inside
+//		if (sessionDataClient == null || !sessionData.getUserOfEvent().equals(sessionDataClient.getUserOfEvent())) {
+//			sessionData.getModificationSet().add(SessionDataModificationFlag.USER_OF_EVENT);
+//		}
 		
 		sessionData.setEventCompletionPercent(getEventCompletionPercent());
+		if (sessionDataClient == null || !sessionData.getEventCompletionPercent().equals(sessionDataClient.getEventCompletionPercent())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT_COMPLETION_PERCENT);
+		}
+		
 		sessionData.setCompletedEventIds(getCompletedEventIds());
+		if (sessionDataClient == null || !sessionData.getCompletedEventIds().equals(sessionDataClient.getCompletedEventIds())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.COMPLETED_EVENT_IDS);
+		}
+		
 		sessionData.setEventTriggerStartTimes(getCachedRetrieveMatchResultsJobTriggerStartTimes());
+		if (sessionDataClient == null || !sessionData.getEventTriggerStartTimes().equals(sessionDataClient.getEventTriggerStartTimes())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT_TRIGGER_START_TIMES);
+		}
+		
 		sessionData.setNewsLine(getNewsLine());
+		if (sessionDataClient == null || !sessionData.getNewsLine().equals(sessionDataClient.getNewsLine())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.NEWS_LINE);
+		}
 		
 		return sessionData;
 	}
@@ -494,7 +521,8 @@ public class SessionService extends ServiceBase {
 	 * @return list containing scheduled retrieval match result job trigger start times of actual event
 	 */
 	public List<LocalDateTime> getCachedRetrieveMatchResultsJobTriggerStartTimes() {
-		return applicationService.getRetrieveMatchResultsJobTriggerStartTimesCache().getIfPresent(this.event.getEventId());
+		var result = applicationService.getRetrieveMatchResultsJobTriggerStartTimesCache().getIfPresent(this.event.getEventId());
+		return result != null ? result : new ArrayList<>(0); 
 	}
 	
 	/**

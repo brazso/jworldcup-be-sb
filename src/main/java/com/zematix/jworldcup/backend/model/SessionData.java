@@ -2,9 +2,11 @@ package com.zematix.jworldcup.backend.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 
+import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
@@ -33,6 +35,9 @@ public class SessionData {
     private Integer eventCompletionPercent;
     private List<Long> completedEventIds;
     private List<LocalDateTime> eventTriggerStartTimes;
+    
+//    private EnumSet<SessionDataModificationFlag> modificationSet;
+    private EnumSet<SessionDataModificationFlag> modificationSet = EnumSet.noneOf(SessionDataModificationFlag.class);
 
     public SessionData(String id) {
     	super();

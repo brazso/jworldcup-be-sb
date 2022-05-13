@@ -48,6 +48,22 @@ services:
       - mysqld:/var/run/mysqld
       - ./docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
 
+  rabbitmq:
+    build:
+      context: docker/rabbit-mq
+      dockerfile: Dockerfile
+    image: jworldcup.rabbitmq
+    container_name: jworldcup.rabbitmq
+    ports:
+    - "15672:15672"
+    - "15674:15674"
+    - "5672:5672"
+    - "5671:5671"
+    - "61613:61613"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
 ## Names our volume
 volumes:
   mysqld:

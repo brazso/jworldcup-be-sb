@@ -2,7 +2,10 @@ package com.zematix.jworldcup.backend.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
+
+import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,5 +31,6 @@ public class SessionDataDto {
     private Integer eventCompletionPercent;
     private List<Long> completedEventIds;
     private List<LocalDateTime> eventTriggerStartTimes;
-
+    
+    private EnumSet<SessionDataModificationFlag> modificationSet;
 }
