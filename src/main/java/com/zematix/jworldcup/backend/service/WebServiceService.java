@@ -19,6 +19,7 @@ import com.zematix.jworldcup.backend.dao.WebServiceDao;
 import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.WebService;
+import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 

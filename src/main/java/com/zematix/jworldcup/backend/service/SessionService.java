@@ -187,6 +187,13 @@ public class SessionService extends ServiceBase {
 	}
 	
 	/**
+	 * @return session id
+	 */
+	public String getId() {
+		return this.id;
+	}
+	
+	/**
 	 * @return application short name
 	 */
 	public String getAppShortName() {

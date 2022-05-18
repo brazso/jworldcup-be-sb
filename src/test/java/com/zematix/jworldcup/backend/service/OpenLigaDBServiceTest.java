@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.msiggi.openligadb.client.Matchdata;
 import com.msiggi.openligadb.client.Sport;
+import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 import com.zematix.jworldcup.backend.model.openligadb.client.Team;
 
 /**

@@ -5,10 +5,12 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,11 +21,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 
-import javax.servlet.http.HttpServletResponse;
-
 import com.zematix.jworldcup.backend.crypto.MultiCryptPasswordEncoder;
+import com.zematix.jworldcup.backend.service.SessionLogoutHandler;
 
 /**
  * This class extends the WebSecurityConfigurerAdapter which is a convenience class that 
@@ -43,6 +45,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Inject
 	private JwtRequestFilter jwtRequestFilter;
+	
+	@Autowired
+    private SessionLogoutHandler logoutHandler;
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -74,7 +79,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		
-		// We don't need CSRF for this example
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
 				.authorizeRequests()
@@ -90,9 +94,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		httpSecurity.logout().permitAll().logoutSuccessHandler((request, response, authentication) -> {
-			response.setStatus(HttpServletResponse.SC_OK);
-		});
+		httpSecurity.logout().permitAll()
+				.addLogoutHandler(logoutHandler)
+				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK));
 		
 		// Add a filter to validate the tokens with every request
 		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

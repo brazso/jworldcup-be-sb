@@ -17,6 +17,7 @@ import com.msiggi.openligadb.client.ArrayOfSport;
 import com.msiggi.openligadb.client.Matchdata;
 import com.msiggi.openligadb.client.Sport;
 import com.msiggi.openligadb.client.Sportsdata;
+import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 import com.zematix.jworldcup.backend.model.openligadb.client.Team;
 
 /**

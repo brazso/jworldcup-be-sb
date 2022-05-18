@@ -67,6 +67,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
 
+	//implementation 'org.springframework.amqp:spring-rabbit'
+	//implementation 'org.springframework.amqp:spring-rabbit-admin'
+
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JSON Web Token Support For The JVM
 	
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

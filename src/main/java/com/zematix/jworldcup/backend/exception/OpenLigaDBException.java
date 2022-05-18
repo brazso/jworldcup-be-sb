@@ -1,4 +1,6 @@
-package com.zematix.jworldcup.backend.service;
+package com.zematix.jworldcup.backend.exception;
+
+import com.zematix.jworldcup.backend.service.OpenLigaDBService;
 
 /**
  * Simple exception class used by {@link OpenLigaDBService}. 
