@@ -11,7 +11,7 @@
 		<job>
 			<name>RegularMaintenanceJob</name>
 			<description>Regular database maintenance operations</description>
-			<job-class>com.zematix.jworldcup.server.scheduler.RegularMaintenanceJob</job-class>
+			<job-class>com.zematix.jworldcup.backend.scheduler.RegularMaintenanceJob</job-class>
 		</job>
 
 		<trigger>

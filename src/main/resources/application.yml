@@ -30,6 +30,13 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
   main:
     allow-bean-definition-overriding: true
+  quartz.properties.org.quartz:
+    threadPool.threadCount: 3
+    jobStore.class: org.quartz.simpl.RAMJobStore
+    plugin.jobInitializer:
+      class: org.quartz.plugins.xml.XMLSchedulingDataProcessorPlugin
+      fileNames: quartz-jobs.xml
+      failOnFileNotFound: true
 
 # Server
 server:

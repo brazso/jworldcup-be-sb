@@ -6,12 +6,16 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
@@ -43,6 +47,9 @@ public class ApplicationService extends ServiceBase {
 
 	@Inject
 	private ChatService chatService;
+	
+	@Autowired
+	SessionRegistry sessionRegistry;
 
 	@Value("${app.shortName}")
 	private String appShortName;
@@ -271,5 +278,21 @@ public class ApplicationService extends ServiceBase {
 		eventIds.addAll(this.eventCompletionPercentCache.asMap().keySet());
 		eventIds = eventIds.stream().filter(e -> this.eventCompletionPercentCache.getUnchecked(e) == 100).toList();
 		return eventIds;
+	}
+
+	/**
+	 * Retrieves a list of all logged in users
+	 * @return all logged in users
+	 */
+	public List<org.springframework.security.core.userdetails.User> getAllAuthenticatedPrincipals() {
+		return sessionRegistry.getAllPrincipals().stream()
+			      .filter(u -> !sessionRegistry.getAllSessions(u, false).isEmpty()) // excludes expired sessions
+			      .map(e -> (org.springframework.security.core.userdetails.User)e)
+			      .collect(Collectors.toList());
+	}
+	
+	public List<SessionInformation> getAllSessions(org.springframework.security.core.userdetails.User user) {
+		List<SessionInformation> si = sessionRegistry.getAllSessions(user, false);
+		return si;
 	}
 }

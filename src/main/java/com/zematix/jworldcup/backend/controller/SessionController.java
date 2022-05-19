@@ -1,12 +1,10 @@
 package com.zematix.jworldcup.backend.controller;
 
 import java.util.Map;
-import java.util.Properties;
 
 import javax.inject.Inject;
 
 import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -95,15 +93,20 @@ public class SessionController extends ServiceBase implements ResponseEntityHelp
 //			Map<String, Object> headers = Map.of("durable", "true", "auto-delete", "false"); // wrong
 //			Map<String, Object> headers = Map.of("x-expires", 20000);
 			Map<String, Object> headers = Map.of("durable", "false", "exclusive", "false", "auto-delete", "true");
-			logger.info("create queue");
-			Properties properties = amqpAdmin.getQueueProperties("session"+sessionData.getId());
-			logger.info("properties1: "+properties); // null
-			amqpAdmin.declareQueue(new Queue("session"+sessionData.getId(), /*durable*/ false, /*exclusive*/ false, /*autoDelete*/ true/*, headers*/));
-			properties = amqpAdmin.getQueueProperties("session"+sessionData.getId());
-			logger.info("properties2: "+properties); // {QUEUE_NAME=session2c4130db-efb7-4a54-91a3-d681d68dafad, QUEUE_MESSAGE_COUNT=0, QUEUE_CONSUMER_COUNT=0}
 
+//			logger.info("create queue");
+//			Properties properties = amqpAdmin.getQueueProperties("session"+sessionData.getId());
+//			logger.info("properties1: "+properties); // null
+//			amqpAdmin.declareQueue(new Queue("session"+sessionData.getId(), /*durable*/ false, /*exclusive*/ false, /*autoDelete*/ true/*, headers*/));
+//			properties = amqpAdmin.getQueueProperties("session"+sessionData.getId());
+//			logger.info("properties2: "+properties); // {QUEUE_NAME=session2c4130db-efb7-4a54-91a3-d681d68dafad, QUEUE_MESSAGE_COUNT=0, QUEUE_CONSUMER_COUNT=0}
+
+			// creates the queue automatically unless it exits 
 			template.convertAndSend("/queue/session"+sessionData.getId(), sessionDataMapper.entityToDto(sessionData), headers);
-//			template.convertAndSendToUser(sessionData.getId(), "/queue/session", sessionDataMapper.entityToDto(sessionData));
+//			template.convertAndSendToUser(sessionData.getId(), "/queue/session", sessionDataMapper.entityToDto(sessionData), headers); // => template.convertAndSend("/user/"+sessionData.getId()+"/queue/session") but later not translated more 
+			
+//			org.springframework.messaging.simp.user.UserDestinationMessageHandler a;
+//			org.springframework.messaging.simp.stomp.StompBrokerRelayMessageHandler b;
 			
 //			rabbitTemplate.convertAndSend("/queue/session"+sessionData.getId(), sessionDataMapper.entityToDto(sessionData)); // error: "SimpleMessageConverter only supports String, byte[] and Serializable payloads"
 //			amqpTemplate.convertAndSend("/queue/session"+sessionData.getId(), sessionDataMapper.entityToDto(sessionData)); // error: "SimpleMessageConverter only supports String, byte[] and Serializable payloads"
@@ -118,6 +121,6 @@ public class SessionController extends ServiceBase implements ResponseEntityHelp
 			@RequestParam String destination) throws ServiceException {
 //		boolean isDone = rabbitAdmin.deleteQueue(destination);
 		boolean isDone = amqpAdmin.deleteQueue(destination); // works
-		return buildResponseEntityWithOK(new GenericResponse<>(new CommonResponse(isDone)));
+		return buildResponseEntityWithOK(new CommonResponse(isDone));
 	}
 }

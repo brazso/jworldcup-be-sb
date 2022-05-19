@@ -119,6 +119,9 @@ dependencies {
 	implementation "org.glassfish.jersey.containers:jersey-container-servlet:2.32"
 	implementation "org.glassfish.jersey.media:jersey-media-json-jackson:2.32"
 	implementation "org.glassfish.jersey.ext:jersey-spring5:2.32"
+
+	// Quartz addon for jobs which is not included in "org.springframework.boot:spring-boot-starter-quartz"
+	implementation "org.quartz-scheduler:quartz-jobs"
 	
 	// this Mockito version must be used because at later versions Mockito.when() does not work with  
 	// class.static_method() input using PowerMockito.spy. It does work only on mocked object. We need 

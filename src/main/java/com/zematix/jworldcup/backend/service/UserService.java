@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -750,5 +751,16 @@ public class UserService extends ServiceBase {
 		commonDao.flushEntityManager();
 		return users.size();
 	}
+
+	/**
+	 * Retrieves a list of all authenticated users
+	 * @return all authenticated users
+	 */
+	public List<String> getAllAuthenticatedUsers() {
+		List<org.springframework.security.core.userdetails.User> principals = applicationService
+				.getAllAuthenticatedPrincipals();
+		return principals.stream().map(e -> e.getUsername()).toList();
+	}
+
 }
 

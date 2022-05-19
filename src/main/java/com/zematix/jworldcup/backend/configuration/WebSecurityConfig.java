@@ -18,6 +18,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -54,6 +56,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new MultiCryptPasswordEncoder();
 	}
 
+	@Bean
+	SessionRegistry sessionRegistry() { 
+	    return new SessionRegistryImpl(); 
+	}
+	
 	protected static final String[] ACTUATOR_WHITELIST = { "/login", "/signup", "/backend-version", 
 			"/users/reset-password", "/users/process-registration-token", 
 			"/users/process-change-email-token", "/users/process-reset-password-token" };
@@ -111,6 +118,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	        cors.applyPermitDefaultValues();
 	        return cors;
 	    });
+	    
+		httpSecurity.sessionManagement().maximumSessions(1).sessionRegistry(sessionRegistry());
 	}
 
 }
