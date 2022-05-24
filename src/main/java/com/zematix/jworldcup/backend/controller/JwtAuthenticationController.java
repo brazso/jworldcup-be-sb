@@ -1,17 +1,10 @@
 package com.zematix.jworldcup.backend.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +21,6 @@ import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.mapper.UserExtendedMapper;
 import com.zematix.jworldcup.backend.mapper.UserMapper;
-import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.model.UserExtended;
 import com.zematix.jworldcup.backend.service.JwtUserDetailsService;
 
@@ -89,24 +81,24 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 		return buildResponseEntityWithOK(new GenericResponse<>(version));
 	}
 	
-	private void authenticate(String username, String password) throws ServiceException {
-		List<ParameterizedMessage> errMsgs = new ArrayList<>();
-		
-		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-		} catch (DisabledException e) {
-			errMsgs.add(ParameterizedMessage.create("USER_DISABLED")); // TODO
-//			throw new ServiceException("USER_DISABLED", e);
-		} catch (LockedException e) {
-			errMsgs.add(ParameterizedMessage.create("USER_LOCKED")); // TODO
-//			throw new ServiceException("USER_LOCKED", e);
-		} catch (BadCredentialsException e) {
-			errMsgs.add(ParameterizedMessage.create("INVALID_CREDENTIALS")); // TODO
-//			throw new Exception("INVALID_CREDENTIALS", e);
-		}
-		
-		if (!errMsgs.isEmpty()) {
-			throw new ServiceException(errMsgs);
-		}
-	}
+//	private void authenticate(String username, String password) throws ServiceException {
+//		List<ParameterizedMessage> errMsgs = new ArrayList<>();
+//		
+//		try {
+//			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+//		} catch (DisabledException e) {
+//			errMsgs.add(ParameterizedMessage.create("USER_DISABLED")); // TODO
+////			throw new ServiceException("USER_DISABLED", e);
+//		} catch (LockedException e) {
+//			errMsgs.add(ParameterizedMessage.create("USER_LOCKED")); // TODO
+////			throw new ServiceException("USER_LOCKED", e);
+//		} catch (BadCredentialsException e) {
+//			errMsgs.add(ParameterizedMessage.create("INVALID_CREDENTIALS")); // TODO
+////			throw new Exception("INVALID_CREDENTIALS", e);
+//		}
+//		
+//		if (!errMsgs.isEmpty()) {
+//			throw new ServiceException(errMsgs);
+//		}
+//	}
 }

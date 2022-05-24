@@ -10,6 +10,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
@@ -84,16 +85,32 @@ public class SessionService extends ServiceBase {
 	private String newsLine;
 
 	/**
+	 * Stored separately because at logout, without auntentication, it must be used.
+	 */
+	private String username;
+	
+	/**
 	 * Initialization of some private fields
 	 */
 	@PostConstruct
-	public void initApplicationSession() {
+	public void initSession() {
+		logger.info("SessionService.postConstruct");
+		
 		locale = Locale.getDefault();
 //		event = eventService.findLastEvent();
 		// user cannot be initialized here, see getUser cached method
+		
+//		// store local id into session
+//		HttpSession session = WebContextHolder.get().getSession();
+//		session.setAttribute("sessionServiceId", id);
 	}
 
-	private void initApplicationSessionAfterUserInitialized() {
+	@PreDestroy
+	public void destroySession() {
+		logger.info("SessionService.preDestroy");
+	}
+	
+	private void initSessionAfterUserInitialized() {
 		String message = ParameterizedMessage.create("header.label.welcome", user.getLoginName()).buildMessage(msgs, locale);
 //		String message = msgs.getMessage("header.label.welcome", new String[]{user.getLoginName()}, locale); // same result
 		
@@ -286,6 +303,7 @@ public class SessionService extends ServiceBase {
 		var authenticatedUser = userDetailsService.getAuthenticatedUser();
 		if (authenticatedUser == null) {
 			this.user = null;
+			this.username = null;
 		}
 		else {
 			String loginName = authenticatedUser.getUsername();
@@ -296,7 +314,8 @@ public class SessionService extends ServiceBase {
 					throw new IllegalStateException(String.format("User with loginName \"%s\" is not found in the database.", loginName));
 				}
 				this.user = user;
-				initApplicationSessionAfterUserInitialized();
+				this.username = loginName;
+				initSessionAfterUserInitialized();
 			}
 		}	
 		return this.user;
@@ -352,6 +371,10 @@ public class SessionService extends ServiceBase {
 		this.newsLine = newsLine;
 	}
 
+	public String getUsername() {
+		return this.username;
+	}
+	
 	/**
 	 * Retrieves the {@link SimpleDateFormat#SHORT} date format belongs to the locale.
 	 * For example locale named "en" returns "mm/dd/yy"

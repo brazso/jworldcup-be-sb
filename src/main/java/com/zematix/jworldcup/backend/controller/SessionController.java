@@ -88,6 +88,7 @@ public class SessionController extends ServiceBase implements ResponseEntityHelp
 	public ResponseEntity<CommonResponse> notifySessionData(
 			@RequestBody SessionDataDto sessionDataDto) throws ServiceException {
 		var sessionData = sessionService.refreshSessionData(sessionDataMapper.dtoToEntity(sessionDataDto));
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (sessionData.getId() != null) {
 //			Map<String, Object> headers = Map.of("durable", "true", "auto-delete", "true", "x-expires", 20000, "x-queue-type", "classic");
 //			Map<String, Object> headers = Map.of("durable", "true", "auto-delete", "false"); // wrong

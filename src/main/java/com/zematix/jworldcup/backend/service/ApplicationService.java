@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -286,13 +285,14 @@ public class ApplicationService extends ServiceBase {
 	 */
 	public List<org.springframework.security.core.userdetails.User> getAllAuthenticatedPrincipals() {
 		return sessionRegistry.getAllPrincipals().stream()
+//				  .filter(User.class::isInstance)
 			      .filter(u -> !sessionRegistry.getAllSessions(u, false).isEmpty()) // excludes expired sessions
 			      .map(e -> (org.springframework.security.core.userdetails.User)e)
-			      .collect(Collectors.toList());
+			      .toList();
 	}
 	
-	public List<SessionInformation> getAllSessions(org.springframework.security.core.userdetails.User user) {
-		List<SessionInformation> si = sessionRegistry.getAllSessions(user, false);
-		return si;
+	public List<SessionInformation> getAllAuthenticatedSessions(org.springframework.security.core.userdetails.User user) {
+		return sessionRegistry.getAllSessions(user, false);
 	}
+	
 }

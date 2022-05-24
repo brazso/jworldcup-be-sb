@@ -27,7 +27,7 @@ public class RetrieveMatchResultsJob extends ServerBase implements Job {
 	@Override
 	//@ActivateRequestContext
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.info("Job exexution started");
+		logger.info("RetrieveMatchResultsJob exexution started");
 
 		JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 		Long eventId = (Long)dataMap.get("eventId"); //getLong method throws ClassCastException if the map does not contain the key

@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -20,15 +21,18 @@ import org.quartz.SchedulerException;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.session.SessionInformation;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import com.google.common.base.Stopwatch;
+import com.zematix.jworldcup.backend.configuration.SessionListener;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.ApplicationService;
 import com.zematix.jworldcup.backend.service.MatchService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
+import com.zematix.jworldcup.backend.service.SessionService;
 import com.zematix.jworldcup.backend.service.UserService;
 import com.zematix.jworldcup.backend.service.WebServiceService;
 import com.zematix.jworldcup.backend.util.CommonUtil;
@@ -300,4 +304,25 @@ public class SchedulerService extends ServiceBase {
 		
 		return relaunchRetrieveMatchResultsJobTrigger;
 	}
+	
+	/**
+	 * Test scheduler job execution.
+	 */
+	public void testExecution() /*throws ServiceException*/ {
+//		try {
+			logger.info("testExecution started");
+			List<org.springframework.security.core.userdetails.User> users = applicationService.getAllAuthenticatedPrincipals();
+			users.stream().forEach( user -> {
+				logger.info("authenticated user: " + user.getUsername());
+				List<SessionInformation> sessionInfos = applicationService.getAllAuthenticatedSessions(user);
+				sessionInfos.stream().map(info -> SessionListener.getSession(info.getSessionId())).filter(Objects::nonNull).forEach(session -> {
+					SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
+					//...
+				});
+			});
+//		} catch (ServiceException e) {
+//			consumeServiceException(e);
+//		}		
+	}
+
 }

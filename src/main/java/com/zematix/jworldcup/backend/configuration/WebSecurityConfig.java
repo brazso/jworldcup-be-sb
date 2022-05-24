@@ -51,6 +51,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
     private SessionLogoutHandler logoutHandler;
 	
+	@Autowired
+	private ChangeSessionIdAuthenticationStrategy sessionAuthenticationStrategy;
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new MultiCryptPasswordEncoder();
@@ -101,9 +104,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		httpSecurity.logout().permitAll()
+		httpSecurity.logout()
 				.addLogoutHandler(logoutHandler)
-				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK));
+				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+				.permitAll();
 		
 		// Add a filter to validate the tokens with every request
 		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
@@ -118,8 +122,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	        cors.applyPermitDefaultValues();
 	        return cors;
 	    });
-	    
-		httpSecurity.sessionManagement().maximumSessions(1).sessionRegistry(sessionRegistry());
+
+		httpSecurity.sessionManagement().sessionAuthenticationStrategy(sessionAuthenticationStrategy)
+				.maximumSessions(1)/* .maxSessionsPreventsLogin(true) */
+				.sessionRegistry(sessionRegistry());
 	}
 
 }

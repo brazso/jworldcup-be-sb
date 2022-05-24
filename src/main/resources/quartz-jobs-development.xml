@@ -24,5 +24,20 @@
 				<repeat-interval>0</repeat-interval>
 			</simple>
 		</trigger>
+		
+		<job>
+			<name>TestJob</name>
+			<description>Regular database maintenance operations</description>
+			<job-class>com.zematix.jworldcup.backend.scheduler.TestJob</job-class>
+		</job>
+		
+		<trigger>
+			<cron>
+				<name>TestTrigger</name>
+				<description>Run every 5 minutes</description>
+				<job-name>TestJob</job-name>
+				<cron-expression>0 0/5 * * * ?</cron-expression>
+			</cron>
+		</trigger>
 	</schedule>
 </job-scheduling-data>
