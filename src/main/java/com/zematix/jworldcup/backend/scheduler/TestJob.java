@@ -13,14 +13,12 @@ import com.zematix.jworldcup.backend.service.ServerBase;
  * Test scheduler job. 
  */
 @Component
-//@ApplicationScope
 public class TestJob extends ServerBase implements Job {
 
 	@Inject
 	private SchedulerService schedulerService;
 
 	@Override
-	//@ActivateRequestContext
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.info("TestJob exexution started");
 //		try {

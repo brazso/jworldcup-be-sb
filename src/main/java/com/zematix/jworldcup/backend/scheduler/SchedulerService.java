@@ -29,8 +29,10 @@ import com.google.common.base.Stopwatch;
 import com.zematix.jworldcup.backend.configuration.SessionListener;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.SessionData;
 import com.zematix.jworldcup.backend.service.ApplicationService;
 import com.zematix.jworldcup.backend.service.MatchService;
+import com.zematix.jworldcup.backend.service.MessageQueueService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
 import com.zematix.jworldcup.backend.service.SessionService;
 import com.zematix.jworldcup.backend.service.UserService;
@@ -55,6 +57,9 @@ public class SchedulerService extends ServiceBase {
 	
 	@Inject
 	private WebServiceService webServiceService;
+	
+	@Inject
+	private MessageQueueService messageQueueService;
 	
 	private Map<Long, Short> futileAttemptsByEventId = new HashMap<>();
 	
@@ -317,6 +322,10 @@ public class SchedulerService extends ServiceBase {
 				List<SessionInformation> sessionInfos = applicationService.getAllAuthenticatedSessions(user);
 				sessionInfos.stream().map(info -> SessionListener.getSession(info.getSessionId())).filter(Objects::nonNull).forEach(session -> {
 					SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
+					SessionData sessionData = sessionService.refreshSessionData(null); // load from local
+					Map<String, Object> localUpdateMap = Map.of("newsLine", "Hello");
+					sessionData = sessionService.refreshSessionData(sessionData, localUpdateMap);
+					messageQueueService.sendSession(sessionData);
 					//...
 				});
 			});

@@ -4,8 +4,11 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -85,7 +88,7 @@ public class SessionService extends ServiceBase {
 	private String newsLine;
 
 	/**
-	 * Stored separately because at logout, without auntentication, it must be used.
+	 * Stored separately because at logout/scheduler, without authentication, it must be used.
 	 */
 	private String username;
 	
@@ -138,69 +141,88 @@ public class SessionService extends ServiceBase {
 		this.setNewsLine(message);
 	}
 
-	public SessionData refreshSessionData(SessionData sessionDataClient) {
+	/**
+	 * Merges given sessionDataClient into this instance and returns the latter one wrapped into SessionData.
+	 * 
+	 * @param sessionDataClient - sessionData comes from client
+	 * @param localUpdateMap - some this instance properties can be updated from the caller
+	 * @return merged instance
+	 */
+	public SessionData refreshSessionData(SessionData sessionDataClient, Map<String, Object> localUpdateMap) {
 		SessionData sessionData = new SessionData(id);
-		
+
 		sessionData.setAppShortName(getAppShortName());
 		sessionData.setAppVersionNumber(getAppVersionNumber());
 		sessionData.setAppVersionDate(getAppVersionDate());
 		sessionData.setAppEmailAddr(getAppEmailAddr());
 		
+		// actualDateTime always comes from local
 		sessionData.setActualDateTime(getActualDateTime());
 		if (sessionDataClient == null || !sessionData.getActualDateTime().equals(sessionDataClient.getActualDateTime())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.ACTUAL_DATE_TIME);
 		}
 		
-		// locale normally comes from client (input)
+		// locale normally comes from client
+		if (sessionDataClient == null || !getLocale().equals(sessionDataClient.getLocale())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.LOCALE);
+		}
 		if (sessionDataClient != null && sessionDataClient.getLocale() != null) {
 			setLocale(sessionDataClient.getLocale());
 		}
 		sessionData.setLocale(getLocale());
-		if (sessionDataClient == null || !sessionData.getLocale().equals(sessionDataClient.getLocale())) {
-			sessionData.getModificationSet().add(SessionDataModificationFlag.LOCALE);
-		}
 
-		// user may come only from local
+		// user always comes from local
 		sessionData.setUser(getUser());
 		if (sessionDataClient == null || !sessionData.getUser().equals(sessionDataClient.getUser())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.USER);
 		}
 		
-		// event normally comes from client (input)
+		// event normally comes from client
+		if (sessionDataClient == null || !getEvent().equals(sessionDataClient.getEvent())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT);
+		}
 		if (sessionDataClient != null && sessionDataClient.getEvent() != null) {
 			setEvent(sessionDataClient.getEvent());
 		}
 		sessionData.setEvent(getEvent());
-		if (sessionDataClient == null || !sessionData.getUser().equals(sessionDataClient.getUser())) {
-			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT);
-		}
 		
 		sessionData.setUserOfEvent(getUserOfEvent()); // UserOfEventDto has no user and event fields inside
 //		if (sessionDataClient == null || !sessionData.getUserOfEvent().equals(sessionDataClient.getUserOfEvent())) {
 //			sessionData.getModificationSet().add(SessionDataModificationFlag.USER_OF_EVENT);
 //		}
 		
+		// eventCompletionPercent comes from local
 		sessionData.setEventCompletionPercent(getEventCompletionPercent());
 		if (sessionDataClient == null || !sessionData.getEventCompletionPercent().equals(sessionDataClient.getEventCompletionPercent())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT_COMPLETION_PERCENT);
 		}
 		
+		// completedEventIds comes from local
 		sessionData.setCompletedEventIds(getCompletedEventIds());
 		if (sessionDataClient == null || !sessionData.getCompletedEventIds().equals(sessionDataClient.getCompletedEventIds())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.COMPLETED_EVENT_IDS);
 		}
 		
+		// eventTriggerStartTimes comes from local
 		sessionData.setEventTriggerStartTimes(getCachedRetrieveMatchResultsJobTriggerStartTimes());
 		if (sessionDataClient == null || !sessionData.getEventTriggerStartTimes().equals(sessionDataClient.getEventTriggerStartTimes())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT_TRIGGER_START_TIMES);
 		}
 		
+		// newsLine comes from local
+		if (localUpdateMap.get("newsLine") != null) {
+			setNewsLine((String)localUpdateMap.get("newsLine"));
+		}
 		sessionData.setNewsLine(getNewsLine());
 		if (sessionDataClient == null || !sessionData.getNewsLine().equals(sessionDataClient.getNewsLine())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.NEWS_LINE);
 		}
 		
 		return sessionData;
+	}
+	
+	public SessionData refreshSessionData(SessionData sessionDataClient) {
+		return refreshSessionData(sessionDataClient, new HashMap<>());
 	}
 	
 	/**
@@ -301,21 +323,23 @@ public class SessionService extends ServiceBase {
 	 */
 	public User getUser() {
 		var authenticatedUser = userDetailsService.getAuthenticatedUser();
-		if (authenticatedUser == null) {
+		String loginName = authenticatedUser != null ? authenticatedUser.getUsername() : this.username;
+		if (loginName == null) {
 			this.user = null;
 			this.username = null;
 		}
 		else {
-			String loginName = authenticatedUser.getUsername();
 			if (this.user == null || !loginName.equals(this.user.getLoginName())) {
-				var user = userService.findUserByLoginName(authenticatedUser.getUsername()); // user.getRoles() also fetched
+				var user = userService.findUserByLoginName(loginName); // user.getRoles() also fetched
 				if (user == null) {
 					// authenticated user must be in the database, so this is supposed to be a dead code
 					throw new IllegalStateException(String.format("User with loginName \"%s\" is not found in the database.", loginName));
 				}
 				this.user = user;
 				this.username = loginName;
-				initSessionAfterUserInitialized();
+				if (authenticatedUser != null) {
+					initSessionAfterUserInitialized();
+				}
 			}
 		}	
 		return this.user;

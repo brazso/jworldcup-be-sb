@@ -30,6 +30,10 @@ public class SessionLogoutHandler implements LogoutHandler {
 		expireUserSessions(sessionService.getUsername()); // getUser() cannot be used, no authentication yet here
 	}
     
+	/**
+	 * Expires authenticated user sessions belongs to the given {@code username}
+	 * @param username
+	 */
 	private void expireUserSessions(String username) {
 		applicationService.getAllAuthenticatedPrincipals().stream().filter(User.class::isInstance)
 				.filter(e -> username.equals(e.getUsername())).forEach(user -> {
