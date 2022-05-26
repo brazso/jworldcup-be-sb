@@ -15,28 +15,28 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
- * Contains test functions of {@link RegularMaintenanceJob} class.
+ * Contains test functions of {@link DatabaseMaintenanceJob} class.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles({"development", "test"})
-public class RegularMaintenanceJobTest {
+public class DatabaseMaintenanceJobTest {
 
 	@Inject
-	private RegularMaintenanceJob regularMaintenanceJob;
+	private DatabaseMaintenanceJob databaseMaintenanceJob;
 	
 	@MockBean
-	private SchedulerService schedulerService; // used by methods of RegularMaintenanceJob 
+	private SchedulerService schedulerService; // used by methods of DatabaseMaintenanceJob 
 
 	/**
-	 * Test {@link RegularMaintenanceJob#execute(JobExecutionContext)} method.
+	 * Test {@link DatabaseMaintenanceJob#execute(JobExecutionContext)} method.
 	 * Scenario: successfully executes method
 	 */
 	@Test
 	public void execute(/*JobExecutionContext context*/) throws JobExecutionException, ServiceException {
 		JobExecutionContext context = null;
-		regularMaintenanceJob.execute(context);
+		databaseMaintenanceJob.execute(context);
 		
-		Mockito.verify(schedulerService).regularMaintenanceExecution();
+		Mockito.verify(schedulerService).databaseMaintenanceJob();
 	}
 }

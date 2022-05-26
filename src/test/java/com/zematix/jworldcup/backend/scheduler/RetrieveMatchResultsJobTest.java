@@ -28,7 +28,7 @@ public class RetrieveMatchResultsJobTest {
 	private RetrieveMatchResultsJob retrieveMatchResultsJob;
 	
 	@MockBean
-	private SchedulerService schedulerService; // used by methods of RegularMaintenanceJob 
+	private SchedulerService schedulerService; // used by methods of RetrieveMatchResultsJob 
 
 	/**
 	 * Test {@link RetrieveMatchResultsJob#execute(JobExecutionContext)} method.
@@ -84,6 +84,6 @@ public class RetrieveMatchResultsJobTest {
 
 		retrieveMatchResultsJob.execute(context);
 		
-		Mockito.verify(schedulerService).retrieveMatchResultsExecution(eventId, firstIncompleteMatchId);
+		Mockito.verify(schedulerService).retrieveMatchResultsJob(eventId, firstIncompleteMatchId);
 	}
 }

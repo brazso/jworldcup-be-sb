@@ -11,21 +11,19 @@ import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.ServerBase;
 
 /**
- * Regular maintenance operations are called in this scheduler job. 
+ * Database maintenance operations are called in this scheduler job. 
  */
 @Component
-//@ApplicationScope
-public class RegularMaintenanceJob extends ServerBase implements Job {
+public class DatabaseMaintenanceJob extends ServerBase implements Job {
 
 	@Inject
 	private SchedulerService schedulerService;
 
 	@Override
-	//@ActivateRequestContext
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.info("RegularMaintenanceJob exexution started");
+		logger.info("DatabaseMaintenanceJob execution started");
 		try {
-			schedulerService.regularMaintenanceExecution();
+			schedulerService.databaseMaintenanceJob();
 		} catch (ServiceException e) {
 			consumeServiceException(e);
 		}

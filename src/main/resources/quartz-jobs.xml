@@ -9,17 +9,32 @@
 
 	<schedule>
 		<job>
-			<name>RegularMaintenanceJob</name>
-			<description>Regular database maintenance operations</description>
-			<job-class>com.zematix.jworldcup.backend.scheduler.RegularMaintenanceJob</job-class>
+			<name>DatabaseMaintenanceJob</name>
+			<description>Database maintenance operations</description>
+			<job-class>com.zematix.jworldcup.backend.scheduler.DatabaseMaintenanceJob</job-class>
 		</job>
 
 		<trigger>
 			<cron>
-				<name>RegularMaintenenaceTrigger</name>
+				<name>DatabaseMaintenenaceJobTrigger</name>
 				<description>Run at 3am on every day</description>
-				<job-name>RegularMaintenanceJob</job-name>
+				<job-name>DatabaseMaintenanceJob</job-name>
 				<cron-expression>0 0 3 * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>NotifyClientsJob</name>
+			<description>Notify clients</description>
+			<job-class>com.zematix.jworldcup.backend.scheduler.NotifyClientsJob</job-class>
+		</job>
+		
+		<trigger>
+			<cron>
+				<name>NotifyClientsJobTrigger</name>
+				<description>Run every 1 minute</description>
+				<job-name>NotifyClientsJob</job-name>
+				<cron-expression>0 0/1 * * * ?</cron-expression>
 			</cron>
 		</trigger>
 	</schedule>

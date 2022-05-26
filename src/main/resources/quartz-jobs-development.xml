@@ -9,16 +9,16 @@
 
 	<schedule>
 		<job>
-			<name>RegularMaintenanceJob</name>
-			<description>Regular database maintenance operations</description>
-			<job-class>com.zematix.jworldcup.backend.scheduler.RegularMaintenanceJob</job-class>
+			<name>DatabaseMaintenanceJob</name>
+			<description>Database database maintenance operations</description>
+			<job-class>com.zematix.jworldcup.backend.scheduler.DatabaseMaintenanceJob</job-class>
 		</job>
 
 		<trigger>
 			<simple>
-				<name>RegularMaintenenaceTrigger</name>
+				<name>DatabaseMaintenenaceJobTrigger</name>
 				<description>Run once at startup</description>
-				<job-name>RegularMaintenanceJob</job-name>
+				<job-name>DatabaseMaintenanceJob</job-name>
 				<misfire-instruction>MISFIRE_INSTRUCTION_SMART_POLICY</misfire-instruction>
 				<repeat-count>0</repeat-count>
 				<repeat-interval>0</repeat-interval>
@@ -26,17 +26,17 @@
 		</trigger>
 		
 		<job>
-			<name>TestJob</name>
-			<description>Regular database maintenance operations</description>
-			<job-class>com.zematix.jworldcup.backend.scheduler.TestJob</job-class>
+			<name>NotifyClientsJob</name>
+			<description>Notify clients</description>
+			<job-class>com.zematix.jworldcup.backend.scheduler.NotifyClientsJob</job-class>
 		</job>
 		
 		<trigger>
 			<cron>
-				<name>TestTrigger</name>
-				<description>Run every 5 minutes</description>
-				<job-name>TestJob</job-name>
-				<cron-expression>0 0/5 * * * ?</cron-expression>
+				<name>NotifyClientsJobTrigger</name>
+				<description>Run every 1 minute</description>
+				<job-name>NotifyClientsJob</job-name>
+				<cron-expression>0 0/1 * * * ?</cron-expression>
 			</cron>
 		</trigger>
 	</schedule>

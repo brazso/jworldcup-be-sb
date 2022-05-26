@@ -18,16 +18,14 @@ import com.zematix.jworldcup.backend.service.ServerBase;
  * from Open League DB web service. 
  */
 @Component
-//@ApplicationScope
 public class RetrieveMatchResultsJob extends ServerBase implements Job {
 
 	@Inject
 	private SchedulerService schedulerService;
 
 	@Override
-	//@ActivateRequestContext
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.info("RetrieveMatchResultsJob exexution started");
+		logger.info("RetrieveMatchResultsJob execution started");
 
 		JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 		Long eventId = (Long)dataMap.get("eventId"); //getLong method throws ClassCastException if the map does not contain the key
@@ -36,7 +34,7 @@ public class RetrieveMatchResultsJob extends ServerBase implements Job {
 		checkState(firstIncompleteMatchId != null, "JobDataMap does not contain \"firstIncompleteMatchId\" value");
 		
 		try {
-			schedulerService.retrieveMatchResultsExecution(eventId, firstIncompleteMatchId);
+			schedulerService.retrieveMatchResultsJob(eventId, firstIncompleteMatchId);
 		} catch (ServiceException e) {
 			consumeServiceException(e);
 		}

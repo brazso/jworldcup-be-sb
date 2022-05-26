@@ -10,21 +10,17 @@ import org.springframework.stereotype.Component;
 import com.zematix.jworldcup.backend.service.ServerBase;
 
 /**
- * Test scheduler job. 
+ * Notify clients scheduler job. 
  */
 @Component
-public class TestJob extends ServerBase implements Job {
+public class NotifyClientsJob extends ServerBase implements Job {
 
 	@Inject
 	private SchedulerService schedulerService;
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.info("TestJob exexution started");
-//		try {
-			schedulerService.testExecution();
-//		} catch (ServiceException e) {
-//			consumeServiceException(e);
-//		}
+		logger.info("NotifyClientsJob execution started");
+		schedulerService.notifyClientsJob();
 	}
 }

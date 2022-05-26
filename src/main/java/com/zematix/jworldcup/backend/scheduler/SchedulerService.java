@@ -78,7 +78,6 @@ public class SchedulerService extends ServiceBase {
 	 * @param scheduler
 	 * @throws ServiceException
 	 */
-	//@ActivateRequestContext
 	public void init(Scheduler scheduler) throws ServiceException {
 		this.scheduler = scheduler;
 		if (!isAppSchedulerEnabled()) {
@@ -128,36 +127,32 @@ public class SchedulerService extends ServiceBase {
 	}
 	
 	/**
-	 * A regular scheduler maintenance job execution.
+	 * A scheduled database maintenance job execution.
 	 * It deletes expired objects and refreshes {@link ApplicationService#topUsersCache}.
 	 */
-	public void regularMaintenanceExecution() throws ServiceException {
-		try {
-			int n = userService.deleteExpiredCandidateUsers();
-			logger.info(String.format("Scheduled deleteExpiredCandidateUsers deleted %d elements.", n));
-			n = userService.deleteExpiredEmailModifications();
-			logger.info(String.format("Scheduled deleteExpiredEmailModifications deleted %d elements.", n));
-			n = userService.deleteExpiredPasswordResets();
-			logger.info(String.format("Scheduled deleteExpiredPasswordResets deleted %d elements.", n));
-			
-			Stopwatch stopwatch = Stopwatch.createStarted();
-			applicationService.refreshTopUsersCache();
-			stopwatch.stop(); // optional
-			logger.info(String.format("Scheduled topUserCache refreshed in %d milliseconds.", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
-		} catch (ServiceException e) {
-			consumeServiceException(e);
-		}		
+	public void databaseMaintenanceJob() throws ServiceException {
+		int n = userService.deleteExpiredCandidateUsers();
+		logger.info(String.format("Scheduled deleteExpiredCandidateUsers deleted %d elements.", n));
+		n = userService.deleteExpiredEmailModifications();
+		logger.info(String.format("Scheduled deleteExpiredEmailModifications deleted %d elements.", n));
+		n = userService.deleteExpiredPasswordResets();
+		logger.info(String.format("Scheduled deleteExpiredPasswordResets deleted %d elements.", n));
+		
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		applicationService.refreshTopUsersCache();
+		stopwatch.stop(); // optional
+		logger.info(String.format("Scheduled topUserCache refreshed in %d milliseconds.", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
 	}
 	
 	/**
-	 * A scheduler job execution which updates the database from retrieved match results of the 
+	 * A scheduled job execution which updates the database from retrieved match results of the 
 	 * given event from the given match where data comes from web service.
 	 * 
 	 * @param eventId
 	 * @param firstIncompleteMatchId
 	 * @throws ServiceException
 	 */
-	public void retrieveMatchResultsExecution(Long eventId, Long firstIncompleteMatchId) throws ServiceException {
+	public void retrieveMatchResultsJob(Long eventId, Long firstIncompleteMatchId) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(firstIncompleteMatchId);
 		
@@ -311,27 +306,22 @@ public class SchedulerService extends ServiceBase {
 	}
 	
 	/**
-	 * Test scheduler job execution.
+	 * Notify clients scheduled job execution.
+	 * Sends refreshed sessionData to all authenticated users.
 	 */
-	public void testExecution() /*throws ServiceException*/ {
-//		try {
-			logger.info("testExecution started");
-			List<org.springframework.security.core.userdetails.User> users = applicationService.getAllAuthenticatedPrincipals();
-			users.stream().forEach( user -> {
-				logger.info("authenticated user: " + user.getUsername());
-				List<SessionInformation> sessionInfos = applicationService.getAllAuthenticatedSessions(user);
-				sessionInfos.stream().map(info -> SessionListener.getSession(info.getSessionId())).filter(Objects::nonNull).forEach(session -> {
-					SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
-					SessionData sessionData = sessionService.refreshSessionData(null); // load from local
-					Map<String, Object> localUpdateMap = Map.of("newsLine", "Hello");
-					sessionData = sessionService.refreshSessionData(sessionData, localUpdateMap);
-					messageQueueService.sendSession(sessionData);
-					//...
-				});
+	public void notifyClientsJob() {
+		List<org.springframework.security.core.userdetails.User> users = applicationService.getAllAuthenticatedPrincipals();
+		users.stream().forEach( user -> {
+			logger.info("authenticated user: " + user.getUsername());
+			List<SessionInformation> sessionInfos = applicationService.getAllAuthenticatedSessions(user);
+			sessionInfos.stream().map(info -> SessionListener.getSession(info.getSessionId())).filter(Objects::nonNull).forEach(session -> {
+				SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
+				SessionData sessionData = sessionService.refreshSessionData(null); // load from local
+				Map<String, Object> localUpdateMap = Map.of("newsLine", "Hello");
+				sessionData = sessionService.refreshSessionData(sessionData, localUpdateMap);
+				messageQueueService.sendSession(sessionData);
 			});
-//		} catch (ServiceException e) {
-//			consumeServiceException(e);
-//		}		
+		});
 	}
 
 }
