@@ -6,10 +6,11 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import com.google.common.base.Stopwatch;
+import com.zematix.jworldcup.backend.configuration.QuartzConfig;
 import com.zematix.jworldcup.backend.configuration.SessionListener;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.exception.ServiceException;
@@ -42,8 +44,8 @@ import com.zematix.jworldcup.backend.util.CommonUtil;
 /**
  * Operations around scheduler. 
  */
-@Service
 @ApplicationScope
+@Service
 public class SchedulerService extends ServiceBase {
 
 	@Inject
@@ -61,7 +63,10 @@ public class SchedulerService extends ServiceBase {
 	@Inject
 	private MessageQueueService messageQueueService;
 	
-	private Map<Long, Short> futileAttemptsByEventId = new HashMap<>();
+	@Inject
+	private Scheduler scheduler;
+
+	private ConcurrentMap<Long, Short> futileAttemptsByEventId = new ConcurrentHashMap<>();
 	
 	@Value("${app.scheduler.enabled:true}")
 	private String appSchedulerEnabled;
@@ -69,22 +74,20 @@ public class SchedulerService extends ServiceBase {
 	@Value("${app.shortName}") 
 	private String appShortName;
 
-	private Scheduler scheduler;
-	
 	/**
-	 * Initializes Quartz scheduler service. Usually it is called from a Quartz listener.
+	 * Initializes Quartz scheduler service. It is called from {@link QuartzConfig}.
 	 * Creates scheduler jobs based on first incomplete (and to be triggered) matches of all events.
 	 * 
 	 * @param scheduler
 	 * @throws ServiceException
+
 	 */
-	public void init(Scheduler scheduler) throws ServiceException {
-		this.scheduler = scheduler;
-		if (!isAppSchedulerEnabled()) {
-			logger.info("Programmatic scheduler service is disabled in application configuration.");
-			return;
-		}
-		
+	public void init() throws ServiceException {
+		logger.trace("SchedulerService: init");
+//		if (!isAppSchedulerEnabled()) {
+//			logger.warn("Scheduler service is disabled in application configuration.");
+//			return;
+//		}
 		List<Match> matches = matchService.retrieveFirstIncompleteMatchesOfEvents();
 		for (Match match : matches) {
 			scheduleByIncompleteMatch(match);

@@ -5,14 +5,12 @@ import javax.inject.Inject;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.stereotype.Component;
 
 import com.zematix.jworldcup.backend.service.ServerBase;
 
 /**
  * Notify clients scheduler job. 
  */
-@Component
 public class NotifyClientsJob extends ServerBase implements Job {
 
 	@Inject

@@ -118,6 +118,7 @@ public class ApplicationService extends ServiceBase {
 	 */
 	@PostConstruct
 	public void initApplication() {
+		logger.info("ApplicationService: init");;
 		// initializes cachedEventCompletionPercentCache
 		List<Event> events = eventService.findAllEvents();
 		events.stream().forEach(e -> refreshEventCompletionPercentCache(e.getEventId()));

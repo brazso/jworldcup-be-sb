@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Listener to store active sessions in a map. Because of used
  * ChangeSessionIdAuthenticationStrategy, the session ids are being altered at
- * each session, so it must be updated also from outside
+ * each session, so it must be updated also from outside.
  */
 @WebListener
 public class SessionListener implements HttpSessionListener {
