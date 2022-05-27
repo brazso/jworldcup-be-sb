@@ -23,9 +23,10 @@ spring:
 # Application
 app:
   url: http://localhost:8090/jworldcup/
-  #cheat.dateTime: 2019-06-22 19:00
+  cheat.dateTime: 2019-06-22 19:00
   #scheduler.enabled: false
   #email.enabled: false
+  expiredDays.event: 0
 
 # SMTP parameters - mailtrap email provider used
 mail.smtp:

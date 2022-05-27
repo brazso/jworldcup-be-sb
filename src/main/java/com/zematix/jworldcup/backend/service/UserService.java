@@ -13,7 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -60,13 +59,13 @@ public class UserService extends ServiceBase {
 	@Inject
 	private PasswordEncoder passwordEncoder;
 	
-	@Value("${app.expiredDays.user.candidate:3}")
+	@Value("${app.expiredDays.user.candidate:0}")
 	private String appExpiredDaysUserCandidate;
 		
-	@Value("${app.expiredDays.user.emailModification:3}")
+	@Value("${app.expiredDays.user.emailModification:0}")
 	private String appExpiredDaysUserEmailModification;
 
-	@Value("${app.expiredDays.user.passwordReset:3}")
+	@Value("${app.expiredDays.user.passwordReset:0}")
 	private String appExpiredDaysUserPasswordReset;
 
 	/**
@@ -713,6 +712,9 @@ public class UserService extends ServiceBase {
 	public int deleteExpiredCandidateUsers() throws ServiceException {
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		int expiredDays = Integer.parseInt(appExpiredDaysUserCandidate);
+		if (expiredDays == 0) {
+			return 0;
+		}
 		LocalDateTime expiredModificationTime = CommonUtil.plusDays(actualDateTime, -expiredDays);
 		List<User> users = userDao.findExpiredCandidateUsers(expiredModificationTime);
 		users.stream().forEach(user -> userDao.deleteUser(user));
@@ -726,6 +728,9 @@ public class UserService extends ServiceBase {
 	public int deleteExpiredEmailModifications() throws ServiceException {
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		int expiredDays = Integer.parseInt(appExpiredDaysUserEmailModification);
+		if (expiredDays == 0) {
+			return 0;
+		}
 		LocalDateTime expiredModificationTime = CommonUtil.plusDays(actualDateTime, -expiredDays);
 		List<User> users = userDao.findExpiredEmailModificationUsers(expiredModificationTime);
 		users.stream().forEach(user -> {
@@ -742,6 +747,9 @@ public class UserService extends ServiceBase {
 	public int deleteExpiredPasswordResets() throws ServiceException {
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		int expiredDays = Integer.parseInt(appExpiredDaysUserPasswordReset);
+		if (expiredDays == 0) {
+			return 0;
+		}
 		LocalDateTime expiredModificationTime = CommonUtil.plusDays(actualDateTime, -expiredDays);
 		List<User> users = userDao.findExpiredPasswordResetUsers(expiredModificationTime);
 		for (User user : users) {

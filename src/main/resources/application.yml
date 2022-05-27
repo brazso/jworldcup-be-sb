@@ -65,6 +65,12 @@ app:
   api:
     moduleName: jworldcup
     version: 1.0
+  expiredDays:
+    event: 30 # default 0 means no retrieval of match-results from external site at all
+    user:
+      candidate: 3 # default 0 means no delete of abandoned candidate users at all
+      emailModification: 3 # default 0 means no delete of abandoned email modifications at all
+      passwordReset: 3 # default 0 means no delete of abandoned reset passwords at all
 
 # Cookie
 cookie.maxAge: 1209600

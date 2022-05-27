@@ -85,6 +85,18 @@ public class EventService extends ServiceBase {
 	}
 	
 	/**
+	 * Finds the next forthcoming event if exists.
+	 * @return found next forthcoming {@link Event} instance otherwise {@code null}
+	 */
+	@Transactional(readOnly = true)
+	public Event findNextEvent() {
+		return findAllEvents().stream()
+				.filter(e -> e.getStartTime().isAfter(applicationService.getActualDateTime()))
+				.min((e1, e2) -> e1.getStartTime().compareTo(e2.getStartTime()))
+				.orElse(null);
+	}
+	
+	/**
 	 * Same as {@link EventDao#findEventByShortDescWithYear(String)} 
 	 * but it also loads all transitive fields of the found 
 	 * {@link Event} instance.

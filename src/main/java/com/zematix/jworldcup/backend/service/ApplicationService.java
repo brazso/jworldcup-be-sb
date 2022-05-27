@@ -123,7 +123,7 @@ public class ApplicationService extends ServiceBase {
 		events.stream().forEach(e -> refreshEventCompletionPercentCache(e.getEventId()));
 		
 		// initializes topUsersCache - not used because the synchronously called loader function might be slow and does use applicationService (infinite loop)
-		// so it is placed to the SchedulerService, see regularMaintenanceExecution method
+		// so it is placed to the SchedulerService, see {@link ApplicationService#databaseMaintenanceJob()} method
 //		try {
 //			List<UserCertificate> topUsers = userGroupService.retrieveTopUsers();
 //			topUsersCache.put(appShortName, topUsers);

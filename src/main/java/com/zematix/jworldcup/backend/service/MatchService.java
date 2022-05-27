@@ -85,7 +85,7 @@ public class MatchService extends ServiceBase {
 	@Inject
     private ApplicationEventPublisher applicationEventPublisher;
 	
-	@Value("${app.expiredDays.event:30}")
+	@Value("${app.expiredDays.event:0}")
 	private String appExpiredDaysEvent;
 	
 	/**
@@ -1065,7 +1065,10 @@ public class MatchService extends ServiceBase {
 		Event event = eventService.findEventByEventId(eventId);
 		checkState(event != null, String.format("No \"Event\" entity belongs to \"eventId\"=%d in database.", eventId));
 		
-		long expiredDays = Integer.parseInt(appExpiredDaysEvent);
+		int expiredDays = Integer.parseInt(appExpiredDaysEvent);
+		if (expiredDays == 0) {
+			return false;
+		}
 		LocalDateTime expiredModificationTime = CommonUtil.plusDays(event.getEndTime(), expiredDays);
 		return actualDateTime.isBefore(expiredModificationTime);
 	}

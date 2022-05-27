@@ -3,8 +3,8 @@ package com.zematix.jworldcup.backend.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -590,5 +590,23 @@ public class SessionService extends ServiceBase {
 //				chatMessage.getMessage());
 //		logger.info("newsLineChatMessage {}", message);
 //		this.setNewsLine(message);
+	}
+	
+	/**
+	 * Generates newsLine message from this session instance.
+	 */
+	public String generateNewsLine() {
+		String result = ParameterizedMessage.create("header.label.welcome", user.getLoginName()).buildMessage(msgs, locale);
+		if (isEventFinished()) {
+			Event nextEvent = eventService.findNextEvent();
+			if (nextEvent == null) {
+				result = ParameterizedMessage.create("newsLine.noNextEvent", user.getLoginName()).buildMessage(msgs, locale);
+			}
+			else {
+				long days = getActualDateTime().until(nextEvent.getStartTime(), ChronoUnit.DAYS);
+				result = ParameterizedMessage.create("newsLine.nextEvent" + (days < 2 ? "1" : ""), days, nextEvent.getShortDescWithYear()).buildMessage(msgs, locale);
+			}
+		}
+		return result;
 	}
 }
