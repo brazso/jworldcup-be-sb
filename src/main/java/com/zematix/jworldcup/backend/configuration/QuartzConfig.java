@@ -13,7 +13,7 @@ import com.zematix.jworldcup.backend.service.ServiceBase;
 
 @Configuration
 @EnableScheduling
-@ConditionalOnProperty(name="app.scheduler.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name="spring.quartz.auto-startup", matchIfMissing = true)
 public class QuartzConfig extends ServiceBase {
 
 	@Inject
@@ -24,4 +24,5 @@ public class QuartzConfig extends ServiceBase {
 		logger.trace("QuartzConfig: init");
 		schedulerService.init();
 	}
+
 }

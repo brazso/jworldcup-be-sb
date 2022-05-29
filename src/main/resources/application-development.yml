@@ -16,9 +16,11 @@ spring:
 #    livereload:
 #      enabled: false
 #      port: 35729
-  quartz.properties.org.quartz:
-    plugin.jobInitializer:
-      fileNames: quartz-jobs-development.xml
+  quartz :
+    #auto-startup: false
+    properties.org.quartz:
+      plugin.jobInitializer:
+        fileNames: quartz-jobs-development.xml
 
 # Application
 app:

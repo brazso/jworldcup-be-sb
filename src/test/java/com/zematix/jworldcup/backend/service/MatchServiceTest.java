@@ -3117,7 +3117,7 @@ public class MatchServiceTest {
 	public void refreshMatchesByScheduler_SchedulerDisabled(/*Long eventId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		
-		Mockito.when(schedulerService.isAppSchedulerEnabled()).thenReturn(false);
+		Mockito.when(schedulerService.isSchedulerEnabled()).thenReturn(false);
 		
 		try {
 			matchService.refreshMatchesByScheduler(eventId);
@@ -3138,7 +3138,7 @@ public class MatchServiceTest {
 	public void refreshMatchesByScheduler_MissingSchedulerJob(/*Long eventId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		
-		Mockito.when(schedulerService.isAppSchedulerEnabled()).thenReturn(true);
+		Mockito.when(schedulerService.isSchedulerEnabled()).thenReturn(true);
 		Mockito.when(schedulerService.isExistsRetrieveMatchResultsJobTrigger(eventId)).thenReturn(false);
 		
 		try {
@@ -3160,7 +3160,7 @@ public class MatchServiceTest {
 	public void refreshMatchesByScheduler_RelaunchhDone(/*Long eventId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		
-		Mockito.when(schedulerService.isAppSchedulerEnabled()).thenReturn(true);
+		Mockito.when(schedulerService.isSchedulerEnabled()).thenReturn(true);
 		Mockito.when(schedulerService.isExistsRetrieveMatchResultsJobTrigger(eventId)).thenReturn(true);
 		
 		Match match = commonDao.findEntityById(Match.class, 1L); //WC2014 first match
@@ -3186,7 +3186,7 @@ public class MatchServiceTest {
 	public void refreshMatchesByScheduler_RelaunchhFailed(/*Long eventId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		
-		Mockito.when(schedulerService.isAppSchedulerEnabled()).thenReturn(true);
+		Mockito.when(schedulerService.isSchedulerEnabled()).thenReturn(true);
 		Mockito.when(schedulerService.isExistsRetrieveMatchResultsJobTrigger(eventId)).thenReturn(true);
 		
 		Match match = commonDao.findEntityById(Match.class, 1L); //WC2014 first match
@@ -3213,7 +3213,7 @@ public class MatchServiceTest {
 	public void refreshMatchesByScheduler_NoIncompleteMatch(/*Long eventId*/) throws ServiceException {
 		Long eventId = 1L; // WC2014
 		
-		Mockito.when(schedulerService.isAppSchedulerEnabled()).thenReturn(true);
+		Mockito.when(schedulerService.isSchedulerEnabled()).thenReturn(true);
 		Mockito.when(schedulerService.isExistsRetrieveMatchResultsJobTrigger(eventId)).thenReturn(true);
 		
 		Mockito.doReturn(null).when(matchServicePartial).retrieveFirstIncompleteMatchByEvent(eventId);

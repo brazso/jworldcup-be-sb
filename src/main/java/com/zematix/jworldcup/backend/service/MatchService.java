@@ -524,9 +524,9 @@ public class MatchService extends ServiceBase {
 	 * @return {@code true} if the match is complete
 	 * @throws ServiceException
 	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public boolean isMatchCompleted(boolean isGroupMatch, Byte goalNormal1, Byte goalExtra1, Byte goalPenalty1, 
-			Byte goalNormal2, Byte goalExtra2, Byte goalPenalty2) throws ServiceException {
+	@VisibleForTesting
+	/*private*/ boolean isMatchCompleted(boolean isGroupMatch, Byte goalNormal1, Byte goalExtra1, Byte goalPenalty1, 
+			Byte goalNormal2, Byte goalExtra2, Byte goalPenalty2) {
 		if (goalNormal1 != null && goalNormal2 != null) {
 			int result = sign((byte) (goalNormal1-goalNormal2));
 			if (isGroupMatch || result != 0) return true;
@@ -551,7 +551,7 @@ public class MatchService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	@VisibleForTesting
-	/*private*/ boolean isMatchCompleted(Match match) throws ServiceException {
+	/*private*/ boolean isMatchCompleted(Match match) {
 		checkNotNull(match);
 
 		return isMatchCompleted(match.getRound().getIsGroupmatchAsBoolean(), 
@@ -575,7 +575,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public int getScore(Long favTeamId, Long team1Id, Long team2Id, Byte goalResult1, Byte goalResult2,
-			Byte goalBet1, Byte goalBet2) throws ServiceException {
+			Byte goalBet1, Byte goalBet2) {
 		int score = 0;
 
 		if (team1Id == null || team2Id == null)
@@ -606,7 +606,7 @@ public class MatchService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public LocalDateTime getEndDateTime(LocalDateTime startTime) throws ServiceException {
+	public LocalDateTime getEndDateTime(LocalDateTime startTime) {
 		checkNotNull(startTime);
 		return CommonUtil.plusMinutes(startTime, 105);
 	}
@@ -621,7 +621,7 @@ public class MatchService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public LocalDateTime getExtraDateTime(LocalDateTime startTime) throws ServiceException {
+	public LocalDateTime getExtraDateTime(LocalDateTime startTime) {
 		checkNotNull(startTime);
 		return CommonUtil.plusMinutes(startTime, 140);
 	}
@@ -635,11 +635,25 @@ public class MatchService extends ServiceBase {
 	 * @return calculated endTime which equals to given {@code startTime} + 150 minutes
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public LocalDateTime getPenaltyDateTime(LocalDateTime startTime) throws ServiceException {
+	public LocalDateTime getPenaltyDateTime(LocalDateTime startTime) {
 		checkNotNull(startTime);
 		return CommonUtil.plusMinutes(startTime, 150);
 	}
 
+	/**
+	 * Returns the calculated match endTime after penalty shoot out but without
+	 * extra time from the given {@code startTime}.
+	 * The match lasts normal 105 minutes + 10 minutes PSO.
+	 * 
+	 * @param startTime - start datetime of a match
+	 * @return calculated endTime which equals to given {@code startTime} + 115 minutes
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public LocalDateTime getPenaltyWithoutExtraDateTime(LocalDateTime startTime) {
+		checkNotNull(startTime);
+		return CommonUtil.plusMinutes(startTime, 115);
+	}
+	
 	/**
 	 * Returns a list of {@link GroupPosition} instances belongs to all matches of the
 	 * round after group rounds.
@@ -649,7 +663,7 @@ public class MatchService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	@VisibleForTesting
-	/*private*/ List<GroupPosition> retrieveGroupPositionsOfParticipantRules(Long eventId) throws ServiceException {
+	/*private*/ List<GroupPosition> retrieveGroupPositionsOfParticipantRules(Long eventId) {
 		checkNotNull(eventId);
 		
 		final String PARTICIPANT_RULE_REGEX = "^([WL])([0-9]+)-([WL])([0-9]+)$";
@@ -732,7 +746,7 @@ public class MatchService extends ServiceBase {
 		Match updatedMatch = retrieveMatch(updatedMatchId);
 		
 		Map<GroupPosition, Team> teamByGroupPositionMap;
-		if (updatedMatch.getRound().getIsGroupmatchAsBoolean()) {
+		if (Boolean.TRUE.equals(updatedMatch.getRound().getIsGroupmatchAsBoolean())) {
 			teamByGroupPositionMap = groupService.getTeamByGroupPositionMap(eventId);
 		}
 		else {
@@ -768,8 +782,8 @@ public class MatchService extends ServiceBase {
 	}
 	
 	/**
-	 * Returns a not {@code null} datetime if the given match is finished, it has
-	 * final result. In this case the end datetime of the match is returned.
+	 * Returns a not {@code null} datetime if the given match is finished and has
+	 * final result. In this case the calculated end datetime of the match is returned.
 	 * Otherwise {@code null} is returned.
 	 * 
 	 * @param match
@@ -780,14 +794,18 @@ public class MatchService extends ServiceBase {
 	/*private*/ LocalDateTime getFinishedMatchEndTime(Match match) throws ServiceException {
 		checkNotNull(match);
 		if (!isMatchCompleted(match)) {
-			//throw new IllegalStateException("Match must be finished!");
 			return null;
 		}
 
 		LocalDateTime matchEndTime = getEndDateTime(match.getStartTime());
-		if (!match.getRound().getIsGroupmatchAsBoolean()) {
+		if (Boolean.FALSE.equals(match.getRound().getIsGroupmatchAsBoolean())) {
 			if (match.getGoalPenaltyByTeam1() != null && match.getGoalPenaltyByTeam2() != null) {
-				matchEndTime = getPenaltyDateTime(match.getStartTime());
+				if (Boolean.TRUE.equals(match.getRound().getIsOvertimeAsBoolean())) {
+					matchEndTime = getPenaltyDateTime(match.getStartTime());
+				}
+				else {
+					matchEndTime = getPenaltyWithoutExtraDateTime(match.getStartTime());
+				}
 			}
 			else if (match.getGoalExtraByTeam1() != null && match.getGoalExtraByTeam2() != null) {
 				matchEndTime = getExtraDateTime(match.getStartTime());
@@ -816,19 +834,23 @@ public class MatchService extends ServiceBase {
 		if (match.getGoalNormalByTeam1() == null || match.getGoalNormalByTeam2() == null) {
 			matchEscalationTime = getEndDateTime(match.getStartTime());
 		}
-		else if (!match.getRound().getIsGroupmatchAsBoolean() && match.getGoalNormalByTeam1() != null
+		else if (Boolean.FALSE.equals(match.getRound().getIsGroupmatchAsBoolean()) && match.getGoalNormalByTeam1() != null
 				&& match.getGoalNormalByTeam2() != null
-				&& match.getGoalNormalByTeam1() - match.getGoalNormalByTeam2() == 0
-				&& (match.getGoalExtraByTeam1() == null || match.getGoalExtraByTeam2() == null)) {
-			matchEscalationTime = getExtraDateTime(match.getStartTime());
-		}
-		else if (!match.getRound().getIsGroupmatchAsBoolean() && match.getGoalNormalByTeam1() != null
-				&& match.getGoalNormalByTeam2() != null
-				&& match.getGoalNormalByTeam1() - match.getGoalNormalByTeam2() == 0
-				&& match.getGoalExtraByTeam1() != null && match.getGoalExtraByTeam2() != null
-				&& match.getGoalExtraByTeam1() - match.getGoalExtraByTeam2() == 0
-				&& (match.getGoalPenaltyByTeam1() == null || match.getGoalPenaltyByTeam2() == null)) {
-			matchEscalationTime = getPenaltyDateTime(match.getStartTime());
+				&& match.getGoalNormalByTeam1() - match.getGoalNormalByTeam2() == 0) {
+			if (Boolean.TRUE.equals(match.getRound().getIsOvertimeAsBoolean()) 
+					&& (match.getGoalExtraByTeam1() == null || match.getGoalExtraByTeam2() == null)) {
+				matchEscalationTime = getExtraDateTime(match.getStartTime());
+			}
+			else if (Boolean.TRUE.equals(match.getRound().getIsOvertimeAsBoolean())
+					&& match.getGoalExtraByTeam1() != null && match.getGoalExtraByTeam2() != null
+					&& match.getGoalExtraByTeam1() - match.getGoalExtraByTeam2() == 0
+					&& (match.getGoalPenaltyByTeam1() == null || match.getGoalPenaltyByTeam2() == null)) {
+				matchEscalationTime = getPenaltyDateTime(match.getStartTime());
+			}
+			else if (Boolean.FALSE.equals(match.getRound().getIsOvertimeAsBoolean())
+					&& (match.getGoalPenaltyByTeam1() == null || match.getGoalPenaltyByTeam2() == null)) {
+				matchEscalationTime = getPenaltyWithoutExtraDateTime(match.getStartTime());
+			}
 		}
 		
 		return matchEscalationTime;
@@ -873,7 +895,7 @@ public class MatchService extends ServiceBase {
 			LocalDateTime parentMatch1EscalationTime = isMatchCompleted(parentMatch1) ? getFinishedMatchEndTime(parentMatch1) : getMatchResultEscalationTime(parentMatch1);
 			LocalDateTime parentMatch2EscalationTime = isMatchCompleted(parentMatch2) ? getFinishedMatchEndTime(parentMatch2) : getMatchResultEscalationTime(parentMatch2);
 			matchEscalationTime = Arrays.asList(parentMatch1EscalationTime, parentMatch2EscalationTime).stream()
-					.max(LocalDateTime::compareTo).get();
+					.max(LocalDateTime::compareTo).orElse(null);
 		}
 		else {
 			// group stage participant rule, e.g. "A1-B2", "A2-BCD3"
@@ -919,7 +941,7 @@ public class MatchService extends ServiceBase {
 		checkNotNull(actualDateTime);
 
 		if (match.getTeam1() == null || match.getTeam2() == null) {
-			if (match.getRound().getIsGroupmatchAsBoolean()) {
+			if (Boolean.TRUE.equals(match.getRound().getIsGroupmatchAsBoolean())) {
 				throw new IllegalStateException("Match without participant teams cannot be exist in group stage.");
 			}
 			// can be only in knock-out stage
@@ -958,6 +980,9 @@ public class MatchService extends ServiceBase {
 				matches.add(match);
 			}
 		}
+		
+		retrieveMatchesByEvent(eventId).stream().filter(e -> e.getTeam1() == null || e.getTeam2() == null || !isMatchCompleted(e)).toList();
+		
 		return matches;
 	}
 
@@ -1281,7 +1306,7 @@ public class MatchService extends ServiceBase {
 		
 		List<ParameterizedMessage> errMsgs = new ArrayList<>();		
 
-		if (!schedulerService.isAppSchedulerEnabled()) {
+		if (!schedulerService.isSchedulerEnabled()) {
 			errMsgs.add(ParameterizedMessage.create("SCHEDULER_DISABLED"));
 			throw new ServiceException(errMsgs);
 		}

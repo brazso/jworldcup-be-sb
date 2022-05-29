@@ -10,6 +10,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -78,6 +79,28 @@ public class WebServiceService extends ServiceBase {
 	}
 
 	/**
+	 * Calls {@link WebServiceDao#retrieveWebServicesByEvent(Long)}. If there is no
+	 * webService belongs to the given event, it throws ServiceException.
+	 * 
+	 * @param eventId - filter
+	 * @throws ServiceException
+	 * @return list of {@link WebService} objects belongs to the given eventId
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<WebService> retrieveWebServicesByEvent(Long eventId) throws ServiceException {
+		checkNotNull(eventId);
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
+		
+		List<WebService> webServices = webServiceDao.retrieveWebServicesByEvent(eventId);
+		if (webServices.isEmpty()) {
+			errMsgs.add(ParameterizedMessage.create("NO_ACTIVE_WEBSERVICE_FOR_EVENT", ParameterizedMessageType.WARNING, eventId));
+			throw new ServiceException(errMsgs);
+		}
+		
+		return webServices;
+	}
+
+	/**
 	 * Updates incomplete but escalated matches from calling web service.
 	 * Returns the number of the updated matches.
 	 * 
@@ -92,12 +115,7 @@ public class WebServiceService extends ServiceBase {
 		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		
-		List<WebService> webServices = webServiceDao.retrieveWebServicesByEvent(eventId);
-		if (webServices.isEmpty()) {
-			errMsgs.add(ParameterizedMessage.create("NO_ACTIVE_WEBSERVICE_FOR_EVENT", ParameterizedMessageType.WARNING, eventId));
-			throw new ServiceException(errMsgs);
-		}
-		
+		List<WebService> webServices = retrieveWebServicesByEvent(eventId);
 		for (WebService webService : webServices) {
 			
 			List<Matchdata> matchdatas = new ArrayList<>();

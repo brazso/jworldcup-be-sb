@@ -68,14 +68,14 @@ public class SchedulerService extends ServiceBase {
 
 	private ConcurrentMap<Long, Short> futileAttemptsByEventId = new ConcurrentHashMap<>();
 	
-	@Value("${app.scheduler.enabled:true}")
-	private String appSchedulerEnabled;
+	@Value("${spring.quartz.auto-startup:true}")
+	private String springQuartzAutoStartup;
 
 	@Value("${app.shortName}") 
 	private String appShortName;
 
 	/**
-	 * Initializes Quartz scheduler service. It is called from {@link QuartzConfig}.
+	 * Initializes Quartz scheduler service. It is called from {@link QuartzConfig#init()}.
 	 * Creates scheduler jobs based on first incomplete (and to be triggered) matches of all events.
 	 * 
 	 * @param scheduler
@@ -84,22 +84,25 @@ public class SchedulerService extends ServiceBase {
 	 */
 	public void init() throws ServiceException {
 		logger.trace("SchedulerService: init");
-//		if (!isAppSchedulerEnabled()) {
-//			logger.warn("Scheduler service is disabled in application configuration.");
-//			return;
-//		}
 		List<Match> matches = matchService.retrieveFirstIncompleteMatchesOfEvents();
 		for (Match match : matches) {
-			scheduleByIncompleteMatch(match);
+			try {
+				if (!webServiceService.retrieveWebServicesByEvent(match.getEvent().getEventId()).isEmpty()) {
+					scheduleByIncompleteMatch(match);
+				}
+			}
+			catch (ServiceException e) {
+				consumeServiceException(e);
+			}
 		}
 	}
 
 	/**
-	 * Returns {@code true} if application scheduler is enabled, {@code false} otherwise.
-	 * @return {@code true} if application scheduler is enabled, {@code false} otherwise
+	 * Returns {@code true} if quartz scheduler is enabled, {@code false} otherwise.
+	 * @return {@code true} if quartz scheduler is enabled, {@code false} otherwise
 	 */
-	public boolean isAppSchedulerEnabled() {
-		return Boolean.valueOf(appSchedulerEnabled);
+	public boolean isSchedulerEnabled() {
+		return Boolean.valueOf(springQuartzAutoStartup);
 	}
 	
 	/**
@@ -164,6 +167,9 @@ public class SchedulerService extends ServiceBase {
 			updatedMatches = webServiceService.updateMatchResults(eventId);
 		} catch (ServiceException e) {
 			consumeServiceException(e);
+//			if (e.getOverallType() == ParameterizedMessageType.ERROR) {
+//				return;
+//			}
 		}
 		
 		if (updatedMatches > 0) {
