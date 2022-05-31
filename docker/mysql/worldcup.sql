@@ -2108,8 +2108,10 @@ INSERT INTO `bet` (`bet_id`, `event_id`, `user_id`, `match_id`, `goal_normal_by_
 CREATE TABLE `chat` (
   `chat_id` int NOT NULL,
   `event_id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `user_group_id` int DEFAULT NULL,
+  `user_id` int NOT NULL COMMENT 'source user',
+  `user_group_id` int DEFAULT NULL COMMENT 'target user group, null means to everybody',
+  `target_user_id` int DEFAULT NULL COMMENT 'target user',
+  `is_private` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1 if the record is private to target_user_id, 0 otherwise',
   `modification_time` datetime NOT NULL COMMENT 'UTC timezone used',
   `message` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -3469,6 +3471,7 @@ ALTER TABLE `chat`
   ADD PRIMARY KEY (`chat_id`),
   ADD KEY `chat__event` (`event_id`),
   ADD KEY `chat__user` (`user_id`),
+  ADD KEY `chat__target_user` (`target_user_id`),
   ADD KEY `chat__user_group` (`user_group_id`);
 
 --
@@ -3677,7 +3680,8 @@ ALTER TABLE `bet`
 ALTER TABLE `chat`
   ADD CONSTRAINT `chat_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `event` (`event_id`),
   ADD CONSTRAINT `chat_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  ADD CONSTRAINT `chat_ibfk_3` FOREIGN KEY (`user_group_id`) REFERENCES `user_group` (`user_group_id`);
+  ADD CONSTRAINT `chat_ibfk_3` FOREIGN KEY (`target_user_id`) REFERENCES `user` (`user_id`),
+  ADD CONSTRAINT `chat_ibfk_4` FOREIGN KEY (`user_group_id`) REFERENCES `user_group` (`user_group_id`);
 
 --
 -- Constraints for table `group_`

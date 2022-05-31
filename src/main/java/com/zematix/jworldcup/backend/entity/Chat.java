@@ -50,6 +50,14 @@ public class Chat implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="user_id", nullable=false)
 	private User user;
+	
+	//bi-directional many-to-one association to User
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="target_user_id", nullable=true)
+	private User targetUser;
+
+	@Column(name="is_private", nullable=false)
+	private Byte isPrivate;
 
 	public Long getChatId() {
 		return this.chatId;
@@ -97,5 +105,21 @@ public class Chat implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Byte getIsPrivate() {
+		return this.isPrivate;
+	}
+
+	public void setIsPrivate(Byte isPrivate) {
+		this.isPrivate = isPrivate;
+	}
+
+	public boolean getIsPrivateAsBoolean() {
+		return this.isPrivate != null && this.isPrivate == 1;
+	}
+
+	public void setIsPrivateAsBoolean(boolean isPrivate) {
+		this.isPrivate = (isPrivate ? (byte) 1 : (byte) 0);
 	}
 }
