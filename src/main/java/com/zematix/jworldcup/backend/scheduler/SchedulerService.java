@@ -201,7 +201,7 @@ public class SchedulerService extends ServiceBase {
 			scheduleByIncompleteMatch(match);
 		}
 		else {
-			// there is no incomplete match at all, no trigger/job has to be created
+			// there is no incomplete match at all, no more trigger/job has to be created
 			futileAttemptsByEventId.remove(eventId);
 			applicationService.getRetrieveMatchResultsJobTriggerStartTimesCache().refresh(eventId); // reset cache
 		}

@@ -707,8 +707,8 @@ public class MatchService extends ServiceBase {
 			if (match == null || (match.getTeam1() == null || match.getTeam2() == null)) {
 				continue;
 			}
-			int matchResult = getMatchResult(match, match.getTeam1().getTeamId());
-			if (matchResult == 1 || matchResult == -1) {
+			Integer matchResult = getMatchResult(match, match.getTeam1().getTeamId());
+			if (matchResult != null && (matchResult == 1 || matchResult == -1)) {
 				Team team = null;
 				switch (groupName) {
 					case "W" :

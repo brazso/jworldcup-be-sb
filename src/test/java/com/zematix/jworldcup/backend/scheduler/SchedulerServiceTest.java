@@ -39,7 +39,7 @@ public class SchedulerServiceTest {
 //	private Map<Long, Short> futileAttemptsByEventId = new HashMap<>();
 //	
 //	@Inject
-//	@ApplicationConfig(key="app.scheduler.enabled", defaultValue = "true")
+//	@ApplicationConfig(key="spring.quartz.auto-startup", defaultValue = "true")
 //	private String appSchedulerEnabled;
 //
 //	@Inject 

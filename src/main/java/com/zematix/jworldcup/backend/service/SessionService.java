@@ -329,7 +329,7 @@ public class SessionService extends ServiceBase {
 			this.username = null;
 		}
 		else {
-			if (this.user == null || !loginName.equals(this.user.getLoginName())) {
+//			if (this.user == null || !loginName.equals(this.user.getLoginName())) {
 				var user = userService.findUserByLoginName(loginName); // user.getRoles() also fetched
 				if (user == null) {
 					// authenticated user must be in the database, so this is supposed to be a dead code
@@ -340,7 +340,7 @@ public class SessionService extends ServiceBase {
 				if (authenticatedUser != null) {
 					initSessionAfterUserInitialized();
 				}
-			}
+//			}
 		}	
 		return this.user;
 	}
