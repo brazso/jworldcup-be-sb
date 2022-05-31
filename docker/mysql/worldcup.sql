@@ -2756,7 +2756,7 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (417, 9, 26, 189, 194, '2021-07-07 01:00:00', 62, 1, 1, NULL, NULL, 4, 3, 'W24-W23'),
 (418, 9, 27, 194, 196, '2021-07-10 00:00:00', 63, 3, 2, NULL, NULL, NULL, NULL, 'L26-L25'),
 (419, 9, 28, 189, 191, '2021-07-11 00:00:00', 64, 1, 0, NULL, NULL, NULL, NULL, 'W26-W25'),
-(420, 10, 1, 209, 200, '2021-11-30 16:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(420, 10, 1, 209, 200, '2021-11-30 16:30:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (421, 10, 2, 213, 205, '2021-11-30 10:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (422, 10, 3, 202, 207, '2021-11-30 13:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (423, 10, 4, 214, 212, '2021-11-30 19:00:00', 65, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
@@ -2786,8 +2786,8 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (447, 10, 28, NULL, NULL, '2021-12-11 19:00:00', 68, NULL, NULL, NULL, NULL, NULL, NULL, 'C1-D2'),
 (448, 10, 29, NULL, NULL, '2021-12-15 15:00:00', 69, NULL, NULL, NULL, NULL, NULL, NULL, 'W25-W27'),
 (449, 10, 30, NULL, NULL, '2021-12-15 19:00:00', 69, NULL, NULL, NULL, NULL, NULL, NULL, 'W26-W28'),
-(450, 10, 31, NULL, NULL, '2021-12-18 10:00:00', 70, NULL, NULL, NULL, NULL, NULL, NULL, 'L26-L28'),
-(451, 10, 32, NULL, NULL, '2021-12-18 15:00:00', 71, NULL, NULL, NULL, NULL, NULL, NULL, 'W26-W28');
+(450, 10, 31, NULL, NULL, '2021-12-18 10:00:00', 70, NULL, NULL, NULL, NULL, NULL, NULL, 'L29-L30'),
+(451, 10, 32, NULL, NULL, '2021-12-18 15:00:00', 71, NULL, NULL, NULL, NULL, NULL, NULL, 'W29-W30');
 
 -- --------------------------------------------------------
 
@@ -3119,22 +3119,22 @@ INSERT INTO `team` (`team_id`, `event_id`, `name`, `flag`, `group_id`, `fifa_poi
 (196, 9, 'Peru', 'PER', 49, 0, 3177),
 (197, 9, 'Uruguay', 'URU', 48, 0, 849),
 (198, 9, 'Venezuela', 'VEN', 49, 0, 3179),
-(199, 10, 'Algeria', 'ALG', 53, 0, NULL),
-(200, 10, 'Bahrain', 'BHR', 50, 0, NULL),
-(201, 10, 'Egypt', 'EGY', 53, 0, NULL),
-(202, 10, 'Iraq', 'IRQ', 50, 0, NULL),
-(203, 10, 'Jordan', 'JOR', 52, 0, NULL),
-(204, 10, 'Lebanon', 'LBN', 53, 0, NULL),
-(205, 10, 'Mauritania', 'MTN', 51, 0, NULL),
-(206, 10, 'Morocco', 'MAR', 52, 0, NULL),
-(207, 10, 'Oman', 'OMA', 50, 0, NULL),
-(208, 10, 'Palestine', 'PLE', 52, 0, NULL),
-(209, 10, 'Qatar', 'QAT', 50, 0, NULL),
-(210, 10, 'Saudi Arabia', 'KSA', 52, 0, NULL),
-(211, 10, 'Sudan', 'SDN', 53, 0, NULL),
-(212, 10, 'Syria', 'SYR', 51, 0, NULL),
-(213, 10, 'Tunisia', 'TUN', 51, 0, NULL),
-(214, 10, 'United Arab Emirates', 'UAE', 51, 0, NULL);
+(199, 10, 'Algeria', 'ALG', 53, 0, 844),
+(200, 10, 'Bahrain', 'BHR', 50, 0, 4914),
+(201, 10, 'Egypt', 'EGY', 53, 0, 1392),
+(202, 10, 'Iraq', 'IRQ', 50, 0, 4911),
+(203, 10, 'Jordan', 'JOR', 52, 0, 4915),
+(204, 10, 'Lebanon', 'LBN', 53, 0, 4904),
+(205, 10, 'Mauritania', 'MTN', 51, 0, 4988),
+(206, 10, 'Morocco', 'MAR', 52, 0, 4629),
+(207, 10, 'Oman', 'OMA', 50, 0, 4906),
+(208, 10, 'Palestine', 'PLE', 52, 0, 4905),
+(209, 10, 'Qatar', 'QAT', 50, 0, 4912),
+(210, 10, 'Saudi Arabia', 'KSA', 52, 0, 2408),
+(211, 10, 'Sudan', 'SDN', 53, 0, 5657),
+(212, 10, 'Syria', 'SYR', 51, 0, 4909),
+(213, 10, 'Tunisia', 'TUN', 51, 0, 1391),
+(214, 10, 'United Arab Emirates', 'UAE', 51, 0, 4902);
 
 -- --------------------------------------------------------
 
@@ -3445,7 +3445,8 @@ INSERT INTO `web_service` (`web_service_id`, `event_id`, `priority`, `league_sho
 (9, 6, 1, 'CA2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
 (10, 7, 1, 'CAF2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
 (11, 8, 1, 'em20', '2020', 'Endergebnis', NULL, 'nach Verlängerung', 'nach Elfmeterscheißen'),
-(12, 9, 1, 'CA2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen');
+(12, 9, 1, 'CA2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
+(13, 10, 1, 'ABC2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen');
 
 --
 -- Indexes for dumped tables
@@ -3656,7 +3657,7 @@ ALTER TABLE `user_status`
 -- AUTO_INCREMENT for table `web_service`
 --
 ALTER TABLE `web_service`
-  MODIFY `web_service_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `web_service_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables
