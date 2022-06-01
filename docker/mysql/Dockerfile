@@ -1,5 +1,4 @@
-FROM mysql:8.0.19
-#FROM mysql:5.7.26
+FROM mysql:8.0.25
 
 ## Nothing to do with timezones, mysql (this version: 5.7.26) already contains them
 #RUN set -x; \
