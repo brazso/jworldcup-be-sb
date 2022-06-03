@@ -1,7 +1,5 @@
 package com.zematix.jworldcup.backend.scheduler;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 
 import org.quartz.Job;
@@ -24,12 +22,8 @@ public class DatabaseMaintenanceJob extends ServerBase implements Job {
 		logger.info("DatabaseMaintenanceJob execution started: schedulerService="+schedulerService);
 		try {
 			schedulerService.databaseMaintenanceJob();
-			TimeUnit.MILLISECONDS.sleep(250);
 		} catch (ServiceException e) {
 			consumeServiceException(e);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }

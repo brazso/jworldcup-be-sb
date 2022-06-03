@@ -138,7 +138,7 @@ public class UserGroupDao extends DaoBase {
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
 		
-		if (userGroupId == 0L) {
+		if (userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID) {
 			users = query.from(qUser)
 					  .where(qUser.roles.contains(userRole)
 							  .and(qUser.userStatus.eq(normalUserStatus)))

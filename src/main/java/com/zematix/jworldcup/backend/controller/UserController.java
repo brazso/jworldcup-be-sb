@@ -274,4 +274,16 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 		return buildResponseEntityWithOK(new CommonResponse());
 	}
 
+	/**
+	 * Retrieves a list of all authenticated users of the given user group.
+	 * @return all authenticated users of the given user group
+	 * @throws ServiceException 
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Find authenticated users belongs to the given user group", description = "Find authenticated users belongs to the given user group")
+	@GetMapping(value = "/find-all-authenticated-users-by-user-group")
+	public ResponseEntity<GenericListResponse<UserDto>> getAllAuthenticatedUsersByUserGroup(@RequestParam Long userGroupId) throws ServiceException {
+		var authenticatedUsers = userService.getAllAuthenticatedUsersByUserGroup(userGroupId);
+		return buildResponseEntityWithOK(new GenericListResponse<>(userMapper.entityListToDtoList(authenticatedUsers)));
+	}
 }

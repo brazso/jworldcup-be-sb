@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zematix.jworldcup.backend.dto.CommonResponse;
 import com.zematix.jworldcup.backend.dto.UserGroupExtendedDto;
 import com.zematix.jworldcup.backend.exception.ServiceException;
-import com.zematix.jworldcup.backend.mapper.ChatMapper;
 import com.zematix.jworldcup.backend.mapper.UserGroupExtendedMapper;
 import com.zematix.jworldcup.backend.service.ChatService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
@@ -32,9 +31,6 @@ public class ChatController extends ServiceBase implements ResponseEntityHelper 
 
 	@Inject
 	private ChatService chatService;
-	
-	@Inject
-	private ChatMapper chatMapper;
 	
 	@Inject
 	private UserGroupExtendedMapper userGroupExtendedMapper;

@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
@@ -42,6 +44,16 @@ public class ChatService extends ServiceBase {
 	
 	@Inject
 	private CommonDao commonDao;
+
+	/**
+	 * Facade to {@link ChatDao#findAllChats()} method.
+	 * 
+	 * @return list of all {@link Chat} entities
+	 */
+	@Transactional(readOnly = true)
+	public List<Chat> findAllChats() {
+		return chatDao.findAllChats();
+	}
 
 	/**
 	 * Returns a list of {@link UserGroup} instances which belongs to the 

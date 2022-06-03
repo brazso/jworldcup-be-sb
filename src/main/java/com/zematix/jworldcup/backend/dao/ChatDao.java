@@ -38,8 +38,7 @@ public class ChatDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Chat> findAllChats() {
 		TypedQuery<Chat> query = getEntityManager().createNamedQuery("Chat.findAll", Chat.class);
-		List<Chat> chats = query.getResultList();
-		return chats;
+		return query.getResultList();
 	}
 	
 	/**

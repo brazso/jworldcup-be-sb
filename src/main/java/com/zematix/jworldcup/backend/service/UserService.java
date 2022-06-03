@@ -51,6 +51,9 @@ public class UserService extends ServiceBase {
 	private UserDao userDao;
 	
 	@Inject
+	private UserGroupService userGroupService;
+	
+	@Inject
 	private CommonDao commonDao;
 
 	@Inject
@@ -764,10 +767,32 @@ public class UserService extends ServiceBase {
 	 * Retrieves a list of all authenticated users
 	 * @return all authenticated users
 	 */
-	public List<String> getAllAuthenticatedUsers() {
+	public List<String> getAllAuthenticatedUserLoginNames() {
 		List<org.springframework.security.core.userdetails.User> principals = applicationService
 				.getAllAuthenticatedPrincipals();
-		return principals.stream().map(e -> e.getUsername()).toList();
+		return principals.stream().map(e -> e.getUsername()).sorted().toList();
+	}
+
+	/**
+	 * Retrieves a list of all authenticated users
+	 * @return all authenticated users
+	 */
+	public List<User> getAllAuthenticatedUsers() {
+		List<String> userLoginNames = getAllAuthenticatedUserLoginNames();
+		return userLoginNames.stream().map(e -> findUserByLoginName(e)).toList();
+	}
+
+	/**
+	 * Retrieves a list of all authenticated users of the given user group.
+	 * @return all authenticated users of the given user group
+	 * @throws ServiceException 
+	 */
+	public List<User> getAllAuthenticatedUsersByUserGroup(Long userGroupId) throws ServiceException {
+		checkNotNull(userGroupId);
+		
+		List<String> authenticatedUserLoginNames = getAllAuthenticatedUserLoginNames();
+		return userGroupService.retrieveUsersByUserGroup(userGroupId).stream()
+				.filter(e -> authenticatedUserLoginNames.contains(e.getLoginName())).toList();
 	}
 
 }

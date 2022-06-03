@@ -15,5 +15,7 @@ public class ChatDto  {
 	private LocalDateTime modificationTime;
 //	private UserGroup userGroup;
 //	private User user;
+//	private User targetUser;
+	private boolean isPrivate;
 	
 }

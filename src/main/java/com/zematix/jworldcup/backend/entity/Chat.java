@@ -107,19 +107,27 @@ public class Chat implements Serializable {
 		this.user = user;
 	}
 
-	public Byte getIsPrivate() {
+	public User getTargetUser() {
+		return targetUser;
+	}
+
+	public void setTargetUser(User targetUser) {
+		this.targetUser = targetUser;
+	}
+
+	public Byte isPrivate() {
 		return this.isPrivate;
 	}
 
-	public void setIsPrivate(Byte isPrivate) {
+	public void setPrivate(Byte isPrivate) {
 		this.isPrivate = isPrivate;
 	}
 
-	public boolean getIsPrivateAsBoolean() {
+	public boolean isPrivateAsBoolean() {
 		return this.isPrivate != null && this.isPrivate == 1;
 	}
 
-	public void setIsPrivateAsBoolean(boolean isPrivate) {
+	public void setPrivateAsBoolean(boolean isPrivate) {
 		this.isPrivate = (isPrivate ? (byte) 1 : (byte) 0);
 	}
 }

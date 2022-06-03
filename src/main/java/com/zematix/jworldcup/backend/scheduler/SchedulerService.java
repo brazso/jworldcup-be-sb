@@ -29,10 +29,12 @@ import org.springframework.web.context.annotation.ApplicationScope;
 import com.google.common.base.Stopwatch;
 import com.zematix.jworldcup.backend.configuration.QuartzConfig;
 import com.zematix.jworldcup.backend.configuration.SessionListener;
+import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.SessionData;
 import com.zematix.jworldcup.backend.service.ApplicationService;
+import com.zematix.jworldcup.backend.service.ChatService;
 import com.zematix.jworldcup.backend.service.MatchService;
 import com.zematix.jworldcup.backend.service.MessageQueueService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
@@ -53,6 +55,9 @@ public class SchedulerService extends ServiceBase {
 	
 	@Inject
 	private UserService userService;
+
+	@Inject
+	private ChatService chatService;
 
 	@Inject
 	private MatchService matchService;
@@ -334,4 +339,14 @@ public class SchedulerService extends ServiceBase {
 		});
 	}
 
+	/**
+	 * Chat initialization scheduler job. Loads all messages except the private ones 
+	 * from chat table and transfers them to proper message queues.
+	 */
+	public void chatInitalizationJob() {
+		List<Chat> chats = chatService.findAllChats();
+		chats.stream().filter(e -> !e.isPrivateAsBoolean()).forEach(e -> {
+			messageQueueService.sendChat(e);
+		});
+	}
 }
