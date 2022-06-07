@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 import com.zematix.jworldcup.backend.dto.ChatDto;
 import com.zematix.jworldcup.backend.entity.Chat;
 
-@Mapper
+@Mapper(uses = {UserMapper.class})
 public interface ChatMapper extends MapperBase<ChatDto, Chat> {
 
 	@Override

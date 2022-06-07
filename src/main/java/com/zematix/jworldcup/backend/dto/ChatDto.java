@@ -14,7 +14,7 @@ public class ChatDto  {
 	private String message;
 	private LocalDateTime modificationTime;
 //	private UserGroup userGroup;
-//	private User user;
+	private UserDto user;
 //	private User targetUser;
 	private boolean isPrivate;
 	

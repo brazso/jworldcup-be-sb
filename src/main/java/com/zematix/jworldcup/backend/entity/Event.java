@@ -2,6 +2,7 @@ package com.zematix.jworldcup.backend.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -76,7 +77,7 @@ public class Event implements Serializable {
 
 	//bi-directional many-to-one association to UserOfEvent
 	@OneToMany(mappedBy="event")
-	private List<UserGroup> userGroups;
+	private List<UserGroup> userGroups = new ArrayList<>();
 	
 	//bi-directional many-to-one association to Chat
 	@OneToMany(mappedBy="event")

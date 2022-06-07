@@ -6,12 +6,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zematix.jworldcup.backend.dto.ChatDto;
 import com.zematix.jworldcup.backend.dto.GenericListResponse;
 import com.zematix.jworldcup.backend.dto.UserCertificateDto;
+import com.zematix.jworldcup.backend.entity.Chat;
+import com.zematix.jworldcup.backend.entity.Event;
+import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.mapper.ChatMapper;
 import com.zematix.jworldcup.backend.mapper.UserCertificateMapper;
+import com.zematix.jworldcup.backend.mapper.UserGroupMapper;
 import com.zematix.jworldcup.backend.model.UserCertificate;
 import com.zematix.jworldcup.backend.service.ApplicationService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
@@ -31,7 +38,13 @@ public class ApplicationController extends ServiceBase implements ResponseEntity
 
 	@Inject
 	private UserCertificateMapper userCertificateMapper;
-	
+
+	@Inject
+	private ChatMapper chatMapper;
+
+	@Inject
+	private UserGroupMapper userGroupMapper;
+
 	/**
 	 * Returns a sorted list of {@link UserCertificate} instances from all events.
 	 * 
@@ -43,5 +56,27 @@ public class ApplicationController extends ServiceBase implements ResponseEntity
 	public ResponseEntity<GenericListResponse<UserCertificateDto>> retrieveTopUsers() throws ServiceException {
 		var topUsers = applicationService.getTopUsersCache();
 		return buildResponseEntityWithOK(new GenericListResponse<>(userCertificateMapper.entityListToDtoList(topUsers)));
+	}
+	
+	/**
+	 * Returns a list of {@link Chat} instances which belongs to the 
+	 * given {@link UserGroup} instance. From the latter object {@link Usergroup#eventId} 
+	 * and {@link UserGroup#userGroupId} are used.
+	 * 
+	 * @param userGroup - filter
+	 * @return list of chats which belongs to the eventId and userGroupId of the given userGroup
+	 */
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@Operation(summary = "Retrieves chat records", description = "Retrieves chat records belong to the given userGroup")
+	@GetMapping(value = "/retrieve-chats")
+	public ResponseEntity<GenericListResponse<ChatDto>> retrieveChats(@RequestParam Long eventId, @RequestParam Long userGroupId) throws ServiceException {
+		UserGroup userGroup = new UserGroup();
+		userGroup.setUserGroupId(userGroupId);
+		Event event = new Event();
+		event.setEventId(eventId);
+		event.addUserGroup(userGroup);
+		
+		var chats = applicationService.getChatsByUserGroupCache().getUnchecked(userGroup);
+		return buildResponseEntityWithOK(new GenericListResponse<>(chatMapper.entityListToDtoList(chats)));
 	}
 }

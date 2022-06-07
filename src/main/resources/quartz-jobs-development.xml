@@ -9,22 +9,6 @@
 
 	<schedule>
 		<job>
-			<name>ChatInitializationJob</name>
-			<description>Chat initialization</description>
-			<job-class>com.zematix.jworldcup.backend.scheduler.ChatInitializationJob</job-class>
-		</job>
-		<trigger>
-			<simple>
-				<name>ChatInitializationJobTrigger</name>
-				<description>Run once at startup</description>
-				<job-name>ChatInitializationJob</job-name>
-				<misfire-instruction>MISFIRE_INSTRUCTION_SMART_POLICY</misfire-instruction>
-				<repeat-count>0</repeat-count>
-				<repeat-interval>0</repeat-interval>
-			</simple>
-		</trigger>
-		
-		<job>
 			<name>DatabaseMaintenanceJob</name>
 			<description>Database database maintenance operations</description>
 			<job-class>com.zematix.jworldcup.backend.scheduler.DatabaseMaintenanceJob</job-class>

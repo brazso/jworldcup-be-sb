@@ -103,8 +103,8 @@ public class ApplicationService extends ServiceBase {
 	
 	/**
 	 * Cached list of chat objects belongs to key userGroup. The latter can be 
-	 * virtual one with UserGroup.EVERYBODY_USER_GROUP_ID ID value, so Long ID
-	 * cannot be used instead of it as key.
+	 * virtual one with UserGroup.EVERYBODY_USER_GROUP_ID ID value, where eventId 
+	 * is a must, so only userGropId cannot be used as key.
 	 */
 	private LoadingCache<UserGroup, List<Chat>> chatsByUserGroupCache = CacheBuilder.newBuilder()
 			.build(new CacheLoader<UserGroup, List<Chat>>() {

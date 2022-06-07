@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
@@ -52,19 +50,20 @@ public class ChatService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public List<Chat> findAllChats() {
-		return chatDao.findAllChats();
+		List<Chat> chats = chatDao.findAllChats();
+//		chats.forEach(e -> {
+//			e.getUser().getRoles().size(); // lazy-load
+//		});
+		return chats;
 	}
 
 	/**
-	 * Returns a list of {@link UserGroup} instances which belongs to the 
-	 * given {@link Event#eventId} and {@link User#userId}.
-	 * The latter means that userGroup contains the given user as a member of it.
-	 * If the given {@code isEverybodyIncluded} parameter is {@code true}, a virtual 
-	 * Everybody userGroup is also added to the end of the result list.
+	 * Returns a list of {@link Chat} instances which belongs to the 
+	 * given {@link UserGroup} instance. From the latter object {@link Usergroup#eventId} 
+	 * and {@link UserGroup#userGroupId} are used.
 	 * 
-	 * @param eventId - filter
-	 * @param userId - filter
-	 * @return list of userGroups which belongs to the given eventId and userId
+	 * @param userGroup - filter
+	 * @return list of chats which belongs to the eventId and userGroupId of the given userGroup
 	 */
 	@Transactional(readOnly = true)
 	public List<Chat> retrieveChats(UserGroup userGroup) throws ServiceException {
