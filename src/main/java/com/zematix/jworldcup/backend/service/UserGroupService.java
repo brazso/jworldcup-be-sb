@@ -16,6 +16,9 @@ import java.util.Properties;
 
 import javax.inject.Inject;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,7 @@ import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.UserDao;
 import com.zematix.jworldcup.backend.dao.UserGroupDao;
@@ -120,6 +124,7 @@ public class UserGroupService extends ServiceBase {
 	 * @return list of userGroups which belongs to the given eventId and userId
 	 */
 	@Transactional(readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, #isEverybodyIncluded}") 
 	public List<UserGroup> retrieveUserGroups(Long eventId, Long userId, boolean isEverybodyIncluded) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -127,14 +132,17 @@ public class UserGroupService extends ServiceBase {
 		List<UserGroup> userGroups = userGroupDao.retrieveUserGroups(eventId, userId);
 		
 		if (isEverybodyIncluded) {
-			// used by scores ui
 			UserGroup userGroup = createVirtualEverybodyUserGroup(eventId, userId);
 			userGroups.add(userGroup);
 		}
-		else {
-			// used by userGroups ui
-			userGroups.stream().forEach(e -> e.setUsersAsList(userGroupDao.retrieveUsersByUserGroup(e.getUserGroupId())));
-		}
+		
+		userGroups.forEach(userGroup -> {
+			List<User> users = userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId());
+			users.forEach(user -> {
+				user.getRoles().size(); // lazy fetch
+			});
+			userGroup.setVirtualUsers(users);
+		});
 		
 		return userGroups;
 	}
@@ -232,6 +240,9 @@ public class UserGroupService extends ServiceBase {
 	 * @param isInsertConfirmed
 	 * @return persisted UserGroup entity instance
 	 */
+//	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, allEntries = true)
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
 	public UserGroup insertUserGroup(Long eventId, Long userId, String name, boolean isInsertConfirmed) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -274,7 +285,7 @@ public class UserGroupService extends ServiceBase {
 		UserGroup userGroup = userGroupDao.insertUserGroup(eventId, userId, name);
 		
 		// init transient field
-		userGroup.setUsersAsList(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
+		userGroup.setVirtualUsers(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
 		
 		return userGroup;
 	}
@@ -287,6 +298,9 @@ public class UserGroupService extends ServiceBase {
 	 * @param name - name of the user group to be imported
 	 * @return persisted UserGroup entity instance
 	 */
+//	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, allEntries = true)
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
 	public UserGroup importUserGroup(Long eventId, Long userId, String name) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -326,7 +340,7 @@ public class UserGroupService extends ServiceBase {
 		UserGroup userGroup = userGroupDao.importUserGroup(eventId, userId, foundUserGroup.getUserGroupId());
 		
 		// init transient field
-		userGroup.setUsersAsList(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
+		userGroup.setVirtualUsers(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
 
 		return userGroup;
 	}
@@ -336,6 +350,7 @@ public class UserGroupService extends ServiceBase {
 	 * 
 	 * @param userGroupId
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, allEntries = true)
 	public void deleteUserGroup(Long userGroupId) throws ServiceException {
 		checkNotNull(userGroupId);
 
@@ -355,6 +370,7 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalStateException
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, allEntries = true)
 	public User findAndAddUserToUserGroup(Long userGroupId, String loginName, String fullName) throws ServiceException {
 		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
@@ -402,6 +418,7 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalStateException
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, allEntries = true)
 	public void removeUserFromUserGroup(Long userGroupId, Long userId) throws ServiceException {
 		checkNotNull(userGroupId);
 		checkNotNull(userId);
@@ -665,6 +682,8 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	@Transactional
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
 	public UserGroup insertUserGroup(Long eventId, Long userId, String name) {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -697,6 +716,8 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	@Transactional
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
 	public UserGroup importUserGroup(Long eventId, Long userId, Long importedUserGroupId) {
 		checkNotNull(eventId);
 		checkNotNull(userId);

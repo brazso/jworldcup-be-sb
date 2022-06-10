@@ -17,6 +17,9 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
+import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.UserDao;
 import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
@@ -228,6 +232,7 @@ public class UserService extends ServiceBase {
 	 * @throws ServiceException if the user cannot be identified or modified
 	 * @throws IllegalArgumentException
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_BY_LOGIN_NAME, key = "#loginName")
 	public User modifyUser(String loginName, String loginPasswordActual, 
 			String loginPasswordNew, String loginPasswordAgain, 
 			String fullName, String emailNew, String emailNewAgain,
@@ -411,6 +416,7 @@ public class UserService extends ServiceBase {
 	 * @return found {@link UserOfEvent} detached object or {@code null}
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_USER_OF_EVENT, key = "{#eventId, #userId}")
 	public UserOfEvent retrieveUserOfEvent(Long eventId, Long userId) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -446,6 +452,7 @@ public class UserService extends ServiceBase {
 	 * @param favouriteKnockoutTeamId - favourite knockout team id 
 	 * @return saved userOfEvent
 	 */
+	@CachePut(cacheNames = CachingConfig.CACHE_USER_OF_EVENT, key = "{#eventId, #userId}")
 	public UserOfEvent saveUserOfEvent(Long eventId, Long userId, Long favouriteGroupTeamId, Long favouriteKnockoutTeamId) throws ServiceException {
 		checkNotNull(userId);
 		checkNotNull(eventId);
@@ -494,14 +501,14 @@ public class UserService extends ServiceBase {
 
 	/**
 	 * Returns found {@link User} instance belongs to the given {@code loginName}.
-	 * It fetches some necessary lazy data as well.
-	 * Otherwise {@code null} is returned.
+ 	 * Otherwise {@code null} is returned. It fetches some necessary lazy data as well.
 	 * 
 	 * @param loginName
 	 * @return user with the given {@code loginName}
 	 * @throws NullPointerException if given {@code loginName} is {@code null}
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_USER_BY_LOGIN_NAME, key = "#loginName")
 	public User findUserByLoginName(String loginName) {
 		checkNotNull(loginName);
 		
@@ -694,6 +701,7 @@ public class UserService extends ServiceBase {
 	 * 
 	 * @param loginName
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_BY_LOGIN_NAME, key = "#loginName")
 	public void deleteUser(String loginName) throws ServiceException {
 		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 		

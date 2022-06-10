@@ -33,7 +33,6 @@ import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.SessionData;
 import com.zematix.jworldcup.backend.service.ApplicationService;
-import com.zematix.jworldcup.backend.service.ChatService;
 import com.zematix.jworldcup.backend.service.MatchService;
 import com.zematix.jworldcup.backend.service.MessageQueueService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
@@ -55,8 +54,8 @@ public class SchedulerService extends ServiceBase {
 	@Inject
 	private UserService userService;
 
-	@Inject
-	private ChatService chatService;
+//	@Inject
+//	private ChatService chatService;
 
 	@Inject
 	private MatchService matchService;

@@ -286,7 +286,7 @@ public class ApplicationService extends ServiceBase {
 	 */
 	public List<org.springframework.security.core.userdetails.User> getAllAuthenticatedPrincipals() {
 		return sessionRegistry.getAllPrincipals().stream()
-//				  .filter(User.class::isInstance)
+				  .filter(org.springframework.security.core.userdetails.User.class::isInstance)
 			      .filter(u -> !sessionRegistry.getAllSessions(u, false).isEmpty()) // excludes expired sessions
 			      .map(e -> (org.springframework.security.core.userdetails.User)e)
 			      .toList();

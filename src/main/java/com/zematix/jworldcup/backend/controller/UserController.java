@@ -131,7 +131,7 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 	@Operation(summary = "Find user-of-event belongs to event and user", description = "Find user-of-event belongs to the given event and user")
 	@GetMapping(value = "/find-user-of-event-by-event-and-user")
 	public ResponseEntity<GenericResponse<UserOfEventDto>> retrieveUserOfEvent(@RequestParam Long eventId, @RequestParam Long userId) throws ServiceException {
-		var userOfEvent = userService.retrieveUserOfEvent(eventId, userId);
+		var userOfEvent = userService.retrieveUserOfEvent(eventId, userId); // cached method
 		return buildResponseEntityWithOK(new GenericResponse<>(userOfEventMapper.entityToDto(userOfEvent)));
 	}
 	
@@ -226,7 +226,7 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 	@GetMapping(value = "/whoami")
 	public ResponseEntity<GenericResponse<UserDto>> whoami() throws ServiceException {
 		var authenticatedUser = userDetailsService.getAuthenticatedUser();
-		var user = userService.findUserByLoginName(authenticatedUser.getUsername()); // user.getRoles() also fetched
+		var user = userService.findUserByLoginName(authenticatedUser.getUsername()); // cached method
 		var authorities = authenticatedUser.getAuthorities().stream().map(e -> e.getAuthority()).collect(Collectors.toSet());
 		return buildResponseEntityWithOK(new GenericResponse<>(userMapper.entityToDto(user, authorities)));
 	}

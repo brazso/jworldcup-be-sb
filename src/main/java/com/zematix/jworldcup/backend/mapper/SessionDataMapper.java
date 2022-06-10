@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 import com.zematix.jworldcup.backend.dto.SessionDataDto;
 import com.zematix.jworldcup.backend.model.SessionData;
 
-@Mapper(uses = {EventMapper.class, UserMapper.class, UserOfEventMapper.class})
+@Mapper(uses = {EventMapper.class, UserMapper.class, UserOfEventMapper.class, UserGroupMapper.class})
 public interface SessionDataMapper extends MapperBase<SessionDataDto, SessionData> {
 
 	@Mapping(target = "localeId", expression = "java( sessionData.getLocale() == null ? null : sessionData.getLocale().toLanguageTag() )")

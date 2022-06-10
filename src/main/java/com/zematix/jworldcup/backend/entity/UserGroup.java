@@ -85,7 +85,7 @@ public class UserGroup implements Serializable {
 	private List<Chat> chats;
 	
 	@Transient
-	private List<User> usersAsList;
+	private List<User> virtualUsers; // includes parent everybody user group 
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -212,12 +212,12 @@ public class UserGroup implements Serializable {
 		return chat;
 	}
 
-	public void setUsersAsList(List<User> usersAsList) {
-		this.usersAsList = usersAsList;
+	public List<User> getVirtualUsers() {
+		return virtualUsers;
 	}
-	
-	public List<User> getUsersAsList() {
-		return this.usersAsList;
+
+	public void setVirtualUsers(List<User> virtualUsers) {
+		this.virtualUsers = virtualUsers;
 	}
 
 	// Getters

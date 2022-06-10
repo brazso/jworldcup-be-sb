@@ -26,6 +26,7 @@ public class SessionDataDto {
     private UserDto user;
     private EventDto event;
     private UserOfEventDto userOfEvent;
+    private List<UserGroupDto> userGroups;
     private String newsLine;
     
     private Integer eventCompletionPercent;

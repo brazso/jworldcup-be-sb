@@ -25,9 +25,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 	private UserService userService;
 	
 	@Override
-//	@Cacheable(cacheNames = CachingConfig.USER_DETAILS_CACHE, key = "#username") // wo caching remove eraseCredentials at WebSecurityConfig
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userService.findUserByLoginName(username);
+		User user = userService.findUserByLoginName(username); // cached method 
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		}

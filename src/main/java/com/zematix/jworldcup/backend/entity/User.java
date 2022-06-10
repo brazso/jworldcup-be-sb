@@ -19,6 +19,7 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -122,6 +123,9 @@ public class User implements Serializable {
 	@OneToMany(mappedBy="user")
 	private List<Chat> chats;
 
+	@Transient
+	private Boolean isOnline;
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -343,5 +347,13 @@ public class User implements Serializable {
 		chat.setUser(null);
 
 		return chat;
+	}
+
+	public Boolean getIsOnline() {
+		return isOnline;
+	}
+
+	public void setIsOnline(Boolean isOnline) {
+		this.isOnline = isOnline;
 	}
 }

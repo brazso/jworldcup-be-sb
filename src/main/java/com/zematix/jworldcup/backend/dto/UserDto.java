@@ -31,5 +31,6 @@ public class UserDto {
 //	private List<UserGroup> ownerUserGroups;
 //	private List<UserOfEvent> userOfEvents;
 //	private List<Chat> chats;
+    private Boolean isOnline;
 
 }

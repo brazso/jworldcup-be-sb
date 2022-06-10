@@ -9,6 +9,7 @@ import java.util.Locale;
 import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
+import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
 
 import lombok.Data;
@@ -30,6 +31,7 @@ public class SessionData {
     private User user;
     private Event event;
     private UserOfEvent userOfEvent;
+    private List<UserGroup> userGroups;
     private String newsLine;
     
     private Integer eventCompletionPercent;

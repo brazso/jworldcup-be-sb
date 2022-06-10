@@ -13,12 +13,14 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 @Configuration
 @EnableCaching
 public class CachingConfig {
-	public static final String USER_DETAILS_CACHE = "userDetails";
+	public static final String CACHE_USER_BY_LOGIN_NAME = "userByLoginName";
+	public static final String CACHE_USER_OF_EVENT = "userOfEvent";
+	public static final String CACHE_USER_GROUPS = "userGroups";
 
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-        		USER_DETAILS_CACHE
+        		CACHE_USER_BY_LOGIN_NAME, CACHE_USER_OF_EVENT, CACHE_USER_GROUPS
         );
         cacheManager.setCaffeine(Caffeine.newBuilder()
           .initialCapacity(200)

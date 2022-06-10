@@ -39,11 +39,11 @@ mail.smtp:
 # Logging
 logging:
   level:
-    #org.hibernate.SQL: DEBUG
-    #org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    #com.zaxxer.hikari: TRACE
-    #org.springframework.orm.jpa: TRACE
-    #org.springframework.transaction.interceptor: TRACE
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.orm.jpa: TRACE
+    org.springframework.transaction.interceptor: TRACE
+#    com.zaxxer.hikari: TRACE
     
     #org.springframework.security.ldap: TRACE
     #org.springframework.ldap: TRACE

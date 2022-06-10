@@ -167,7 +167,7 @@ public class UserGroupServiceTest {
 		
 		List<UserGroup> userGroups = userGroupService.retrieveUserGroups(eventId, userId, isEverybodyIncluded);
 		assertEquals("Retrieved list should be equal to the expected one.", expectedUserGroups, userGroups);
-		assertEquals("Retrieved user list should be equal to the expected one.", expectedUserGroups.get(0).getUsersAsList(), expectedUsers);
+		assertEquals("Retrieved user list should be equal to the expected one.", expectedUserGroups.get(0).getVirtualUsers(), expectedUsers);
 	}
 
 	/**
@@ -357,7 +357,7 @@ public class UserGroupServiceTest {
 		UserGroup userGroup = userGroupService.insertUserGroup(eventId, userId, name, isInsertConfirmed);
 		assertEquals("Inserted userGroup must be the same as the expected one", 
 				expectedUserGroup, userGroup);
-		assertEquals("Retrieved user list should be equal to the expected one.", userGroup.getUsersAsList(), expectedUsers);
+		assertEquals("Retrieved user list should be equal to the expected one.", userGroup.getVirtualUsers(), expectedUsers);
 	}
 	
 	/**
@@ -454,7 +454,7 @@ public class UserGroupServiceTest {
 		UserGroup userGroup = userGroupService.insertUserGroup(eventId, userId, name, isInsertConfirmed);
 		assertEquals("Inserted userGroup must be the same as the expected one", 
 				expectedUserGroup, userGroup);
-		assertEquals("Retrieved user list should be equal to the expected one.", userGroup.getUsersAsList(), expectedUsers);
+		assertEquals("Retrieved user list should be equal to the expected one.", userGroup.getVirtualUsers(), expectedUsers);
 	}
 	
 	/**

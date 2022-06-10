@@ -60,6 +60,9 @@ public class SessionService extends ServiceBase {
 	private ChatService chatService;
 
 	@Inject
+	private UserGroupService userGroupService;
+
+	@Inject
 	private MessageSource msgs;
 
 	/**
@@ -91,6 +94,11 @@ public class SessionService extends ServiceBase {
 	 * Stored separately because at logout/scheduler, without authentication, it must be used.
 	 */
 	private String username;
+
+	/**
+	 * List of userGroups belongs to the this.event and this.user
+	 */
+	private List<UserGroup> userGroups = new ArrayList<>();
 	
 	/**
 	 * Initialization of some private fields
@@ -122,6 +130,9 @@ public class SessionService extends ServiceBase {
 		
 		// refresh userOfEvent
 		this.getUserOfEvent();
+		
+		// refresh userGroups
+		this.getUserGroups();
 
 		// initialize newsLine
 		Chat chat = null;
@@ -190,6 +201,8 @@ public class SessionService extends ServiceBase {
 //		if (sessionDataClient == null || !sessionData.getUserOfEvent().equals(sessionDataClient.getUserOfEvent())) {
 //			sessionData.getModificationSet().add(SessionDataModificationFlag.USER_OF_EVENT);
 //		}
+		
+		sessionData.setUserGroups(getUserGroups());
 		
 		// eventCompletionPercent comes from local
 		sessionData.setEventCompletionPercent(getEventCompletionPercent());
@@ -316,10 +329,9 @@ public class SessionService extends ServiceBase {
 	}
 	
 	/**
-	 * Retrieves cached {@link User} instance. Unless it is found,
-	 * it is read from database.
+	 * Retrieves authenticated {@link User} instance.
 	 * 
-	 * @return cached/database user
+	 * @return authenticated user
 	 */
 	public User getUser() {
 		var authenticatedUser = userDetailsService.getAuthenticatedUser();
@@ -329,18 +341,16 @@ public class SessionService extends ServiceBase {
 			this.username = null;
 		}
 		else {
-//			if (this.user == null || !loginName.equals(this.user.getLoginName())) {
-				var user = userService.findUserByLoginName(loginName); // user.getRoles() also fetched
-				if (user == null) {
-					// authenticated user must be in the database, so this is supposed to be a dead code
-					throw new IllegalStateException(String.format("User with loginName \"%s\" is not found in the database.", loginName));
-				}
-				this.user = user;
-				this.username = loginName;
-				if (authenticatedUser != null) {
-					initSessionAfterUserInitialized();
-				}
-//			}
+			var user = userService.findUserByLoginName(loginName); // cached method
+			if (user == null) {
+				// authenticated user must exist in the database, so this is supposed to be a dead code
+				throw new IllegalStateException(String.format("User with loginName \"%s\" is not found in the database.", loginName));
+			}
+			this.user = user;
+			this.username = loginName;
+			if (authenticatedUser != null) {
+				initSessionAfterUserInitialized();
+			}
 		}	
 		return this.user;
 	}
@@ -366,7 +376,7 @@ public class SessionService extends ServiceBase {
 				
 				UserOfEvent userOfEvent = null;
 				try {
-					userOfEvent = userService.retrieveUserOfEvent(this.event.getEventId(), this.user.getUserId());
+					userOfEvent = userService.retrieveUserOfEvent(this.event.getEventId(), this.user.getUserId()); // cached method
 				} catch (ServiceException e) {
 					consumeServiceException(e);
 					throw new IllegalStateException(e.getMessage()); // fatal case 
@@ -397,6 +407,37 @@ public class SessionService extends ServiceBase {
 
 	public String getUsername() {
 		return this.username;
+	}
+
+	/**
+	 * Retrieves cached list of {@link UserGroup} instances. Unless it is found,
+	 * it is read from database. Creates an empty instance if it is 
+	 * not in the database either.
+	 * 
+	 * @return cached/database/empty userGroups
+	 */
+	public List<UserGroup> getUserGroups() {
+		if (this.event == null || this.user == null) {
+			this.userGroups = new ArrayList<>();
+		}
+		else {
+			List<UserGroup> userGroups = new ArrayList<>();
+			try {
+				userGroups = userGroupService.retrieveUserGroups(this.event.getEventId(), this.user.getUserId(), true); // cached method
+				userGroups.forEach(userGroup -> {
+					userGroup.getVirtualUsers().forEach(user -> {
+						user.setIsOnline(applicationService.getAllAuthenticatedPrincipals().stream()
+								.anyMatch(principal -> principal.getUsername().equals(user.getLoginName())));
+					});
+				});
+			} catch (ServiceException e) {
+				consumeServiceException(e);
+				throw new IllegalStateException(e.getMessage()); // fatal case 
+			}
+			this.userGroups = userGroups;
+		}
+
+		return this.userGroups;
 	}
 	
 	/**

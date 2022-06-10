@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +29,8 @@ import io.swagger.v3.oas.annotations.Operation;
 //@CrossOrigin
 public class JwtAuthenticationController implements ResponseEntityHelper {
 
-	@Inject
-	private AuthenticationManager authenticationManager;
+//	@Inject
+//	private AuthenticationManager authenticationManager;
 
 	@Inject
 	private JwtTokenUtil jwtTokenUtil;
@@ -51,7 +50,7 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 	@PostMapping(value = "/login")
 	@Operation(summary = "Authenticate a user", description = "Authenticate a user")
 	public ResponseEntity<JwtResponse> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws ServiceException {
-//		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword()); // authenticated by login yet
+//		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword()); // authentication is already executed in every request of {@link JwtRequestFilter}
 //		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
 		User user = userDetailsService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
