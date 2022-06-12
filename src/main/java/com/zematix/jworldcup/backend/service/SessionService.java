@@ -203,6 +203,9 @@ public class SessionService extends ServiceBase {
 //		}
 		
 		sessionData.setUserGroups(getUserGroups());
+		if (sessionDataClient == null || !sessionData.getUserGroups().equals(sessionDataClient.getUserGroups())) {
+			sessionData.getModificationSet().add(SessionDataModificationFlag.USER_GROUPS);
+		}
 		
 		// eventCompletionPercent comes from local
 		sessionData.setEventCompletionPercent(getEventCompletionPercent());

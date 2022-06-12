@@ -8,6 +8,7 @@ public enum SessionDataModificationFlag {
 	EVENT_TRIGGER_START_TIMES, 
 	LOCALE,
 	NEWS_LINE, 
-	USER
-//	USER_OF_EVENT
+	USER,
+//	USER_OF_EVENT,
+	USER_GROUPS
 }

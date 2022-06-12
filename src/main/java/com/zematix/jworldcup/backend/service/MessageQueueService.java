@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.zematix.jworldcup.backend.entity.Chat;
+import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.mapper.ChatMapper;
 import com.zematix.jworldcup.backend.mapper.SessionDataMapper;
 import com.zematix.jworldcup.backend.model.SessionData;
@@ -40,7 +41,7 @@ public class MessageQueueService extends ServiceBase{
 //		logger.info("properties2: "+properties); // {QUEUE_NAME=session2c4130db-efb7-4a54-91a3-d681d68dafad, QUEUE_MESSAGE_COUNT=0, QUEUE_CONSUMER_COUNT=0}
 
 		// creates the queue automatically unless it exits 
-		template.convertAndSend("/queue/session"+sessionData.getId(), sessionDataMapper.entityToDto(sessionData), headers);
+		template.convertAndSend("/queue/session#"+sessionData.getId(), sessionDataMapper.entityToDto(sessionData), headers);
 	}
 	
 	/**
@@ -50,10 +51,10 @@ public class MessageQueueService extends ServiceBase{
 	public void sendChat(Chat chat) {
 		final Map<String, Object> headers = Map.of("durable", "false", "exclusive", "false", "auto-delete", "false");
 
-//		Long userGroupId = chat.getUserGroup() != null ? chat.getUserGroup().getUserGroupId() : UserGroup.EVERYBODY_USER_GROUP_ID;
+		Long userGroupId = chat.getUserGroup() != null ? chat.getUserGroup().getUserGroupId() : UserGroup.EVERYBODY_USER_GROUP_ID;
+		
 		// creates the queue automatically unless it exits 
-//		template.convertAndSend("/topic/chat"+userGroupId, chatMapper.entityToDto(chat), headers);
-		template.convertAndSend("/topic/chat", chatMapper.entityToDto(chat), headers);
+		template.convertAndSend("/topic/chat#"+userGroupId, chatMapper.entityToDto(chat), headers);
 	}
 	
 	/**
