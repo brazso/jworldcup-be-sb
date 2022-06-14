@@ -328,11 +328,13 @@ public class SchedulerService extends ServiceBase {
 			List<SessionInformation> sessionInfos = applicationService.getAllAuthenticatedSessions(user);
 			sessionInfos.stream().map(info -> SessionListener.getSession(info.getSessionId())).filter(Objects::nonNull).forEach(session -> {
 				SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
-				SessionData sessionData = sessionService.refreshSessionData(null); // load from local
-				String newsLine = sessionService.generateNewsLine();
-				Map<String, Object> localUpdateMap = Map.of("newsLine", newsLine);
-				sessionData = sessionService.refreshSessionData(sessionData, localUpdateMap);
-				messageQueueService.sendSession(sessionData);
+				if (sessionService != null) {
+					SessionData sessionData = sessionService.refreshSessionData(null); // load from local
+					String newsLine = sessionService.generateNewsLine();
+					Map<String, Object> localUpdateMap = Map.of("newsLine", newsLine);
+					sessionData = sessionService.refreshSessionData(sessionData, localUpdateMap);
+					messageQueueService.sendSession(sessionData);
+				}
 			});
 		});
 	}

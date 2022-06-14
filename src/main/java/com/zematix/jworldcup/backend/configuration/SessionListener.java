@@ -27,26 +27,26 @@ public class SessionListener implements HttpSessionListener {
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
         String id = event.getSession().getId();
-        logger.debug("session created: {}", id);
         sessionMap.put(id, event.getSession());
+        logger.debug("session created: {} (map size: {})", id, sessionMap.size());
     }
 
 	public static void sessionCreated(HttpSession session) {
         String id = session.getId();
-        logger.debug("session created: {}", id);
         sessionMap.put(id, session);
+        logger.debug("session created: {} (map size: {})", id, sessionMap.size());
     }
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
 		String id = event.getSession().getId();
-		logger.debug("session destroyed: {}", id);
 		sessionMap.remove(id);
+		logger.debug("session destroyed: {} (map size: {})", id, sessionMap.size());
 	}
 
 	public static void sessionDestroyed(String id) {
-		logger.debug("session destroyed: {}", id);
 		sessionMap.remove(id);
+		logger.debug("session destroyed: {} (map size: {})", id, sessionMap.size());
 	}
 
 	public static HttpSession getSession(String sessionID) {

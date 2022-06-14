@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.core.log.LogMessage;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionFixationProtectionEvent;
 import org.springframework.stereotype.Component;
@@ -18,11 +19,12 @@ import org.springframework.util.Assert;
 import org.springframework.web.util.WebUtils;
 
 /**
- * A class for performing session fixation protection. It is a copy of the original one,
- * but its onSessionChange method updates SessionListener's map with the id modified sessions.
+ * A class for performing session fixation protection. It is a copy of the original 
+ * {@link ChangeSessionIdAuthenticationStrategy} one, but its onSessionChange method 
+ * updates SessionListener's map with the id modified sessions.
  */
 @Component
-public final class ChangeSessionIdAuthenticationStrategy
+public final class ChangeSessionIdAuthenticationStrategyEx
 		implements SessionAuthenticationStrategy, ApplicationEventPublisherAware {
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
@@ -39,7 +41,7 @@ public final class ChangeSessionIdAuthenticationStrategy
 	 */
 	private boolean alwaysCreateSession;
 
-	ChangeSessionIdAuthenticationStrategy() {
+	ChangeSessionIdAuthenticationStrategyEx() {
 	}
 
 	/**
@@ -58,7 +60,15 @@ public final class ChangeSessionIdAuthenticationStrategy
 	@Override
 	public void onAuthentication(Authentication authentication, HttpServletRequest request,
 			HttpServletResponse response) {
+		logger.info("onAuthentication");
+		
+		// TODO: unfortunately concurrent later request (authenticated by the same user)
+		// sometimes does not detect the session of the previous one if they are very
+		// close in time, therefore a new session is created later by {@link
+		// RegisterSessionAuthenticationStrategy} which is used by only this request and
+		// it will be destroyed only by session timeout.
 		boolean hadSessionAlready = request.getSession(false) != null;
+		logger.info("hadSessionAlready: " + hadSessionAlready);
 		if (!hadSessionAlready && !this.alwaysCreateSession) {
 			// Session fixation isn't a problem if there's no session
 			return;
@@ -81,7 +91,7 @@ public final class ChangeSessionIdAuthenticationStrategy
 			}
 			else {
 				if (this.logger.isDebugEnabled()) {
-					this.logger.debug(LogMessage.format("Changed session id from %s", originalSessionId));
+					this.logger.debug(LogMessage.format("Changed session id from %s to %s", originalSessionId, newSessionId));
 				}
 			}
 			onSessionChange(originalSessionId, session, authentication);

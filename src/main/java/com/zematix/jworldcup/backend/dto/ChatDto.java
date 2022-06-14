@@ -10,12 +10,12 @@ public class ChatDto  {
 
 	@EqualsAndHashCode.Include
 	private Long chatId;
-//	private Event event;
+	private EventDto event;
 	private String message;
 	private LocalDateTime modificationTime;
-//	private UserGroup userGroup;
+	private UserGroupDto userGroup;
 	private UserDto user;
-//	private User targetUser;
+	private UserDto targetUser;
 	private boolean isPrivate;
 	
 }

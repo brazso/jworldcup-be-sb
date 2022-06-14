@@ -16,11 +16,15 @@ public class CachingConfig {
 	public static final String CACHE_USER_BY_LOGIN_NAME = "userByLoginName";
 	public static final String CACHE_USER_OF_EVENT = "userOfEvent";
 	public static final String CACHE_USER_GROUPS = "userGroups";
+	public static final String CACHE_EVENT_START_TIME = "eventStartTime";
+	public static final String CACHE_EVENT_KNOCKOUT_START_TIME = "eventKnockoutStartTime";
+	public static final String CACHE_EVENT_END_TIME = "eventEndTime";
 
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-        		CACHE_USER_BY_LOGIN_NAME, CACHE_USER_OF_EVENT, CACHE_USER_GROUPS
+        		CACHE_USER_BY_LOGIN_NAME, CACHE_USER_OF_EVENT, CACHE_USER_GROUPS, 
+        		CACHE_EVENT_START_TIME, CACHE_EVENT_KNOCKOUT_START_TIME, CACHE_EVENT_END_TIME
         );
         cacheManager.setCaffeine(Caffeine.newBuilder()
           .initialCapacity(200)

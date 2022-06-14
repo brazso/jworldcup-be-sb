@@ -51,8 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
     private SessionLogoutHandler logoutHandler;
 	
-	@Autowired
-	private ChangeSessionIdAuthenticationStrategy sessionAuthenticationStrategy;
+//	@Autowired
+//	private ChangeSessionIdAuthenticationStrategyEx sessionAuthenticationStrategy;
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -99,9 +99,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // browser (angular) uses
 				// all other requests need to be authenticated
 				.anyRequest().authenticated().and().
+				exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().
 				// make sure we use stateless session; session won't be used to store user's
 				// state.
-				exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().
 				sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		
 		httpSecurity.logout()
@@ -123,9 +123,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	        return cors;
 	    });
 
-		httpSecurity.sessionManagement().sessionAuthenticationStrategy(sessionAuthenticationStrategy)
-				.maximumSessions(1)/* .maxSessionsPreventsLogin(true) */
-				.sessionRegistry(sessionRegistry());
+//		httpSecurity.sessionManagement().sessionAuthenticationStrategy(sessionAuthenticationStrategy)
+//				.maximumSessions(-1) // concurrent REST API calls from the same authenticated user might need more sessions
+//				.sessionRegistry(sessionRegistry());
+		
+		httpSecurity.sessionManagement()
+				.maximumSessions(1)
+				.sessionRegistry(sessionRegistry()).and().
+				sessionFixation().none(); // works flawlessly but session fixation invokes security risk
 	}
 
 }

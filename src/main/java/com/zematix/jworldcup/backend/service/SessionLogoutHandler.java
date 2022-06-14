@@ -1,5 +1,7 @@
 package com.zematix.jworldcup.backend.service;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,7 +29,9 @@ public class SessionLogoutHandler implements LogoutHandler {
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 		// authentication variable is null here, cannot be used
 		logger.info("logout id: {}, username: {}", sessionService.getId(), sessionService.getUsername());
-		expireUserSessions(sessionService.getUsername()); // getUser() cannot be used, no authentication yet here
+		if (sessionService.getUsername() != null) {
+			expireUserSessions(sessionService.getUsername()); // getUser() cannot be used, no authentication yet here
+		}
 	}
     
 	/**
@@ -35,6 +39,7 @@ public class SessionLogoutHandler implements LogoutHandler {
 	 * @param username
 	 */
 	private void expireUserSessions(String username) {
+		checkNotNull(username);
 		applicationService.getAllAuthenticatedPrincipals().stream().filter(User.class::isInstance)
 				.filter(e -> username.equals(e.getUsername())).forEach(user -> {
 					applicationService.getAllAuthenticatedSessions(user).stream()

@@ -42,16 +42,17 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.orm.jpa: TRACE
-    org.springframework.transaction.interceptor: TRACE
+#    org.springframework.transaction.interceptor: TRACE
 #    com.zaxxer.hikari: TRACE
     
-    #org.springframework.security.ldap: TRACE
-    #org.springframework.ldap: TRACE
-    #org.springframework.messaging.simp: WARN
+#    org.springframework.security.ldap: TRACE
+#    org.springframework.ldap: TRACE
+#    org.springframework.messaging.simp: WARN
     
-    #org.springframework.messaging: DEBUG
-    #org.springframework.security.web.authentication: DEBUG
-    #org.springframework.cache.interceptor: TRACE
+#    org.springframework.messaging: DEBUG
+#    org.springframework.security.web.authentication: TRACE
+#    org.springframework.security.core.session: TRACE
+#    org.springframework.cache.interceptor: TRACE
     
     com.zematix.jworldcup.backend: TRACE
 

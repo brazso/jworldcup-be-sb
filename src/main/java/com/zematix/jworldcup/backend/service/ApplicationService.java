@@ -48,7 +48,7 @@ public class ApplicationService extends ServiceBase {
 	private ChatService chatService;
 	
 	@Autowired
-	SessionRegistry sessionRegistry;
+	private SessionRegistry sessionRegistry;
 
 	@Value("${app.shortName}")
 	private String appShortName;

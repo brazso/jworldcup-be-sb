@@ -7,11 +7,13 @@ import java.util.List;
 
 import javax.persistence.TypedQuery;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.jpa.impl.JPAQuery;
+import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.QBet;
@@ -93,6 +95,7 @@ public class EventDao extends DaoBase {
 	 * @throws IllegalArgumentException if the given {@code eventId} is null
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_EVENT_START_TIME, key = "{#eventId}")
 	public LocalDateTime getStartTime(Long eventId) {
 		Match match = null;
 		
@@ -115,6 +118,7 @@ public class EventDao extends DaoBase {
 	 * @throws IllegalArgumentException if the given eventId is null 
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_EVENT_END_TIME, key = "{#eventId}")
 	public LocalDateTime getEndTime(Long eventId) {
 		Match match = null;
 		
@@ -139,6 +143,7 @@ public class EventDao extends DaoBase {
 	 * @throws IllegalArgumentException if the given {@code eventId} is null
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_EVENT_KNOCKOUT_START_TIME, key = "{#eventId}")
 	public LocalDateTime getKnockoutStartTime(Long eventId) {
 		Match match = null;
 		

@@ -23,8 +23,10 @@ public interface UserGroupMapper extends MapperBase<UserGroupDto, UserGroup> {
 
 	@AfterMapping
 	default void map(UserGroup userGroup, @MappingTarget UserGroupDto userGroupDto) {
-		userGroup.getVirtualUsers().forEach(user -> {
-			user.setEmailAddr(null); // for security reasons
-		});
+		if (userGroup.getVirtualUsers() != null) {
+			userGroup.getVirtualUsers().forEach(user -> {
+				user.setEmailAddr(null); // for security reasons
+			});
+		}
 	}
 }
