@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zematix.jworldcup.backend.dto.ChatDto;
 import com.zematix.jworldcup.backend.dto.CommonResponse;
-import com.zematix.jworldcup.backend.dto.UserGroupExtendedDto;
+import com.zematix.jworldcup.backend.dto.GenericResponse;
+import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.exception.ServiceException;
-import com.zematix.jworldcup.backend.mapper.UserGroupExtendedMapper;
+import com.zematix.jworldcup.backend.mapper.ChatMapper;
 import com.zematix.jworldcup.backend.service.ChatService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
 
@@ -33,22 +35,19 @@ public class ChatController extends ServiceBase implements ResponseEntityHelper 
 	private ChatService chatService;
 	
 	@Inject
-	private UserGroupExtendedMapper userGroupExtendedMapper;
+	private ChatMapper chatMapper;
 	
 	/**
-	 * Persists new chat entity.
+	 * Sends given chat (with message) and persists it as new chat entity.
 	 * 
-	 * @param userGroup
-	 * @param userId
-	 * @param message
-	 * @return {@code true} if persist was successful, {@code false} otherwise
+	 * @param chatDto
+	 * @throws ServiceException
 	 */
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
-	@Operation(summary = "Create a chat entity", description = "Create a chat entity into database")
-	@PostMapping(value = "/insert-chat")
-	public ResponseEntity<CommonResponse> sendChatMessage(@RequestBody UserGroupExtendedDto userGroupExtendedDto) throws ServiceException {
-		chatService.sendChatMessage(userGroupExtendedMapper.dtoToEntity(userGroupExtendedDto), userGroupExtendedDto.getUserId(), 
-				userGroupExtendedDto.getMessage());
+	@Operation(summary = "Sends a chat message", description = "Sends a chat message and inserts that into database")
+	@PostMapping(value = "/send-chat")
+	public ResponseEntity<CommonResponse> sendChat(@RequestBody ChatDto chatDto) throws ServiceException {
+		chatService.sendChat(chatMapper.dtoToEntity(chatDto));
 		return buildResponseEntityWithOK(new CommonResponse());
 	}
 }

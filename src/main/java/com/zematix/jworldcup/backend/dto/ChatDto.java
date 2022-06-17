@@ -16,6 +16,5 @@ public class ChatDto  {
 	private UserGroupDto userGroup;
 	private UserDto user;
 	private UserDto targetUser;
-	private boolean isPrivate;
 	
 }

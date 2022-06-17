@@ -1,7 +1,6 @@
 package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,8 +15,6 @@ import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.dao.ChatDao;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.entity.Chat;
-import com.zematix.jworldcup.backend.entity.Event;
-import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
@@ -39,6 +36,9 @@ public class ChatService extends ServiceBase {
 	
 	@Inject
 	private ApplicationService applicationService;
+	
+	@Inject
+	private MessageQueueService queueService;
 	
 	@Inject
 	private CommonDao commonDao;
@@ -72,7 +72,10 @@ public class ChatService extends ServiceBase {
 		List<Chat> chats = chatDao.retrieveChats(userGroup.getEvent().getEventId(), userGroup.getUserGroupId());
 		
 		// load lazy associations
-		chats.stream().forEach(e -> {e.getUser()/*.getLoginName()*/; e.getEvent(); });
+		chats.stream().forEach(e -> {
+			e.getUser()/*.getLoginName()*/; 
+			e.getEvent(); 
+		});
 		
 		return chats;
 	}
@@ -83,43 +86,37 @@ public class ChatService extends ServiceBase {
 	 * @param userGroup
 	 * @param userId
 	 * @param message
-	 * @return {@code true} if persist was successful, {@code false} otherwise
+	 * @return sent chat instance
 	 */
 	@Transactional
-	public void sendChatMessage(UserGroup userGroup, Long userId, String message) throws ServiceException {
-		checkNotNull(userGroup);
-		checkNotNull(userId);
+	public void sendChat(Chat chat) throws ServiceException {
+		checkNotNull(chat);
+		checkNotNull(chat.getEvent());
+		checkNotNull(chat.getUser());
 		
 		List<ParameterizedMessage> errMsgs = new ArrayList<>();
 
-		if (Strings.isNullOrEmpty(message)) {
+		if (Strings.isNullOrEmpty(chat.getMessage())) {
 			errMsgs.add(ParameterizedMessage.create("MISSING_MESSAGE"));
 			throw new ServiceException(errMsgs);
 		}
 		
-		Event event = userGroup.getEvent();
-		checkState(event != null, "No loaded \"Event\" entity belongs to \"userGroup\" argument.");
-		User user = commonDao.findEntityById(User.class, userId);
-		checkState(user != null, "No \"User\" entity belongs to \"userId\"=%d in database.", userId);
-
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		
-		Chat chat = new Chat();
-		chat.setEvent(event);
-		chat.setUser(user);
+		UserGroup userGroup = chat.getUserGroup();
 		if (userGroup.getUserGroupId().equals(UserGroup.EVERYBODY_USER_GROUP_ID)) {
 			chat.setUserGroup(null);
 		}
-		else {
-			chat.setUserGroup(userGroup);
-		}
 		chat.setModificationTime(actualDateTime);
-		chat.setMessage(message);
 		commonDao.persistEntity(chat);
 		commonDao.flushEntityManager();
+		commonDao.detachEntity(chat);
+		chat.setUserGroup(userGroup); // restore original value
 		
-		chatDao.truncateChats(event.getEventId(), userGroup.getUserGroupId());
+		chatDao.truncateChats(chat.getEvent().getEventId(), userGroup.getUserGroupId());
 		applicationService.refreshChatsByUserGroupCache(userGroup);
+
+		queueService.sendChat(chat);
 	}
 	
 	@Transactional(readOnly = true)

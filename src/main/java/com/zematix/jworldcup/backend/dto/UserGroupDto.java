@@ -2,6 +2,8 @@ package com.zematix.jworldcup.backend.dto;
 
 import java.util.List;
 
+import com.zematix.jworldcup.backend.entity.Event;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,7 +19,7 @@ public class UserGroupDto {
 
 	private String name;
 
-//	private Event event;
+	private EventDto event;
 
 //	private Set<UserDto> users = new HashSet<>();
 

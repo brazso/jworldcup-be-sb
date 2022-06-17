@@ -142,6 +142,7 @@ public class UserGroupService extends ServiceBase {
 				user.getRoles().size(); // lazy fetch
 			});
 			userGroup.setVirtualUsers(users);
+			userGroup.getEvent();
 		});
 		
 		return userGroups;

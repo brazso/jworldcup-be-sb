@@ -30,7 +30,7 @@ public interface UserMapper extends MapperBase<UserDto, User> {
 	UserDto entityToDto(User user, Set<String> authorities);
 
 	default Set<String> mapAuthorities(Set<Role> roles) {
-		return roles.stream().map(e -> "ROLE_" + e.getRole()).collect(Collectors.toSet());
+		return roles == null ? null : roles.stream().map(e -> "ROLE_" + e.getRole()).collect(Collectors.toSet());
 	}
 	
 }

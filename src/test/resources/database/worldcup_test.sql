@@ -49,7 +49,6 @@ CREATE TABLE `chat` (
   `user_id` int NOT NULL COMMENT 'source user',
   `user_group_id` int DEFAULT NULL COMMENT 'target user group, null means to everybody',
   `target_user_id` int DEFAULT NULL COMMENT 'target user',
-  `is_private` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1 if the record is private to target_user_id, 0 otherwise',
   `modification_time` datetime NOT NULL COMMENT 'UTC timezone used',
   `message` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

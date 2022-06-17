@@ -56,9 +56,6 @@ public class Chat implements Serializable {
 	@JoinColumn(name="target_user_id", nullable=true)
 	private User targetUser;
 
-	@Column(name="is_private", nullable=false)
-	private Byte isPrivate;
-
 	public Long getChatId() {
 		return this.chatId;
 	}
@@ -113,21 +110,5 @@ public class Chat implements Serializable {
 
 	public void setTargetUser(User targetUser) {
 		this.targetUser = targetUser;
-	}
-
-	public Byte isPrivate() {
-		return this.isPrivate;
-	}
-
-	public void setPrivate(Byte isPrivate) {
-		this.isPrivate = isPrivate;
-	}
-
-	public boolean isPrivateAsBoolean() {
-		return this.isPrivate != null && this.isPrivate == 1;
-	}
-
-	public void setPrivateAsBoolean(boolean isPrivate) {
-		this.isPrivate = (isPrivate ? (byte) 1 : (byte) 0);
 	}
 }
