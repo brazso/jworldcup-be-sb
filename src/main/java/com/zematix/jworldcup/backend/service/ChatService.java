@@ -73,8 +73,12 @@ public class ChatService extends ServiceBase {
 		
 		// load lazy associations
 		chats.stream().forEach(e -> {
-			e.getUser()/*.getLoginName()*/; 
-			e.getEvent(); 
+			e.getUser().getLoginName();
+			e.getUser().getRoles().size();
+			e.getEvent().getDescription();
+			if (e.getUserGroup() != null) {
+				e.getUserGroup().getName();
+			}
 		});
 		
 		return chats;

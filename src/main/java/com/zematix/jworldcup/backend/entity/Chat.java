@@ -14,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 /**
  * The persistent class for the chat database table.
@@ -22,12 +25,14 @@ import javax.persistence.Table;
 @Entity
 @Table(name="chat")
 @NamedQuery(name="Chat.findAll", query="SELECT c FROM Chat c")
+@Data @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Chat implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="chat_id", unique=true, nullable=false)
+	@EqualsAndHashCode.Include
 	private Long chatId;
 
 	//bi-directional many-to-one association to Event
@@ -55,60 +60,4 @@ public class Chat implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="target_user_id", nullable=true)
 	private User targetUser;
-
-	public Long getChatId() {
-		return this.chatId;
-	}
-
-	public void setChatId(Long chatId) {
-		this.chatId = chatId;
-	}
-
-	public Event getEvent() {
-		return this.event;
-	}
-
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-
-	public String getMessage() {
-		return this.message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public LocalDateTime getModificationTime() {
-		return this.modificationTime;
-	}
-
-	public void setModificationTime(LocalDateTime modificationTime) {
-		this.modificationTime = modificationTime;
-	}
-
-	public UserGroup getUserGroup() {
-		return this.userGroup;
-	}
-
-	public void setUserGroup(UserGroup userGroup) {
-		this.userGroup = userGroup;
-	}
-
-	public User getUser() {
-		return this.user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public User getTargetUser() {
-		return targetUser;
-	}
-
-	public void setTargetUser(User targetUser) {
-		this.targetUser = targetUser;
-	}
 }
