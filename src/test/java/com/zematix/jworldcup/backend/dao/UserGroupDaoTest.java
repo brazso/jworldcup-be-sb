@@ -153,7 +153,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.getUserGroups().add(userGroup);
 		commonDao.persistEntity(userGroup);
@@ -166,7 +165,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(adminUser);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.getUserGroups().add(userGroup);
 		commonDao.persistEntity(userGroup);
@@ -179,7 +177,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		commonDao.persistEntity(userGroup);
 		expectedUserGroups.add(userGroup);
 
@@ -190,7 +187,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(adminUser);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		commonDao.persistEntity(userGroup);
 		//expectedUserGroups.add(userGroup); // must be in comment because it should not be retrieved
 
@@ -252,7 +248,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(userGroup);
@@ -306,7 +301,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(userGroup);
@@ -415,7 +409,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(userGroup);
@@ -575,7 +568,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(userGroup);
@@ -604,7 +596,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(userGroup);
@@ -617,7 +608,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(userGroup);
@@ -684,7 +674,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(userGroup);
@@ -715,7 +704,6 @@ public class UserGroupDaoTest {
 		expectedUserGroup.setOwner(user);
 		expectedUserGroup.setPublicEditableAsBoolean(false);
 		expectedUserGroup.setPublicVisibleAsBoolean(true);
-		expectedUserGroup.setUsers(new HashSet<User>());
 		expectedUserGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(expectedUserGroup);
@@ -747,7 +735,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(userGroup);
@@ -760,7 +747,6 @@ public class UserGroupDaoTest {
 		expectedUserGroup.setOwner(user);
 		expectedUserGroup.setPublicEditableAsBoolean(false);
 		expectedUserGroup.setPublicVisibleAsBoolean(true);
-		expectedUserGroup.setUsers(new HashSet<User>());
 		expectedUserGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(expectedUserGroup);
@@ -902,7 +888,6 @@ public class UserGroupDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.setUserGroups(new HashSet<UserGroup>());
 		user.getUserGroups().add(userGroup);

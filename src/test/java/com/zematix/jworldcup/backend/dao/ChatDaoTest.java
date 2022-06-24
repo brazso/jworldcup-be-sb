@@ -298,7 +298,6 @@ public class ChatDaoTest {
 		userGroup.setOwner(user);
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setPublicEditableAsBoolean(false);
-		userGroup.setUsers(new HashSet<User>());
 		userGroup.getUsers().add(user);
 		user.getUserGroups().add(userGroup);
 		commonDao.persistEntity(userGroup);
@@ -348,8 +347,6 @@ public class ChatDaoTest {
 		userGroup1.setOwner(user);
 		userGroup1.setPublicVisibleAsBoolean(true);
 		userGroup1.setPublicEditableAsBoolean(false);
-		userGroup1.setUsers(new HashSet<User>());
-		userGroup1.getUsers().add(user);
 		user.getUserGroups().add(userGroup1);
 		commonDao.persistEntity(userGroup1);
 		
@@ -372,7 +369,6 @@ public class ChatDaoTest {
 		userGroup2.setOwner(user);
 		userGroup2.setPublicVisibleAsBoolean(true);
 		userGroup2.setPublicEditableAsBoolean(false);
-		userGroup2.setUsers(new HashSet<User>());
 		userGroup2.getUsers().add(user);
 		user.getUserGroups().add(userGroup2);
 		commonDao.persistEntity(userGroup2);
@@ -394,7 +390,6 @@ public class ChatDaoTest {
 		userGroup3.setOwner(otherUser);
 		userGroup3.setPublicVisibleAsBoolean(true);
 		userGroup3.setPublicEditableAsBoolean(false);
-		userGroup3.setUsers(new HashSet<User>());
 		userGroup3.getUsers().add(otherUser);
 		otherUser.getUserGroups().add(userGroup3);
 		commonDao.persistEntity(userGroup3);
@@ -435,7 +430,6 @@ public class ChatDaoTest {
 		userGroup1.setOwner(user);
 		userGroup1.setPublicVisibleAsBoolean(true);
 		userGroup1.setPublicEditableAsBoolean(false);
-		userGroup1.setUsers(new HashSet<User>());
 		userGroup1.getUsers().add(user);
 		user.getUserGroups().add(userGroup1);
 		commonDao.persistEntity(userGroup1);
@@ -458,7 +452,6 @@ public class ChatDaoTest {
 		userGroup2.setOwner(user);
 		userGroup2.setPublicVisibleAsBoolean(true);
 		userGroup2.setPublicEditableAsBoolean(false);
-		userGroup2.setUsers(new HashSet<User>());
 		userGroup2.getUsers().add(user);
 		user.getUserGroups().add(userGroup2);
 		commonDao.persistEntity(userGroup2);
@@ -480,7 +473,6 @@ public class ChatDaoTest {
 		userGroup3.setOwner(otherUser);
 		userGroup3.setPublicVisibleAsBoolean(true);
 		userGroup3.setPublicEditableAsBoolean(false);
-		userGroup3.setUsers(new HashSet<User>());
 		userGroup3.getUsers().add(otherUser);
 		otherUser.getUserGroups().add(userGroup3);
 		commonDao.persistEntity(userGroup3);

@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.UserDao;
@@ -137,11 +136,11 @@ public class UserGroupService extends ServiceBase {
 		}
 		
 		userGroups.forEach(userGroup -> {
-			List<User> users = userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId());
+			List<User> users = userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()); // lazy fetch?
 			users.forEach(user -> {
 				user.getRoles().size(); // lazy fetch
 			});
-			userGroup.setVirtualUsers(users);
+			userGroup.setUsers(users);
 			userGroup.getEvent();
 		});
 		
@@ -284,9 +283,7 @@ public class UserGroupService extends ServiceBase {
 		}
 
 		UserGroup userGroup = userGroupDao.insertUserGroup(eventId, userId, name);
-		
-		// init transient field
-		userGroup.setVirtualUsers(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
+		userGroup.setUsers(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
 		
 		return userGroup;
 	}
@@ -339,9 +336,7 @@ public class UserGroupService extends ServiceBase {
 		}
 
 		UserGroup userGroup = userGroupDao.importUserGroup(eventId, userId, foundUserGroup.getUserGroupId());
-		
-		// init transient field
-		userGroup.setVirtualUsers(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
+		userGroup.setUsers(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
 
 		return userGroup;
 	}
@@ -700,7 +695,7 @@ public class UserGroupService extends ServiceBase {
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setOwner(user);
-		userGroup.setUsers(Sets.newHashSet(user));
+		userGroup.addUser(user);
 		
 		commonDao.persistEntity(userGroup);
 		
@@ -736,7 +731,7 @@ public class UserGroupService extends ServiceBase {
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setOwner(user);
-		userGroup.setUsers(Sets.newHashSet(user));
+		userGroup.addUser(user);
 		userGroup.getUsers().addAll(importedUserGroup.getUsers());
 		if (!userGroup.getUsers().contains(user)) {
 			userGroup.getUsers().add(user);

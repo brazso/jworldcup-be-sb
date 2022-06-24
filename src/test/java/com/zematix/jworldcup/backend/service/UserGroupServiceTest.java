@@ -24,7 +24,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.UserDao;
 import com.zematix.jworldcup.backend.dao.UserGroupDao;
@@ -167,7 +166,7 @@ public class UserGroupServiceTest {
 		
 		List<UserGroup> userGroups = userGroupService.retrieveUserGroups(eventId, userId, isEverybodyIncluded);
 		assertEquals("Retrieved list should be equal to the expected one.", expectedUserGroups, userGroups);
-		assertEquals("Retrieved user list should be equal to the expected one.", expectedUserGroups.get(0).getVirtualUsers(), expectedUsers);
+		assertEquals("Retrieved user list should be equal to the expected one.", expectedUserGroups.get(0).getUsers(), expectedUsers);
 	}
 
 	/**
@@ -357,7 +356,7 @@ public class UserGroupServiceTest {
 		UserGroup userGroup = userGroupService.insertUserGroup(eventId, userId, name, isInsertConfirmed);
 		assertEquals("Inserted userGroup must be the same as the expected one", 
 				expectedUserGroup, userGroup);
-		assertEquals("Retrieved user list should be equal to the expected one.", userGroup.getVirtualUsers(), expectedUsers);
+		assertEquals("Retrieved user list should be equal to the expected one.", userGroup.getUsers(), expectedUsers);
 	}
 	
 	/**
@@ -454,7 +453,7 @@ public class UserGroupServiceTest {
 		UserGroup userGroup = userGroupService.insertUserGroup(eventId, userId, name, isInsertConfirmed);
 		assertEquals("Inserted userGroup must be the same as the expected one", 
 				expectedUserGroup, userGroup);
-		assertEquals("Retrieved user list should be equal to the expected one.", userGroup.getVirtualUsers(), expectedUsers);
+		assertEquals("Retrieved user list should be equal to the expected one.", userGroup.getUsers(), expectedUsers);
 	}
 	
 	/**
@@ -586,8 +585,7 @@ public class UserGroupServiceTest {
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setOwner(user);
-		userGroup.setUsers(Sets.newHashSet(user));
-		user.getUserGroups().add(userGroup);
+		userGroup.addUser(user);
 		commonDao.persistEntity(userGroup);
 		userGroupId = userGroup.getUserGroupId();
 
@@ -714,8 +712,7 @@ public class UserGroupServiceTest {
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setOwner(user);
-		userGroup.setUsers(Sets.newHashSet(user));
-		user.getUserGroups().add(userGroup);
+		userGroup.addUser(user);
 		commonDao.persistEntity(userGroup);
 		userGroupId = userGroup.getUserGroupId();
 		

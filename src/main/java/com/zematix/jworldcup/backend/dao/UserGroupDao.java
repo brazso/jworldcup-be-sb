@@ -354,7 +354,7 @@ public class UserGroupDao extends DaoBase {
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setOwner(user);
-		userGroup.setUsers(Sets.newHashSet(user));
+		userGroup.addUser(user);
 		
 		commonDao.persistEntity(userGroup);
 		
@@ -387,7 +387,6 @@ public class UserGroupDao extends DaoBase {
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setOwner(user);
-		userGroup.setUsers(Sets.newHashSet(user));
 		userGroup.getUsers().addAll(importedUserGroup.getUsers());
 		if (!userGroup.getUsers().contains(user)) {
 			userGroup.getUsers().add(user);

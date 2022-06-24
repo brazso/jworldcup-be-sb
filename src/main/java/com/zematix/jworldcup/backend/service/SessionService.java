@@ -428,7 +428,7 @@ public class SessionService extends ServiceBase {
 			try {
 				userGroups = userGroupService.retrieveUserGroups(this.event.getEventId(), this.user.getUserId(), true); // cached method
 				userGroups.forEach(userGroup -> {
-					userGroup.getVirtualUsers().forEach(user -> {
+					userGroup.getUsers().forEach(user -> {
 						user.setIsOnline(applicationService.getAllAuthenticatedPrincipals().stream()
 								.anyMatch(principal -> principal.getUsername().equals(user.getLoginName())));
 					});

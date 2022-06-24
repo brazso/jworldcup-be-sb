@@ -1,8 +1,8 @@
 package com.zematix.jworldcup.backend.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,8 +18,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 /**
@@ -29,6 +31,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name="user_group", uniqueConstraints=@UniqueConstraint(columnNames={"name", "event_id"}))
 @NamedQuery(name="UserGroup.findAll", query="SELECT u FROM UserGroup u")
+@Data @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -45,6 +48,7 @@ public class UserGroup implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="user_group_id", unique=true, nullable=false)
+	@EqualsAndHashCode.Include
 	private Long userGroupId;
 
 	@Column(name="is_public_editable", nullable=false)
@@ -59,6 +63,7 @@ public class UserGroup implements Serializable {
 	//bi-directional many-to-one association to Event
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="event_id", nullable=false)
+	@EqualsAndHashCode.Include // outside database there might be EVERYBODY_USER_GROUP_ID elements where "event" is part of the PK
 	private Event event;
 
 	//bi-directional many-to-many association to User
@@ -73,7 +78,7 @@ public class UserGroup implements Serializable {
 			}
 		)
 	@OrderBy("loginName ASC")
-	private Set<User> users;
+	private List<User> users = new ArrayList<>();
 
 	//bi-directional many-to-one association to User
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -82,72 +87,14 @@ public class UserGroup implements Serializable {
 	
 	//bi-directional many-to-one association to Chat
 	@OneToMany(mappedBy="userGroup")
-	private List<Chat> chats;
+	private List<Chat> chats = new ArrayList<>();
 	
-	@Transient
-	private List<User> virtualUsers; // includes parent everybody user group 
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((userGroupId == null) ? 0 : userGroupId.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof UserGroup)) // use instanceof instead of getClass, due to hibernate creating proxys of subclasses that are lazy-loaded
-			return false;
-		UserGroup other = (UserGroup) obj;
-		if (userGroupId == null) {
-			if (other.getUserGroupId() != null) // remember to change to getter at other, simple property may result always null
-				return false;
-		} else if (!userGroupId.equals(other.getUserGroupId())) // remember to change to getter at other, simple property may result always null
-			return false;
-		return true;
-	}
-
-	public Long getUserGroupId() {
-		return this.userGroupId;
-	}
-
-	public void setUserGroupId(Long userGroupId) {
-		this.userGroupId = userGroupId;
-	}
-
-	public Byte getIsPublicEditable() {
-		return this.isPublicEditable;
-	}
-
-	public void setIsPublicEditable(Byte isPublicEditable) {
-		this.isPublicEditable = isPublicEditable;
-	}
-
 	public Boolean isPublicEditableAsBoolean() {
 		return this.isPublicEditable == null ? null : this.isPublicEditable == 1;
 	}
 
 	public void setPublicEditableAsBoolean(Boolean isPublicEditable) {
 		this.isPublicEditable = isPublicEditable == null ? null : (isPublicEditable.booleanValue() ? (byte) 1 : (byte) 0);
-	}
-
-	public Byte getIsPublicVisible() {
-		return this.isPublicVisible;
-	}
-
-	public void setIsPublicVisible(Byte isPublicVisible) {
-		this.isPublicVisible = isPublicVisible;
 	}
 
 	public Boolean isPublicVisibleAsBoolean() {
@@ -158,46 +105,20 @@ public class UserGroup implements Serializable {
 		this.isPublicVisible = isPublicVisible == null ? null : (isPublicVisible.booleanValue() ? (byte) 1 : (byte) 0);
 	}
 
-	public String getName() {
-		return this.name;
+	public User addUser(User user) {
+		getUsers().add(user);
+		user.getUserGroups().add(this);
+
+		return user;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public User removeUser(User user) {
+		getUsers().remove(user);
+		user.getUserGroups().remove(this);
+
+		return user;
 	}
 
-	public Event getEvent() {
-		return this.event;
-	}
-
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-
-	public Set<User> getUsers() {
-		return this.users;
-	}
-
-	public void setUsers(Set<User> users) {
-		this.users = users;
-	}
-
-	public User getOwner() {
-		return this.owner;
-	}
-
-	public void setOwner(User owner) {
-		this.owner = owner;
-	}
-
-	public List<Chat> getChats() {
-		return chats;
-	}
-
-	public void setChats(List<Chat> chats) {
-		this.chats = chats;
-	}
-	
 	public Chat addChat(Chat chat) {
 		getChats().add(chat);
 		chat.setUserGroup(this);
@@ -210,14 +131,6 @@ public class UserGroup implements Serializable {
 		chat.setUserGroup(null);
 
 		return chat;
-	}
-
-	public List<User> getVirtualUsers() {
-		return virtualUsers;
-	}
-
-	public void setVirtualUsers(List<User> virtualUsers) {
-		this.virtualUsers = virtualUsers;
 	}
 
 	// Getters
