@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.google.common.collect.Streams;
 import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
@@ -96,7 +98,7 @@ public class SessionService extends ServiceBase {
 	private String username;
 
 	/**
-	 * List of userGroups belongs to the this.event and this.user
+	 * List of userGroups belongs to this.event and this.user
 	 */
 	private List<UserGroup> userGroups = new ArrayList<>();
 	
@@ -205,6 +207,15 @@ public class SessionService extends ServiceBase {
 		sessionData.setUserGroups(getUserGroups());
 		if (sessionDataClient == null || !sessionData.getUserGroups().equals(sessionDataClient.getUserGroups())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.USER_GROUPS);
+		}
+		else { // check users' online flag modifications
+			List<String> from = sessionDataClient.getUserGroups().stream().flatMap(ug -> ug.getUsers().stream())
+					.distinct().map(u -> u.getLoginName() + u.getIsOnline()).toList();
+			List<String> to = sessionData.getUserGroups().stream().flatMap(ug -> ug.getUsers().stream()).distinct()
+					.map(u -> u.getLoginName() + u.getIsOnline()).toList();
+			if (!from.equals(to)) {
+				sessionData.getModificationSet().add(SessionDataModificationFlag.USER_GROUPS);
+			}
 		}
 		
 		// eventCompletionPercent comes from local
