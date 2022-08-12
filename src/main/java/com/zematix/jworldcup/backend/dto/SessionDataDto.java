@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
+import com.zematix.jworldcup.backend.emun.SessionDataOperationFlag;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,4 +35,5 @@ public class SessionDataDto {
     private List<LocalDateTime> eventTriggerStartTimes;
     
     private EnumSet<SessionDataModificationFlag> modificationSet;
+    private SessionDataOperationFlag operationFlag;
 }

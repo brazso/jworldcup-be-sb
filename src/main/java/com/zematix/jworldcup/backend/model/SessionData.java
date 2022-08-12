@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
+import com.zematix.jworldcup.backend.emun.SessionDataOperationFlag;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
@@ -38,8 +39,8 @@ public class SessionData {
     private List<Long> completedEventIds;
     private List<LocalDateTime> eventTriggerStartTimes;
     
-//    private EnumSet<SessionDataModificationFlag> modificationSet;
     private EnumSet<SessionDataModificationFlag> modificationSet = EnumSet.noneOf(SessionDataModificationFlag.class);
+    private SessionDataOperationFlag operationFlag = SessionDataOperationFlag.CLIENT;
 
     public SessionData(String id) {
     	super();

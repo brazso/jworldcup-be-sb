@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -29,6 +28,7 @@ import org.springframework.web.context.annotation.ApplicationScope;
 import com.google.common.base.Stopwatch;
 import com.zematix.jworldcup.backend.configuration.QuartzConfig;
 import com.zematix.jworldcup.backend.configuration.SessionListener;
+import com.zematix.jworldcup.backend.emun.SessionDataOperationFlag;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.SessionData;
@@ -319,7 +319,7 @@ public class SchedulerService extends ServiceBase {
 	
 	/**
 	 * Notify clients scheduled job execution.
-	 * Sends refreshed sessionData to all authenticated users.
+	 * Sends session refresh requests to all authenticated clients.
 	 */
 	public void notifyClientsJob() {
 		List<org.springframework.security.core.userdetails.User> users = applicationService.getAllAuthenticatedPrincipals();
@@ -329,10 +329,13 @@ public class SchedulerService extends ServiceBase {
 			sessionInfos.stream().map(info -> SessionListener.getSession(info.getSessionId())).filter(Objects::nonNull).forEach(session -> {
 				SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
 				if (sessionService != null) {
-					SessionData sessionData = sessionService.refreshSessionData(null); // load from local
-					String newsLine = sessionService.generateNewsLine();
-					Map<String, Object> localUpdateMap = Map.of("newsLine", newsLine);
-					sessionData = sessionService.refreshSessionData(sessionData, localUpdateMap);
+//					SessionData sessionData = sessionService.refreshSessionData(null); // load from local/server
+//					String newsLine = sessionService.generateNewsLine();
+//					Map<String, Object> localUpdateMap = Map.of("newsLine", newsLine);
+//					sessionData = sessionService.refreshSessionData(sessionData, localUpdateMap);
+//					messageQueueService.sendSession(sessionData);
+					SessionData sessionData = new SessionData(sessionService.getId());
+					sessionData.setOperationFlag(SessionDataOperationFlag.SERVER);
 					messageQueueService.sendSession(sessionData);
 				}
 			});

@@ -11,7 +11,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -22,7 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
-import com.google.common.collect.Streams;
 import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
@@ -163,13 +161,16 @@ public class SessionService extends ServiceBase {
 	 */
 	public SessionData refreshSessionData(SessionData sessionDataClient, Map<String, Object> localUpdateMap) {
 		SessionData sessionData = new SessionData(id);
+		if (sessionDataClient != null && sessionDataClient.getOperationFlag() != null) {
+			sessionData.setOperationFlag(sessionDataClient.getOperationFlag());
+		}
 
 		sessionData.setAppShortName(getAppShortName());
 		sessionData.setAppVersionNumber(getAppVersionNumber());
 		sessionData.setAppVersionDate(getAppVersionDate());
 		sessionData.setAppEmailAddr(getAppEmailAddr());
 		
-		// actualDateTime always comes from local
+		// actualDateTime always comes from local/server
 		sessionData.setActualDateTime(getActualDateTime());
 		if (sessionDataClient == null || !sessionData.getActualDateTime().equals(sessionDataClient.getActualDateTime())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.ACTUAL_DATE_TIME);
@@ -184,7 +185,7 @@ public class SessionService extends ServiceBase {
 		}
 		sessionData.setLocale(getLocale());
 
-		// user always comes from local
+		// user always comes from local/server
 		sessionData.setUser(getUser());
 		if (sessionDataClient == null || !sessionData.getUser().equals(sessionDataClient.getUser())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.USER);
@@ -218,25 +219,25 @@ public class SessionService extends ServiceBase {
 			}
 		}
 		
-		// eventCompletionPercent comes from local
+		// eventCompletionPercent comes from local/server
 		sessionData.setEventCompletionPercent(getEventCompletionPercent());
 		if (sessionDataClient == null || !sessionData.getEventCompletionPercent().equals(sessionDataClient.getEventCompletionPercent())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT_COMPLETION_PERCENT);
 		}
 		
-		// completedEventIds comes from local
+		// completedEventIds comes from local/server
 		sessionData.setCompletedEventIds(getCompletedEventIds());
 		if (sessionDataClient == null || !sessionData.getCompletedEventIds().equals(sessionDataClient.getCompletedEventIds())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.COMPLETED_EVENT_IDS);
 		}
 		
-		// eventTriggerStartTimes comes from local
+		// eventTriggerStartTimes comes from local/server
 		sessionData.setEventTriggerStartTimes(getCachedRetrieveMatchResultsJobTriggerStartTimes());
 		if (sessionDataClient == null || !sessionData.getEventTriggerStartTimes().equals(sessionDataClient.getEventTriggerStartTimes())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT_TRIGGER_START_TIMES);
 		}
 		
-		// newsLine comes from local
+		// newsLine comes from local/server
 		if (localUpdateMap.get("newsLine") != null) {
 			setNewsLine((String)localUpdateMap.get("newsLine"));
 		}
@@ -348,6 +349,10 @@ public class SessionService extends ServiceBase {
 	 * @return authenticated user
 	 */
 	public User getUser() {
+		if (this.user != null) {
+			return this.user;
+		}
+
 		var authenticatedUser = userDetailsService.getAuthenticatedUser();
 		String loginName = authenticatedUser != null ? authenticatedUser.getUsername() : this.username;
 		if (loginName == null) {
