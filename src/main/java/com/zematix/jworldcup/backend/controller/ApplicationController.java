@@ -18,7 +18,6 @@ import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.mapper.ChatMapper;
 import com.zematix.jworldcup.backend.mapper.UserCertificateMapper;
-import com.zematix.jworldcup.backend.mapper.UserGroupMapper;
 import com.zematix.jworldcup.backend.model.UserCertificate;
 import com.zematix.jworldcup.backend.service.ApplicationService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
@@ -42,9 +41,6 @@ public class ApplicationController extends ServiceBase implements ResponseEntity
 	@Inject
 	private ChatMapper chatMapper;
 
-	@Inject
-	private UserGroupMapper userGroupMapper;
-
 	/**
 	 * Returns a sorted list of {@link UserCertificate} instances from all events.
 	 * 
@@ -60,14 +56,13 @@ public class ApplicationController extends ServiceBase implements ResponseEntity
 	
 	/**
 	 * Returns a list of {@link Chat} instances which belongs to the 
-	 * given {@link UserGroup} instance. From the latter object {@link Usergroup#eventId} 
-	 * and {@link UserGroup#userGroupId} are used.
+	 * given {@link Event} and {@link UserGroup} instances.
 	 * 
 	 * @param userGroup - filter
-	 * @return list of chats which belongs to the eventId and userGroupId of the given userGroup
+	 * @return list of chats which belongs to the eventId and userGroupId
 	 */
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-	@Operation(summary = "Retrieves chat records", description = "Retrieves chat records belong to the given userGroup")
+	@Operation(summary = "Retrieves chat records", description = "Retrieves chat records belong to the given event and userGroup")
 	@GetMapping(value = "/retrieve-chats")
 	public ResponseEntity<GenericListResponse<ChatDto>> retrieveChats(@RequestParam Long eventId, @RequestParam Long userGroupId) throws ServiceException {
 		UserGroup userGroup = new UserGroup();

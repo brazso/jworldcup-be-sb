@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.entity.Chat;
+import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.QChat;
+import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 
@@ -146,4 +148,43 @@ public class ChatDao extends DaoBase {
 		return chat;
 	}
 
+	/**
+	 * Returns a list of private {@link Chat} instances which belongs to the 
+	 * given event {@link Event}, source and target {@link User} instances.
+	 * 
+	 * @param eventId - filter
+	 * @param sourceUserId - filter
+	 * @param targeteUserId - filter
+	 * @return list of private chats which belongs to the given event, source and target users
+	 */
+	public List<Chat> retrievePrivateChats(Long eventId, Long sourceUserId, Long targetUserId) throws ServiceException {
+		List<Chat> chats;
+		checkNotNull(sourceUserId);
+		checkNotNull(targetUserId);
+		
+		QChat qChat = QChat.chat;
+		JPAQuery<Chat> query = new JPAQuery<>(getEntityManager());
+		
+		if (eventId != null) {
+			chats = query.from(qChat)
+			  .where(qChat.userGroup.isNull()
+					  .and(qChat.event.eventId.eq(eventId))
+					  .andAnyOf(qChat.user.userId.eq(sourceUserId).and(qChat.targetUser.userId.eq(targetUserId)), 
+							  qChat.user.userId.eq(targetUserId)).and(qChat.targetUser.userId.eq(sourceUserId)))
+			  .orderBy(qChat.chatId.asc())
+			  .limit(MAX_USERGROUP_CHAT_MESSAGES)
+			  .fetch();
+		}
+		else {
+			chats = query.from(qChat)
+			  .where(qChat.userGroup.isNull()
+					  .andAnyOf(qChat.user.userId.eq(sourceUserId).and(qChat.targetUser.userId.eq(targetUserId)), 
+							  qChat.user.userId.eq(targetUserId)).and(qChat.targetUser.userId.eq(sourceUserId)))
+			  .orderBy(qChat.chatId.asc())
+			  .limit(MAX_USERGROUP_CHAT_MESSAGES)
+			  .fetch();			
+		}
+		
+		return chats;
+	}
 }

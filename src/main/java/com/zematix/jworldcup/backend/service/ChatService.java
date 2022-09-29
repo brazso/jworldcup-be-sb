@@ -15,6 +15,7 @@ import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.dao.ChatDao;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.entity.Chat;
+import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
@@ -141,5 +142,33 @@ public class ChatService extends ServiceBase {
 		}
 
 		return chat; 
+	}
+
+	/**
+	 * Returns a list of private {@link Chat} instances which belongs to the 
+	 * given event {@link Event}, source and target {@link User} instances.
+	 * 
+	 * @param eventId - filter (optional)
+	 * @param sourceUserId - filter
+	 * @param targeteUserId - filter
+	 * @return list of private chats which belongs to the given event, source and target users
+	 */
+	public List<Chat> retrievePrivateChats(Long eventId, Long sourceUserId, Long targetUserId) throws ServiceException {
+		checkNotNull(sourceUserId);
+		checkNotNull(targetUserId);
+		
+		List<Chat> chats = chatDao.retrievePrivateChats(eventId, sourceUserId, targetUserId);
+		
+		// load lazy associations
+		chats.stream().forEach(e -> {
+			e.getUser().getLoginName();
+			e.getUser().getRoles().size();
+			e.getEvent().getDescription();
+			if (e.getUserGroup() != null) {
+				e.getUserGroup().getName();
+			}
+		});
+		
+		return chats;
 	}
 }
