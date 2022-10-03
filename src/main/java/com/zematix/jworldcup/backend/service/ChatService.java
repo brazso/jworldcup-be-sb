@@ -105,6 +105,12 @@ public class ChatService extends ServiceBase {
 			errMsgs.add(ParameterizedMessage.create("MISSING_MESSAGE"));
 			throw new ServiceException(errMsgs);
 		}
+
+		// private chat is handled distinguished
+		if (chat.getUserGroup() == null && chat.getTargetUser() != null) {
+			this.sendPrivateChat(chat);
+			return;
+		}
 		
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		
@@ -171,4 +177,36 @@ public class ChatService extends ServiceBase {
 		
 		return chats;
 	}
-}
+
+	/**
+	 * Persists new private chat entity.
+	 * 
+	 * @param userGroup
+	 * @param userId
+	 * @param message
+	 * @return sent chat instance
+	 */
+	private void sendPrivateChat(Chat chat) throws ServiceException {
+		checkNotNull(chat);
+		checkNotNull(chat.getEvent());
+		checkNotNull(chat.getUser());
+		checkNotNull(chat.getTargetUser());
+		
+		List<ParameterizedMessage> errMsgs = new ArrayList<>();
+
+		if (Strings.isNullOrEmpty(chat.getMessage())) {
+			errMsgs.add(ParameterizedMessage.create("MISSING_MESSAGE"));
+			throw new ServiceException(errMsgs);
+		}
+		
+		LocalDateTime actualDateTime = applicationService.getActualDateTime();
+		
+		chat.setModificationTime(actualDateTime);
+		commonDao.persistEntity(chat);
+		commonDao.flushEntityManager();
+		commonDao.detachEntity(chat);
+		
+		chatDao.truncatePrivateChats(null, chat.getUser().getUserId(), chat.getTargetUser().getUserId()); // truncates independently on eventId
+
+		queueService.sendChat(chat);
+	}}

@@ -170,7 +170,7 @@ public class ChatDao extends DaoBase {
 			  .where(qChat.userGroup.isNull()
 					  .and(qChat.event.eventId.eq(eventId))
 					  .andAnyOf(qChat.user.userId.eq(sourceUserId).and(qChat.targetUser.userId.eq(targetUserId)), 
-							  qChat.user.userId.eq(targetUserId)).and(qChat.targetUser.userId.eq(sourceUserId)))
+							  qChat.user.userId.eq(targetUserId).and(qChat.targetUser.userId.eq(sourceUserId))))
 			  .orderBy(qChat.chatId.asc())
 			  .limit(MAX_USERGROUP_CHAT_MESSAGES)
 			  .fetch();
@@ -179,12 +179,69 @@ public class ChatDao extends DaoBase {
 			chats = query.from(qChat)
 			  .where(qChat.userGroup.isNull()
 					  .andAnyOf(qChat.user.userId.eq(sourceUserId).and(qChat.targetUser.userId.eq(targetUserId)), 
-							  qChat.user.userId.eq(targetUserId)).and(qChat.targetUser.userId.eq(sourceUserId)))
+							  qChat.user.userId.eq(targetUserId).and(qChat.targetUser.userId.eq(sourceUserId))))
 			  .orderBy(qChat.chatId.asc())
 			  .limit(MAX_USERGROUP_CHAT_MESSAGES)
 			  .fetch();			
 		}
 		
 		return chats;
+	}
+
+	/**
+	 * Enforces {@link ChatDao#MAX_USERGROUP_CHAT_MESSAGES} limit on private chat rows in database.
+	 * The given chat rows cannot contain more rows than the limit. The surplus rows are being deleted.
+	 */
+	public boolean truncatePrivateChats(Long eventId, Long userId, Long targetUserId) {
+		List<Chat> chats;
+		checkNotNull(userId);
+		checkNotNull(targetUserId);
+
+		QChat qChat = QChat.chat;
+		JPAQuery<Chat> query = new JPAQuery<>(getEntityManager());
+		if (eventId != null) {
+			chats = query.from(qChat)
+			  .where(qChat.userGroup.isNull()
+					  .and(qChat.event.eventId.eq(eventId))
+					  .andAnyOf(qChat.user.userId.eq(userId).and(qChat.targetUser.userId.eq(targetUserId)), 
+							  qChat.user.userId.eq(targetUserId).and(qChat.targetUser.userId.eq(userId))))
+			  .orderBy(qChat.chatId.asc())
+			  .limit(MAX_USERGROUP_CHAT_MESSAGES + 1)
+			  .fetch();
+		}
+		else {
+			chats = query.from(qChat)
+			  .where(qChat.userGroup.isNull()
+					  .andAnyOf(qChat.user.userId.eq(userId).and(qChat.targetUser.userId.eq(targetUserId)), 
+							  qChat.user.userId.eq(targetUserId).and(qChat.targetUser.userId.eq(userId))))
+			  .orderBy(qChat.chatId.asc())
+			  .limit(MAX_USERGROUP_CHAT_MESSAGES + 1)
+			  .fetch();			
+		}
+		
+		if (chats.size() <= MAX_USERGROUP_CHAT_MESSAGES) {
+			return false;
+		}
+		
+		Chat surplusChat = chats.get(0);
+		
+		JPADeleteClause clause = new JPADeleteClause(getEntityManager(), qChat);
+		if (eventId != null) {
+			clause.where(qChat.userGroup.isNull()
+					.and(qChat.event.eventId.eq(eventId))
+					.andAnyOf(qChat.user.userId.eq(userId).and(qChat.targetUser.userId.eq(targetUserId)),
+							qChat.user.userId.eq(targetUserId).and(qChat.targetUser.userId.eq(userId)))
+					.and(qChat.chatId.loe(surplusChat.getChatId())))
+			  .execute();
+		}
+		else {
+			clause.where(qChat.userGroup.isNull()
+					.andAnyOf(qChat.user.userId.eq(userId).and(qChat.targetUser.userId.eq(targetUserId)),
+							qChat.user.userId.eq(targetUserId).and(qChat.targetUser.userId.eq(userId)))
+					.and(qChat.chatId.loe(surplusChat.getChatId())))
+			  .execute();
+		}
+		
+		return true;
 	}
 }
