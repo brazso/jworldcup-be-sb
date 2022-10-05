@@ -62,9 +62,9 @@ public class MessageQueueService extends ServiceBase{
 	 * @param chat
 	 */
 	public void sendPrivateChat(Chat chat) {
-		final Map<String, Object> headers = Map.of("durable", "false", "exclusive", "false", "auto-delete", "false");
+		final Map<String, Object> headers = Map.of("durable", "false", "exclusive", "false", "auto-delete", "true");
 
 		// creates the queue automatically unless it exits 
-		template.convertAndSend("/queue/chat#"+chat.getTargetUser().getUserId(), chatMapper.entityToDto(chat), headers);
+		template.convertAndSend("/queue/privatechat#"+chat.getTargetUser().getUserId(), chatMapper.entityToDto(chat), headers);
 	}
 }

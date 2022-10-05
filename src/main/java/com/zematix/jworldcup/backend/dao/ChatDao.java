@@ -59,7 +59,8 @@ public class ChatDao extends DaoBase {
 			JPAQuery<Chat> query = new JPAQuery<>(getEntityManager());
 			chats = query.from(qChat)
 			  .where(qChat.userGroup.isNull()
-					  .and(qChat.event.eventId.eq(eventId)))
+					  .and(qChat.event.eventId.eq(eventId))
+					  .and(qChat.targetUser.isNull()))
 			  .orderBy(qChat.chatId.asc())
 			  .limit(MAX_USERGROUP_CHAT_MESSAGES)
 			  .fetch();
@@ -68,7 +69,8 @@ public class ChatDao extends DaoBase {
 			QChat qChat = QChat.chat;
 			JPAQuery<Chat> query = new JPAQuery<>(getEntityManager());
 			chats = query.from(qChat)
-			  .where(qChat.userGroup.userGroupId.eq(userGroupId))
+			  .where(qChat.userGroup.userGroupId.eq(userGroupId)
+					  .and(qChat.targetUser.isNull()))
 			  .orderBy(qChat.chatId.asc())
 			  .limit(MAX_USERGROUP_CHAT_MESSAGES)
 			  .fetch();
@@ -92,14 +94,16 @@ public class ChatDao extends DaoBase {
 		if (userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID) {
 			chats = query.from(qChat)
 			  .where(qChat.userGroup.isNull()
-					  .and(qChat.event.eventId.eq(eventId)))
+					  .and(qChat.event.eventId.eq(eventId))
+					  .and(qChat.targetUser.isNull()))
 			  .orderBy(qChat.chatId.asc())
 			  .limit(MAX_USERGROUP_CHAT_MESSAGES+1)
 			  .fetch();
 		}
 		else {
 			chats = query.from(qChat)
-			  .where(qChat.userGroup.userGroupId.eq(userGroupId))
+			  .where(qChat.userGroup.userGroupId.eq(userGroupId)
+					  .and(qChat.targetUser.isNull()))
 			  .orderBy(qChat.chatId.asc())
 			  .limit(MAX_USERGROUP_CHAT_MESSAGES+1)
 			  .fetch();
@@ -114,13 +118,15 @@ public class ChatDao extends DaoBase {
 		JPADeleteClause clause = new JPADeleteClause(getEntityManager(), qChat);
 		if (userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID) {
 			clause.where(qChat.userGroup.isNull()
-					  .and(qChat.event.eventId.eq(eventId))
-					  .and(qChat.chatId.loe(surplusChat.getChatId())))
+					.and(qChat.event.eventId.eq(eventId))
+					.and(qChat.targetUser.isNull())
+					.and(qChat.chatId.loe(surplusChat.getChatId())))
 			  .execute();
 		}
 		else {
 			clause.where(qChat.userGroup.userGroupId.eq(userGroupId)
-					  .and(qChat.chatId.loe(surplusChat.getChatId())))
+					.and(qChat.targetUser.isNull())
+					.and(qChat.chatId.loe(surplusChat.getChatId())))
 			  .execute();
 		}
 		
@@ -184,7 +190,7 @@ public class ChatDao extends DaoBase {
 			  .limit(MAX_USERGROUP_CHAT_MESSAGES)
 			  .fetch();			
 		}
-		
+
 		return chats;
 	}
 

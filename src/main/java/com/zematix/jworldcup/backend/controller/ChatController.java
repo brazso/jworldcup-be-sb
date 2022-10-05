@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zematix.jworldcup.backend.dao.ChatDao;
 import com.zematix.jworldcup.backend.dto.ChatDto;
 import com.zematix.jworldcup.backend.dto.CommonResponse;
 import com.zematix.jworldcup.backend.dto.GenericListResponse;
+import com.zematix.jworldcup.backend.dto.GenericResponse;
 import com.zematix.jworldcup.backend.entity.Chat;
+import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.mapper.ChatMapper;
 import com.zematix.jworldcup.backend.service.ChatService;
@@ -48,9 +51,9 @@ public class ChatController extends ServiceBase implements ResponseEntityHelper 
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")	
 	@Operation(summary = "Sends a chat message", description = "Sends a chat message and inserts that into database")
 	@PostMapping(value = "/send-chat")
-	public ResponseEntity<CommonResponse> sendChat(@RequestBody ChatDto chatDto) throws ServiceException {
-		chatService.sendChat(chatMapper.dtoToEntity(chatDto));
-		return buildResponseEntityWithOK(new CommonResponse());
+	public ResponseEntity<GenericResponse<ChatDto>> sendChat(@RequestBody ChatDto chatDto) throws ServiceException {
+		var chat = chatService.sendChat(chatMapper.dtoToEntity(chatDto));
+		return buildResponseEntityWithOK(new GenericResponse<>(chatMapper.entityToDto(chat)));
 	}
 
 	/**

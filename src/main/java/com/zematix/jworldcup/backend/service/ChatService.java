@@ -94,7 +94,7 @@ public class ChatService extends ServiceBase {
 	 * @return sent chat instance
 	 */
 	@Transactional
-	public void sendChat(Chat chat) throws ServiceException {
+	public Chat sendChat(Chat chat) throws ServiceException {
 		checkNotNull(chat);
 		checkNotNull(chat.getEvent());
 		checkNotNull(chat.getUser());
@@ -108,8 +108,7 @@ public class ChatService extends ServiceBase {
 
 		// private chat is handled distinguished
 		if (chat.getUserGroup() == null && chat.getTargetUser() != null) {
-			this.sendPrivateChat(chat);
-			return;
+			return this.sendPrivateChat(chat);
 		}
 		
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
@@ -128,6 +127,7 @@ public class ChatService extends ServiceBase {
 		applicationService.refreshChatsByUserGroupCache(userGroup);
 
 		queueService.sendChat(chat);
+		return chat;
 	}
 	
 	@Transactional(readOnly = true)
@@ -162,9 +162,17 @@ public class ChatService extends ServiceBase {
 	public List<Chat> retrievePrivateChats(Long eventId, Long sourceUserId, Long targetUserId) throws ServiceException {
 		checkNotNull(sourceUserId);
 		checkNotNull(targetUserId);
-		
+
 		List<Chat> chats = chatDao.retrievePrivateChats(eventId, sourceUserId, targetUserId);
-		
+
+		// update accessTime - it is null yet - aimed to sourceUserId  
+		LocalDateTime actualDateTime = applicationService.getActualDateTime();
+		for (Chat chat: chats) {
+			if (chat.getAccessTime() == null && chat.getTargetUser().getUserId().equals(sourceUserId)) {
+				chat.setAccessTime(actualDateTime);
+			}
+		}
+
 		// load lazy associations
 		chats.stream().forEach(e -> {
 			e.getUser().getLoginName();
@@ -186,7 +194,7 @@ public class ChatService extends ServiceBase {
 	 * @param message
 	 * @return sent chat instance
 	 */
-	private void sendPrivateChat(Chat chat) throws ServiceException {
+	private Chat sendPrivateChat(Chat chat) throws ServiceException {
 		checkNotNull(chat);
 		checkNotNull(chat.getEvent());
 		checkNotNull(chat.getUser());
@@ -208,5 +216,6 @@ public class ChatService extends ServiceBase {
 		
 		chatDao.truncatePrivateChats(null, chat.getUser().getUserId(), chat.getTargetUser().getUserId()); // truncates independently on eventId
 
-		queueService.sendChat(chat);
+		queueService.sendPrivateChat(chat);
+		return chat;
 	}}

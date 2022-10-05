@@ -46,6 +46,9 @@ public class Chat implements Serializable {
 	@Column(name="modification_time", nullable=false)
 	private LocalDateTime modificationTime;
 
+	@Column(name="access_time", nullable=true)
+	private LocalDateTime accessTime;
+
 	//bi-directional many-to-one association to UserGroup
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="user_group_id", nullable=true)
