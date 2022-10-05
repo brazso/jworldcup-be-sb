@@ -365,6 +365,7 @@ public class SessionService extends ServiceBase {
 				// authenticated user must exist in the database, so this is supposed to be a dead code
 				throw new IllegalStateException(String.format("User with loginName \"%s\" is not found in the database.", loginName));
 			}
+			user.setLoginTime(applicationService.getActualDateTime());
 			this.user = user;
 			this.username = loginName;
 			if (authenticatedUser != null) {

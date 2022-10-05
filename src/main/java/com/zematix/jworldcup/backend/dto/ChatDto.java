@@ -13,6 +13,7 @@ public class ChatDto  {
 	private EventDto event;
 	private String message;
 	private LocalDateTime modificationTime;
+	private LocalDateTime accessTime;
 	private UserGroupDto userGroup;
 	private UserDto user;
 	private UserDto targetUser;

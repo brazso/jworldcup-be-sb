@@ -125,7 +125,10 @@ public class User implements Serializable {
 
 	@Transient
 	private Boolean isOnline;
-	
+
+	@Transient
+	private LocalDateTime loginTime;
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -355,5 +358,13 @@ public class User implements Serializable {
 
 	public void setIsOnline(Boolean isOnline) {
 		this.isOnline = isOnline;
+	}
+
+	public LocalDateTime getLoginTime() {
+		return loginTime;
+	}
+
+	public void setLoginTime(LocalDateTime loginTime) {
+		this.loginTime = loginTime;
 	}
 }
