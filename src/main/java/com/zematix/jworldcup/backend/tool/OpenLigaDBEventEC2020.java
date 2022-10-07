@@ -32,6 +32,7 @@ import com.zematix.jworldcup.backend.entity.WebService;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
+ * @Deprecated
  * Imports EC2020 event from OpenLigaDB. Retrieving the groups (from A to F) was impossibe
  * because it cannot be retrieved from OpenLigaDB.
  * Having run this script on 2021-06-06, there were lots of post-database work. 
@@ -42,6 +43,7 @@ import com.zematix.jworldcup.backend.util.CommonUtil;
  * - OpenLigaDB team named North Macedonia may have no flag MKD image stored in local. Download https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Flag_of_North_Macedonia.svg/640px-Flag_of_North_Macedonia.svg.png image.
  * - OpenLigaDB team named Scotland may have no flag SCO image stored in local. Download https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Flag_of_Scotland.svg/1024px-Flag_of_Scotland.svg.png image.
  */
+@Deprecated
 public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 
 	/**

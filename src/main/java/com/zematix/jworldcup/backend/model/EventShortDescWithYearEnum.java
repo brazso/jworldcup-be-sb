@@ -53,5 +53,10 @@ public enum EventShortDescWithYearEnum {
 	/**
 	 * FIFA Arab Cup 2021
 	 */
-	ABC2021
+	ABC2021,
+	
+	/**
+	 * FIFA World Cup 2022
+	 */
+	WC2022
 }

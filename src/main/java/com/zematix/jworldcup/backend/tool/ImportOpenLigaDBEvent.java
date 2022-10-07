@@ -70,8 +70,7 @@ public class ImportOpenLigaDBEvent implements CommandLineRunner {
 	 */
 	@Override
 	public void run(String... args) {
-//		final String eventShortDescWithYear = "EC2020";
-		final String eventShortDescWithYear = "CA2021";
+		final String eventShortDescWithYear = "WC2022";
 		final boolean isTestMode = false; // flag that changes are not committed back to the database
 
 		importOpenLigaDBEvent(eventShortDescWithYear, isTestMode);

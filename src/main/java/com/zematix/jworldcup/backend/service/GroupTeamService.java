@@ -100,7 +100,8 @@ public class GroupTeamService extends ServiceBase {
 				EventShortDescWithYearEnum.WC2018,
 				EventShortDescWithYearEnum.AFC2019,
 				EventShortDescWithYearEnum.CAF2019,
-				EventShortDescWithYearEnum.EC2020
+				EventShortDescWithYearEnum.EC2020,
+				EventShortDescWithYearEnum.WC2022
 				).contains(eventShortDescWithYearEnum)) {
 			switch (level) {
 				case 0:
@@ -173,7 +174,8 @@ public class GroupTeamService extends ServiceBase {
 						EventShortDescWithYearEnum.WC2018,
 						EventShortDescWithYearEnum.AFC2019,
 						EventShortDescWithYearEnum.CAF2019,
-						EventShortDescWithYearEnum.EC2020
+						EventShortDescWithYearEnum.EC2020,
+						EventShortDescWithYearEnum.WC2022
 						).contains(eventShortDescWithYearEnum)) {
 					if (level == 1 && twinGroupTeams.size() < groupTeams.size()) {
 						// Level sorting must be repeated to the matches between the teams

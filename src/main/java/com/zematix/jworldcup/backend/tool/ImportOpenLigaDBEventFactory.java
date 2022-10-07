@@ -34,6 +34,8 @@ public class ImportOpenLigaDBEventFactory {
 			return new OpenLigaDBEventEC2020();
 		case "CA2021": 
 			return new OpenLigaDBEventCA2021();
+		case "WC2022": 
+			return new OpenLigaDBEventWC2022();
 		default:
 			return null;
 		}

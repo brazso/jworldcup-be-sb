@@ -31,6 +31,7 @@ import com.zematix.jworldcup.backend.entity.WebService;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
+ * @Deprecated
  * Imports complete CA2021 event from OpenLigaDB. 
  * 
  * Groups come from the matches of the preliminary round, namely from its city location. 
@@ -42,6 +43,7 @@ import com.zematix.jworldcup.backend.util.CommonUtil;
  * -Dspring.profiles.active=development
  * as JVM argument.
  */
+@Deprecated
 public class OpenLigaDBEventCA2021 extends OpenLigaDBEvent {
 
 	/**
