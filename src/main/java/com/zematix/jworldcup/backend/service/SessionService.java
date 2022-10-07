@@ -5,10 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -22,12 +20,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
 import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
+import com.zematix.jworldcup.backend.emun.SessionDataOperationFlag;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.HeaderMessage;
+import com.zematix.jworldcup.backend.model.HeaderMessageList;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.model.SessionData;
 import com.zematix.jworldcup.backend.model.UserCertificate;
@@ -99,6 +100,12 @@ public class SessionService extends ServiceBase {
 	 * List of userGroups belongs to this.event and this.user
 	 */
 	private List<UserGroup> userGroups = new ArrayList<>();
+
+	/**
+	 * List of news messages to be displayed on UI header as newsLine.
+	 */
+//	private Queue<String> headerMessages = new LinkedList<>();
+	private HeaderMessageList headerMessages = new HeaderMessageList();
 	
 	/**
 	 * Initialization of some private fields
@@ -122,9 +129,6 @@ public class SessionService extends ServiceBase {
 	}
 	
 	private void initSessionAfterUserInitialized() {
-		String message = ParameterizedMessage.create("header.label.welcome", user.getLoginName()).buildMessage(msgs, locale);
-//		String message = msgs.getMessage("header.label.welcome", new String[]{user.getLoginName()}, locale); // same result
-		
 		// refresh event
 		event = eventService.findLastEventByUserId(user.getUserId());
 		
@@ -133,6 +137,17 @@ public class SessionService extends ServiceBase {
 		
 		// refresh userGroups
 		this.getUserGroups();
+
+		this.initHeaderMessages();
+	}
+
+	private void initHeaderMessages() {
+		this.headerMessages.clear();
+		
+		String message = ParameterizedMessage.create("header.label.welcome", user.getLoginName()).buildMessage(msgs, locale);
+//		String message = msgs.getMessage("header.label.welcome", new String[]{user.getLoginName()}, locale); // same result
+		HeaderMessage headerMessage = HeaderMessage.builder().message(message).priority(1).creationTime(getActualDateTime()).build();
+		this.headerMessages.push(headerMessage);
 
 		// initialize newsLine
 		Chat chat = null;
@@ -146,20 +161,31 @@ public class SessionService extends ServiceBase {
 			String userGroupName = chat.getUserGroup().isEverybody() ? /*msgs.getString("userGroups.name.Everybody")*/ UserGroup.EVERYBODY_NAME: chat.getUserGroup().getName();
 			message = String.format("[%s -> %s] %s", chat.getUser().getLoginName(), 
 					userGroupName, chat.getMessage());
+			headerMessage = HeaderMessage.builder().message(message).priority(5).creationTime(getActualDateTime()).build();
+			this.headerMessages.push(headerMessage);
 		}
-
-		logger.info("newsLineChatMessage {}", message);
-		this.setNewsLine(message);
+		
+		if (isEventFinished()) {
+			Event nextEvent = eventService.findNextEvent();
+			if (nextEvent == null) {
+				message = ParameterizedMessage.create("newsLine.noNextEvent", user.getLoginName()).buildMessage(msgs, locale);
+			}
+			else {
+				long days = getActualDateTime().until(nextEvent.getStartTime(), ChronoUnit.DAYS);
+				message = ParameterizedMessage.create("newsLine.nextEvent" + (days < 2 ? "1" : ""), days, nextEvent.getShortDescWithYear()).buildMessage(msgs, locale);
+			}
+			headerMessage = HeaderMessage.builder().message(message).priority(3).creationTime(getActualDateTime()).build();
+			this.headerMessages.push(headerMessage);
+		}
 	}
-
+	
 	/**
 	 * Merges given sessionDataClient into this instance and returns the latter one wrapped into SessionData.
 	 * 
 	 * @param sessionDataClient - sessionData comes from client
-	 * @param localUpdateMap - some this instance properties can be updated from the caller
 	 * @return merged instance
 	 */
-	public SessionData refreshSessionData(SessionData sessionDataClient, Map<String, Object> localUpdateMap) {
+	public SessionData refreshSessionData(SessionData sessionDataClient) {
 		SessionData sessionData = new SessionData(id);
 		if (sessionDataClient != null && sessionDataClient.getOperationFlag() != null) {
 			sessionData.setOperationFlag(sessionDataClient.getOperationFlag());
@@ -237,20 +263,17 @@ public class SessionService extends ServiceBase {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.EVENT_TRIGGER_START_TIMES);
 		}
 		
-		// newsLine comes from local/server
-		if (localUpdateMap.get("newsLine") != null) {
-			setNewsLine((String)localUpdateMap.get("newsLine"));
+		// newsLine comes from server, in fact it is written here
+		if (sessionData.getOperationFlag() == SessionDataOperationFlag.SERVER) {
+			HeaderMessage headerMessage = getHeaderMessages().pop();
+			setNewsLine(headerMessage != null ? headerMessage.getMessage() : null);
 		}
 		sessionData.setNewsLine(getNewsLine());
-		if (sessionDataClient == null || !sessionData.getNewsLine().equals(sessionDataClient.getNewsLine())) {
+		if (sessionDataClient == null || (sessionData.getNewsLine() != null && !sessionData.getNewsLine().equals(sessionDataClient.getNewsLine()))) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.NEWS_LINE);
 		}
 		
 		return sessionData;
-	}
-	
-	public SessionData refreshSessionData(SessionData sessionDataClient) {
-		return refreshSessionData(sessionDataClient, new HashMap<>());
 	}
 	
 	/**
@@ -460,6 +483,10 @@ public class SessionService extends ServiceBase {
 		return this.userGroups;
 	}
 	
+	public HeaderMessageList getHeaderMessages() {
+		return this.headerMessages;
+	}
+	
 	/**
 	 * Retrieves the {@link SimpleDateFormat#SHORT} date format belongs to the locale.
 	 * For example locale named "en" returns "mm/dd/yy"
@@ -640,34 +667,4 @@ public class SessionService extends ServiceBase {
 		return result != null ? result : new ArrayList<>(0); 
 	}
 	
-	/**
-	 * Updates {@link ChatMessage#newsLine with the sent chat message from push object} 
-	 */
-	public void updateNewsLine() { // TODO
-//		Map<String, String> params = getExternalContext().getRequestParameterMap();
-//		ChatMessage chatMessage = new ChatMessage(params.get("message"), params.get("user"),
-//				params.get("userGroup"), Long.valueOf(params.get("userGroupId")));
-//		String message = String.format("[%s -> %s] %s", chatMessage.getUser(), chatMessage.getUserGroup(),
-//				chatMessage.getMessage());
-//		logger.info("newsLineChatMessage {}", message);
-//		this.setNewsLine(message);
-	}
-	
-	/**
-	 * Generates newsLine message from this session instance.
-	 */
-	public String generateNewsLine() {
-		String result = ParameterizedMessage.create("header.label.welcome", user.getLoginName()).buildMessage(msgs, locale);
-		if (isEventFinished()) {
-			Event nextEvent = eventService.findNextEvent();
-			if (nextEvent == null) {
-				result = ParameterizedMessage.create("newsLine.noNextEvent", user.getLoginName()).buildMessage(msgs, locale);
-			}
-			else {
-				long days = getActualDateTime().until(nextEvent.getStartTime(), ChronoUnit.DAYS);
-				result = ParameterizedMessage.create("newsLine.nextEvent" + (days < 2 ? "1" : ""), days, nextEvent.getShortDescWithYear()).buildMessage(msgs, locale);
-			}
-		}
-		return result;
-	}
 }

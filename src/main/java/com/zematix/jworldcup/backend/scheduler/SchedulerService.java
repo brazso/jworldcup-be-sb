@@ -324,16 +324,11 @@ public class SchedulerService extends ServiceBase {
 	public void notifyClientsJob() {
 		List<org.springframework.security.core.userdetails.User> users = applicationService.getAllAuthenticatedPrincipals();
 		users.stream().forEach( user -> {
-			logger.info("authenticated user: " + user.getUsername());
+			logger.info("authenticated user: {}", user.getUsername());
 			List<SessionInformation> sessionInfos = applicationService.getAllAuthenticatedSessions(user);
 			sessionInfos.stream().map(info -> SessionListener.getSession(info.getSessionId())).filter(Objects::nonNull).forEach(session -> {
 				SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
 				if (sessionService != null) {
-//					SessionData sessionData = sessionService.refreshSessionData(null); // load from local/server
-//					String newsLine = sessionService.generateNewsLine();
-//					Map<String, Object> localUpdateMap = Map.of("newsLine", newsLine);
-//					sessionData = sessionService.refreshSessionData(sessionData, localUpdateMap);
-//					messageQueueService.sendSession(sessionData);
 					SessionData sessionData = new SessionData(sessionService.getId());
 					sessionData.setOperationFlag(SessionDataOperationFlag.SERVER);
 					messageQueueService.sendSession(sessionData);
