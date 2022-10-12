@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 01, 2022 at 12:17 PM
+-- Generation Time: Oct 12, 2022 at 12:47 PM
 -- Server version: 8.0.25
 -- PHP Version: 7.4.1
 
@@ -47,8 +47,8 @@ CREATE TABLE `chat` (
   `chat_id` int NOT NULL,
   `event_id` int NOT NULL,
   `user_id` int NOT NULL COMMENT 'source user',
-  `user_group_id` int DEFAULT NULL COMMENT 'target user group, null means to everybody',
-  `target_user_id` int DEFAULT NULL COMMENT 'target user',
+  `user_group_id` int DEFAULT NULL COMMENT 'target user group, null means to everybody or to private user',
+  `target_user_id` int DEFAULT NULL COMMENT 'private to target user',
   `modification_time` datetime NOT NULL COMMENT 'UTC timezone used',
   `access_time` datetime DEFAULT NULL COMMENT 'used only at private, UTC timezone used',
   `message` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
@@ -83,7 +83,8 @@ INSERT INTO `event` (`event_id`, `location`, `year`, `description`, `short_desc`
 (7, 'Egypt', 2019, 'Africa Cup of Nations', 'CAF', 'CAF'),
 (8, 'England and others', 2020, 'Euro Cup', 'EC', 'UEFA'),
 (9, 'Brazil', 2021, 'Copa America', 'CA', 'CONMEBOL'),
-(10, 'Qatar', 2021, 'Arab Cup', 'ABC', 'FIFA');
+(10, 'Qatar', 2021, 'Arab Cup', 'ABC', 'FIFA'),
+(11, 'Qatar', 2022, 'World Cup', 'WC', 'FIFA');
 
 -- --------------------------------------------------------
 
@@ -156,7 +157,15 @@ INSERT INTO `group_` (`group_id`, `event_id`, `name`, `team1_id`, `team2_id`) VA
 (50, 10, 'A', NULL, NULL),
 (51, 10, 'B', NULL, NULL),
 (52, 10, 'C', NULL, NULL),
-(53, 10, 'D', NULL, NULL);
+(53, 10, 'D', NULL, NULL),
+(54, 11, 'A', NULL, NULL),
+(55, 11, 'B', NULL, NULL),
+(56, 11, 'C', NULL, NULL),
+(57, 11, 'D', NULL, NULL),
+(58, 11, 'E', NULL, NULL),
+(59, 11, 'F', NULL, NULL),
+(60, 11, 'G', NULL, NULL),
+(61, 11, 'H', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -636,7 +645,71 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (448, 10, 29, NULL, NULL, '2021-12-15 15:00:00', 69, NULL, NULL, NULL, NULL, NULL, NULL, 'W25-W27'),
 (449, 10, 30, NULL, NULL, '2021-12-15 19:00:00', 69, NULL, NULL, NULL, NULL, NULL, NULL, 'W26-W28'),
 (450, 10, 31, NULL, NULL, '2021-12-18 10:00:00', 70, NULL, NULL, NULL, NULL, NULL, NULL, 'L29-L30'),
-(451, 10, 32, NULL, NULL, '2021-12-18 15:00:00', 71, NULL, NULL, NULL, NULL, NULL, NULL, 'W29-W30');
+(451, 10, 32, NULL, NULL, '2021-12-18 15:00:00', 71, NULL, NULL, NULL, NULL, NULL, NULL, 'W29-W30'),
+(452, 11, 1, 230, 222, '2022-11-20 16:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(453, 11, 2, 223, 226, '2022-11-21 13:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(454, 11, 3, 239, 234, '2022-11-21 16:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(455, 11, 4, 245, 246, '2022-11-21 19:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(456, 11, 5, 215, 237, '2022-11-22 10:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(457, 11, 6, 220, 243, '2022-11-22 13:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(458, 11, 7, 233, 235, '2022-11-22 16:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(459, 11, 8, 224, 216, '2022-11-22 19:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(460, 11, 9, 232, 231, '2022-11-23 10:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(461, 11, 10, 221, 227, '2022-11-23 13:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(462, 11, 11, 241, 219, '2022-11-23 16:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(463, 11, 12, 217, 229, '2022-11-23 19:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(464, 11, 13, 238, 228, '2022-11-24 10:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(465, 11, 14, 244, 242, '2022-11-24 13:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(466, 11, 15, 236, 225, '2022-11-24 16:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(467, 11, 16, 218, 240, '2022-11-24 19:00:00', 72, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(468, 11, 17, 246, 226, '2022-11-25 10:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(469, 11, 18, 230, 239, '2022-11-25 13:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(470, 11, 19, 234, 222, '2022-11-25 16:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(471, 11, 20, 223, 245, '2022-11-25 19:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(472, 11, 21, 243, 216, '2022-11-26 10:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(473, 11, 22, 235, 237, '2022-11-26 13:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(474, 11, 23, 224, 220, '2022-11-26 16:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(475, 11, 24, 215, 233, '2022-11-26 19:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(476, 11, 25, 227, 219, '2022-11-27 10:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(477, 11, 26, 217, 232, '2022-11-27 13:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(478, 11, 27, 231, 229, '2022-11-27 16:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(479, 11, 28, 241, 221, '2022-11-27 19:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(480, 11, 29, 228, 240, '2022-11-28 10:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(481, 11, 30, 242, 225, '2022-11-28 13:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(482, 11, 31, 218, 238, '2022-11-28 16:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(483, 11, 32, 236, 244, '2022-11-28 19:00:00', 73, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(484, 11, 33, 222, 239, '2022-11-29 15:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(485, 11, 34, 234, 230, '2022-11-29 15:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(486, 11, 35, 246, 223, '2022-11-29 19:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(487, 11, 36, 226, 245, '2022-11-29 19:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(488, 11, 37, 216, 220, '2022-11-30 15:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(489, 11, 38, 243, 224, '2022-11-30 15:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(490, 11, 39, 235, 215, '2022-11-30 19:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(491, 11, 40, 237, 233, '2022-11-30 19:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(492, 11, 41, 229, 232, '2022-12-01 15:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(493, 11, 42, 231, 217, '2022-12-01 15:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(494, 11, 43, 219, 221, '2022-12-01 19:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(495, 11, 44, 227, 241, '2022-12-01 19:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(496, 11, 45, 225, 244, '2022-12-02 15:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(497, 11, 46, 242, 236, '2022-12-02 15:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(498, 11, 47, 240, 238, '2022-12-02 19:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(499, 11, 48, 228, 218, '2022-12-02 19:00:00', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(500, 11, 49, NULL, NULL, '2022-12-03 15:00:00', 75, NULL, NULL, NULL, NULL, NULL, NULL, 'A1-B2'),
+(501, 11, 50, NULL, NULL, '2022-12-03 19:00:00', 75, NULL, NULL, NULL, NULL, NULL, NULL, 'C1-D2'),
+(502, 11, 51, NULL, NULL, '2022-12-04 15:00:00', 75, NULL, NULL, NULL, NULL, NULL, NULL, 'D1-C2'),
+(503, 11, 52, NULL, NULL, '2022-12-04 19:00:00', 75, NULL, NULL, NULL, NULL, NULL, NULL, 'B1-A2'),
+(504, 11, 53, NULL, NULL, '2022-12-05 15:00:00', 75, NULL, NULL, NULL, NULL, NULL, NULL, 'E1-F2'),
+(505, 11, 54, NULL, NULL, '2022-12-05 19:00:00', 75, NULL, NULL, NULL, NULL, NULL, NULL, 'G1-H2'),
+(506, 11, 55, NULL, NULL, '2022-12-06 15:00:00', 75, NULL, NULL, NULL, NULL, NULL, NULL, 'F1-E2'),
+(507, 11, 56, NULL, NULL, '2022-12-06 19:00:00', 75, NULL, NULL, NULL, NULL, NULL, NULL, 'H1-G2'),
+(508, 11, 57, NULL, NULL, '2022-12-09 15:00:00', 76, NULL, NULL, NULL, NULL, NULL, NULL, 'W53-W54'),
+(509, 11, 58, NULL, NULL, '2022-12-09 19:00:00', 76, NULL, NULL, NULL, NULL, NULL, NULL, 'W49-W50'),
+(510, 11, 59, NULL, NULL, '2022-12-10 15:00:00', 76, NULL, NULL, NULL, NULL, NULL, NULL, 'W55-W56'),
+(511, 11, 60, NULL, NULL, '2022-12-10 19:00:00', 76, NULL, NULL, NULL, NULL, NULL, NULL, 'W51-W52'),
+(512, 11, 61, NULL, NULL, '2022-12-13 19:00:00', 77, NULL, NULL, NULL, NULL, NULL, NULL, 'W58-W57'),
+(513, 11, 62, NULL, NULL, '2022-12-14 19:00:00', 77, NULL, NULL, NULL, NULL, NULL, NULL, 'W60-W59'),
+(514, 11, 63, NULL, NULL, '2022-12-17 15:00:00', 78, NULL, NULL, NULL, NULL, NULL, NULL, 'L61-L62'),
+(515, 11, 64, NULL, NULL, '2022-12-18 15:00:00', 79, NULL, NULL, NULL, NULL, NULL, NULL, 'W61-W62');
 
 -- --------------------------------------------------------
 
@@ -747,7 +820,15 @@ INSERT INTO `round` (`round_id`, `event_id`, `name`, `is_groupmatch`, `is_overti
 (68, 10, 'Quarter-finals', 0, 1),
 (69, 10, 'Semi-finals', 0, 1),
 (70, 10, 'Third place play-off', 0, 1),
-(71, 10, 'Final', 0, 1);
+(71, 10, 'Final', 0, 1),
+(72, 11, '1st round', 1, NULL),
+(73, 11, '2nd round', 1, NULL),
+(74, 11, '3rd round', 1, NULL),
+(75, 11, 'Round of 16', 0, NULL),
+(76, 11, 'Quarter-finals', 0, NULL),
+(77, 11, 'Semi-finals', 0, NULL),
+(78, 11, 'Third place play-off', 0, NULL),
+(79, 11, 'Final', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -983,7 +1064,39 @@ INSERT INTO `team` (`team_id`, `event_id`, `name`, `flag`, `group_id`, `fifa_poi
 (211, 10, 'Sudan', 'SDN', 53, 0, 5657),
 (212, 10, 'Syria', 'SYR', 51, 0, 4909),
 (213, 10, 'Tunisia', 'TUN', 51, 0, 1391),
-(214, 10, 'United Arab Emirates', 'UAE', 51, 0, 4902);
+(214, 10, 'United Arab Emirates', 'UAE', 51, 0, 4902),
+(215, 11, 'Argentina', 'ARG', 56, 0, 5573),
+(216, 11, 'Australia', 'AUS', 57, 0, 5580),
+(217, 11, 'Belgium', 'BEL', 59, 0, 5587),
+(218, 11, 'Brazil', 'BRA', 60, 0, 5591),
+(219, 11, 'Costa Rica', 'CRC', 58, 0, 5584),
+(220, 11, 'Denmark', 'DEN', 57, 0, 5577),
+(221, 11, 'Germany', 'GER', 58, 0, 5581),
+(222, 11, 'Ecuador', 'ECU', 54, 0, 5568),
+(223, 11, 'England', 'ENG', 55, 0, 5569),
+(224, 11, 'France', 'FRA', 57, 0, 5579),
+(225, 11, 'Ghana', 'GHA', 61, 0, 5596),
+(226, 11, 'Iran', 'IRN', 55, 0, 5570),
+(227, 11, 'Japan', 'JPN', 58, 0, 5582),
+(228, 11, 'Cameroon', 'CMR', 60, 0, 5590),
+(229, 11, 'Canada', 'CAN', 59, 0, 5588),
+(230, 11, 'Qatar', 'QAT', 54, 0, 5567),
+(231, 11, 'Croatia', 'CRO', 59, 0, 5586),
+(232, 11, 'Morocco', 'MAR', 59, 0, 5585),
+(233, 11, 'Mexico', 'MEX', 56, 0, 5575),
+(234, 11, 'Netherlands', 'NED', 54, 0, 5566),
+(235, 11, 'Poland', 'POL', 56, 0, 5576),
+(236, 11, 'Portugal', 'POR', 61, 0, 5595),
+(237, 11, 'Saudi Arabia', 'KSA', 56, 0, 5574),
+(238, 11, 'Switzerland', 'SUI', 60, 0, 5589),
+(239, 11, 'Senegal', 'SEN', 54, 0, 5565),
+(240, 11, 'Serbia', 'SRB', 60, 0, 5592),
+(241, 11, 'Spain', 'ESP', 58, 0, 5583),
+(242, 11, 'South Korea', 'KOR', 61, 0, 5594),
+(243, 11, 'Tunisia', 'TUN', 57, 0, 5578),
+(244, 11, 'Uruguay', 'URU', 61, 0, 5593),
+(245, 11, 'United States', 'USA', 55, 0, 5571),
+(246, 11, 'Wales', 'WAL', 55, 0, 5572);
 
 -- --------------------------------------------------------
 
@@ -1287,19 +1400,19 @@ ALTER TABLE `chat`
 -- AUTO_INCREMENT for table `event`
 --
 ALTER TABLE `event`
-  MODIFY `event_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `event_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `group_`
 --
 ALTER TABLE `group_`
-  MODIFY `group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `match_`
 --
 ALTER TABLE `match_`
-  MODIFY `match_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=452;
+  MODIFY `match_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=516;
 
 --
 -- AUTO_INCREMENT for table `role`
@@ -1311,13 +1424,13 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT for table `round`
 --
 ALTER TABLE `round`
-  MODIFY `round_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `round_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT for table `team`
 --
 ALTER TABLE `team`
-  MODIFY `team_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
+  MODIFY `team_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=247;
 
 --
 -- AUTO_INCREMENT for table `user`

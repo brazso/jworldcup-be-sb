@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.model.CountryCode;
+import com.zematix.jworldcup.backend.service.OpenLigaDBService;
 
 public abstract class OpenLigaDBEvent {
 
@@ -27,7 +28,10 @@ public abstract class OpenLigaDBEvent {
 	
 	protected Map<String, Object> params = new HashMap<>();
 	
+	protected OpenLigaDBService openLigaDBService;
+	
 	public OpenLigaDBEvent() {
+		this.openLigaDBService = new OpenLigaDBService(); // cannot be injected here
 	}
 
 	protected <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
