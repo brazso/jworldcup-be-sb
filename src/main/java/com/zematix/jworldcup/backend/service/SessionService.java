@@ -62,7 +62,10 @@ public class SessionService extends ServiceBase {
 
 	@Inject
 	private UserGroupService userGroupService;
-
+	
+	@Inject
+	private TeamService teamService;
+	
 	@Inject
 	private MessageSource msgs;
 
@@ -141,6 +144,9 @@ public class SessionService extends ServiceBase {
 		this.initHeaderMessages();
 	}
 
+	/**
+	 * After an user logged in, start header messages are generated.
+	 */
 	private void initHeaderMessages() {
 		this.headerMessages.clear();
 		
@@ -175,6 +181,24 @@ public class SessionService extends ServiceBase {
 				message = ParameterizedMessage.create("newsLine.nextEvent" + (days < 2 ? "1" : ""), days, nextEvent.getShortDescWithYear()).buildMessage(msgs, locale);
 			}
 			headerMessage = HeaderMessage.builder().message(message).priority(3).creationTime(getActualDateTime()).build();
+			this.headerMessages.push(headerMessage);
+		}
+	}
+	
+	/**
+	 * Header messages are generated for the logged in user.
+	 */
+	public void generateHeaderMessages() {
+		HeaderMessage headerMessage;
+		if (applicationService.getActualDateTime().isBefore(this.event.getStartTime()) && this.userOfEvent.getFavouriteGroupTeam() == null) {
+			String message = ParameterizedMessage.create("header.label.missing_group_favourite_team", this.event.getShortDescWithYear()).buildMessage(msgs, locale);
+			headerMessage = HeaderMessage.builder().message(message).priority(2).creationTime(getActualDateTime()).build();
+			this.headerMessages.push(headerMessage);
+		}
+		if (applicationService.getActualDateTime().isBefore(this.event.getKnockoutStartTime()) && this.userOfEvent.getFavouriteKnockoutTeam() == null &&
+				!teamService.retrieveFavouriteKnockoutTeams(this.event.getEventId()).isEmpty()) {
+			String message = ParameterizedMessage.create("header.label.missing_knockout_favourite_team", this.event.getShortDescWithYear()).buildMessage(msgs, locale);
+			headerMessage = HeaderMessage.builder().message(message).priority(2).creationTime(getActualDateTime()).build();
 			this.headerMessages.push(headerMessage);
 		}
 	}

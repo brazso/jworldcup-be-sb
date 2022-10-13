@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
@@ -27,6 +29,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
+import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.MatchDao;
 import com.zematix.jworldcup.backend.dao.RoundDao;
@@ -84,6 +87,9 @@ public class MatchService extends ServiceBase {
 	
 	@Inject
     private ApplicationEventPublisher applicationEventPublisher;
+
+	@Inject
+	private CacheManager cacheManager;
 	
 	@Value("${app.expiredDays.event:0}")
 	private String appExpiredDaysEvent;
@@ -376,7 +382,12 @@ public class MatchService extends ServiceBase {
 		
 		updateMatchParticipants(match.getEvent().getEventId(), match.getMatchId());
 		// update cached value
-		applicationService.refreshEventCompletionPercentCache(match.getEvent().getEventId());			
+		applicationService.refreshEventCompletionPercentCache(match.getEvent().getEventId());
+		// invalidate dependent cache(s)
+		Cache cache = cacheManager.getCache(CachingConfig.CACHE_EVENT_KNOCKOUT_START_TIME);
+		if (cache != null) {
+			cache.evictIfPresent(match.getEvent().getEventId());
+		}
 	}
 	
 	/**

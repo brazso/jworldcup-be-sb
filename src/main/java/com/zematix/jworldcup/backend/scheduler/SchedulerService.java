@@ -329,6 +329,7 @@ public class SchedulerService extends ServiceBase {
 			sessionInfos.stream().map(info -> SessionListener.getSession(info.getSessionId())).filter(Objects::nonNull).forEach(session -> {
 				SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
 				if (sessionService != null) {
+					sessionService.generateHeaderMessages();
 					SessionData sessionData = new SessionData(sessionService.getId());
 					sessionData.setOperationFlag(SessionDataOperationFlag.SERVER);
 					messageQueueService.sendSession(sessionData);

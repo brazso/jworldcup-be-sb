@@ -8,11 +8,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
+import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.dao.TeamDao;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Team;
@@ -43,6 +45,7 @@ public class TeamService extends ServiceBase {
 	 * @return all teams of an event
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_FAVOURITE_GROUP_TEAMS, key = "{#eventId}")
 	public List<Team> retrieveFavouriteGroupTeams(Long eventId) {
 		checkNotNull(eventId);
 		
@@ -57,6 +60,7 @@ public class TeamService extends ServiceBase {
 	 * @return all teams qualified to knockout phase of an event
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_FAVOURITE_KNOCKOUT_TEAMS, key = "{#eventId}")
 	public List<Team> retrieveFavouriteKnockoutTeams(Long eventId) {
 		checkNotNull(eventId);
 		
