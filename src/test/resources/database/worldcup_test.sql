@@ -1248,7 +1248,8 @@ INSERT INTO `web_service` (`web_service_id`, `event_id`, `priority`, `league_sho
 (10, 7, 1, 'CAF2019', '2019', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
 (11, 8, 1, 'em20', '2020', 'Endergebnis', NULL, 'nach Verlängerung', 'nach Elfmeterscheißen'),
 (12, 9, 1, 'CA2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
-(13, 10, 1, 'ABC2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen');
+(13, 10, 1, 'ABC2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
+(14, 11, 1, 'wmk', '2022', 'nach regulärer Spielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschiessen');
 
 --
 -- Indexes for dumped tables
@@ -1460,7 +1461,7 @@ ALTER TABLE `user_status`
 -- AUTO_INCREMENT for table `web_service`
 --
 ALTER TABLE `web_service`
-  MODIFY `web_service_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `web_service_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Constraints for dumped tables
