@@ -403,35 +403,30 @@ public class SessionService extends ServiceBase {
 	}
 	
 	/**
-	 * Retrieves cached {@link UserOfEvent} instance. Unless it is found,
-	 * it is read from database. Creates an empty instance if it is 
-	 * not in the database either.
+	 * Retrieves {@link UserOfEvent} instance from database. Creates an empty 
+	 * instance if it is not found the database.
 	 * 
-	 * @return cached/database/empty userOfEvent
+	 * @return database/empty userOfEvent
 	 */
 	public UserOfEvent getUserOfEvent() {
 		if (this.event == null || this.user == null) {
 			this.userOfEvent = null;
 		}
 		else {
-			if (this.userOfEvent == null 
-					|| (this.userOfEvent.getEvent().getEventId() != this.event.getEventId() || this.userOfEvent.getUser().getUserId() != this.user.getUserId())) {
-				
-				UserOfEvent userOfEvent = null;
-				try {
-					userOfEvent = userService.retrieveUserOfEvent(this.event.getEventId(), this.user.getUserId()); // cached method
-				} catch (ServiceException e) {
-					consumeServiceException(e);
-					throw new IllegalStateException(e.getMessage()); // fatal case 
-				}
-				if (userOfEvent == null) {
-					// create empty UserOfEvent element to use as cached value
-					userOfEvent = new UserOfEvent();
-					userOfEvent.setEvent(this.event);
-					userOfEvent.setUser(this.user);
-				}
-				this.userOfEvent = userOfEvent;
+			UserOfEvent userOfEvent = null;
+			try {
+				userOfEvent = userService.retrieveUserOfEvent(this.event.getEventId(), this.user.getUserId()); // cached method
+			} catch (ServiceException e) {
+				consumeServiceException(e);
+				throw new IllegalStateException(e.getMessage()); // fatal case 
 			}
+			if (userOfEvent == null) {
+				// create empty UserOfEvent element to use as cached value
+				userOfEvent = new UserOfEvent();
+				userOfEvent.setEvent(this.event);
+				userOfEvent.setUser(this.user);
+			}
+			this.userOfEvent = userOfEvent;
 		}
 		return this.userOfEvent;
 	}
@@ -453,11 +448,10 @@ public class SessionService extends ServiceBase {
 	}
 
 	/**
-	 * Retrieves cached list of {@link UserGroup} instances. Unless it is found,
-	 * it is read from database. Creates an empty instance if it is 
-	 * not in the database either.
+	 * Retrieves a list of {@link UserGroup} instances. Creates an empty instance if it is 
+	 * not found in the database.
 	 * 
-	 * @return cached/database/empty userGroups
+	 * @return database/empty userGroups
 	 */
 	public List<UserGroup> getUserGroups() {
 		if (this.event == null || this.user == null) {
