@@ -214,7 +214,7 @@ public class WebServiceServiceTest {
 	 *           belongs to the eventId
 	 */
 	@Test
-	public void /*long*/ updateMatchResults_EmptyIncompleteEscalatedMatches(/*Long eventId*/) throws ServiceException, OpenLigaDBException {
+	public void /*List<Matchg>*/ updateMatchResults_EmptyIncompleteEscalatedMatches(/*Long eventId*/) throws ServiceException, OpenLigaDBException {
 		Long eventId = 1L; // WC2014
 		
 		LocalDateTime actualDateTime = LocalDateTime.now();
@@ -232,7 +232,7 @@ public class WebServiceServiceTest {
 		Mockito.when(matchService.retrieveIncompleteEscalatedMatchesByEvent(eventId, actualDateTime)).thenReturn(matches);
 		
 		long expectedUpdatedMatches = 0;
-		long updatedMatches = webServiceService.updateMatchResults(eventId);
+		long updatedMatches = webServiceService.updateMatchResults(eventId).size();
 		assertEquals("Result updatedMatches counter should be equal to the expected one", expectedUpdatedMatches, updatedMatches);
 	}
 	
@@ -241,7 +241,7 @@ public class WebServiceServiceTest {
 	 * Scenario: successfully updates matches belongs to the eventId
 	 */
 	@Test
-	public void /*long*/ updateMatchResults(/*Long eventId*/) throws ServiceException, OpenLigaDBException {
+	public void /*List<Match>*/ updateMatchResults(/*Long eventId*/) throws ServiceException, OpenLigaDBException {
 		Long eventId = 1L; // WC2014
 		
 		Match match = commonDao.findEntityById(Match.class, 1L); // WC2014 first (group stage) match
@@ -270,7 +270,7 @@ public class WebServiceServiceTest {
 		Mockito.doReturn(isUpdated).when(webServiceServicePartial).updateMatchByMatchdata(match, matchdata, webService);
 		
 		long expectedUpdatedMatches = 1;
-		long updatedMatches = webServiceServicePartial.updateMatchResults(eventId);
+		long updatedMatches = webServiceServicePartial.updateMatchResults(eventId).size();
 		assertEquals("Result updatedMatches counter should be equal to the expected one", expectedUpdatedMatches, updatedMatches);
 	}
 	

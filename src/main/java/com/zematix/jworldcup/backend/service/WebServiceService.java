@@ -102,13 +102,13 @@ public class WebServiceService extends ServiceBase {
 
 	/**
 	 * Updates incomplete but escalated matches from calling web service.
-	 * Returns the number of the updated matches.
+	 * Returns the updated matches.
 	 * 
-	 * @return number of updated matches
+	 * @return list of updated matches
 	 * @throws ServiceException
 	 */
-	public long updateMatchResults(Long eventId) throws ServiceException {
-		long updatedMatches = 0;
+	public List<Match> updateMatchResults(Long eventId) throws ServiceException {
+		List<Match> updatedMatches = new ArrayList<>();
 
 		checkNotNull(eventId);
 
@@ -134,7 +134,7 @@ public class WebServiceService extends ServiceBase {
 					logger.info(String.format("Match with %d matchId is incomplete but escalated", match.getMatchId()));
 					boolean isUpdated = updateMatchByMatchdata(match, matchdata, webService);
 					if (isUpdated) {
-						updatedMatches++;
+						updatedMatches.add(match);
 						logger.info(String.format("Escalated match with %d matchId is updated", match.getMatchId()));
 					}
 				}

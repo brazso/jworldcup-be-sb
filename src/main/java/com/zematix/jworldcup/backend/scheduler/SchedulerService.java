@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +32,7 @@ import com.zematix.jworldcup.backend.configuration.SessionListener;
 import com.zematix.jworldcup.backend.emun.SessionDataOperationFlag;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.exception.ServiceException;
+import com.zematix.jworldcup.backend.model.PublishedEvent;
 import com.zematix.jworldcup.backend.model.SessionData;
 import com.zematix.jworldcup.backend.service.ApplicationService;
 import com.zematix.jworldcup.backend.service.MatchService;
@@ -165,7 +167,7 @@ public class SchedulerService extends ServiceBase {
 		checkNotNull(eventId);
 		checkNotNull(firstIncompleteMatchId);
 		
-		long updatedMatches = 0; 
+		List<Match> updatedMatches = new ArrayList<>(); 
 		try {
 			updatedMatches = webServiceService.updateMatchResults(eventId);
 		} catch (ServiceException e) {
@@ -175,9 +177,12 @@ public class SchedulerService extends ServiceBase {
 //			}
 		}
 		
-		if (updatedMatches > 0) {
+		if (!updatedMatches.isEmpty()) {
 			// update cached value
 			applicationService.refreshEventCompletionPercentCache(eventId);
+			
+			// generate header messages from updated matches
+			this.generateHeaderMessagesByMatches(updatedMatches);
 		}
 		
 		Match match = null;
@@ -208,6 +213,33 @@ public class SchedulerService extends ServiceBase {
 			futileAttemptsByEventId.remove(eventId);
 			applicationService.getRetrieveMatchResultsJobTriggerStartTimesCache().refresh(eventId); // reset cache
 		}
+	}
+
+	/**
+	 * Generate header messages for all logged in users from the given recently updated matches.
+	 * @param matches - updated matches
+	 */
+	private void generateHeaderMessagesByMatches(List<Match> matches) {
+		checkNotNull(matches);
+		
+		if (matches.isEmpty()) {
+			return;
+		}
+		
+		List<org.springframework.security.core.userdetails.User> users = applicationService.getAllAuthenticatedPrincipals();
+		users.stream().forEach( user -> {
+			logger.info("authenticated user: {}", user.getUsername());
+			List<SessionInformation> sessionInfos = applicationService.getAllAuthenticatedSessions(user);
+			sessionInfos.stream().map(info -> SessionListener.getSession(info.getSessionId())).filter(Objects::nonNull).forEach(session -> {
+				SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
+				if (sessionService != null) {
+					for (Match match: matches) {
+						PublishedEvent<Match> publishedEvent = new PublishedEvent<>(match, true);
+						sessionService.onUpdateMatchEvent(publishedEvent); // direct call
+					}
+				}
+			});
+		});
 	}
 	
 	/**

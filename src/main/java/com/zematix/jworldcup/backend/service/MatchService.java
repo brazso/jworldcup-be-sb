@@ -357,6 +357,7 @@ public class MatchService extends ServiceBase {
 		// might be easier, but it needs an extra service. 
 		final Match finalMatch = match;
 		executeAfterTransactionCommits(() -> {
+			// launches event to generate a header message about the updated match elsewhere
 			PublishedEvent<Match> event = new PublishedEvent<>(finalMatch, true);
 			applicationEventPublisher.publishEvent(event);			
 		});
@@ -455,6 +456,7 @@ public class MatchService extends ServiceBase {
 		// might be easier, but it needs an extra service. 
 		final Match finalMatch = match;
 		executeAfterTransactionCommits(() -> {
+			// launches event to generate a header message about the updated match elsewhere
 			PublishedEvent<Match> event = new PublishedEvent<>(finalMatch, true);
 			applicationEventPublisher.publishEvent(event);			
 		});

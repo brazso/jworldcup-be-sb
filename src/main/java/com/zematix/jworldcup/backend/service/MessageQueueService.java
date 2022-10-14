@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.zematix.jworldcup.backend.entity.Chat;
+import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.mapper.ChatMapper;
 import com.zematix.jworldcup.backend.mapper.SessionDataMapper;
@@ -72,7 +73,7 @@ public class MessageQueueService extends ServiceBase{
 		// creates the queue automatically unless it exits 
 		template.convertAndSend("/queue/privatechat#"+chat.getTargetUser().getUserId(), chatMapper.entityToDto(chat), headers);
 
-		// launches event to generate a header message elsewhere 
+		// launches event to generate a header message about the sent private message elsewhere 
 		PublishedEvent<Chat> event = new PublishedEvent<>(chat, true);
 		applicationEventPublisher.publishEvent(event);
 	}
