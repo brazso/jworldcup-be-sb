@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.mapper.ChatMapper;
 import com.zematix.jworldcup.backend.mapper.SessionDataMapper;
+import com.zematix.jworldcup.backend.model.PublishedEvent;
 import com.zematix.jworldcup.backend.model.SessionData;
 
 @Service
@@ -25,6 +27,9 @@ public class MessageQueueService extends ServiceBase{
 
 	@Inject
 	private ChatMapper chatMapper;
+
+	@Inject
+    private ApplicationEventPublisher applicationEventPublisher;
 
 	/**
 	 * Sends the given session data to a session queue.
@@ -66,5 +71,9 @@ public class MessageQueueService extends ServiceBase{
 
 		// creates the queue automatically unless it exits 
 		template.convertAndSend("/queue/privatechat#"+chat.getTargetUser().getUserId(), chatMapper.entityToDto(chat), headers);
+
+		// launches event to generate a header message elsewhere 
+		PublishedEvent<Chat> event = new PublishedEvent<>(chat, true);
+		applicationEventPublisher.publishEvent(event);
 	}
 }

@@ -16,6 +16,9 @@ import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
+import org.springframework.lang.NonNull;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
@@ -23,6 +26,7 @@ import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
 import com.zematix.jworldcup.backend.emun.SessionDataOperationFlag;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.entity.Event;
+import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
@@ -30,6 +34,7 @@ import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.HeaderMessage;
 import com.zematix.jworldcup.backend.model.HeaderMessageList;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
+import com.zematix.jworldcup.backend.model.PublishedEvent;
 import com.zematix.jworldcup.backend.model.SessionData;
 import com.zematix.jworldcup.backend.model.UserCertificate;
 
@@ -684,5 +689,48 @@ public class SessionService extends ServiceBase {
 		var result = applicationService.getRetrieveMatchResultsJobTriggerStartTimesCache().getIfPresent(this.event.getEventId());
 		return result != null ? result : new ArrayList<>(0); 
 	}
-	
+
+	/**
+	 * Invoked from {@link MatchService#saveMatch(Long, boolean, Boolean, LocalDateTime, Byte, Byte, Byte, Byte, Byte, Byte)
+	 * when a match result is saved.
+	 * @param event - contains the saved match
+	 */
+	@Async
+	@EventListener(condition = "#event.success")
+	public void onUpdateMatchEvent(@NonNull PublishedEvent/*<Match>*/ event) {
+		if (!event.getEntity().getClass().equals(Match.class)) {
+			return;
+		}
+		
+		Match match = (Match)event.getEntity();
+		logger.info("onUpdateMatchEvent matchId: {}", match.getMatchId());
+
+		String teamName1 = ParameterizedMessage.create("team."+match.getTeam1().getName()).buildMessage(msgs, locale);
+		String teamName2 = ParameterizedMessage.create("team."+match.getTeam2().getName()).buildMessage(msgs, locale);
+		String message = ParameterizedMessage.create("header.label.match_result", teamName1, teamName2,
+				match.getGoalNormalByTeam1(), match.getGoalNormalByTeam2()).buildMessage(msgs, locale);
+		HeaderMessage headerMessage = HeaderMessage.builder().message(message).priority(5).creationTime(getActualDateTime()).build();
+		this.headerMessages.push(headerMessage);
+	}
+
+	/**
+	 * Invoked from {@link MatchService#saveMatch(Long, boolean, Boolean, LocalDateTime, Byte, Byte, Byte, Byte, Byte, Byte)
+	 * when a match result is saved.
+	 * @param event - contains the saved match
+	 */
+	@Async
+	@EventListener(condition = "#event.success")
+	public void onSendPrivateChat(@NonNull PublishedEvent/*<Chat>*/ event) {
+		if (!event.getEntity().getClass().equals(Chat.class)) {
+			return;
+		}
+		
+		Chat chat = (Chat)event.getEntity();
+		logger.info("onSendPrivateChat chatId: {}", chat.getChatId());
+
+		String message = ParameterizedMessage.create("header.label.private_chat", chat.getUser().getLoginName())
+				.buildMessage(msgs, locale);
+		HeaderMessage headerMessage = HeaderMessage.builder().message(message).priority(2).creationTime(getActualDateTime()).build();
+		this.headerMessages.push(headerMessage);
+	}
 }

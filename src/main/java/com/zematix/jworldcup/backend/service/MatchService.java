@@ -43,10 +43,10 @@ import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.GroupPosition;
 import com.zematix.jworldcup.backend.model.Pair;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
+import com.zematix.jworldcup.backend.model.PublishedEvent;
 import com.zematix.jworldcup.backend.scheduler.SchedulerService;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 import com.zematix.jworldcup.backend.util.LambdaExceptionUtil;
-import com.zematix.jworldcup.backend.util.UpdateEntityEvent;
 
 /**
  * Operations around {@link Match} elements. 
@@ -357,7 +357,7 @@ public class MatchService extends ServiceBase {
 		// might be easier, but it needs an extra service. 
 		final Match finalMatch = match;
 		executeAfterTransactionCommits(() -> {
-			UpdateEntityEvent<Match> event = new UpdateEntityEvent<>(finalMatch, true);
+			PublishedEvent<Match> event = new PublishedEvent<>(finalMatch, true);
 			applicationEventPublisher.publishEvent(event);			
 		});
 		
@@ -373,10 +373,19 @@ public class MatchService extends ServiceBase {
 		});
 	}
 	
+	/**
+	 * Invoked from {@link MatchService#saveMatch(Long, boolean, Boolean, LocalDateTime, Byte, Byte, Byte, Byte, Byte, Byte)
+	 * when a match result is saved.
+	 * @param event - contains the saved match
+	 */
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Async
 	@EventListener(condition = "#event.success")
-	public void onUpdateMatchEvent(@NonNull UpdateEntityEvent/*<Match>*/ event) throws ServiceException {
+	public void onUpdateMatchEvent(@NonNull PublishedEvent/*<Match>*/ event) throws ServiceException {
+		if (!event.getEntity().getClass().equals(Match.class)) {
+			return;
+		}
+		
 		Match match = (Match)event.getEntity();
 		logger.info("onUpdateMatchEvent matchId: {}", match.getMatchId());
 		
@@ -446,7 +455,7 @@ public class MatchService extends ServiceBase {
 		// might be easier, but it needs an extra service. 
 		final Match finalMatch = match;
 		executeAfterTransactionCommits(() -> {
-			UpdateEntityEvent<Match> event = new UpdateEntityEvent<>(finalMatch, true);
+			PublishedEvent<Match> event = new PublishedEvent<>(finalMatch, true);
 			applicationEventPublisher.publishEvent(event);			
 		});
 		
