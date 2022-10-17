@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.configuration;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -31,15 +32,12 @@ import com.zematix.jworldcup.backend.service.SessionLogoutHandler;
 /**
  * This class extends the WebSecurityConfigurerAdapter which is a convenience class that 
  * allows customization to both WebSecurity and HttpSecurity.
- * 
- * Production usage!
- * Swagger links are disallowed.
  */
-@Profile("!develop")
+@Profile("develop")
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true) // enable @PreAuthorize and @PostAuthorize annotations for methods
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityDevelopConfig extends WebSecurityConfigurerAdapter {
 
 	@Inject
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -70,6 +68,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			"/users/reset-password", "/users/process-registration-token", 
 			"/users/process-change-email-token", "/users/process-reset-password-token" };
 
+	protected static final String[] SWAGGER_WHITELIST = { "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", };
+
 	@Inject
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		// configure AuthenticationManager so that it knows from where to load
@@ -92,7 +92,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
 				.authorizeRequests()
-				.antMatchers(ACTUATOR_WHITELIST)
+				.antMatchers(Stream.concat(Stream.of(ACTUATOR_WHITELIST), Stream.of(SWAGGER_WHITELIST))
+						.toArray(String[]::new))
 				.permitAll()
 				// .antMatchers("/", "/**").permitAll()
 				// .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // browser (angular) uses
