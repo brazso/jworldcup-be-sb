@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -33,18 +32,16 @@ import com.zematix.jworldcup.backend.validation.ModifyUserValidationGroup;
 @Entity
 @Table(name="user")
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
-@NamedNativeQueries({
-    @NamedNativeQuery(
-            name    =   "deleteUserRolesByUserId",
-            query   =   "DELETE FROM user__role WHERE user_id = ?",
-            			resultClass=User.class
-    ),
-    @NamedNativeQuery(
-            name    =   "deleteUserUserGroupsByUserId",
-            query   =   "DELETE FROM user__user_group WHERE user_id = ?",
-                        resultClass=User.class
-    )
-})
+@NamedNativeQuery(
+        name    =   "deleteUserRolesByUserId",
+        query   =   "DELETE FROM user__role WHERE user_id = ?",
+        			resultClass=User.class
+)
+@NamedNativeQuery(
+        name    =   "deleteUserUserGroupsByUserId",
+        query   =   "DELETE FROM user__user_group WHERE user_id = ?",
+                    resultClass=User.class
+)
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
