@@ -71,6 +71,10 @@ app:
       candidate: 3 # default 0 means no delete of abandoned candidate users at all
       emailModification: 3 # default 0 means no delete of abandoned email modifications at all
       passwordReset: 3 # default 0 means no delete of abandoned reset passwords at all
+  reCaptcha:
+    siteKey: 6LdAnY0iAAAAAPMFHecAgzoOH9caOgCD52OwpTty
+    secretKey: 6LdAnY0iAAAAALusuamLTrTwloLRU9UJ51IM6u2f
+     
 
 # Cookie
 cookie.maxAge: 1209600

@@ -66,8 +66,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	    return new SessionRegistryImpl(); 
 	}
 	
-	protected static final String[] ACTUATOR_WHITELIST = { "/login", "/signup", "/backend-version", 
-			"/users/reset-password", "/users/process-registration-token", 
+	protected static final String[] ACTUATOR_WHITELIST = { "/login", "/signup", "/backend-version",
+			"/verify-captcha", "/users/reset-password", "/users/process-registration-token", 
 			"/users/process-change-email-token", "/users/process-reset-password-token" };
 
 	@Inject
