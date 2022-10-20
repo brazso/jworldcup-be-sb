@@ -42,7 +42,7 @@ import com.zematix.jworldcup.backend.model.UserPosition;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles({"development", "test"})
+@ActiveProfiles({"develop", "test"})
 @Transactional
 public class UserGroupServiceTest {
 

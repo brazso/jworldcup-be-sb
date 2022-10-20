@@ -25,7 +25,7 @@ import com.zematix.jworldcup.backend.entity.User;
 
 /**
  * Reset all users' password that they become login name in lower case with "_!" postfix.
- * It makes testing easier. It runs only with -Dapplication.environment=development
+ * It makes testing easier. It runs only with -Dapplication.environment=develop
  * VM setting.
   */
 @EnableAutoConfiguration
@@ -76,11 +76,6 @@ public class ResetUserPasswords implements CommandLineRunner {
 	 * 
 	 */
 	public void main() {
-
-//		String environment = System.getProperty(ApplicationEnvironment.APP_ENV_PARAMETER_NAME);
-//		checkNotNull(environment);
-//		checkState(environment.equalsIgnoreCase(ApplicationEnvironment.DEVELOPMENT.name()));
-		
 		/*EntityManager*/ em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		

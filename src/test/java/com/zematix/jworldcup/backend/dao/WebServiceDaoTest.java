@@ -24,7 +24,7 @@ import com.zematix.jworldcup.backend.entity.WebService;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles({"development", "test"})
+@ActiveProfiles({"develop", "test"})
 @Transactional
 public class WebServiceDaoTest {
 

@@ -23,7 +23,7 @@ import com.zematix.jworldcup.backend.entity.Role;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles({"development", "test"})
+@ActiveProfiles({"develop", "test"})
 @Transactional
 public class RoleDaoTest {
 

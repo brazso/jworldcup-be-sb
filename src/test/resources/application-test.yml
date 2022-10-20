@@ -3,7 +3,7 @@
 
 # hsqldb database usage for automatic tests
 
-# "test" list element inside @ActiveProfiles({"development", "test"})
+# "test" list element inside @ActiveProfiles({"develop", "test"})
 # in test files invokes its usage.
 
 # Drop is needed at *.schema-generation.database.action

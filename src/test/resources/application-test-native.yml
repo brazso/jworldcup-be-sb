@@ -3,8 +3,8 @@
 
 # native mysql database usage for automatic tests
 
-# Change @ActiveProfiles({"development", "test"}) to
-# @ActiveProfiles({"development", "test_native"}) in
+# Change @ActiveProfiles({"develop", "test"}) to
+# @ActiveProfiles({"develop", "test_native"}) in
 # test files if you want to use it. Before each release
 # it is recommended to run a native complete test.
 

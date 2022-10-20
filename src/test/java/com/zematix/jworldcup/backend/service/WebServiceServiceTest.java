@@ -40,7 +40,7 @@ import com.zematix.jworldcup.backend.util.CommonUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles({"development", "test"})
+@ActiveProfiles({"develop", "test"})
 @Transactional
 public class WebServiceServiceTest {
 	private static final Comparator<Matchdata> byMatchId = (m1, m2) -> Integer.compare(m1.getMatchID(), m2.getMatchID());

@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Strings;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.entity.QUser;
 import com.zematix.jworldcup.backend.entity.QUserOfEvent;
 import com.zematix.jworldcup.backend.entity.Role;
@@ -302,6 +304,7 @@ public class UserDao extends DaoBase {
 	 * @return modified {@link User} instance
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_BY_LOGIN_NAME, key = "#user.loginName")
 	public User modifyUserStatusToken(User user, String status, LocalDateTime modificationTime) {
 		checkNotNull(user);
 		checkArgument(commonDao.containsEntity(user),
@@ -430,6 +433,7 @@ public class UserDao extends DaoBase {
 	 * @return {@code true} if the email modification is accepted and done
 	 * @throws IllegalArgumentException if any of the given parameter is invalid
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_BY_LOGIN_NAME, key = "#user.loginName")
 	public boolean modifyUserEmailAddr(User user, LocalDateTime modificationTime) {
 		boolean isModified = false;
 
@@ -458,6 +462,7 @@ public class UserDao extends DaoBase {
 	 * @return {@code true} if the password reset is started successfully
 	 * @throws IllegalArgumentException if any of the given parameter is invalid
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_BY_LOGIN_NAME, key = "#user.loginName")
 	public boolean modifyUserResetPassword(User user, String resetPassword, LocalDateTime modificationTime) {
 		boolean isModified = false;
 

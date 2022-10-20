@@ -1,6 +1,6 @@
 # Contains application parameters for development environment.
 # It overrides the parameter values used in application.yml.
-# It gets activated by giving option "-Dapplication.environment=development" to JVM
+# It gets activated by giving option "-Dapplication.environment=develop" to JVM
 
 # Spring 
 spring:
@@ -20,11 +20,11 @@ spring:
     #auto-startup: false
     properties.org.quartz:
       plugin.jobInitializer:
-        fileNames: quartz-jobs-development.xml
+        fileNames: quartz-jobs-develop.xml
 
 # Application
 app:
-  url: http://localhost:8090/jworldcup/
+  url: http://localhost:4200/
   #cheat.dateTime: 2019-06-22 19:00
   #email.enabled: false
   expiredDays.event: 1000

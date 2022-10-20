@@ -50,7 +50,7 @@ gradle build -x test
 
 run app using development profile
 ```
-gradle -Dspring.profiles.active=development bootRun
+gradle -Dspring.profiles.active=develop bootRun
 ```
 
 run app using production profile, ie. without any profile

@@ -67,7 +67,7 @@ public class EmailService extends ServiceBase {
 		Properties properties = new Properties();
 		properties.put("toEmailAddr", user.getEmailAddr());
 		properties.put("userFullName", user.getFullName());
-		String confirmationUrl = String.format("%slogin.xhtml?confirmation_token=%s&function=registration", appUrl, user.getToken());
+		String confirmationUrl = String.format("%slogin?confirmation_token=%s&function=registration", appUrl, user.getToken());
 		properties.put("confirmationUrl", confirmationUrl);
 		String htmlContent = templateService.generateContent(TemplateId.REGISTRATION_HTML, properties, locale);
 		String plainContent = templateService.generateContent(TemplateId.REGISTRATION_PLAIN, properties, locale);
@@ -90,7 +90,7 @@ public class EmailService extends ServiceBase {
 		Properties properties = new Properties();
 		properties.put("toEmailAddr", user.getEmailNew());
 		properties.put("userFullName", user.getFullName());
-		String confirmationUrl = String.format("%slogin.xhtml?confirmation_token=%s&function=changeEmail", appUrl, user.getToken());
+		String confirmationUrl = String.format("%slogin?confirmation_token=%s&function=changeEmail", appUrl, user.getToken());
 		properties.put("confirmationUrl", confirmationUrl);
 		String htmlContent = templateService.generateContent(TemplateId.CHANGE_EMAIL_HTML, properties, locale);
 		String plainContent = templateService.generateContent(TemplateId.CHANGE_EMAIL_PLAIN, properties, locale);
@@ -116,7 +116,7 @@ public class EmailService extends ServiceBase {
 		properties.put("userFullName", user.getFullName());
 		properties.put("loginName", user.getLoginName());
 		properties.put("resetPassword", resetPassword);
-		String confirmationUrl = String.format("%slogin.xhtml?confirmation_token=%s&function=resetPassword", appUrl, user.getToken());
+		String confirmationUrl = String.format("%slogin?confirmation_token=%s&function=resetPassword", appUrl, user.getToken());
 		properties.put("confirmationUrl", confirmationUrl);
 		String htmlContent = templateService.generateContent(TemplateId.RESET_PASSWORD_HTML, properties, locale);
 		String plainContent = templateService.generateContent(TemplateId.RESET_PASSWORD_PLAIN, properties, locale);

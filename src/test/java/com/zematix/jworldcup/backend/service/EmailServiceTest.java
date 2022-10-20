@@ -24,7 +24,7 @@ import com.zematix.jworldcup.backend.exception.ServiceException;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles({"development", "test"})
+@ActiveProfiles({"develop", "test"})
 public class EmailServiceTest {
 	
 	@Inject

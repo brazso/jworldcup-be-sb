@@ -24,7 +24,7 @@ import com.zematix.jworldcup.backend.entity.User;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles({"development", "test"})
+@ActiveProfiles({"develop", "test"})
 @Transactional
 public class BetRepositoryTest {
   

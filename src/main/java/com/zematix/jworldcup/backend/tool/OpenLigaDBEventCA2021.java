@@ -40,7 +40,7 @@ import com.zematix.jworldcup.backend.util.CommonUtil;
  * neither.
  * 
  * If you want sql logging, add
- * -Dspring.profiles.active=development
+ * -Dspring.profiles.active=develop
  * as JVM argument.
  */
 @Deprecated
