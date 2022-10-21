@@ -1,4 +1,4 @@
-package com.zematix.jworldcup.backend.model;
+package com.zematix.jworldcup.backend.emun;
 
 /**
  * Stored and supported football events.

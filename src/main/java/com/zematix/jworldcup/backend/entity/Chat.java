@@ -14,8 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -25,7 +26,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name="chat")
 @NamedQuery(name="Chat.findAll", query="SELECT c FROM Chat c")
-@Data @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Chat implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -18,12 +18,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zematix.jworldcup.backend.emun.EventShortDescWithYearEnum;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Round;
 import com.zematix.jworldcup.backend.entity.Team;
-import com.zematix.jworldcup.backend.model.EventShortDescWithYearEnum;
 
 /**
  * Contains test functions of {@link MatchDao} class.

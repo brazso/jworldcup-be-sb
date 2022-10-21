@@ -25,6 +25,10 @@ import javax.validation.constraints.Size;
 import com.zematix.jworldcup.backend.validation.Email;
 import com.zematix.jworldcup.backend.validation.ModifyUserValidationGroup;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 /**
  * The persistent class for the user database table.
  * 
@@ -42,12 +46,14 @@ import com.zematix.jworldcup.backend.validation.ModifyUserValidationGroup;
         query   =   "DELETE FROM user__user_group WHERE user_id = ?",
                     resultClass=User.class
 )
+@Data @NoArgsConstructor @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="user_id", unique=true, nullable=false)
+	@EqualsAndHashCode.Include
 	private Long userId;
 
 	@NotNull
@@ -126,125 +132,6 @@ public class User implements Serializable {
 	@Transient
 	private LocalDateTime loginTime;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof User)) // use instanceof instead of getClass, due to hibernate creating proxys of subclasses that are lazy-loaded
-			return false;
-		final User other = (User) obj;
-		if (userId == null) {
-			if (other.getUserId() != null) // remember to change to getter at other, simple property may result always null
-				return false;
-		} else if (!userId.equals(other.getUserId())) // remember to change to getter at other, simple property may result always null
-			return false;
-		return true;
-	}
-
-	public Long getUserId() {
-		return this.userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	public String getEmailAddr() {
-		return this.emailAddr;
-	}
-
-	public void setEmailAddr(String emailAddr) {
-		this.emailAddr = emailAddr;
-	}
-
-	public String getEmailNew() {
-		return this.emailNew;
-	}
-
-	public void setEmailNew(String emailNew) {
-		this.emailNew = emailNew;
-	}
-
-	public String getFullName() {
-		return this.fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
-	public String getLoginName() {
-		return this.loginName;
-	}
-
-	public void setLoginName(String loginName) {
-		this.loginName = loginName;
-	}
-
-	public String getLoginPassword() {
-		return this.loginPassword;
-	}
-
-	public void setLoginPassword(String loginPassword) {
-		this.loginPassword = loginPassword;
-	}
-
-	public String getResetPassword() {
-		return this.resetPassword;
-	}
-
-	public void setResetPassword(String resetPassword) {
-		this.resetPassword = resetPassword;
-	}
-
-	public String getToken() {
-		return this.token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public String getZoneId() {
-		return this.zoneId;
-	}
-
-	public void setZoneId(String zoneId) {
-		this.zoneId = zoneId;
-	}
-
-	public LocalDateTime getModificationTime() {
-		return this.modificationTime;
-	}
-
-	public void setModificationTime(LocalDateTime modificationTime) {
-		this.modificationTime = modificationTime;
-	}
-
-	public List<Bet> getBets() {
-		return this.bets;
-	}
-
-	public void setBets(List<Bet> bets) {
-		this.bets = bets;
-	}
-
 	public Bet addBet(Bet bet) {
 		getBets().add(bet);
 		bet.setUser(this);
@@ -257,38 +144,6 @@ public class User implements Serializable {
 		bet.setUser(null);
 
 		return bet;
-	}
-
-	public Set<Role> getRoles() {
-		return this.roles;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
-
-	public UserStatus getUserStatus() {
-		return this.userStatus;
-	}
-
-	public void setUserStatus(UserStatus userStatus) {
-		this.userStatus = userStatus;
-	}
-
-	public Set<UserGroup> getUserGroups() {
-		return this.userGroups;
-	}
-
-	public void setUserGroups(Set<UserGroup> userGroups) {
-		this.userGroups = userGroups;
-	}
-
-	public List<UserGroup> getOwnerUserGroups() {
-		return this.ownerUserGroups;
-	}
-
-	public void setOwnerUserGroups(List<UserGroup> ownerUserGroups) {
-		this.ownerUserGroups = ownerUserGroups;
 	}
 
 	public UserGroup addOwnerUserGroups(UserGroup ownerUserGroups) {
@@ -305,14 +160,6 @@ public class User implements Serializable {
 		return ownerUserGroups;
 	}
 
-	public List<UserOfEvent> getUserOfEvents() {
-		return this.userOfEvents;
-	}
-
-	public void setUserOfEvents(List<UserOfEvent> userOfEvents) {
-		this.userOfEvents = userOfEvents;
-	}
-
 	public UserOfEvent addUserOfEvent(UserOfEvent userOfEvent) {
 		getUserOfEvents().add(userOfEvent);
 		userOfEvent.setUser(this);
@@ -327,14 +174,6 @@ public class User implements Serializable {
 		return userOfEvent;
 	}
 
-	public List<Chat> getChats() {
-		return chats;
-	}
-
-	public void setChats(List<Chat> chats) {
-		this.chats = chats;
-	}
-
 	public Chat addChat(Chat chat) {
 		getChats().add(chat);
 		chat.setUser(this);
@@ -347,21 +186,5 @@ public class User implements Serializable {
 		chat.setUser(null);
 
 		return chat;
-	}
-
-	public Boolean getIsOnline() {
-		return isOnline;
-	}
-
-	public void setIsOnline(Boolean isOnline) {
-		this.isOnline = isOnline;
-	}
-
-	public LocalDateTime getLoginTime() {
-		return loginTime;
-	}
-
-	public void setLoginTime(LocalDateTime loginTime) {
-		this.loginTime = loginTime;
 	}
 }

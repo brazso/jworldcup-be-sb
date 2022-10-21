@@ -20,8 +20,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -31,7 +32,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name="user_group", uniqueConstraints=@UniqueConstraint(columnNames={"name", "event_id"}))
 @NamedQuery(name="UserGroup.findAll", query="SELECT u FROM UserGroup u")
-@Data @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -133,7 +134,7 @@ public class UserGroup implements Serializable {
 		return chat;
 	}
 
-	// Getters
+	// Calculated getters
 	
 	/**
 	 * Returns {@true} if actual userGroup belongs to Everybody.

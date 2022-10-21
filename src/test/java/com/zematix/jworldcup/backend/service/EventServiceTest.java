@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.EventDao;
+import com.zematix.jworldcup.backend.emun.EventShortDescWithYearEnum;
 import com.zematix.jworldcup.backend.entity.Event;
-import com.zematix.jworldcup.backend.model.EventShortDescWithYearEnum;
 
 /**
  * Contains test functions of {@link EventService} class.

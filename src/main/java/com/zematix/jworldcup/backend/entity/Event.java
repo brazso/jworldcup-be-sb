@@ -16,6 +16,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
  * The persistent class for the event database table.
@@ -24,12 +28,14 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name="event", uniqueConstraints=@UniqueConstraint(columnNames={"year", "short_desc"}))
 @NamedQuery(name="Event.findAll", query="SELECT e FROM Event e")
+@Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Event implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="event_id", unique=true, nullable=false)
+	@EqualsAndHashCode.Include
 	private Long eventId;
 
 	@Column(nullable=false, length=100)
@@ -101,93 +107,6 @@ public class Event implements Serializable {
 	@Transient
 	private LocalDateTime endTime;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((eventId == null) ? 0 : eventId.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Event)) // use instanceof instead of getClass, due to hibernate creating proxys of subclasses that are lazy-loaded
-			return false;
-		Event other = (Event) obj;
-		if (eventId == null) {
-			if (other.getEventId() != null) // remember to change to getter at other, simple property may result always null
-				return false;
-		} else if (!eventId.equals(other.getEventId())) // remember to change to getter at other, simple property may result always null
-			return false;
-		return true;
-	}
-
-	public Long getEventId() {
-		return this.eventId;
-	}
-
-	public void setEventId(Long eventId) {
-		this.eventId = eventId;
-	}
-
-	public String getDescription() {
-		return this.description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getLocation() {
-		return this.location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getShortDesc() {
-		return this.shortDesc;
-	}
-
-	public void setShortDesc(String shortDesc) {
-		this.shortDesc = shortDesc;
-	}
-
-	public Short getYear() {
-		return this.year;
-	}
-
-	public void setYear(Short year) {
-		this.year = year;
-	}
-
-	public String getOrganizer() {
-		return organizer;
-	}
-
-	public void setOrganizer(String organizer) {
-		this.organizer = organizer;
-	}
-
-	public List<Bet> getBets() {
-		return this.bets;
-	}
-
-	public void setBets(List<Bet> bets) {
-		this.bets = bets;
-	}
-
 	public Bet addBet(Bet bet) {
 		getBets().add(bet);
 		bet.setEvent(this);
@@ -200,14 +119,6 @@ public class Event implements Serializable {
 		bet.setEvent(null);
 
 		return bet;
-	}
-
-	public List<Group> getGroups() {
-		return this.groups;
-	}
-
-	public void setGroups(List<Group> groups) {
-		this.groups = groups;
 	}
 
 	public Group addGroup(Group group) {
@@ -224,14 +135,6 @@ public class Event implements Serializable {
 		return group;
 	}
 
-	public List<Match> getMatches() {
-		return this.matches;
-	}
-
-	public void setMatches(List<Match> matches) {
-		this.matches = matches;
-	}
-
 	public Match addMatch(Match match) {
 		getMatches().add(match);
 		match.setEvent(this);
@@ -244,14 +147,6 @@ public class Event implements Serializable {
 		match.setEvent(null);
 
 		return match;
-	}
-
-	public List<Round> getRounds() {
-		return this.rounds;
-	}
-
-	public void setRounds(List<Round> rounds) {
-		this.rounds = rounds;
 	}
 
 	public Round addRound(Round round) {
@@ -268,14 +163,6 @@ public class Event implements Serializable {
 		return round;
 	}
 
-	public List<Team> getTeams() {
-		return this.teams;
-	}
-
-	public void setTeams(List<Team> teams) {
-		this.teams = teams;
-	}
-
 	public Team addTeam(Team team) {
 		getTeams().add(team);
 		team.setEvent(this);
@@ -288,14 +175,6 @@ public class Event implements Serializable {
 		team.setEvent(null);
 
 		return team;
-	}
-
-	public List<WebService> getWebServices() {
-		return this.webServices;
-	}
-
-	public void setWebServices(List<WebService> webServices) {
-		this.webServices = webServices;
 	}
 
 	public WebService addWebService(WebService webService) {
@@ -312,14 +191,6 @@ public class Event implements Serializable {
 		return webService;
 	}
 
-	public List<UserOfEvent> getUserOfEvents() {
-		return this.userOfEvents;
-	}
-
-	public void setUserOfEvents(List<UserOfEvent> userOfEvents) {
-		this.userOfEvents = userOfEvents;
-	}
-
 	public UserOfEvent addUserOfEvent(UserOfEvent userOfEvent) {
 		getUserOfEvents().add(userOfEvent);
 		userOfEvent.setEvent(this);
@@ -332,14 +203,6 @@ public class Event implements Serializable {
 		userOfEvent.setEvent(null);
 
 		return userOfEvent;
-	}
-
-	public List<UserGroup> getUserGroups() {
-		return this.userGroups;
-	}
-
-	public void setUserGroups(List<UserGroup> userGroups) {
-		this.userGroups = userGroups;
 	}
 
 	public UserGroup addUserGroup(UserGroup userGroup) {
@@ -356,14 +219,6 @@ public class Event implements Serializable {
 		return userGroup;
 	}
 
-	public List<Chat> getChats() {
-		return chats;
-	}
-
-	public void setChats(List<Chat> chats) {
-		this.chats = chats;
-	}
-
 	public Chat addChat(Chat chat) {
 		getChats().add(chat);
 		chat.setEvent(this);
@@ -376,42 +231,6 @@ public class Event implements Serializable {
 		chat.setEvent(null);
 
 		return chat;
-	}
-
-	/**
-	 * @return the startTime
-	 */
-	public LocalDateTime getStartTime() {
-		return startTime;
-	}
-
-	/**
-	 * @param startTime the startTime to set
-	 */
-	public void setStartTime(LocalDateTime startTime) {
-		this.startTime = startTime;
-	}
-
-	public LocalDateTime getKnockoutStartTime() {
-		return knockoutStartTime;
-	}
-
-	public void setKnockoutStartTime(LocalDateTime knockoutStartTime) {
-		this.knockoutStartTime = knockoutStartTime;
-	}
-
-	/**
-	 * @return the endTime
-	 */
-	public LocalDateTime getEndTime() {
-		return endTime;
-	}
-
-	/**
-	 * @param endTime the endTime to set
-	 */
-	public void setEndTime(LocalDateTime endTime) {
-		this.endTime = endTime;
 	}
 
 	// calculated getter fields

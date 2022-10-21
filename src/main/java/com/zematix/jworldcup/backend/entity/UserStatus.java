@@ -1,8 +1,19 @@
 package com.zematix.jworldcup.backend.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -12,6 +23,7 @@ import java.util.List;
 @Entity
 @Table(name="user_status")
 @NamedQuery(name="UserStatus.findAll", query="SELECT u FROM UserStatus u")
+@Getter @Setter
 public class UserStatus implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -30,38 +42,6 @@ public class UserStatus implements Serializable {
 	@OneToMany(mappedBy="userStatus")
 	private List<User> users;
 
-	public Long getUserStatusId() {
-		return this.userStatusId;
-	}
-
-	public void setUserStatusId(Long userStatusId) {
-		this.userStatusId = userStatusId;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getStatus() {
-		return this.status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public List<User> getUsers() {
-		return this.users;
-	}
-
-	public void setUsers(List<User> users) {
-		this.users = users;
-	}
-
 	public User addUser(User user) {
 		getUsers().add(user);
 		user.setUserStatus(this);
@@ -75,5 +55,4 @@ public class UserStatus implements Serializable {
 
 		return user;
 	}
-
 }

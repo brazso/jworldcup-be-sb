@@ -1,8 +1,24 @@
 package com.zematix.jworldcup.backend.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -12,12 +28,14 @@ import java.util.List;
 @Entity
 @Table(name="round")
 @NamedQuery(name="Round.findAll", query="SELECT r FROM Round r")
+@Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Round implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="round_id", unique=true, nullable=false)
+	@EqualsAndHashCode.Include
 	private Long roundId;
 
 	@Column(name="is_groupmatch", nullable=false)
@@ -39,53 +57,6 @@ public class Round implements Serializable {
 	@JoinColumn(name="event_id", nullable=false)
 	private Event event;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((roundId == null) ? 0 : roundId.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Round)) // use instanceof instead of getClass, due to hibernate creating proxys of subclasses that are lazy-loaded
-			return false;
-		Round other = (Round) obj;
-		if (roundId == null) {
-			if (other.getRoundId() != null) // remember to change to getter at other, simple property may result always null
-				return false;
-		} else if (!roundId.equals(other.getRoundId())) // remember to change to getter at other, simple property may result always null
-			return false;
-		return true;
-	}
-
-	public Long getRoundId() {
-		return this.roundId;
-	}
-
-	public void setRoundId(Long roundId) {
-		this.roundId = roundId;
-	}
-
-	public Byte getIsGroupmatch() {
-		return this.isGroupmatch;
-	}
-
-	public void setIsGroupmatch(Byte isGroupmatch) {
-		this.isGroupmatch = isGroupmatch;
-	}
-
 	public Boolean getIsGroupmatchAsBoolean() {
 		return this.isGroupmatch == null ? null : this.isGroupmatch == 1;
 	}
@@ -94,36 +65,12 @@ public class Round implements Serializable {
 		this.isGroupmatch = isGroupmatch == null ? null : (isGroupmatch.booleanValue() ? (byte) 1 : (byte) 0);
 	}
 
-	public Byte getIsOvertime() {
-		return this.isOvertime;
-	}
-
-	public void setIsOvertime(Byte isOvertime) {
-		this.isOvertime = isOvertime;
-	}
-
 	public Boolean getIsOvertimeAsBoolean() {
 		return this.isOvertime == null ? null : this.isOvertime == 1;
 	}
 
 	public void setIsOvertimeAsBoolean(Boolean isOvertime) {
 		this.isOvertime = isOvertime == null ? null : (isOvertime.booleanValue() ? (byte) 1 : (byte) 0);
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public List<Match> getMatches() {
-		return this.matches;
-	}
-
-	public void setMatches(List<Match> matches) {
-		this.matches = matches;
 	}
 
 	public Match addMatch(Match match) {
@@ -139,13 +86,4 @@ public class Round implements Serializable {
 
 		return match;
 	}
-
-	public Event getEvent() {
-		return this.event;
-	}
-
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-
 }

@@ -18,6 +18,10 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
  * The persistent class for the bet database table.
@@ -26,12 +30,14 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name="bet", uniqueConstraints=@UniqueConstraint(columnNames={"user_id", "match_id"}))
 @NamedQuery(name="Bet.findAll", query="SELECT b FROM Bet b")
+@Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Bet implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="bet_id", unique=true, nullable=false)
+	@EqualsAndHashCode.Include
 	private Long betId;
 
 	@NotNull
@@ -61,92 +67,4 @@ public class Bet implements Serializable {
 	
 	@Transient
 	private Integer score;
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((betId == null) ? 0 : betId.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Bet)) // use instanceof instead of getClass, due to hibernate creating proxys of subclasses that are lazy-loaded
-			return false;
-		Bet other = (Bet) obj;
-		if (betId == null) {
-			if (other.getBetId() != null) // remember to change to getter at other, simple property may result always null
-				return false;
-		} else if (!betId.equals(other.getBetId())) // remember to change to getter at other, simple property may result always null
-			return false;
-		return true;
-	}
-
-	public Long getBetId() {
-		return this.betId;
-	}
-
-	public void setBetId(Long betId) {
-		this.betId = betId;
-	}
-
-	public Byte getGoalNormalByTeam1() {
-		return this.goalNormalByTeam1;
-	}
-
-	public void setGoalNormalByTeam1(Byte goalNormalByTeam1) {
-		this.goalNormalByTeam1 = goalNormalByTeam1;
-	}
-
-	public Byte getGoalNormalByTeam2() {
-		return this.goalNormalByTeam2;
-	}
-
-	public void setGoalNormalByTeam2(Byte goalNormalByTeam2) {
-		this.goalNormalByTeam2 = goalNormalByTeam2;
-	}
-
-	public Event getEvent() {
-		return this.event;
-	}
-
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-
-	public Match getMatch() {
-		return this.match;
-	}
-
-	public void setMatch(Match match) {
-		this.match = match;
-	}
-
-	public User getUser() {
-		return this.user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Integer getScore() {
-		return score;
-	}
-
-	public void setScore(Integer score) {
-		this.score = score;
-	}
-
 }

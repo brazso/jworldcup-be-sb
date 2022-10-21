@@ -1,8 +1,22 @@
 package com.zematix.jworldcup.backend.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -12,6 +26,7 @@ import java.util.List;
 @Entity
 @Table(name="group_")
 @NamedQuery(name="Group.findAll", query="SELECT g FROM Group g")
+@Getter @Setter
 public class Group implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -41,54 +56,6 @@ public class Group implements Serializable {
 	//bi-directional many-to-one association to Team
 	@OneToMany(mappedBy="group")
 	private List<Team> teams;
-
-	public Long getGroupId() {
-		return this.groupId;
-	}
-
-	public void setGroupId(Long groupId) {
-		this.groupId = groupId;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Event getEvent() {
-		return this.event;
-	}
-
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-
-	public Team getTeam1() {
-		return this.team1;
-	}
-
-	public void setTeam1(Team team1) {
-		this.team1 = team1;
-	}
-
-	public Team getTeam2() {
-		return this.team2;
-	}
-
-	public void setTeam2(Team team2) {
-		this.team2 = team2;
-	}
-
-	public List<Team> getTeams() {
-		return this.teams;
-	}
-
-	public void setTeams(List<Team> teams) {
-		this.teams = teams;
-	}
 
 	public Team addTeam(Team team) {
 		getTeams().add(team);

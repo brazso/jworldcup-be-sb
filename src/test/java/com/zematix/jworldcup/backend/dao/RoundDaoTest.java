@@ -15,9 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Ordering;
+import com.zematix.jworldcup.backend.emun.EventShortDescWithYearEnum;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Round;
-import com.zematix.jworldcup.backend.model.EventShortDescWithYearEnum;
 
 /**
  * Contains test functions of {@link RoundDao} class.

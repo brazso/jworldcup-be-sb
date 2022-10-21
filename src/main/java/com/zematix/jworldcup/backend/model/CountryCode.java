@@ -2,6 +2,10 @@ package com.zematix.jworldcup.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class CountryCode {
 	@JsonProperty("CLDR display name")
 	private String displayName; // "Taiwan";
@@ -66,41 +70,4 @@ public class CountryCode {
 //	private String "official_name_es"; // null
 //	private String "official_name_fr"; // null
 //	private String "official_name_ru"; // null
-	/**
-	 * @return the displayName
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
-	/**
-	 * @param displayName the displayName to set
-	 */
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-	/**
-	 * @return the fifa
-	 */
-	public String getFifa() {
-		return fifa;
-	}
-	/**
-	 * @param fifa the fifa to set
-	 */
-	public void setFifa(String fifa) {
-		this.fifa = fifa;
-	}
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
 }

@@ -14,6 +14,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
  * The persistent class for the role database table.
@@ -22,6 +25,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="role")
 @NamedQuery(name="Role.findAll", query="SELECT r FROM Role r")
+@Getter @Setter
 public class Role implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -48,37 +52,4 @@ public class Role implements Serializable {
 			}
 		)
 	private Set<User> users;
-
-	public Long getRoleId() {
-		return this.roleId;
-	}
-
-	public void setRoleId(Long roleId) {
-		this.roleId = roleId;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getRole() {
-		return this.role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public Set<User> getUsers() {
-		return this.users;
-	}
-
-	public void setUsers(Set<User> users) {
-		this.users = users;
-	}
-
 }

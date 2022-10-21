@@ -13,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
  * The persistent class for the user_of_event database table.
@@ -21,6 +24,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="user_of_event")
 @NamedQuery(name="UserOfEvent.findAll", query="SELECT u FROM UserOfEvent u")
+@Getter @Setter
 public class UserOfEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -48,45 +52,4 @@ public class UserOfEvent implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="fav_knockout_team_id")
 	private Team favouriteKnockoutTeam;
-
-	public Long getUserOfEventId() {
-		return this.userOfEventId;
-	}
-
-	public void setUserOfEventId(Long userOfEventId) {
-		this.userOfEventId = userOfEventId;
-	}
-
-	public User getUser() {
-		return this.user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Event getEvent() {
-		return this.event;
-	}
-
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-
-	public Team getFavouriteGroupTeam() {
-		return this.favouriteGroupTeam;
-	}
-
-	public void setFavouriteGroupTeam(Team favouriteGroupTeam) {
-		this.favouriteGroupTeam = favouriteGroupTeam;
-	}
-
-	public Team getFavouriteKnockoutTeam() {
-		return this.favouriteKnockoutTeam;
-	}
-
-	public void setFavouriteKnockoutTeam(Team favouriteKnockoutTeam) {
-		this.favouriteKnockoutTeam = favouriteKnockoutTeam;
-	}
-
 }

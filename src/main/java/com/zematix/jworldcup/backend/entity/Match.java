@@ -19,6 +19,10 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
  * The persistent class for the match database table.
@@ -27,12 +31,14 @@ import javax.validation.constraints.Min;
 @Entity
 @Table(name="match_")
 @NamedQuery(name="Match.findAll", query="SELECT m FROM Match m")
+@Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Match implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="match_id", unique=true, nullable=false)
+	@EqualsAndHashCode.Include
 	private Long matchId;
 
 	@Min(0) @Max(99)
@@ -100,125 +106,6 @@ public class Match implements Serializable {
 	@Transient
 	private Integer resultSignByTeam1;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((matchId == null) ? 0 : matchId.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Match)) // use instanceof instead of getClass, due to hibernate creating proxys of subclasses that are lazy-loaded
-			return false;
-		Match other = (Match) obj;
-		if (matchId == null) {
-			if (other.getMatchId() != null) // remember to change to getter at other, simple property may result always null
-				return false;
-		} else if (!matchId.equals(other.getMatchId())) // remember to change to getter at other, simple property may result always null
-			return false;
-		return true;
-	}
-
-	public Long getMatchId() {
-		return this.matchId;
-	}
-
-	public void setMatchId(Long matchId) {
-		this.matchId = matchId;
-	}
-
-	public Byte getGoalExtraByTeam1() {
-		return this.goalExtraByTeam1;
-	}
-
-	public void setGoalExtraByTeam1(Byte goalExtraByTeam1) {
-		this.goalExtraByTeam1 = goalExtraByTeam1;
-	}
-
-	public Byte getGoalExtraByTeam2() {
-		return this.goalExtraByTeam2;
-	}
-
-	public void setGoalExtraByTeam2(Byte goalExtraByTeam2) {
-		this.goalExtraByTeam2 = goalExtraByTeam2;
-	}
-
-	public Byte getGoalNormalByTeam1() {
-		return this.goalNormalByTeam1;
-	}
-
-	public void setGoalNormalByTeam1(Byte goalNormalByTeam1) {
-		this.goalNormalByTeam1 = goalNormalByTeam1;
-	}
-
-	public Byte getGoalNormalByTeam2() {
-		return this.goalNormalByTeam2;
-	}
-
-	public void setGoalNormalByTeam2(Byte goalNormalByTeam2) {
-		this.goalNormalByTeam2 = goalNormalByTeam2;
-	}
-
-	public Byte getGoalPenaltyByTeam1() {
-		return this.goalPenaltyByTeam1;
-	}
-
-	public void setGoalPenaltyByTeam1(Byte goalPenaltyByTeam1) {
-		this.goalPenaltyByTeam1 = goalPenaltyByTeam1;
-	}
-
-	public Byte getGoalPenaltyByTeam2() {
-		return this.goalPenaltyByTeam2;
-	}
-
-	public void setGoalPenaltyByTeam2(Byte goalPenaltyByTeam2) {
-		this.goalPenaltyByTeam2 = goalPenaltyByTeam2;
-	}
-
-	public Short getMatchN() {
-		return this.matchN;
-	}
-
-	public void setMatchN(Short matchN) {
-		this.matchN = matchN;
-	}
-
-	public String getParticipantsRule() {
-		return this.participantsRule;
-	}
-
-	public void setParticipantsRule(String participantsRule) {
-		this.participantsRule = participantsRule;
-	}
-
-	public LocalDateTime getStartTime() {
-		return this.startTime;
-	}
-
-	public void setStartTime(LocalDateTime startTime) {
-		this.startTime = startTime;
-	}
-
-	public List<Bet> getBets() {
-		return this.bets;
-	}
-
-	public void setBets(List<Bet> bets) {
-		this.bets = bets;
-	}
-
 	public Bet addBet(Bet bet) {
 		getBets().add(bet);
 		bet.setMatch(this);
@@ -232,45 +119,4 @@ public class Match implements Serializable {
 
 		return bet;
 	}
-
-	public Event getEvent() {
-		return this.event;
-	}
-
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-
-	public Round getRound() {
-		return this.round;
-	}
-
-	public void setRound(Round round) {
-		this.round = round;
-	}
-
-	public Team getTeam1() {
-		return this.team1;
-	}
-
-	public void setTeam1(Team team1) {
-		this.team1 = team1;
-	}
-
-	public Team getTeam2() {
-		return this.team2;
-	}
-
-	public void setTeam2(Team team2) {
-		this.team2 = team2;
-	}
-
-	public Integer getResultSignByTeam1() {
-		return resultSignByTeam1;
-	}
-
-	public void setResultSignByTeam1(Integer resultSignByTeam1) {
-		this.resultSignByTeam1 = resultSignByTeam1;
-	}
-
 }

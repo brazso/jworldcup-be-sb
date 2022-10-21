@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.zematix.jworldcup.backend.model.EventShortDescWithYearEnum;
+import com.zematix.jworldcup.backend.emun.EventShortDescWithYearEnum;
 import com.zematix.jworldcup.backend.model.GroupPosition;
 import com.zematix.jworldcup.backend.model.GroupTeam;
 import com.zematix.jworldcup.backend.model.Pair;

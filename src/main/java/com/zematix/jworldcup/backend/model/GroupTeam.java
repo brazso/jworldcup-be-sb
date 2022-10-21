@@ -9,15 +9,18 @@ import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.MatchService;
 import com.zematix.jworldcup.backend.service.ServerBase;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Contains a {@link Team} and auxiliary data to calculate its position in the group.
  */
+@Getter @Setter
 public class GroupTeam extends ServerBase {
 
-	// "@Inject Logger logger" cannot be used here in non CDI environment
-//	private static final Logger logger = LoggerFactory.getLogger(GroupTeam.class);
-
 	//@Inject - cannot be used in non CDI environment
+	@Getter(value = AccessLevel.NONE) @Setter(value = AccessLevel.NONE)
 	private MatchService matchService;
 	
 	private Team team;
@@ -55,63 +58,6 @@ public class GroupTeam extends ServerBase {
 		this.playedMatches = playedMatches;
 		
 		this.isTeamInGroupFinished = playedMatches != null && team.getGroup().getTeams().size()-1 == playedMatches.size();
-	}
-
-	/**
-	 * @return the team
-	 */
-	public Team getTeam() {
-		return team;
-	}
-	/**
-	 * @param team the team to set
-	 */
-	public void setTeam(Team team) {
-		this.team = team;
-	}
-	/**
-	 * @return the playedMatches
-	 */
-	public List<Match> getPlayedMatches() {
-		return playedMatches;
-	}
-	/**
-	 * @param playedMatches the playedMatches to set
-	 */
-	public void setPlayedMatches(List<Match> playedMatches) {
-		this.playedMatches = playedMatches;
-	}
-	/**
-	 * @return the filterTeamIds
-	 */
-	public List<Long> getFilterTeamIds() {
-		return filterTeamIds;
-	}
-	/**
-	 * @param filterTeamIds the filterTeamIds to set
-	 */
-	public void setFilterTeamIds(List<Long> filterTeamIds) {
-		this.filterTeamIds = filterTeamIds;
-	}
-	/**
-	 * @return the positionInGroup
-	 */
-	public int getPositionInGroup() {
-		return positionInGroup;
-	}
-	/**
-	 * @param positionInGroup the positionInGroup to set
-	 */
-	public void setPositionInGroup(int positionInGroup) {
-		this.positionInGroup = positionInGroup;
-	}
-
-	public boolean isTeamInGroupFinished() {
-		return isTeamInGroupFinished;
-	}
-
-	public void setTeamInGroupFinished(boolean isTeamInGroupFinished) {
-		this.isTeamInGroupFinished = isTeamInGroupFinished;
 	}
 
 	// calculated fields
