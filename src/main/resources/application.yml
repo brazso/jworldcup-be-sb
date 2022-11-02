@@ -1,6 +1,10 @@
 # Contains application parameters for production environment. Any value can be overriden 
 # in other application-{profile} files.
 
+# sensitive secrets are stored in a separated config file, #SECRET labels refer to them here 
+#where their values are already obsolete
+spring.config.import: optional:secrets.yml
+
 # Spring
 spring:
   application:
@@ -21,8 +25,8 @@ spring:
   datasource:
     #driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
-    username: worldcup
-    password: worldcup.org
+    #username: worldcup #SECRET
+    #password: worldcup.org #SECRET
     hikari:
       maximumPoolSize: 20
       transactionIsolation: TRANSACTION_READ_COMMITTED
@@ -45,17 +49,11 @@ server:
     context-path: "/jworldcup"
     
 # Security
-#security:
-#  oauth2:
-#    resource:
-#      jwt:
-#        key-uri: "http://zematix.hu/uaa/oauth/token_key"
-jwt.secret: jworldcup-sensitive-secret-key # remember to change it in real production environment!
+#jwt.secret: jworldcup-sensitive-secret-key #SECRET
 
 # Application
 app:
   url: https://worldcup.zematix.hu/
-  key: dummy0sensitive # obsolete
   version:
     number: 0.6.0
     date: 2021-04-29
@@ -71,10 +69,8 @@ app:
       candidate: 3 # default 0 means no delete of abandoned candidate users at all
       emailModification: 3 # default 0 means no delete of abandoned email modifications at all
       passwordReset: 3 # default 0 means no delete of abandoned reset passwords at all
-  reCaptcha:
-    siteKey: 6LdAnY0iAAAAAPMFHecAgzoOH9caOgCD52OwpTty
-    secretKey: 6LdAnY0iAAAAALusuamLTrTwloLRU9UJ51IM6u2f
-     
+  #reCaptcha:
+    #secretKey: 6LdAnY0iAAAAALusuamLTrTwloLRU9UJ51IM6u2f #SECRET
 
 # Cookie
 cookie.maxAge: 1209600
@@ -83,8 +79,8 @@ cookie.maxAge: 1209600
 mail.smtp:
   host: smtp.zoho.com
   port: 465
-  user: branyiczky.zsolt@zematix.hu
-  pass: 94Cmyiyy7bMI
+  #user: branyiczky.zsolt@zematix.hu #SECRET
+  #pass: 94Cmyiyy7bMI #SECRET
   auth: true
   starttls.enable: true
   socketFactory.class: javax.net.ssl.SSLSocketFactory

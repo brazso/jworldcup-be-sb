@@ -2,6 +2,10 @@
 # It overrides the parameter values used in application.yml.
 # It gets activated by giving option "-Dapplication.environment=develop" to JVM
 
+# sensitive secrets are stored in a separated config file, #SECRET labels refer to them here 
+# where their values are already obsolete
+spring.config.import: optional:secrets-develop.yml
+
 # Spring 
 spring:
   datasource:
@@ -22,6 +26,9 @@ spring:
       plugin.jobInitializer:
         fileNames: quartz-jobs-develop.xml
 
+# Security
+jwt.secret: jworldcup-sensitive-secret-key
+
 # Application
 app:
   url: http://localhost:4200/
@@ -33,8 +40,8 @@ app:
 mail.smtp:
   host: smtp.mailtrap.io
   port: 2525
-  user: 16febbd3b2dff0
-  pass: 4b1dc44f26f800
+  #user: 16febbd3b2dff0 #SECRET
+  #pass: 4b1dc44f26f800 #SECRET
 
 # Logging
 logging:
