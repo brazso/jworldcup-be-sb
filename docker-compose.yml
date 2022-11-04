@@ -13,9 +13,9 @@ services:
     ports:
       - 3306:3306
     environment: 
-      MYSQL_ROOT_PASSWORD: osboxes.org
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-osboxes.org}
       MYSQL_USER: worldcup
-      MYSQL_PASSWORD: worldcup.org
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-worldcup.org}
       MYSQL_DATABASE: worldcup
 #    networks:
 #      - php-network
@@ -61,8 +61,22 @@ services:
     - "5671:5671"
     - "61613:61613"
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
+
+#  springboot:
+#    build:
+#      context: .
+#      dockerfile: docker/springboot/Dockerfile
+#    container_name: jworldcup.springboot
+#    ports:
+#    - "8090:8090"
+#    image: jworldcup.springboot
+#    profiles:
+#      - production
+#    depends_on:
+#      - mysql
+#      - rabbitmq
 
 ## Names our volume
 volumes:

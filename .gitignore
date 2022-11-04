@@ -34,3 +34,6 @@ out/
 ### Others
 .dbeaver
 bin/
+
+### Sensitive secrets
+.env.prod

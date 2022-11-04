@@ -3,7 +3,7 @@
 # It gets activated by giving option "-Dapplication.environment=develop" to JVM
 
 # sensitive secrets are stored in a separated config file, #SECRET labels refer to them here 
-# where their values are already obsolete
+# where their values are already obsolete here
 spring.config.import: optional:secrets-develop.yml
 
 # Spring 
@@ -11,7 +11,6 @@ spring:
   datasource:
     #driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
-    username: worldcup
     password: worldcup.org
     hikari:
       maximumPoolSize: 3
