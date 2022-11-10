@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 
 services:
 
@@ -19,6 +19,7 @@ services:
       MYSQL_DATABASE: worldcup
 #    networks:
 #      - php-network
+#      - jworldcup-mysql
     volumes:
       - mysqld:/var/run/mysqld
 #      - ./src/test/resources/database/worldcup_test.sql:/docker-entrypoint-initdb.d/2_worldcup_test.sql
@@ -64,20 +65,26 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
 
-#  springboot:
-#    build:
-#      context: .
-#      dockerfile: docker/springboot/Dockerfile
-#    container_name: jworldcup.springboot
-#    ports:
-#    - "8090:8090"
-#    image: jworldcup.springboot
-#    profiles:
-#      - production
-#    depends_on:
-#      - mysql
-#      - rabbitmq
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    container_name: jworldcup.backend
+    ports:
+    - "8090:8090"
+    image: jworldcup.backend
+    #command: sh -c 'sleep 30; /wait-for-it.sh -t 0 mysql:3306'
+    profiles:
+      - production
+    depends_on:
+      - mysql
+      - rabbitmq
+#    networks:
+#      - jworldcup-mysql
 
 ## Names our volume
 volumes:
   mysqld:
+
+#networks:
+#  jworldcup-mysql: 

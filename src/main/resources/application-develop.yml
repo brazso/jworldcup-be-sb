@@ -42,6 +42,11 @@ mail.smtp:
   #user: 16febbd3b2dff0 #SECRET
   #pass: 4b1dc44f26f800 #SECRET
 
+ # RabbitMQ
+ rabbitMQ:
+   user: guest
+   password: guest
+
 # Logging
 logging:
   level:

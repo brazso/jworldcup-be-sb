@@ -24,7 +24,7 @@ spring:
           time_zone: UTC
   datasource:
     #driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
+    url: jdbc:mysql://mysql:3306/worldcup?useLegacyDatetimeCode=false # mysql host runs in an docker image
     username: worldcup
     #password: worldcup.org #SECRET
     hikari:
@@ -86,3 +86,8 @@ mail.smtp:
   socketFactory.class: javax.net.ssl.SSLSocketFactory
   connectiontimeout: 5000
   timeout: 5000
+
+# RabbitMQ
+rabbitMQ:
+  #user: guest #SECRET
+  #password: guest #SECRET
