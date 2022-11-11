@@ -17,9 +17,6 @@ services:
       MYSQL_USER: worldcup
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-worldcup.org}
       MYSQL_DATABASE: worldcup
-#    networks:
-#      - php-network
-#      - jworldcup-mysql
     volumes:
       - mysqld:/var/run/mysqld
 #      - ./src/test/resources/database/worldcup_test.sql:/docker-entrypoint-initdb.d/2_worldcup_test.sql
@@ -43,8 +40,6 @@ services:
 ##      PMA_PORT: 3306
 ##      PMA_USER: worldcup
 ##      PMA_PASSWORD: worldcup.org
-#    networks:
-#      - php-network
     volumes:
       - mysqld:/var/run/mysqld
       - ./docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
@@ -79,12 +74,7 @@ services:
     depends_on:
       - mysql
       - rabbitmq
-#    networks:
-#      - jworldcup-mysql
 
 ## Names our volume
 volumes:
   mysqld:
-
-#networks:
-#  jworldcup-mysql: 

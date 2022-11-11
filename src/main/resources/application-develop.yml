@@ -43,7 +43,7 @@ mail.smtp:
   #pass: 4b1dc44f26f800 #SECRET
 
  # RabbitMQ
- rabbitMQ:
+rabbitMQ:
    user: guest
    password: guest
 

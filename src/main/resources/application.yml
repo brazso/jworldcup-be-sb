@@ -24,7 +24,7 @@ spring:
           time_zone: UTC
   datasource:
     #driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://mysql:3306/worldcup?useLegacyDatetimeCode=false # mysql host runs in an docker image
+    url: jdbc:mysql://mysql:3306/worldcup?useLegacyDatetimeCode=false # mysql host runs in a docker container
     username: worldcup
     #password: worldcup.org #SECRET
     hikari:
@@ -88,6 +88,27 @@ mail.smtp:
   timeout: 5000
 
 # RabbitMQ
-rabbitMQ:
+#rabbitMQ:
   #user: guest #SECRET
   #password: guest #SECRET
+
+# Logging
+#logging:
+#  level:
+    #org.hibernate.SQL: DEBUG
+    #org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    #org.springframework.orm.jpa: TRACE
+#    org.springframework.transaction.interceptor: TRACE
+#    com.zaxxer.hikari: TRACE
+#    com.mysql.cj.jdbc: TRACE
+    
+#    org.springframework.security.ldap: TRACE
+#    org.springframework.ldap: TRACE
+#    org.springframework.messaging.simp: WARN
+    
+#    org.springframework.messaging: DEBUG
+#    org.springframework.security.web.authentication: TRACE
+#    org.springframework.security.core.session: TRACE
+#    org.springframework.cache.interceptor: TRACE
+    
+#    com.zematix.jworldcup.backend: TRACE
