@@ -24,7 +24,7 @@ public class WebSocketDevelopConfiguration implements WebSocketMessageBrokerConf
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
 		registry.setApplicationDestinationPrefixes("/app");
 
-		// Enables a full featured broker (RabbitMQ here)
+		// Enables a full featured RabbitMQ broker
         registry.enableStompBrokerRelay("/topic", "/queue")
                 /*.setRelayHost("localhost")
                 .setRelayPort(61613)

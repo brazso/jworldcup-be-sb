@@ -13,6 +13,9 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 	
+	@Value("${rabbitMQ.host}")
+	private String rabbitMQHost;
+
 	@Value("${rabbitMQ.user}")
 	private String rabbitMQUser;
 
@@ -31,10 +34,10 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
 		registry.setApplicationDestinationPrefixes("/app");
 
-		// Enables a full featured broker (RabbitMQ here)
+		// Enables a full featured RabbitMQ broker
         registry.enableStompBrokerRelay("/topic", "/queue")
-                /*.setRelayHost("localhost")
-                .setRelayPort(61613)*/
+                .setRelayHost(rabbitMQHost)
+                //.setRelayPort(61613)
                 .setClientLogin(rabbitMQUser)
                 .setClientPasscode(rabbitMQPassword);
 	}
