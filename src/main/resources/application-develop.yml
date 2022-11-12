@@ -44,8 +44,7 @@ mail.smtp:
 
  # RabbitMQ
 rabbitMQ:
-   user: guest
-   password: guest
+   password: jworldcup
 
 # Logging
 logging:

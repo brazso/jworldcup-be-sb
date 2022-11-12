@@ -39,6 +39,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                 .setRelayHost(rabbitMQHost)
                 //.setRelayPort(61613)
                 .setClientLogin(rabbitMQUser)
-                .setClientPasscode(rabbitMQPassword);
+                .setClientPasscode(rabbitMQPassword)
+                .setSystemLogin(rabbitMQUser)
+                .setSystemPasscode(rabbitMQPassword);
 	}
 }

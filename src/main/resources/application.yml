@@ -90,8 +90,8 @@ mail.smtp:
 # RabbitMQ
 rabbitMQ:
   host: rabbitmq # rabbitMQ host runs in a docker container
-  #user: guest #SECRET
-  #password: guest #SECRET
+  user: jworldcup
+  #password: jworldcup #SECRET
 
 # Logging
 #logging:

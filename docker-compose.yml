@@ -46,8 +46,12 @@ services:
 
   rabbitmq:
     build:
-      context: docker/rabbit-mq
+      context: docker/rabbitmq
       dockerfile: Dockerfile
+      args:
+        ENV_POSTFIX: ${ENV_POSTFIX:-}
+        RABBITMQ_JWORLDCUP_PASS: ${RABBITMQ_JWORLDCUP_PASS:-}
+        RABBITMQ_ADMIN_PASS: ${RABBITMQ_ADMIN_PASS:-}
     image: jworldcup.rabbitmq
     container_name: jworldcup.rabbitmq
     ports:
@@ -57,9 +61,8 @@ services:
     - "5671:5671"
     - "61613:61613"
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
-
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_JWORLDCUP_USER:-jwordlcup}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_JWORLDCUP_PASS:-jworldcup}
   backend:
     build:
       context: .

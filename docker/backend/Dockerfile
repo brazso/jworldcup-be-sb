@@ -11,4 +11,4 @@ USER spring:spring
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar 
 
-ENTRYPOINT sleep 30; java -Djava.security.egd=file:/dev/./urandom -jar app.jar
+ENTRYPOINT sleep 20; java -Djava.security.egd=file:/dev/./urandom -jar app.jar

@@ -19,23 +19,42 @@ Data persisted to mysql database in the project. There is a remote database for 
 
 There are more docker images in the project which must be started by developers before launching the IDE. At least it is a must for the test phase in the build process, or for just running the application. All of them are located in the docker folder. One of them contains development databases, 2 mysql databases, for unit and integration tests. The other image contains a phpmyadmin application, an excellent tool to manage mysql databases. The latter one is also served to create database export file for the application tests, it is always loaded automatically in the beginning of the unit test phase.
 
-This is how to start the images from command prompt. It should be executed from the docker folder.
+This is how to start the images from command prompt. It should be executed from the project root folder, where docker folder exists.
 
 ```
 $ docker-compose up
 ```
 
-It is recommended to shutdown the running images if the work is over. It should be executed from the docker folder.
+It is recommended to shutdown the running images if the work is over.
 
 ```
 $ docker-compose down
 ```
 
-If you have to update docker mysql images in docker/mysql folder, the docker images must be rebuilt again. It should be executed from the docker folder.
+If you have to update docker mysql images in docker/mysql folder, the docker images must be rebuilt again.
 
 ```
 $ docker-compose build
 ```
+
+Or you can start the images with rebuilding those before in one command.
+
+```
+$ docker-compose up --build
+```
+
+The production application also runs in docker containers. There are the altered starter and finish commands for production stage, where build argument is optional at starter.
+```
+$ docker-compose --profile production --env-file .env.prod up --build
+$ docker-compose --profile production down
+```
+
+If you just want to peek to a running docker container, e.g. rabbitmq, run the following command. You may retrive all used running docker services from docker-compose.yml file.
+
+```
+$ docker exec -it jworldcup.rabbitmq bash
+```
+
 ### Run application from Gradle
 
 full build

@@ -1,0 +1,41 @@
+{
+    "users": [
+        {
+            "name": "jworldcup",
+            "password": "jworldcup",
+            "tags": ""
+        },
+        {
+            "name": "admin",
+            "password": "admin",
+            "tags": "administrator"
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "jworldcup",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "admin",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        
+    ],
+    "parameters": [],
+    "policies": [],
+    "exchanges": [],
+    "bindings": [],
+    "queues": []
+}
