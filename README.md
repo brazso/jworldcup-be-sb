@@ -84,7 +84,7 @@ gradle -stop
 
 ### PhpMyAdmin
 
-After the docker images started you may open phpMyAdmin in a web browser using [http://localhost:8080](http://localhost:8080) url.
+After the docker images started you may open phpMyAdmin in a web browser using [http://localhost:8100](http://localhost:8100) url.
 
 Select the local developer server as a developer. Use worldcup / worldcup.org for authentication.
 There are 2 databases enlisted
