@@ -116,5 +116,5 @@ If you use Eclipse IDE (4.23 2022-03) it is recommended to install the following
 * SonarLint 7.3.1 (sourcecode analyser tool)
 
 ### Rest API
-* Swagger UI page is [http://localhost:8090/jworldcup/swagger-ui.html](http://localhost:8090/jworldcup/swagger-ui.html)
-* OpenAPI description is available at the following url for json format: [http://localhost:8090/jworldcup/v3/api-docs](http://localhost:8090/jworldcup/v3/api-docs)
+* Swagger UI page is [http://localhost:8090/jworldcup-api/swagger-ui.html](http://localhost:8090/jworldcup-api/swagger-ui.html)
+* OpenAPI description is available at the following url for json format: [http://localhost:8090/jworldcup-api/v3/api-docs](http://localhost:8090/jworldcup-api/v3/api-docs)
