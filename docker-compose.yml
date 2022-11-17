@@ -5,8 +5,8 @@ services:
   mysql:
     build:
 #      context: docker/mysql
-      context: .
 #      dockerfile: Dockerfile
+      context: .
       dockerfile: docker/mysql/Dockerfile
     container_name: jworldcup.mysql
     image: jworldcup.mysql
@@ -46,8 +46,10 @@ services:
 
   rabbitmq:
     build:
-      context: docker/rabbitmq
-      dockerfile: Dockerfile
+#      context: docker/rabbitmq
+#      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/rabbitmq/Dockerfile
       args:
         ENV_POSTFIX: ${ENV_POSTFIX:-}
         RABBITMQ_JWORLDCUP_PASS: ${RABBITMQ_JWORLDCUP_PASS:-}

@@ -37,3 +37,4 @@ bin/
 
 ### Sensitive secrets
 .env.prod
+certs/
