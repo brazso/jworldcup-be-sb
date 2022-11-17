@@ -57,14 +57,18 @@ services:
     image: jworldcup.rabbitmq
     container_name: jworldcup.rabbitmq
     ports:
-    - "15672:15672"
-    - "15674:15674"
-    - "5672:5672"
-    - "5671:5671"
-    - "61613:61613"
+    - "15672:15672" # HTTP API clients, management UI and rabbitmqadmin without TLS
+    - "15671:15671" # HTTP API clients, management UI and rabbitmqadmin with TLS
+    - "15674:15674" # STOMP-over-WebSockets clients without TLS
+    - "15673:15673" # STOMP-over-WebSockets clients with TLS
+    - "5672:5672" # used by AMQP 0-9-1 and AMQP 1.0 clients without TLS
+    - "5671:5671" # used by AMQP 0-9-1 and AMQP 1.0 clients with TLS
+    - "61613:61613" # STOMP clients without TLS
+    - "61614:61614" # STOMP clients without with TLS
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_JWORLDCUP_USER:-jwordlcup}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_JWORLDCUP_PASS:-jworldcup}
+      
   backend:
     build:
       context: .
