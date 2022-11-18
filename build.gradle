@@ -30,7 +30,7 @@ lombok { // id "io.freefair.lombok"
 }
 
 group = 'com.zematix.jworldcup'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.0'
 sourceCompatibility = '17'
 
 bootRun {
