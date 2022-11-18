@@ -8,6 +8,7 @@ import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.stereotype.Component;
 
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.ServerBase;
@@ -16,6 +17,7 @@ import com.zematix.jworldcup.backend.service.ServerBase;
  * Retrieve missing match results or team participants of an event
  * from Open League DB web service. 
  */
+@Component // might be injected from test
 public class RetrieveMatchResultsJob extends ServerBase implements Job {
 
 	@Inject
@@ -23,7 +25,7 @@ public class RetrieveMatchResultsJob extends ServerBase implements Job {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.info("RetrieveMatchResultsJob execution started: schedulerService="+schedulerService);
+		logger.info("RetrieveMatchResultsJob execution started: schedulerService={}", schedulerService);
 
 		JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 		Long eventId = (Long)dataMap.get("eventId"); //getLong method throws ClassCastException if the map does not contain the key

@@ -92,7 +92,7 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 	 */
 	@Operation(summary = "Retrieve actual backend version", description = "Retrieve actual backend version")
 	@GetMapping(value = "/backend-version")
-	public ResponseEntity<GenericResponse<String>> whoami() throws ServiceException {
+	public ResponseEntity<GenericResponse<String>> whoami() {
 		var version = this.buildProperties.getVersion();
 		return buildResponseEntityWithOK(new GenericResponse<>(version));
 	}

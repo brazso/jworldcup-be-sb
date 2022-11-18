@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.QUser;
@@ -48,8 +47,7 @@ public class UserGroupDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<UserGroup> getAllUserGroups() {
 		TypedQuery<UserGroup> query = getEntityManager().createNamedQuery("UserGroup.findAll", UserGroup.class);
-		List<UserGroup> userGroups = query.getResultList();
-		return userGroups;
+		return query.getResultList();
 	}
 	
 	/**

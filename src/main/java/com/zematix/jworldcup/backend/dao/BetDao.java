@@ -1,11 +1,9 @@
 package com.zematix.jworldcup.backend.dao;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
@@ -17,10 +15,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.QBet;
-import com.zematix.jworldcup.backend.entity.QUserGroup;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
-import com.zematix.jworldcup.backend.exception.ServiceException;
 
 /**
  * Database operations around {@link Bet} entities.
@@ -29,8 +25,8 @@ import com.zematix.jworldcup.backend.exception.ServiceException;
 @Transactional
 public class BetDao extends DaoBase {
 
-	@Inject
-	private CommonDao commonDao;
+//	@Inject
+//	private CommonDao commonDao;
 
 	/**
 	 * Returns a list of all {@link Bet} entities from database.
@@ -99,7 +95,7 @@ public class BetDao extends DaoBase {
 	 * @return found bets
 	 */
 	@Transactional(readOnly = true)
-	public List<Bet>  retrieveBetsByMatchAndUserGroup(Long matchId, Long userGroupId) throws ServiceException {
+	public List<Bet>  retrieveBetsByMatchAndUserGroup(Long matchId, Long userGroupId) {
 		List<Bet> bets = null;
 		checkNotNull(matchId);
 		checkNotNull(userGroupId);

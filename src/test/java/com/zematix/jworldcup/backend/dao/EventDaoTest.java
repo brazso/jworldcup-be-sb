@@ -54,7 +54,7 @@ public class EventDaoTest {
 	 */
 	@Test
 	public void /*Event*/ findLastEvent() {
-		Event expectedLastEvent = commonDao.findEntityById(Event.class, 10L);
+		Event expectedLastEvent = commonDao.findEntityById(Event.class, 11L); // increase me by one in case of new event
 		Event lastEvent = eventDao.findLastEvent();
 		
 		assertEquals(expectedLastEvent, lastEvent);

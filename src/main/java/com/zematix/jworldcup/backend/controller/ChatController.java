@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zematix.jworldcup.backend.dao.ChatDao;
 import com.zematix.jworldcup.backend.dto.ChatDto;
-import com.zematix.jworldcup.backend.dto.CommonResponse;
 import com.zematix.jworldcup.backend.dto.GenericListResponse;
 import com.zematix.jworldcup.backend.dto.GenericResponse;
 import com.zematix.jworldcup.backend.entity.Chat;

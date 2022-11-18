@@ -1,7 +1,5 @@
 package com.zematix.jworldcup.backend.controller;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.springframework.http.ResponseEntity;
@@ -92,7 +90,7 @@ public class SessionController extends ServiceBase implements ResponseEntityHelp
 //			Map<String, Object> headers = Map.of("durable", "true", "auto-delete", "true", "x-expires", 20000, "x-queue-type", "classic");
 //			Map<String, Object> headers = Map.of("durable", "true", "auto-delete", "false"); // wrong
 //			Map<String, Object> headers = Map.of("x-expires", 20000);
-			Map<String, Object> headers = Map.of("durable", "false", "exclusive", "false", "auto-delete", "true");
+//			Map<String, Object> headers = Map.of("durable", "false", "exclusive", "false", "auto-delete", "true");
 
 //			logger.info("create queue");
 //			Properties properties = amqpAdmin.getQueueProperties("session"+sessionData.getId());

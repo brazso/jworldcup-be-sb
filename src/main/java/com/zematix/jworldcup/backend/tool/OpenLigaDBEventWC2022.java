@@ -16,7 +16,6 @@ import javax.persistence.TypedQuery;
 
 import com.msiggi.openligadb.client.ArrayOfGroup;
 import com.msiggi.openligadb.client.ArrayOfLeague;
-import com.msiggi.openligadb.client.ArrayOfTeam;
 import com.msiggi.openligadb.client.Matchdata;
 import com.msiggi.openligadb.client.Sportsdata;
 import com.zematix.jworldcup.backend.entity.Event;
@@ -72,7 +71,7 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 		event.setOrganizer("FIFA");
 		em.persist(event);
 		
-		logger.info("eventId="+event.getEventId());
+		logger.info("eventId={}", event.getEventId());
 		
 		List<com.msiggi.openligadb.client.Group> oldbGroups = new ArrayList<>();
 		ArrayOfGroup aog = sportsdata.getSportsdataSoap12().getAvailGroups(LEAGUE_SHORTCUT, LEAGUE_SAISON);
@@ -129,10 +128,6 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 		
 		TypedQuery<Team> query = em.createNamedQuery("Team.findAll", Team.class);
 		List<Team> teams = query.getResultList();
-		
-		List<com.msiggi.openligadb.client.Team> oldbTeams = new ArrayList<>();
-		ArrayOfTeam aot = sportsdata.getSportsdataSoap12().getTeamsByLeagueSaison(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-		/*List<Sport>*/ oldbTeams = aot.getTeam();
 		
 		List<com.zematix.jworldcup.backend.model.openligadb.client.Team> olTeams = new ArrayList<>(); 
 		try {
@@ -240,7 +235,7 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 					participantsRule += "-W"+matchesByRoundMap.get("Achtelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
 				match.setParticipantsRule(participantsRule);
-				logger.info("participantsRule: "+participantsRule);
+				logger.info("participantsRule: {}", participantsRule);
 				
 				if (matchesByRoundMap.get("Viertelfinale") == null) {
 					matchesByRoundMap.put("Viertelfinale", new ArrayList<Match>());
@@ -261,7 +256,7 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 					participantsRule += "-W"+matchesByRoundMap.get("Viertelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
 				match.setParticipantsRule(participantsRule);
-				logger.info("participantsRule: "+participantsRule);
+				logger.info("participantsRule: {}", participantsRule);
 
 				if (matchesByRoundMap.get("Halbfinale") == null) {
 					matchesByRoundMap.put("Halbfinale", new ArrayList<Match>());
@@ -282,7 +277,7 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 					participantsRule += "-L"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
 				match.setParticipantsRule(participantsRule);
-				logger.info("participantsRule: "+participantsRule);
+				logger.info("participantsRule: {}", participantsRule);
 			}
 			else if (matchdata.getGroupName().contains("Finale")) {
 				match.setRound(roundList.get(7));
@@ -298,7 +293,7 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 					participantsRule += "-W"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
 				match.setParticipantsRule(participantsRule);
-				logger.info("participantsRule: "+participantsRule);
+				logger.info("participantsRule: {}", participantsRule);
 			}
 			em.persist(match);
 		}

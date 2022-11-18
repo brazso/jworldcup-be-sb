@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Team;
-import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.MatchService;
 import com.zematix.jworldcup.backend.service.ServerBase;
 
@@ -78,11 +77,7 @@ public class GroupTeam extends ServerBase {
 		
 		int side = teamId.equals(match.getTeam1().getTeamId()) ? 1 : 2;
 		
-		try {
-			matchResult = matchService.getMatchResult(side, match.getGoalNormalByTeam1(), null, null, match.getGoalNormalByTeam2(), null, null);
-		} catch (ServiceException e) {
-			consumeServiceException(e);
-		}
+		matchResult = matchService.getMatchResult(side, match.getGoalNormalByTeam1(), null, null, match.getGoalNormalByTeam2(), null, null);
 		return matchResult;
 	}
 

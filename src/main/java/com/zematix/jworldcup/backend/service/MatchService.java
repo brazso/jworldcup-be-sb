@@ -479,7 +479,7 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public int getMatchResult(int side, Byte goalNormal1, Byte goalExtra1, Byte goalPenalty1, 
-			Byte goalNormal2, Byte goalExtra2, Byte goalPenalty2) throws ServiceException {
+			Byte goalNormal2, Byte goalExtra2, Byte goalPenalty2) {
 		checkArgument(side==1 || side==2, "Argument \"side\" value must be 1 or 2.");
 		int result = -2;
 		side = (byte) (-1*(side*2-3)); // 1 or 2 -> +1 or -1
@@ -759,7 +759,6 @@ public class MatchService extends ServiceBase {
 	 * @return number of updated matches
 	 * @throws ServiceException 
 	 */
-//TODO	@Transactional(txType=TransactionAttributeType.REQUIRES_NEW)
 	public int updateMatchParticipants(Long eventId, Long updatedMatchId) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(updatedMatchId);
@@ -813,7 +812,7 @@ public class MatchService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	@VisibleForTesting
-	/*private*/ LocalDateTime getFinishedMatchEndTime(Match match) throws ServiceException {
+	/*private*/ LocalDateTime getFinishedMatchEndTime(Match match) {
 		checkNotNull(match);
 		if (!isMatchCompleted(match)) {
 			return null;
@@ -849,7 +848,7 @@ public class MatchService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	@VisibleForTesting
-	/*private*/ LocalDateTime getMatchResultEscalationTime(Match match) throws ServiceException {
+	/*private*/ LocalDateTime getMatchResultEscalationTime(Match match) {
 		LocalDateTime matchEscalationTime = null;
 		checkNotNull(match);
 		
@@ -1106,7 +1105,7 @@ public class MatchService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	@Transactional(readOnly = true)
-	public boolean isInsideExpiredModificationTimeByEventId(Long eventId, LocalDateTime actualDateTime) throws ServiceException {
+	public boolean isInsideExpiredModificationTimeByEventId(Long eventId, LocalDateTime actualDateTime) {
 		checkNotNull(eventId);
 		checkNotNull(actualDateTime);
 		Event event = eventService.findEventByEventId(eventId);
