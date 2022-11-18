@@ -34,3 +34,5 @@ spring:
     url: jdbc:hsqldb:mem:testdb;shutdown=true;syntax_mys=true;hsqldb.tx=mvcc #;hsqldb.tx_level=serializable
     username: sa
     password:
+  quartz :
+    auto-startup: false
