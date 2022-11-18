@@ -60,7 +60,7 @@ public class ResetUserPasswords implements CommandLineRunner {
 		List<User> users = query.getResultList();
 
 		for (User user : users) {
-			logger.info("User: " + user.getLoginName());
+			logger.info("User: {}", user.getLoginName());
 			// overwrites login password
 			String loginPassword = user.getLoginName().toLowerCase() + "_!";
 			SecureHashing secureHashing = new SecureHashing();

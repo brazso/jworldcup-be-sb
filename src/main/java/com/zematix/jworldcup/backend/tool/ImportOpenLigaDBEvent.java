@@ -17,6 +17,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * It would be exhaustive manually entering the start data of a tournament. 
  * Run its {@link ImportOpenLigaDBEvent#main(String[]) method to start the import
  * after your {@link ImportOpenLigaDBEventFactory} has the implementation.
+ * It runs only with -Dapplication.environment=develop VM setting.
   */
 @EnableAutoConfiguration
 @EntityScan(basePackages = "com.zematix.jworldcup.backend.entity")
