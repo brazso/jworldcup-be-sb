@@ -65,7 +65,7 @@ gradle build
 build without test
 ```
 gradle build -x test
-'''
+```
 
 run app using development profile
 ```
