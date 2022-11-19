@@ -1,5 +1,5 @@
 # jworldcup-be-sb
-JWorldcup soccer bet game backend created on Java / Spring Boot
+JWorldcup soccer bet game backend created on Java / Spring Boot used by jworldcup-ui-an frontend
 
 ## For developers
 
@@ -45,7 +45,7 @@ $ docker-compose up --build
 
 The production application also runs in docker containers. There are the altered starter and finish commands for production stage, where build argument is optional at starter.
 ```
-$ docker-compose --profile production --env-file .env.prod up --build
+$ docker-compose --profile production --env-file .env.prod up --build -d
 $ docker-compose --profile production down
 ```
 
