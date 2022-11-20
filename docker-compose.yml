@@ -19,7 +19,8 @@ services:
       MYSQL_DATABASE: worldcup
     volumes:
       - mysqld:/var/run/mysqld
-      - ../docker-volumes/mysql:/var/lib/mysql # persist database outside of docker
+      - ../docker-shares/mysql/system:/var/lib/mysql # persist database outside of docker
+      - ../docker-shares/mysql/backup:/root/worldcup.zematix.hu/mysql/backup # regularily dumped worldcup database
 #      - ./src/test/resources/database/worldcup_test.sql:/docker-entrypoint-initdb.d/2_worldcup_test.sql
 #    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-time-zone=UTC']
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password

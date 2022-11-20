@@ -79,7 +79,7 @@ cookie.maxAge: 1209600
 mail.smtp:
   host: smtp.zoho.com
   port: 465
-  #user: branyiczky.zsolt@zematix.hu #SECRET
+  #user: anybody.somebody@domain.dm #SECRET
   #pass: 94Cmyiyy7bMI #SECRET
   auth: true
   starttls.enable: true
