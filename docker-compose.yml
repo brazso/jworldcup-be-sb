@@ -8,6 +8,10 @@ services:
 #      dockerfile: Dockerfile
       context: .
       dockerfile: docker/mysql/Dockerfile
+      args:
+        ENV_POSTFIX: ${ENV_POSTFIX:-}
+        MYSQL_USER: ${MYSQL_USER:-worldcup}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD:-worldcup.org}
     container_name: jworldcup.mysql
     image: jworldcup.mysql
     ports:
@@ -20,7 +24,7 @@ services:
     volumes:
       - mysqld:/var/run/mysqld
       - ../docker-shares/mysql/system:/var/lib/mysql # persist database outside of docker
-      - ../docker-shares/mysql/backup:/root/worldcup.zematix.hu/mysql/backup # regularily dumped worldcup database
+      - ../docker-shares/mysql/backup:/root/jworldcup/mysql/backup # regularily dumped worldcup database dumps
 #      - ./src/test/resources/database/worldcup_test.sql:/docker-entrypoint-initdb.d/2_worldcup_test.sql
 #    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-time-zone=UTC']
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
