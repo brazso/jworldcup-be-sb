@@ -4,6 +4,12 @@ ARG ENV_POSTFIX
 ARG MYSQL_USER
 ARG MYSQL_PASSWORD
 
+## install zip
+#RUN set -x; \
+#  apt-get update && \ 
+#  apt-get install -y zip && \
+#  rm -rf /var/lib/apt/lists/*
+
 ## Nothing to do with timezones, mysql (this version: 5.7.26) already contains them
 #RUN set -x; \
 #  echo "USE mysql;" > /docker-entrypoint-initdb.d/timezones.sql \
@@ -21,21 +27,32 @@ RUN set -x; \
 
 ## Loads init database scripts.
 COPY docker/mysql/worldcup_init.sql /docker-entrypoint-initdb.d/01-worldcup_init.sql
-COPY docker/mysql/worldcup.sql /docker-entrypoint-initdb.d/02-worldcup.sql
-COPY src/test/resources/database/worldcup_test.sql /docker-entrypoint-initdb.d/03_worldcup_test.sql
+#COPY docker/mysql/worldcup.sql /docker-entrypoint-initdb.d/02-worldcup.sql
+COPY src/test/resources/database/worldcup_test.sql docker/mysql/backup/worldcup.sql /docker-entrypoint-initdb.d/
+RUN set -x; \
+  if [ -f /docker-entrypoint-initdb.d/worldcup.sql ]; \
+  then \
+    mv /docker-entrypoint-initdb.d/worldcup.sql /docker-entrypoint-initdb.d/02-worldcup.sql; \
+    rm /docker-entrypoint-initdb.d/worldcup_test.sql; \
+  else \
+    mv /docker-entrypoint-initdb.d/worldcup_test.sql /docker-entrypoint-initdb.d/02-worldcup.sql; \
+  fi
+#COPY src/test/resources/database/worldcup_test.sql /docker-entrypoint-initdb.d/02-worldcup.sql
+#COPY ../docker-shares/mysql/backup/worldcu[p].sql /docker-entrypoint-initdb.d/02-worldcup.sql # pattern used inside that non-existing file do not invoke error
+COPY src/test/resources/database/worldcup_test.sql /docker-entrypoint-initdb.d/03-worldcup_test.sql
 RUN set -x; \
   echo "USE worldcup_test;" > /docker-entrypoint-initdb.d/04-worldcup_init.sql; \
-  cat /docker-entrypoint-initdb.d/03_worldcup_test.sql >> /docker-entrypoint-initdb.d/04-worldcup_init.sql; \
-  rm /docker-entrypoint-initdb.d/03_worldcup_test.sql
+  cat /docker-entrypoint-initdb.d/03-worldcup_test.sql >> /docker-entrypoint-initdb.d/04-worldcup_init.sql; \
+  rm /docker-entrypoint-initdb.d/03-worldcup_test.sql
 
-## Create /root/.my.cnf file for supporting mysqldump usage without password
+## Create /root/.my.cnf file for to support mysqldump usage without password
 RUN set -x; \
   echo "[mysqldump]\n\
 user=$MYSQL_USER\n\
 password=$MYSQL_PASSWORD"\
   >> /root/.my.cnf
 
-## Copy dumpdb.sh which can be used to create dump from database
+## Copy dbdump.sh which can be used to create dump from database
 RUN set -x; \
   mkdir -p /root/jworldcup/mysql/backup
 COPY docker/mysql/dbdump.sh /root/jworldcup/mysql/
