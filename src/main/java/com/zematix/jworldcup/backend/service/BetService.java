@@ -118,10 +118,7 @@ public class BetService extends ServiceBase {
 		Pair<Long> favouriteTeamIds = null;
 		for (Bet bet: bets) {
 			// setScore
-			if (favouriteTeamIds == null) {
-				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
-			}
-			bet.setScore(retrieveScoreByBet(bet, favouriteTeamIds));
+			bet.setScore(retrieveScoreByBet(bet, null));
 			
 		}
 		return bets;
