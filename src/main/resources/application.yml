@@ -55,8 +55,8 @@ server:
 app:
   url: https://worldcup.zematix.hu/
   version:
-    number: 1.0.0
-    date: 2022-11-18
+    number: 1.0.1
+    date: 2022-11-22
   shortName: JWorldcup
   emailAddr: jworldcup@zematix.hu
   user.candidate.expire.days: 3

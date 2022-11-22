@@ -1,6 +1,6 @@
 ## Changes
 
-### Version 1.0.1 / 2022-11-??
+### Version 1.0.1 / 2022-11-22
 
 * MySql docker backup support in production mode
 * Fix: Other's tips incorrectly read favourite teams, might have duplicated displayed scores at bets
