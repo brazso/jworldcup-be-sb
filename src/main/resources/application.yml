@@ -79,7 +79,7 @@ cookie.maxAge: 1209600
 mail.smtp:
   host: smtp.zoho.com
   port: 465
-  #user: branyiczky.zsolt@zematix.hu #SECRET
+  #user: anybody.somebody@domain.dm #SECRET
   #pass: 94Cmyiyy7bMI #SECRET
   auth: true
   starttls.enable: true
@@ -94,8 +94,8 @@ rabbitMQ:
   #password: jworldcup #SECRET
 
 # Logging
-#logging:
-#  level:
+logging:
+  level:
     #org.hibernate.SQL: DEBUG
     #org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     #org.springframework.orm.jpa: TRACE
@@ -112,4 +112,4 @@ rabbitMQ:
 #    org.springframework.security.core.session: TRACE
 #    org.springframework.cache.interceptor: TRACE
     
-#    com.zematix.jworldcup.backend: TRACE
+    com.zematix.jworldcup.backend: TRACE
