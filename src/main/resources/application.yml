@@ -49,7 +49,9 @@ server:
     context-path: "/jworldcup-api"
     
 # Security
-#jwt.secret: jworldcup-sensitive-secret-key #SECRET
+jwt:
+#  secret: jworldcup-sensitive-secret-key #SECRET
+  validity: 18000 # 5 hours in seconds
 
 # Application
 app:
