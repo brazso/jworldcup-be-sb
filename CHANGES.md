@@ -1,5 +1,10 @@
 ## Changes
 
+### Version 1.0.2 / 2022-11-26
+
+* Generation of Spring Boot application log into file in production mode
+* Fix: call of db export from mysql docker container
+
 ### Version 1.0.1 / 2022-11-22
 
 * MySql docker backup support in production mode

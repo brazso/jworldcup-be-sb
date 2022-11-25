@@ -49,14 +49,16 @@ server:
     context-path: "/jworldcup-api"
     
 # Security
-#jwt.secret: jworldcup-sensitive-secret-key #SECRET
+jwt:
+#  secret: jworldcup-sensitive-secret-key #SECRET
+  validity: 18000 # 5 hours in seconds
 
 # Application
 app:
   url: https://worldcup.zematix.hu/
   version:
-    number: 1.0.1
-    date: 2022-11-22
+    number: 1.0.2
+    date: 2022-11-26
   shortName: JWorldcup
   emailAddr: jworldcup@zematix.hu
   user.candidate.expire.days: 3
@@ -95,6 +97,7 @@ rabbitMQ:
 
 # Logging
 logging:
+  file.path: logs
   level:
     #org.hibernate.SQL: DEBUG
     #org.hibernate.type.descriptor.sql.BasicBinder: TRACE

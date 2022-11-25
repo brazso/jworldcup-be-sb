@@ -25,11 +25,13 @@ public class JwtTokenUtil implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60; // in seconds
 	public static final String AUTHORITIES_KEY = "scopes";
 
 	@Value("${jwt.secret}")
-	private String secret;
+	private String jwtSecret;
+	
+	@Value("${jwt.validity:86400}") // default is 24 hours in seconds
+	private String jwtValidity;
 	
 	@Value("${app.shortName}")
 	private String appShortName;
@@ -51,7 +53,7 @@ public class JwtTokenUtil implements Serializable {
 	
     //for retrieveing any information from token we will need the secret key
 	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
 	}
 
 	//check if the token has expired
@@ -65,6 +67,7 @@ public class JwtTokenUtil implements Serializable {
 		Map<String, Object> claims = new HashMap<>();
 		
 		claims.put(Claims.ISSUER, appShortName);
+		//claims.put("shortExp", new Date(System.currentTimeMillis() + Long.parseLong(jwtValidity) * 1000)); // https://security.stackexchange.com/a/169449
 		
 		final String authorities = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -82,8 +85,8 @@ public class JwtTokenUtil implements Serializable {
 	private String doGenerateToken(Map<String, Object> claims, String subject) {
 
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-				.signWith(SignatureAlgorithm.HS512, secret).compact();
+				.setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(jwtValidity) * 1000))
+				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
 	}
 
 	//validate token

@@ -2,6 +2,9 @@ buildscript {
 	ext {
 		generatedSourcesRelativePath = "generated/src"
 	}
+    dependencies {
+        classpath group: 'org.yaml', name: 'snakeyaml', version: '1.19'
+    }
 }
 
 plugins {
@@ -29,8 +32,10 @@ lombok { // id "io.freefair.lombok"
 	version = "${lombokVersion}"
 }
 
+def applicationConfig = new org.yaml.snakeyaml.Yaml().loadAll(new File("$projectDir/src/main/resources/application.yml").newInputStream()).first()
+
 group = 'com.zematix.jworldcup'
-version = '1.0.1'
+version = applicationConfig.app.version.number
 sourceCompatibility = '17'
 
 bootRun {
