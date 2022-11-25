@@ -86,9 +86,9 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 	}
 
 	/**
-	 * Returns actual backend version
+	 * Returns actual backend version and its release date
 	 * 
-	 * @return actual backend version
+	 * @return actual backend version and its release date
 	 */
 	@Operation(summary = "Retrieve actual backend version", description = "Retrieve actual backend version")
 	@GetMapping(value = "/backend-version")
