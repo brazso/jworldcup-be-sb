@@ -5,7 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +29,7 @@ import com.zematix.jworldcup.backend.mapper.UserExtendedMapper;
 import com.zematix.jworldcup.backend.mapper.UserMapper;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.model.UserExtended;
+import com.zematix.jworldcup.backend.service.ApplicationService;
 import com.zematix.jworldcup.backend.service.GoogleService;
 import com.zematix.jworldcup.backend.service.JwtUserDetailsService;
 
@@ -55,7 +55,7 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 	private UserMapper userMapper;
 	
 	@Inject
-	private BuildProperties buildProperties;
+	private ApplicationService applicationService;
 	
 	@Inject
 	private GoogleService googleService;
@@ -93,7 +93,7 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 	@Operation(summary = "Retrieve actual backend version", description = "Retrieve actual backend version")
 	@GetMapping(value = "/backend-version")
 	public ResponseEntity<GenericResponse<String>> whoami() {
-		var version = this.buildProperties.getVersion();
+		var version = String.format("%s (%s)", applicationService.getAppVersionNumber(), applicationService.getAppVersionDate());
 		return buildResponseEntityWithOK(new GenericResponse<>(version));
 	}
 	
