@@ -63,7 +63,7 @@ RUN set -x; \
 RUN set -x; \
   echo "#!/bin/sh\n\n\
 cd /root/jworldcup/mysql || exit 0\n\
-exec ./dbdump.sh"\
+./dbdump.sh"\
   >> /etc/cron.daily/dbdump
 RUN set -x; \
   chmod 755 /etc/cron.daily/dbdump
