@@ -7,7 +7,6 @@ RUN chmod +x /wait-for-it.sh
 
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
-#ARG JAR_FILE=build/libs/jworldcup-be-sb.jar
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar 
 
