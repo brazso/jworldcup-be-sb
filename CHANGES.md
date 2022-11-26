@@ -1,5 +1,10 @@
 ## Changes
 
+### Version 1.0.3 / 2022-11-26
+
+* Fix: wsdl absolute file path changed to relative
+* Fix: wmk openligadb tournament label modification
+
 ### Version 1.0.2 / 2022-11-26
 
 * Generation of Spring Boot application log into file in production mode

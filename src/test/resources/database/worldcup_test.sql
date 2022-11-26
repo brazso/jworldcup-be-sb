@@ -1249,7 +1249,7 @@ INSERT INTO `web_service` (`web_service_id`, `event_id`, `priority`, `league_sho
 (11, 8, 1, 'em20', '2020', 'Endergebnis', NULL, 'nach Verlängerung', 'nach Elfmeterscheißen'),
 (12, 9, 1, 'CA2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
 (13, 10, 1, 'ABC2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
-(14, 11, 1, 'wmk', '2022', 'nach regulärer Spielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschiessen');
+(14, 11, 1, 'wmk', '2022', 'Endergebnis', NULL, 'nach Verlängerung', 'nach Elfmeterschiessen');
 
 --
 -- Indexes for dumped tables
