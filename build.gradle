@@ -165,6 +165,7 @@ wsimport {
 
 	wsdl ("Sportsdata.wsdl") {
 		packageName("com.msiggi.openligadb.client")
+		wsdlLocation("../../../../wsdl/Sportsdata.wsdl")
 	}
 }
 
