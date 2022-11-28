@@ -73,8 +73,9 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 		User user = userDetailsService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 		UserDetails userDetails = userDetailsService.loadUserDetailsByUser(user);
 		
-		String token = jwtTokenUtil.generateToken(userDetails);
-		return buildResponseEntityWithOK(new JwtResponse(token));
+		String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
+		String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
+		return buildResponseEntityWithOK(new JwtResponse(accessToken, refreshToken));
 	}
 
 	@PostMapping(value = "/signup")

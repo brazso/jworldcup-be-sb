@@ -30,9 +30,12 @@ public class JwtTokenUtil implements Serializable {
 	@Value("${jwt.secret}")
 	private String jwtSecret;
 	
-	@Value("${jwt.validity:86400}") // default is 24 hours in seconds
-	private String jwtValidity;
+	@Value("${jwt.validity.access:600}") // default is 10 minutes in seconds
+	private String jwtValidityAccess;
 	
+	@Value("${jwt.validity.refresh:86400}") // default is 24 hours in seconds
+	private String jwtValidityRefresh;
+
 	@Value("${app.shortName}")
 	private String appShortName;
 
@@ -62,19 +65,36 @@ public class JwtTokenUtil implements Serializable {
 		return expiration.before(new Date());
 	}
 
-	//generate token for user
-	public String generateToken(UserDetails userDetails) {
+	//generate access token for user
+	public String generateAccessToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		
 		claims.put(Claims.ISSUER, appShortName);
-		//claims.put("shortExp", new Date(System.currentTimeMillis() + Long.parseLong(jwtValidity) * 1000)); // https://security.stackexchange.com/a/169449
 		
 		final String authorities = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 		claims.put(AUTHORITIES_KEY, authorities);
 		
-		return doGenerateToken(claims, userDetails.getUsername());
+		claims.put("tokenType", "ACCESS");
+		
+		return doGenerateToken(claims, userDetails.getUsername(), jwtValidityAccess);
+	}
+
+	//generate refresh token for user
+	public String generateRefreshToken(UserDetails userDetails) {
+		Map<String, Object> claims = new HashMap<>();
+		
+		claims.put(Claims.ISSUER, appShortName);
+		
+//		final String authorities = userDetails.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(","));
+//		claims.put(AUTHORITIES_KEY, authorities);
+		
+		claims.put("tokenType", "REFRESH");
+		
+		return doGenerateToken(claims, userDetails.getUsername(), jwtValidityRefresh);
 	}
 
 	//while creating the token -
@@ -82,7 +102,7 @@ public class JwtTokenUtil implements Serializable {
 	//2. Sign the JWT using the HS512 algorithm and secret key.
 	//3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
 	//   compaction of the JWT to a URL-safe string 
-	private String doGenerateToken(Map<String, Object> claims, String subject) {
+	private String doGenerateToken(Map<String, Object> claims, String subject, String jwtValidity) {
 
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(jwtValidity) * 1000))
