@@ -1,10 +1,15 @@
 package com.zematix.jworldcup.backend.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,10 +79,29 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 		UserDetails userDetails = userDetailsService.loadUserDetailsByUser(user);
 		
 		String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
-		String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
-		return buildResponseEntityWithOK(new JwtResponse(accessToken, refreshToken));
+		ResponseCookie responseCookie = jwtTokenUtil.generateRefreshTokenCookie(userDetails);
+		
+		return ResponseEntity.ok()
+				.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+				.body(new JwtResponse(accessToken));
 	}
 
+	@PostMapping(value = "/refresh")
+	@Operation(summary = "Refresh authentication token", description = "Refresh authentication token")
+	public ResponseEntity<JwtResponse> refreshAuthenticationToken(HttpServletRequest request) throws ServiceException {
+
+		Cookie cookie = Arrays.asList(request.getCookies()).stream().filter(e -> e.getName().equals("refreshToken")).findFirst().orElse(null);
+		if (cookie == null) {
+			return null;
+		}
+
+		String refreshToken = cookie.getValue();
+		String username = jwtTokenUtil.getUsernameFromToken(refreshToken);
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
+		return buildResponseEntityWithOK(new JwtResponse(accessToken));
+	}
+	
 	@PostMapping(value = "/signup")
 	@Operation(summary = "Register a new user", description = "Register a new user")
 	public ResponseEntity<GenericResponse<UserDto>> saveUser(@RequestBody UserExtendedDto userExtendedDto) throws ServiceException {

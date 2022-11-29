@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -82,7 +83,7 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	//generate refresh token for user
-	public String generateRefreshToken(UserDetails userDetails) {
+	private String generateRefreshToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		
 		claims.put(Claims.ISSUER, appShortName);
@@ -95,6 +96,18 @@ public class JwtTokenUtil implements Serializable {
 		claims.put("tokenType", "REFRESH");
 		
 		return doGenerateToken(claims, userDetails.getUsername(), jwtValidityRefresh);
+	}
+
+	//generate refresh token for user
+	public ResponseCookie generateRefreshTokenCookie(UserDetails userDetails) {
+		String refreshToken = generateRefreshToken(userDetails);
+		
+		return ResponseCookie.from("refreshToken", refreshToken)
+				.maxAge(Long.parseLong(jwtValidityRefresh))
+				.httpOnly(true)
+				.secure(true)
+				.sameSite("None")
+				.build();
 	}
 
 	//while creating the token -
