@@ -49,7 +49,14 @@ public class TeamService extends ServiceBase {
 	public List<Team> retrieveFavouriteGroupTeams(Long eventId) {
 		checkNotNull(eventId);
 		
-		return teamDao.retrieveFavouriteGroupTeams(eventId);
+		var teams = teamDao.retrieveFavouriteGroupTeams(eventId);
+
+		// load lazy associations
+		teams.stream().forEach(e -> {
+			e.getGroup().getName();
+		});
+		
+		return teams;
 	}
 	
 	/**
@@ -63,8 +70,16 @@ public class TeamService extends ServiceBase {
 	@Cacheable(cacheNames = CachingConfig.CACHE_FAVOURITE_KNOCKOUT_TEAMS, key = "{#eventId}")
 	public List<Team> retrieveFavouriteKnockoutTeams(Long eventId) {
 		checkNotNull(eventId);
+
+		var teams = teamDao.retrieveFavouriteKnockoutTeams(eventId);
 		
-		return teamDao.retrieveFavouriteKnockoutTeams(eventId);
+		// load lazy associations
+		teams.stream().forEach(e -> {
+			e.getGroup().getName();
+		});
+		
+
+		return teams;
 	}
 
 	/**
