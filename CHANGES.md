@@ -1,5 +1,9 @@
 ## Changes
 
+### Version 1.0.4 / 2022-12-01
+
+* Fix: LazyInitializationException at selecting favourite teams page
+
 ### Version 1.0.3 / 2022-11-26
 
 * Fix: wsdl absolute file path changed to relative
@@ -18,4 +22,3 @@
 ### Version 1.0.0 / 2022-11-18
 
 * Initial version developed and built on Spring Boot 2.5.7
-

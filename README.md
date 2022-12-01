@@ -118,3 +118,7 @@ If you use Eclipse IDE (4.23 2022-03) it is recommended to install the following
 ### Rest API
 * Swagger UI page is [http://localhost:8090/jworldcup-api/swagger-ui.html](http://localhost:8090/jworldcup-api/swagger-ui.html)
 * OpenAPI description is available at the following url for json format: [http://localhost:8090/jworldcup-api/v3/api-docs](http://localhost:8090/jworldcup-api/v3/api-docs)
+
+### Useful links
+
+- [A secure way to encrypt any password in the config file in a Spring Boot project](https://medium.com/engineering-jio-com/a-secure-way-to-encrypt-any-password-in-the-config-file-in-a-spring-boot-project-20d12436b4b9)
