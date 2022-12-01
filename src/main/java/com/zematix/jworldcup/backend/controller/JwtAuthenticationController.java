@@ -68,7 +68,12 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 	@Value("${app.reCaptcha.secretKey}")
 	private String captchaSecret;
 
-
+	/**
+	 * 
+	 * @param authenticationRequest
+	 * @return
+	 * @throws ServiceException
+	 */
 	@PostMapping(value = "/login")
 	@Operation(summary = "Authenticate a user", description = "Authenticate a user")
 	public ResponseEntity<JwtResponse> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws ServiceException {
@@ -86,6 +91,12 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 				.body(new JwtResponse(accessToken));
 	}
 
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 * @throws ServiceException
+	 */
 	@PostMapping(value = "/refresh")
 	@Operation(summary = "Refresh authentication token", description = "Refresh authentication token")
 	public ResponseEntity<JwtResponse> refreshAuthenticationToken(HttpServletRequest request) throws ServiceException {
@@ -94,12 +105,16 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 		if (cookie == null) {
 			return null;
 		}
-
 		String refreshToken = cookie.getValue();
-		String username = jwtTokenUtil.getUsernameFromToken(refreshToken);
+		String username = jwtTokenUtil.getUsernameFromToken(refreshToken); // TODO - try block, see in JwtRequestFilter.java
+		
 		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 		String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
-		return buildResponseEntityWithOK(new JwtResponse(accessToken));
+		ResponseCookie responseCookie = jwtTokenUtil.generateRefreshTokenCookie(userDetails);
+		
+		return ResponseEntity.ok()
+				.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+				.body(new JwtResponse(accessToken));
 	}
 	
 	@PostMapping(value = "/signup")

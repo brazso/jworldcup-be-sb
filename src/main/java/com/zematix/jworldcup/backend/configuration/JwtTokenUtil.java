@@ -55,15 +55,10 @@ public class JwtTokenUtil implements Serializable {
 		return claimsResolver.apply(claims);
 	}
 	
-    //for retrieveing any information from token we will need the secret key
+    //For retrieving any information from token we will need the secret key. 
+	//parseClaimsJws may throw different jwt RuntimeExceptions.
 	private Claims getAllClaimsFromToken(String token) {
 		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-	}
-
-	//check if the token has expired
-	private Boolean isTokenExpired(String token) {
-		final Date expiration = getExpirationDateFromToken(token);
-		return expiration.before(new Date());
 	}
 
 	//generate access token for user
@@ -87,12 +82,6 @@ public class JwtTokenUtil implements Serializable {
 		Map<String, Object> claims = new HashMap<>();
 		
 		claims.put(Claims.ISSUER, appShortName);
-		
-//		final String authorities = userDetails.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.joining(","));
-//		claims.put(AUTHORITIES_KEY, authorities);
-		
 		claims.put("tokenType", "REFRESH");
 		
 		return doGenerateToken(claims, userDetails.getUsername(), jwtValidityRefresh);
@@ -120,11 +109,5 @@ public class JwtTokenUtil implements Serializable {
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(jwtValidity) * 1000))
 				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
-	}
-
-	//validate token
-	public Boolean validateToken(String token, UserDetails userDetails) {
-		final String username = getUsernameFromToken(token);
-		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 }
