@@ -4,14 +4,8 @@ services:
 
   mysql:
     build:
-#      context: docker/mysql
-#      dockerfile: Dockerfile
       context: .
       dockerfile: docker/mysql/Dockerfile
-      args:
-        ENV_POSTFIX: ${ENV_POSTFIX:-}
-        MYSQL_USER: ${MYSQL_USER:-worldcup}
-        MYSQL_PASSWORD: ${MYSQL_PASSWORD:-worldcup.org}
     container_name: jworldcup.mysql
     image: jworldcup.mysql
     security_opt:
@@ -26,11 +20,34 @@ services:
     volumes:
       - mysqld:/var/run/mysqld
       - ../docker-shares/mysql:/var/lib/mysql # persist docker database
-      - ./docker/mysql/backup:/root/jworldcup/mysql/backup # regularily dumped worldcup database dumps
-#      - ./src/test/resources/database/worldcup_test.sql:/docker-entrypoint-initdb.d/2_worldcup_test.sql
-#    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-time-zone=UTC']
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
     
+  backup:
+    profiles:
+      - production
+    build:
+      context: docker/backup
+      dockerfile: Dockerfile
+    container_name: jworldcup.backup
+    image: fradelg/mysql-cron-backup
+    depends_on:
+      - mysql
+    volumes:
+      - ./docker/mysql/backup:/backup # contains regularily dumped worldcup database dumps
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER:-worldcup}
+      - MYSQL_PASS=${MYSQL_PASSWORD:-worldcup.org}
+      - MYSQL_DATABASE=worldcup
+      - MYSQLDUMP_OPTS=--no-tablespaces --lock-tables=false
+      - MAX_BACKUPS=30
+      - TIMEOUT=30s # waits for mysql service (in seconds)
+      - CRON_TIME=0 3 * * * # makes backup every day at 03:00
+      - GZIP_LEVEL=9 # smallest size
+      - DATE_FORMAT=date +%Y%m%d%H%M%S
+      - FILENAME_FORMAT="/backup/$${db}_$$DATE.sql"
+      - LATEST_FORMAT="/backup/$$db.sql"
+
   phpmyadmin:
     build:
       context: docker/phpmyadmin
@@ -54,8 +71,6 @@ services:
 
   rabbitmq:
     build:
-#      context: docker/rabbitmq
-#      dockerfile: Dockerfile
       context: .
       dockerfile: docker/rabbitmq/Dockerfile
       args:
