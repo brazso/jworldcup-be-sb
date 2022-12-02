@@ -28,9 +28,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("session")
 public class SessionController extends ServiceBase implements ResponseEntityHelper {
 
-//	@Inject
-//	private Logger logger;
-
 	@Inject
 	private SessionService sessionService;
 

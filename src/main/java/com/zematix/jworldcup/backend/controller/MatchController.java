@@ -47,9 +47,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("matches")
 public class MatchController extends ServiceBase implements ResponseEntityHelper {
 
-//	@Inject
-//	private Logger logger;
-
 	@Inject
 	private MatchService matchService;
 	

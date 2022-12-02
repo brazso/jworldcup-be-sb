@@ -32,9 +32,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("groups")
 public class GroupController extends ServiceBase implements ResponseEntityHelper {
 
-//	@Inject
-//	private Logger logger;
-
 	@Inject
 	private GroupService groupService;
 	

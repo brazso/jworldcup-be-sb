@@ -28,9 +28,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("events")
 public class EventController extends ServiceBase implements ResponseEntityHelper {
 
-//	@Inject
-//	private Logger logger;
-
 	@Inject
 	private EventService eventService;
 	
