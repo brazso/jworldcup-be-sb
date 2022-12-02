@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,12 +38,14 @@ import com.zematix.jworldcup.backend.model.UserExtended;
 import com.zematix.jworldcup.backend.service.ApplicationService;
 import com.zematix.jworldcup.backend.service.GoogleService;
 import com.zematix.jworldcup.backend.service.JwtUserDetailsService;
+import com.zematix.jworldcup.backend.service.ServiceBase;
 
+import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 //@CrossOrigin
-public class JwtAuthenticationController implements ResponseEntityHelper {
+public class JwtAuthenticationController extends ServiceBase implements ResponseEntityHelper {
 
 //	@Inject
 //	private AuthenticationManager authenticationManager;
@@ -52,7 +55,7 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 
 	@Inject
 	private JwtUserDetailsService userDetailsService;
-
+	
 	@Inject
 	private UserExtendedMapper userExtendedMapper;
 
@@ -103,10 +106,20 @@ public class JwtAuthenticationController implements ResponseEntityHelper {
 
 		Cookie cookie = Arrays.asList(request.getCookies()).stream().filter(e -> e.getName().equals("refreshToken")).findFirst().orElse(null);
 		if (cookie == null) {
-			return null;
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 		String refreshToken = cookie.getValue();
-		String username = jwtTokenUtil.getUsernameFromToken(refreshToken); // TODO - try block, see in JwtRequestFilter.java
+		String username = null;
+		
+		try {
+			username = jwtTokenUtil.getUsernameFromToken(refreshToken);
+		}
+		catch (JwtException e) {
+			logger.error(e.getMessage());
+		}
+		if (username == null) { // incoming refresh token is invalid
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();			
+		}
 		
 		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 		String accessToken = jwtTokenUtil.generateAccessToken(userDetails);

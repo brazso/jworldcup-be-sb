@@ -17,8 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.zematix.jworldcup.backend.service.JwtUserDetailsService;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.JwtException;
 
 /**
  * The JwtRequestFilter extends the Spring Web Filter OncePerRequestFilter class. 
@@ -52,12 +51,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				jwtToken = requestTokenHeader.substring(TOKEN_PREFIX.length());
 				try {
 					username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-				} catch (IllegalArgumentException e) {
-					logger.error("Unable to get JWT Token");
-				} catch (ExpiredJwtException e) {
-					logger.error("JWT Token has expired");
-				} catch (SignatureException e) {
-					logger.error("Verifying an existing signature of a JWT failed");
+				}
+				catch (JwtException e) {
+					logger.error(e.getMessage());
 				}
 			} else {
 				logger.warn("JWT Token does not begin with Bearer String");
