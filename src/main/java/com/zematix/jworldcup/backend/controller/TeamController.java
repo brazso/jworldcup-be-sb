@@ -25,9 +25,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("teams")
 public class TeamController extends ServiceBase implements ResponseEntityHelper {
 
-//	@Inject
-//	private Logger logger;
-
 	@Inject
 	private TeamService teamService;
 	

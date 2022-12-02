@@ -31,9 +31,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("chats")
 public class ChatController extends ServiceBase implements ResponseEntityHelper {
 
-//	@Inject
-//	private Logger logger;
-
 	@Inject
 	private ChatService chatService;
 	

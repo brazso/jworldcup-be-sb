@@ -40,9 +40,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("bets")
 public class BetController extends ServiceBase implements ResponseEntityHelper {
 
-//	@Inject
-//	private Logger logger;
-
 	@Inject
 	private BetService betService;
 	
