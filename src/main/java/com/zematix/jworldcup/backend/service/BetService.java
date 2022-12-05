@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Iterables;
 import com.zematix.jworldcup.backend.dao.BetDao;
 import com.zematix.jworldcup.backend.dao.CommonDao;
-import com.zematix.jworldcup.backend.dao.UserDao;
 import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.User;
+import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.Pair;
@@ -40,13 +40,13 @@ public class BetService extends ServiceBase {
 	private ApplicationService applicationService;
 	
 	@Inject
-	private MatchService matchService;
-	
-	@Inject
 	private BetDao betDao;
 
 	@Inject
-	private UserDao userDao;
+	private MatchService matchService;
+	
+	@Inject
+	private UserOfEventService userOfEventService;
 
 	@Inject 
 	private CommonDao commonDao;
@@ -115,7 +115,6 @@ public class BetService extends ServiceBase {
 		checkNotNull(userGroupId);
 		
 		List<Bet> bets = betDao.retrieveBetsByMatchAndUserGroup(matchId, userGroupId);
-		Pair<Long> favouriteTeamIds = null;
 		for (Bet bet: bets) {
 			// setScore
 			bet.setScore(retrieveScoreByBet(bet, null));
@@ -240,7 +239,7 @@ public class BetService extends ServiceBase {
 		Long favouriteGroupTeamId = null;
 		Long favouriteKnockoutTeamId = null;
 		
-		UserOfEvent userOfEvent = userDao.retrieveUserOfEvent(bet.getEvent().getEventId(), bet.getUser().getUserId());
+		UserOfEvent userOfEvent = userOfEventService.retrieveUserOfEvent(bet.getEvent().getEventId(), bet.getUser().getUserId());
 		if (userOfEvent != null) {
 			if (userOfEvent.getFavouriteGroupTeam() != null) {
 				favouriteGroupTeamId = userOfEvent.getFavouriteGroupTeam().getTeamId();

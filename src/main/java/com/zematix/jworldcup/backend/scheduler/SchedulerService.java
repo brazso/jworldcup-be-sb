@@ -56,9 +56,6 @@ public class SchedulerService extends ServiceBase {
 	@Inject
 	private UserService userService;
 
-//	@Inject
-//	private ChatService chatService;
-
 	@Inject
 	private MatchService matchService;
 	

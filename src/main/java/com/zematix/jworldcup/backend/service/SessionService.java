@@ -60,6 +60,9 @@ public class SessionService extends ServiceBase {
 	private UserService userService;
 
 	@Inject
+	private UserOfEventService userOfEventService;
+
+	@Inject
 	private EventService eventService;
 	
 	@Inject
@@ -444,7 +447,7 @@ public class SessionService extends ServiceBase {
 		else {
 			UserOfEvent userOfEvent = null;
 			try {
-				userOfEvent = userService.retrieveUserOfEvent(this.event.getEventId(), this.user.getUserId()); // cached method
+				userOfEvent = userOfEventService.retrieveUserOfEvent(this.event.getEventId(), this.user.getUserId()); // cached method
 			} catch (ServiceException e) {
 				consumeServiceException(e);
 				throw new IllegalStateException(e.getMessage()); // fatal case 
