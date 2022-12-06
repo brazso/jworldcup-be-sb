@@ -60,6 +60,9 @@ public class SessionService extends ServiceBase {
 	private UserService userService;
 
 	@Inject
+	private UserOfEventService userOfEventService;
+
+	@Inject
 	private EventService eventService;
 	
 	@Inject
@@ -264,11 +267,11 @@ public class SessionService extends ServiceBase {
 		if (sessionDataClient == null || !sessionData.getUserGroups().equals(sessionDataClient.getUserGroups())) {
 			sessionData.getModificationSet().add(SessionDataModificationFlag.USER_GROUPS);
 		}
-		else { // check users' online flag modifications
+		else { // check users' active flag modifications
 			List<String> from = sessionDataClient.getUserGroups().stream().flatMap(ug -> ug.getUsers().stream())
-					.distinct().map(u -> u.getLoginName() + u.getIsOnline()).toList();
+					.distinct().map(u -> u.getLoginName() + u.getIsActive()).toList();
 			List<String> to = sessionData.getUserGroups().stream().flatMap(ug -> ug.getUsers().stream()).distinct()
-					.map(u -> u.getLoginName() + u.getIsOnline()).toList();
+					.map(u -> u.getLoginName() + u.getIsActive()).toList();
 			if (!from.equals(to)) {
 				sessionData.getModificationSet().add(SessionDataModificationFlag.USER_GROUPS);
 			}
@@ -444,7 +447,7 @@ public class SessionService extends ServiceBase {
 		else {
 			UserOfEvent userOfEvent = null;
 			try {
-				userOfEvent = userService.retrieveUserOfEvent(this.event.getEventId(), this.user.getUserId()); // cached method
+				userOfEvent = userOfEventService.retrieveUserOfEvent(this.event.getEventId(), this.user.getUserId()); // cached method
 			} catch (ServiceException e) {
 				consumeServiceException(e);
 				throw new IllegalStateException(e.getMessage()); // fatal case 
@@ -494,6 +497,8 @@ public class SessionService extends ServiceBase {
 					userGroup.getUsers().forEach(user -> {
 						user.setIsOnline(applicationService.getAllAuthenticatedPrincipals().stream()
 								.anyMatch(principal -> principal.getUsername().equals(user.getLoginName())));
+						user.setIsActive(Boolean.TRUE.equals(user.getIsOnline()) && applicationService
+								.getLastAppearancebyUserCache().getIfPresent(user.getLoginName()) != null);
 					});
 				});
 			} catch (ServiceException e) {

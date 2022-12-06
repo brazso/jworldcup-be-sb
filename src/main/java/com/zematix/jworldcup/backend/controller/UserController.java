@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +22,10 @@ import com.zematix.jworldcup.backend.dto.GenericMapResponse;
 import com.zematix.jworldcup.backend.dto.GenericResponse;
 import com.zematix.jworldcup.backend.dto.UserDto;
 import com.zematix.jworldcup.backend.dto.UserExtendedDto;
-import com.zematix.jworldcup.backend.dto.UserOfEventDto;
 import com.zematix.jworldcup.backend.entity.User;
-import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.mapper.UserExtendedMapper;
 import com.zematix.jworldcup.backend.mapper.UserMapper;
-import com.zematix.jworldcup.backend.mapper.UserOfEventMapper;
 import com.zematix.jworldcup.backend.model.UserExtended;
 import com.zematix.jworldcup.backend.service.JwtUserDetailsService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
@@ -57,9 +53,6 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 
 	@Inject
 	private UserExtendedMapper userExtendedMapper;
-
-	@Inject
-	private UserOfEventMapper userOfEventMapper;
 
 	/**
 	 * Modifies registration data of an existing user. It is a simple wrapper to
@@ -119,41 +112,6 @@ public class UserController extends ServiceBase implements ResponseEntityHelper 
 		return buildResponseEntityWithOK(new GenericListResponse<>(fullNames));
 	}
 
-	/**
-	 * Retrieves {@link UserOfEvent} instance by its given eventId and userId or {@code null}
-	 * unless found. Returned entity is detached from PU.
-	 * 
-	 * @param eventId
-	 * @param userId
-	 * @return found {@link UserOfEvent} detached object or {@code null}
-	 */
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-	@Operation(summary = "Find user-of-event belongs to event and user", description = "Find user-of-event belongs to the given event and user")
-	@GetMapping(value = "/find-user-of-event-by-event-and-user")
-	public ResponseEntity<GenericResponse<UserOfEventDto>> retrieveUserOfEvent(@RequestParam Long eventId, @RequestParam Long userId) throws ServiceException {
-		var userOfEvent = userService.retrieveUserOfEvent(eventId, userId); // cached method
-		return buildResponseEntityWithOK(new GenericResponse<>(userOfEventMapper.entityToDto(userOfEvent)));
-	}
-	
-	/**
-	 * Saves given favourite teams of {@link UserOfEvent} instance by its given 
-	 * userId and eventId. It creates a new database row or it just modifies that.
-	 * 
-	 * @param eventId
-	 * @param userId
-	 * @param favouriteGroupTeamId - favourite group team id
-	 * @param favouriteKnockoutTeamId - favourite knockout team id 
-	 * @return saved userOfEvent
-	 */
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-	@Operation(summary = "Save favourite teams of user-of-event by event and user", description = "Save favourite teams of user-of-event by event and user")
-	@PostMapping(value = "/save-user-of-event")	
-	public ResponseEntity<GenericResponse<UserOfEventDto>> saveUserOfEvent(@RequestParam Long eventId, @RequestParam Long userId, 
-			@RequestParam(required = false) Long favouriteGroupTeamId, @RequestParam(required = false) Long favouriteKnockoutTeamId) throws ServiceException {
-		var userOfEvent = userService.saveUserOfEvent(eventId, userId, favouriteGroupTeamId, favouriteKnockoutTeamId);
-		return buildResponseEntityWithOK(new GenericResponse<>(userOfEventMapper.entityToDto(userOfEvent)));
-	}
-	
 	/**
 	 * Resets user password by the given email address. 
 	 * After verification of the email address, if it belongs to

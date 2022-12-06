@@ -86,12 +86,15 @@ public class MatchService extends ServiceBase {
 	private SchedulerService schedulerService;
 	
 	@Inject
+	private UserOfEventService userOfEventService;
+	
+	@Inject
     private ApplicationEventPublisher applicationEventPublisher;
 
 	@Inject
 	private CacheManager cacheManager;
 	
-	@Value("${app.expiredDays.event:0}")
+	@Value("${scheduler.expiration.event.days:0}")
 	private String appExpiredDaysEvent;
 	
 	/**
@@ -791,7 +794,13 @@ public class MatchService extends ServiceBase {
 			}
 			if (!updatedTeamPair.equals(origTeamPair)) {
 				match.setTeam1(updatedTeamPair.getValue1());
+				if (origTeamPair.getValue1() == null && updatedTeamPair.getValue1() != null) {
+					userOfEventService.prolongFavouriteTeamOfEventUsers(eventId, updatedTeamPair.getValue1().getTeamId());
+				}
 				match.setTeam2(updatedTeamPair.getValue2());
+				if (origTeamPair.getValue2() == null && updatedTeamPair.getValue2() != null) {
+					userOfEventService.prolongFavouriteTeamOfEventUsers(eventId, updatedTeamPair.getValue2().getTeamId());
+				}
 				updatedMatches++;
 			}
 		}

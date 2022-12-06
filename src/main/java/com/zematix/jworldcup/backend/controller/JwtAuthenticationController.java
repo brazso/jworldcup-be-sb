@@ -1,11 +1,8 @@
 package com.zematix.jworldcup.backend.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -88,6 +86,9 @@ public class JwtAuthenticationController extends ServiceBase implements Response
 		
 		String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
 		ResponseCookie responseCookie = jwtTokenUtil.generateRefreshTokenCookie(userDetails);
+
+		// because login does not go through JwtRequestFilter, lastAppearanceByUserCache must be filled here
+		applicationService.refreshLastAppearanceByUserCache(user.getLoginName());
 		
 		return ResponseEntity.ok()
 				.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
@@ -102,15 +103,12 @@ public class JwtAuthenticationController extends ServiceBase implements Response
 	 */
 	@PostMapping(value = "/refresh")
 	@Operation(summary = "Refresh authentication token", description = "Refresh authentication token")
-	public ResponseEntity<JwtResponse> refreshAuthenticationToken(HttpServletRequest request) throws ServiceException {
-
-		Cookie cookie = Arrays.asList(request.getCookies()).stream().filter(e -> e.getName().equals("refreshToken")).findFirst().orElse(null);
-		if (cookie == null) {
+	public ResponseEntity<JwtResponse> refreshAuthenticationToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) throws ServiceException {
+		if (refreshToken == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
-		String refreshToken = cookie.getValue();
-		String username = null;
 		
+		String username = null;
 		try {
 			username = jwtTokenUtil.getUsernameFromToken(refreshToken);
 		}

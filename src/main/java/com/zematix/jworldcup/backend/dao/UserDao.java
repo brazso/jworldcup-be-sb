@@ -22,11 +22,9 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.entity.QUser;
-import com.zematix.jworldcup.backend.entity.QUserOfEvent;
 import com.zematix.jworldcup.backend.entity.Role;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
-import com.zematix.jworldcup.backend.entity.UserOfEvent;
 import com.zematix.jworldcup.backend.entity.UserStatus;
 
 /**
@@ -319,29 +317,6 @@ public class UserDao extends DaoBase {
 
 		commonDao.flushEntityManager();
 		return user;
-	}
-
-	/**
-	 * Returns found {@link UserOfEvent} instance which matches the given
-	 * {@code userId} and {@code eventId}. Otherwise {@code null} is returned.
-	 * 
-	 * @param - eventId
-	 * @param - userId
-	 * @return found userOfEvent with the given {@code userId} and {@code eventId}
-	 * @throws IllegalArgumentException if any of the given parameters is invalid
-	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public UserOfEvent retrieveUserOfEvent(Long eventId, Long userId) {
-		UserOfEvent userOfEvent = null;
-		checkNotNull(eventId);
-		checkNotNull(userId);
-
-		QUserOfEvent qUserOfEvent = QUserOfEvent.userOfEvent;
-		JPAQuery<UserOfEvent> query = new JPAQuery<>(getEntityManager());
-		userOfEvent = query.from(qUserOfEvent)
-				.where(qUserOfEvent.user.userId.eq(userId).and(qUserOfEvent.event.eventId.eq(eventId))).fetchOne();
-
-		return userOfEvent;
 	}
 
 	/**

@@ -824,11 +824,11 @@ INSERT INTO `round` (`round_id`, `event_id`, `name`, `is_groupmatch`, `is_overti
 (72, 11, '1st round', 1, NULL),
 (73, 11, '2nd round', 1, NULL),
 (74, 11, '3rd round', 1, NULL),
-(75, 11, 'Round of 16', 0, NULL),
-(76, 11, 'Quarter-finals', 0, NULL),
-(77, 11, 'Semi-finals', 0, NULL),
-(78, 11, 'Third place play-off', 0, NULL),
-(79, 11, 'Final', 0, NULL);
+(75, 11, 'Round of 16', 0, 1),
+(76, 11, 'Quarter-finals', 0, 1),
+(77, 11, 'Semi-finals', 0, 1),
+(78, 11, 'Third place play-off', 0, 1),
+(79, 11, 'Final', 0, 1);
 
 -- --------------------------------------------------------
 

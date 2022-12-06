@@ -130,6 +130,9 @@ public class User implements Serializable {
 	private Boolean isOnline;
 
 	@Transient
+	private Boolean isActive;
+
+	@Transient
 	private LocalDateTime loginTime;
 
 	public Bet addBet(Bet bet) {
