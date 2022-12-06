@@ -1,5 +1,10 @@
 ## Changes
 
+### Version 1.0.6 / 2022-12-06
+
+* User activity is displayed at chat page because online status is incomprehensible
+* Fix: Jwt refresh token invalidation at logout
+
 ### Version 1.0.5 / 2022-12-02
 
 * Jwt refresh token used with extended expiration age
