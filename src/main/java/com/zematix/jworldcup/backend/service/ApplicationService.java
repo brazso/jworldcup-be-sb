@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -65,6 +66,9 @@ public class ApplicationService extends ServiceBase {
 	@Value("${app.emailAddr}")
 	private String appEmailAddr;
 	
+	@Value("${app.user.expiration.activity.seconds:0}")
+	private String appUserExpirationActivitySeconds;
+	
 	/**
 	 * Cached map containing event completions in percent.
 	 * Key is the {@link Event#eventId}, value is an integer between 0 and 100.
@@ -114,14 +118,31 @@ public class ApplicationService extends ServiceBase {
 			});
 	
 	/**
+	 * Cached last appearance datetime belongs to user loginName as key.
+	 * Adding elements to the cache takes place manually. Storing the value is superfluous in fact,
+	 * only the key existence is relevant.
+	 */
+	private LoadingCache<String, LocalDateTime> lastAppearanceByUserIdCache = null;
+	
+	/**
 	 * Initialization of cached fields
 	 */
 	@PostConstruct
 	public void initApplication() {
-		logger.info("ApplicationService: init");;
+		logger.info("ApplicationService: init");
+		
 		// initializes cachedEventCompletionPercentCache
 		List<Event> events = eventService.findAllEvents();
 		events.stream().forEach(e -> refreshEventCompletionPercentCache(e.getEventId()));
+		
+		// define lastAppearanceByUserIdCache here because @Value annotation is not process yet during bean creation 
+		lastAppearanceByUserIdCache = CacheBuilder.newBuilder()
+				.expireAfterWrite(Long.parseLong(appUserExpirationActivitySeconds), TimeUnit.SECONDS)
+				.build(new CacheLoader<String, LocalDateTime>() {
+					public LocalDateTime load(String username) throws Exception {
+						return getActualDateTime();
+					}
+				});
 		
 		// initializes topUsersCache - not used because the synchronously called loader function might be slow and does use applicationService (infinite loop)
 		// so it is placed to the SchedulerService, see {@link ApplicationService#databaseMaintenanceJob()} method
@@ -267,6 +288,22 @@ public class ApplicationService extends ServiceBase {
 	 */
 	public void refreshChatsByUserGroupCache(UserGroup userGroup) {
 		chatsByUserGroupCache.refresh(userGroup);
+	}
+	
+	/**
+	 * Gets or loads lastAppearancesbyUserCache list in cache.
+	 */
+	public LoadingCache<String, LocalDateTime> getLastAppearancebyUserCache() {
+		return lastAppearanceByUserIdCache;
+	}
+
+	/**
+	 * Refreshes lastAppearancesbyUserCache belongs to the given user loginName.
+	 * 
+	 * @param loginName
+	 */
+	public void refreshLastAppearanceByUserCache(String username) {
+		lastAppearanceByUserIdCache.refresh(username);
 	}
 	
 	/**

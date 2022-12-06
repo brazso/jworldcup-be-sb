@@ -30,8 +30,6 @@ spring:
     hikari:
       maximumPoolSize: 20
       transactionIsolation: TRANSACTION_READ_COMMITTED
-  liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
   main:
     allow-bean-definition-overriding: true
   quartz.properties.org.quartz:
@@ -63,21 +61,18 @@ app:
     date: 2022-12-02
   shortName: JWorldcup
   emailAddr: jworldcup@zematix.hu
-  user.candidate.expire.days: 3
+  user:
+    expiration:
+      candidate.days: 3 # default 0 means no delete of abandoned candidate users at all
+      emailModification.days: 3 # default 0 means no delete of abandoned email modifications at all
+      passwordReset.days: 3 # default 0 means no delete of abandoned reset passwords at all
+      activity.seconds: 300 # 5 minutes
+  scheduler.expiration.event.days: 30 # default 0 means no retrieval of match-results from external site at all
   api:
     moduleName: jworldcup
     version: 1.0
-  expiredDays:
-    event: 30 # default 0 means no retrieval of match-results from external site at all
-    user:
-      candidate: 3 # default 0 means no delete of abandoned candidate users at all
-      emailModification: 3 # default 0 means no delete of abandoned email modifications at all
-      passwordReset: 3 # default 0 means no delete of abandoned reset passwords at all
   #reCaptcha:
     #secretKey: 6LdAnY0iAAAAALusuamLTrTwloLRU9UJ51IM6u2f #SECRET
-
-# Cookie
-cookie.maxAge: 1209600
 
 # SMTP parameters- Zoho email provider used with generated app specific pwd
 mail.smtp:

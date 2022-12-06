@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.zematix.jworldcup.backend.service.ApplicationService;
 import com.zematix.jworldcup.backend.service.JwtUserDetailsService;
 
 import io.jsonwebtoken.JwtException;
@@ -33,6 +34,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 	@Inject
 	private JwtTokenUtil jwtTokenUtil;
+	
+	@Inject
+	private ApplicationService applicationService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -71,6 +75,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			// that the current user is authenticated. So it passes the
 			// Spring Security Configurations successfully.
 			SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+		}
+		
+		if (username != null && !request.getRequestURI().endsWith("session/refresh-session-data")) { 
+			applicationService.refreshLastAppearanceByUserCache(username);
 		}
 		
 		chain.doFilter(request, response);

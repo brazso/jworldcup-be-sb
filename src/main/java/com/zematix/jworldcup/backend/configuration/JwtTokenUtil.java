@@ -1,6 +1,7 @@
 package com.zematix.jworldcup.backend.configuration;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,9 @@ public class JwtTokenUtil implements Serializable {
 
 	@Value("${app.shortName}")
 	private String appShortName;
+	
+	@Value("${server.servlet.context-path}")
+	private String apiContextPath;
 
 	/**
 	 * Retrieves username from the given jwt token
@@ -132,7 +136,23 @@ public class JwtTokenUtil implements Serializable {
 		String refreshToken = generateRefreshToken(userDetails);
 		
 		return ResponseCookie.from("refreshToken", refreshToken)
+				.path(apiContextPath)
 				.maxAge(Long.parseLong(jwtValidityRefresh))
+				.httpOnly(true)
+				.secure(true)
+				.sameSite("None")
+				.build();
+	}
+
+	/**
+	 * Generates a response cookie containing a new refresh token for user of the given details. 
+	 * @param userDetails
+	 * @return refresh jwt token
+	 */
+	public ResponseCookie generateDeletedRefreshTokenCookie() {
+		return ResponseCookie.from("refreshToken", null)
+				.path(apiContextPath)
+				.maxAge(Duration.ofSeconds(0)) // Don't set to -1 or it will become a session cookie!
 				.httpOnly(true)
 				.secure(true)
 				.sameSite("None")

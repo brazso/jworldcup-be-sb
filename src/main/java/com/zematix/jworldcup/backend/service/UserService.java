@@ -62,13 +62,13 @@ public class UserService extends ServiceBase {
 	@Inject
 	private PasswordEncoder passwordEncoder;
 	
-	@Value("${app.expiredDays.user.candidate:0}")
+	@Value("${app.user.expiration.candidate.days:0}")
 	private String appExpiredDaysUserCandidate;
 		
-	@Value("${app.expiredDays.user.emailModification:0}")
+	@Value("${app.user.expiration.emailModification.days:0}")
 	private String appExpiredDaysUserEmailModification;
 
-	@Value("${app.expiredDays.user.passwordReset:0}")
+	@Value("${app.user.expiration.passwordReset.days:0}")
 	private String appExpiredDaysUserPasswordReset;
 
 	/**

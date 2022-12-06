@@ -32,5 +32,6 @@ public class UserDto {
 //	private List<UserOfEvent> userOfEvents;
 //	private List<Chat> chats;
     private Boolean isOnline;
+    private Boolean isActive;
     private LocalDateTime loginTime;
 }
