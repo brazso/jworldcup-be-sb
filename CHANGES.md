@@ -1,9 +1,15 @@
 ## Changes
 
+### Version 1.0.7 / 2022-12-07
+
+* Feature: score gained on favourite team supplemented by asterisk
+
 ### Version 1.0.6 / 2022-12-06
 
 * User activity is displayed at chat page because online status is incomprehensible
+* Feature: automatically copying user's favourite team from group stage to knockout one when the team gets to knockout stage
 * Fix: Jwt refresh token invalidation at logout
+* Fix: WC2022 knockout matches might have overtime before penalties
 
 ### Version 1.0.5 / 2022-12-02
 

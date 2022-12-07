@@ -67,4 +67,10 @@ public class Bet implements Serializable {
 	
 	@Transient
 	private Integer score;
+	
+	/**
+	 * Is team on index (0/1) favourite team of the owner user on the match? Otherwise its value is {@code null}.
+	 */
+	@Transient
+	private Integer favouriteTeamIndex;
 }

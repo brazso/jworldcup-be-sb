@@ -20,4 +20,5 @@ public class BetDto {
 	private MatchDto match;
 	private UserDto user;
 	private Integer score;
+	private Integer favouriteTeamIndex;
 }
