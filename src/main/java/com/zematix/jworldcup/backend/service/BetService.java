@@ -68,12 +68,11 @@ public class BetService extends ServiceBase {
 		List<Bet> bets = betDao.retrieveBetsByEventAndUser(eventId, userId);
 		Pair<Long> favouriteTeamIds = null;
 		for (Bet bet: bets) {
-			// setScore
 			if (favouriteTeamIds == null) {
 				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
 			}
 			bet.setScore(retrieveScoreByBet(bet, favouriteTeamIds));
-			
+			bet.setFavouriteTeamIndex(retrieveFavouriteTeamIndexByBet(bet, favouriteTeamIds));
 		}
 		return bets;
 	}
@@ -95,8 +94,8 @@ public class BetService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 
-		// setScore
 		bet.setScore(retrieveScoreByBet(bet, null));
+		bet.setFavouriteTeamIndex(retrieveFavouriteTeamIndexByBet(bet, null));
 		
 		commonDao.detachEntity(bet);
 	
@@ -116,9 +115,8 @@ public class BetService extends ServiceBase {
 		
 		List<Bet> bets = betDao.retrieveBetsByMatchAndUserGroup(matchId, userGroupId);
 		for (Bet bet: bets) {
-			// setScore
 			bet.setScore(retrieveScoreByBet(bet, null));
-			
+			bet.setFavouriteTeamIndex(retrieveFavouriteTeamIndexByBet(bet, null));
 		}
 		return bets;
 	}
@@ -190,6 +188,7 @@ public class BetService extends ServiceBase {
 
 		if (bet != null) {
 			bet.setScore(this.retrieveScoreByBet(bet, null));
+			bet.setFavouriteTeamIndex(retrieveFavouriteTeamIndexByBet(bet, null));
 		}
 		
 		if (!errMsgs.isEmpty()) {
@@ -282,6 +281,40 @@ public class BetService extends ServiceBase {
 				bet.getGoalNormalByTeam1(), bet.getGoalNormalByTeam2());
 
 		return score;
+	}
+
+	/**
+	 * Returns favourite team index gained by given {@code bet} and {@code favouriteTeamId}.
+	 * If latter one is not given, its value is retrieved from database.
+	 * Index comes from the position of the bet match teams, its value can be 0 or 1. If no 
+	 * favourite team is among the match participant teams, {@code null} returns.
+	 *  @param bet
+	 *  @param favouriteTeamId
+	 */
+	private Integer retrieveFavouriteTeamIndexByBet(Bet bet, Pair<Long> favouriteTeamIds) throws ServiceException {
+		checkNotNull(bet);
+		Integer favouriteTeamIndex = null;
+		
+		Long favouriteGroupTeamId = null;
+		Long favouriteKnockoutTeamId = null;
+		if (favouriteTeamIds == null) {
+			favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
+		}
+		if (favouriteTeamIds != null) { 
+			favouriteGroupTeamId = favouriteTeamIds.getValue1();
+			favouriteKnockoutTeamId = favouriteTeamIds.getValue2();
+		}
+
+		boolean isGroupmatch = Boolean.TRUE.equals(bet.getMatch().getRound().getIsGroupmatchAsBoolean());
+		Long favouriteTeamId = isGroupmatch ? favouriteTeamIds.getValue1() : favouriteTeamIds.getValue2();
+		if (bet.getMatch().getTeam1().getTeamId().equals(favouriteTeamId)) {
+			favouriteTeamIndex = 0;
+		}
+		else if (bet.getMatch().getTeam2().getTeamId().equals(favouriteTeamId)) {
+			favouriteTeamIndex = 1;
+		}
+
+		return favouriteTeamIndex;
 	}
 
 	/**
