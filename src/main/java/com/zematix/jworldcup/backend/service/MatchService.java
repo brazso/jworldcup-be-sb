@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
@@ -399,7 +400,7 @@ public class MatchService extends ServiceBase {
 		// invalidate dependent cache(s)
 		Cache cache = cacheManager.getCache(CachingConfig.CACHE_EVENT_KNOCKOUT_START_TIME);
 		if (cache != null) {
-			cache.evictIfPresent(match.getEvent().getEventId());
+			cache.evictIfPresent(SimpleKeyGenerator.generateKey(match.getEvent().getEventId()));
 		}
 	}
 	

@@ -7,8 +7,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +39,9 @@ public class UserOfEventService extends ServiceBase {
 	
 	@Inject
 	private CommonDao commonDao;
+
+	@Inject
+	private CacheManager cacheManager;
 
 	/**
 	 * Retrieves {@link UserOfEvent} instance by its given eventId and userId or {@code null}
@@ -146,7 +152,12 @@ public class UserOfEventService extends ServiceBase {
 					&& e.getFavouriteKnockoutTeam() == null) {
 				Team team = commonDao.findEntityById(Team.class, teamId);
 				checkState(team != null, String.format("No \"Team\" entity belongs to \"teamsId\"=%d in database.", teamId));
-				e.setFavouriteKnockoutTeam(team); // update knockout team in database
+				e.setFavouriteKnockoutTeam(team); // update knockout team in UserOfEvent/database
+				// invalidate dependent cache(s)
+				Cache cache = cacheManager.getCache(CachingConfig.CACHE_USER_OF_EVENT);
+				if (cache != null) {
+					cache.evictIfPresent(SimpleKeyGenerator.generateKey(eventId, e.getUser().getUserId()));
+				}
 			}
 		});
 	}
