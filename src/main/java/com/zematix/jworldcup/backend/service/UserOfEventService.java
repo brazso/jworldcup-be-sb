@@ -68,9 +68,11 @@ public class UserOfEventService extends ServiceBase {
 		if (userOfEvent.getFavouriteGroupTeam() != null) {
 //			userOfEvent.getFavouriteGroupTeam().getTeamId(); // not enough, it does not fetch Team entity...
 			userOfEvent.getFavouriteGroupTeam().getName(); // so we choose another field
+			userOfEvent.getFavouriteGroupTeam().getGroup().getName();
 		}
 		if (userOfEvent.getFavouriteKnockoutTeam() != null) {
 			userOfEvent.getFavouriteKnockoutTeam().getName();
+			userOfEvent.getFavouriteKnockoutTeam().getGroup().getName();
 		}
 		
 		commonDao.detachEntity(userOfEvent);
