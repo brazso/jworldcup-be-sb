@@ -54,6 +54,9 @@ If you just want to peek to a running docker container, e.g. rabbitmq, run the f
 ```
 $ docker exec -it jworldcup.rabbitmq bash
 ```
+#### MySQL docker image
+
+Database instance is stored not inside the `jworldcup.mysql` container, but on the host in `../dock-shares/mysql` folder. If you start the container first time, that folder is empty yet and the database is loaded from the `jworldcup.mysql` docker `backup` folder, where `worldcup.sql` and `worldcup.sql.gz` files are searched for in the given order. If you want to reload the database in your developer server, remember to delete `../dock-shares/mysql` folder at first, otherwise the backup is not retrieved during docker container start.
 
 ### Run application from Gradle
 
@@ -108,12 +111,10 @@ After gradle test (or build if test is not disabled there) the result can be che
 file://{$buildDir}/reports/tests/test/index.html
 
 ### Eclipse IDE
-If you use Eclipse IDE (4.23 2022-03) it is recommended to install the following items in Eclipse Marketplace
-* Install lombok.jar (v1.18.22), see also [https://www.baeldung.com/lombok-ide#eclipse](https://www.baeldung.com/lombok-ide#eclipse)
-* Java 17 Support for Eclipse 2021-09 (unsupported natively)
-* Spring Tools 4 (Spring tool, e.g. running application easily as Spring Boot App)
-* DBeaver 21.2.5 (if you want a more convenient database tool than PhpMyAdmin included in docker image)
-* SonarLint 7.3.1 (sourcecode analyser tool)
+If you use Eclipse IDE (4.30 2023-12) it is recommended to install the following items in Eclipse Marketplace
+* Install lombok.jar (v1.18.30), see also [https://www.baeldung.com/lombok-ide#eclipse](https://www.baeldung.com/lombok-ide#eclipse)
+* Spring Tools 4 (aka Spring Tool Suite4) 4.21.0.RELEASE (Spring tool, e.g. running application easily as Spring Boot App from IDE)
+* SonarLint 9.2 (sourcecode analyser tool)
 
 ### Rest API
 * Swagger UI page is [http://localhost:8090/jworldcup-api/swagger-ui.html](http://localhost:8090/jworldcup-api/swagger-ui.html)

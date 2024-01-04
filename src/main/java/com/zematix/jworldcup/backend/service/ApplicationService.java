@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.session.SessionInformation;
@@ -48,7 +47,7 @@ public class ApplicationService extends ServiceBase {
 	@Inject
 	private ChatService chatService;
 	
-	@Autowired
+	@Inject
 	private SessionRegistry sessionRegistry;
 
 	@Value("${app.shortName}")

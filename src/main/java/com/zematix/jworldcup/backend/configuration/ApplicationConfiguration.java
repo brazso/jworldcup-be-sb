@@ -25,7 +25,7 @@ public class ApplicationConfiguration {
 	}
 
 	@Bean
-	public ResourceBundleMessageSource messageSource() {
+	ResourceBundleMessageSource messageSource() {
 		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
 		String basename = "i18n/messages";
 		source.setBasenames(basename);

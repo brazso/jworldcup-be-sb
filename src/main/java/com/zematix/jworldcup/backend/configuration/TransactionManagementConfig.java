@@ -47,7 +47,7 @@ public class TransactionManagementConfig {
 	@Bean
 	@Primary
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-    public TransactionAttributeSource transactionAttributeSourceWithDefaultRollBackForAllExceptions() {
+    TransactionAttributeSource transactionAttributeSourceWithDefaultRollBackForAllExceptions() {
         return new AnnotationTransactionAttributeSource() {
 
         	@Override

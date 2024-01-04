@@ -8,13 +8,13 @@ buildscript {
 }
 
 plugins {
-	id "org.springframework.boot" version "2.5.14"
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
-	id 'eclipse'
-	id "de.undercouch.download" version "4.0.4"
-	id "uk.co.boothen.gradle.wsimport" version "0.16"
-	id "io.freefair.lombok" version "5.3.3.3"
+	id("org.springframework.boot") version "2.7.18"
+	id('io.spring.dependency-management') version '1.1.4'
+	id('java')
+	id('eclipse')
+	id("de.undercouch.download") version "5.5.0"
+	id("uk.co.boothen.gradle.wsimport") version "0.21"
+	id("io.freefair.lombok") version "8.4"
 }
 
 //Buildship doesn't use that hooks (https://discuss.gradle.org/t/when-does-buildship-eclipse-customization-run/20781/2)
@@ -36,7 +36,7 @@ def applicationConfig = new org.yaml.snakeyaml.Yaml().loadAll(new File("$project
 
 group = 'com.zematix.jworldcup'
 version = applicationConfig.app.version.number
-sourceCompatibility = '17'
+sourceCompatibility = '21'
 
 bootRun {
 	String activeProfile = System.properties['spring.profiles.active']
@@ -79,7 +79,7 @@ dependencies {
 	
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.hsqldb:hsqldb'
-	runtimeOnly 'mysql:mysql-connector-java'
+	runtimeOnly 'com.mysql:mysql-connector-j'
 	
 	// JUnit4 used instead of the native JUnit5
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -150,6 +150,7 @@ test {
 }
 
 task downloadFile(type: Download, description: "Download OpenLigaDB WSDL file") {
+	dependsOn processResources 
 	src "https://www.openligadb.de/Webservices/Sportsdata.asmx?wsdl"
 	dest "src/main/resources/wsdl/Sportsdata.wsdl"
 	//onlyIfModified true
@@ -204,6 +205,7 @@ task generateTestDatabaseScripts {
 
 // Eclipse IDE looks for the bootBuildInfo generated properties file during application boot under bin/main/META-INF folder
 task copyBuildInfo(type: Copy) {
+	dependsOn(tasks["build"])
 	from "$buildDir/resources/main/META-INF/build-info.properties"
 	into "bin/main/META-INF"
 }
@@ -229,7 +231,7 @@ compileJava {
 }
 
 tasks.withType(JavaCompile) {
-	dependsOn downloadFile, generateTestDatabaseScripts, copyBuildInfo //, wsimport //, generateJaxb
+	dependsOn downloadFile, generateTestDatabaseScripts//, copyBuildInfo //, wsimport //, generateJaxb
 	options.compilerArgs += [
 		//"--enable-preview",
 		"-Amapstruct.defaultComponentModel=spring",
@@ -254,6 +256,6 @@ clean {
 }
 
 springBoot {
-	mainClassName = 'com.zematix.jworldcup.backend.Application'
+	//mainClassName = 'com.zematix.jworldcup.backend.Application'
 	buildInfo()
 }

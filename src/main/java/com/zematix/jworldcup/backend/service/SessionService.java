@@ -382,7 +382,7 @@ public class SessionService extends ServiceBase {
 	}
 
 	public void setLanguage(String language) {
-		locale = new Locale(language);
+		locale = Locale.of(language);
 	}
 
 	/**
