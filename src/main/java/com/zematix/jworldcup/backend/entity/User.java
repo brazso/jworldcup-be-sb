@@ -101,14 +101,14 @@ public class User implements Serializable {
 	@OneToMany(mappedBy="user")
 	private List<Bet> bets;
 
-	//bi-directional many-to-many association to Role
-	@ManyToMany(mappedBy="users")
-	private Set<Role> roles;
+	//bi-directional many-to-many association to virtual Role
+	@ManyToMany(mappedBy="roleUsers")
+	private Set<Dictionary> roles;
 
-	//bi-directional many-to-one association to UserStatus
+	//bi-directional many-to-one association to virtual UserStatus
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="user_status_id", nullable=false)
-	private UserStatus userStatus;
+	private Dictionary userStatus;
 
 	//bi-directional many-to-many association to UserGroup
 	@ManyToMany(mappedBy="users")
@@ -125,6 +125,10 @@ public class User implements Serializable {
 	//bi-directional many-to-one association to UserGroup
 	@OneToMany(mappedBy="user")
 	private List<Chat> chats;
+
+	//bi-directional many-to-one association to UserNotification
+	@OneToMany(mappedBy="user")
+	private List<UserNotification> userNotifications;
 
 	@Transient
 	private Boolean isOnline;
@@ -189,5 +193,19 @@ public class User implements Serializable {
 		chat.setUser(null);
 
 		return chat;
+	}
+
+	public UserNotification addUserNotification(UserNotification userNotification) {
+		getUserNotifications().add(userNotification);
+		userNotification.setUser(this);
+
+		return userNotification;
+	}
+
+	public UserNotification removeUserNotification(UserNotification userNotification) {
+		getUserNotifications().remove(userNotification);
+		userNotification.setUser(null);
+
+		return userNotification;
 	}
 }

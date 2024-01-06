@@ -15,7 +15,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Async;
@@ -46,7 +45,6 @@ import com.zematix.jworldcup.backend.model.UserCertificate;
  */
 @SessionScope
 @Service
-@Configuration
 public class SessionService extends ServiceBase {
 	private final String id = UUID.randomUUID().toString();
 	

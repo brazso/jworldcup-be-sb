@@ -15,13 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.zematix.jworldcup.backend.emun.DictionaryEnum;
+import com.zematix.jworldcup.backend.emun.RoleEnum;
+import com.zematix.jworldcup.backend.emun.UserStatusEnum;
+import com.zematix.jworldcup.backend.entity.Dictionary;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.QUser;
 import com.zematix.jworldcup.backend.entity.QUserGroup;
-import com.zematix.jworldcup.backend.entity.Role;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
-import com.zematix.jworldcup.backend.entity.UserStatus;
 
 /**
  * Database operations around {@link UserGroup} entities.
@@ -34,10 +36,7 @@ public class UserGroupDao extends DaoBase {
 	private CommonDao commonDao;
 	
 	@Inject
-	private RoleDao roleDao;
-
-	@Inject
-	private UserStatusDao userStatusDao;
+	private DictionaryDao dictionaryDao;
 	
 	/**
 	 * Returns a list of all {@link UserGroup} entities from database.
@@ -109,8 +108,8 @@ public class UserGroupDao extends DaoBase {
 	}
 	
 	/**
-	 * Returns a list of found {@link User} instance with "USER" {@link Role#getRole()} 
-	 * and with "NORMAL" {@link UserStatus#getStatus()} which belongs to the given 
+	 * Returns a list of found {@link User} instance with "USER" role 
+	 * and with "NORMAL" user status which belongs to the given 
 	 * {@code userGroupId}. If the given userGroup is virtual Everybody then all users 
 	 * are retrieved.
 	 * 
@@ -127,11 +126,11 @@ public class UserGroupDao extends DaoBase {
 		checkArgument(userGroup != null || userGroupId == UserGroup.EVERYBODY_USER_GROUP_ID, 
 				String.format("No \"UserGroup\" instance belongs to \"userGroupId\"=%d in database.", userGroupId));
 		
-		Role userRole = roleDao.findRoleByRole("USER");
-		checkState(userRole != null, "No \"Role\" instance belongs to \"role\"=%s in database.", "USER");
+		Dictionary userRole = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.ROLE.name(), RoleEnum.USER.name());
+		checkState(userRole != null, "No \"Role\" instance belongs to \"role\"=%s in database.", RoleEnum.USER.name());
 
-		UserStatus normalUserStatus = userStatusDao.findUserStatusByStatus("NORMAL");
-		checkState(normalUserStatus != null, "No \"UserStatus\" instance belongs to \"userStatus\"=%s in database.", "NORMAL");
+		Dictionary normalUserStatus = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.USER_STATUS.name(), UserStatusEnum.NORMAL.name());
+		checkState(normalUserStatus != null, "No \"UserStatus\" instance belongs to \"userStatus\"=%s in database.", UserStatusEnum.NORMAL.name());
 		
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
@@ -156,8 +155,8 @@ public class UserGroupDao extends DaoBase {
 	}
 
 	/**
-	 * Returns a list of found {@link User} instance with "USER" {@link Role#getRole()} 
-	 * and with "NORMAL" {@link UserStatus#getStatus()} which belongs to the given 
+	 * Returns a list of found {@link User} instance with "USER" role 
+	 * and with "NORMAL" user status which belongs to the given 
 	 * {@code userGroupId} and each user has at least one bet belongs to the event of
 	 * the given userGroup.
 	 * If the given {@code userGroupId} belongs to the virtual Everybody then the given
@@ -184,11 +183,11 @@ public class UserGroupDao extends DaoBase {
 					"Argument \"eventId\" cannot be null if \"userGroupId\" belongs to virtual Everybody userGroup.");
 		}
 		
-		Role userRole = roleDao.findRoleByRole("USER");
-		checkState(userRole != null, "No \"Role\" instance belongs to \"role\"=%s in database.", "USER");
+		Dictionary userRole = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.ROLE.name(), RoleEnum.USER.name());
+		checkState(userRole != null, "No \"Role\" instance belongs to \"role\"=%s in database.", RoleEnum.USER.name());
 
-		UserStatus normalUserStatus = userStatusDao.findUserStatusByStatus("NORMAL");
-		checkState(normalUserStatus != null, "No \"UserStatus\" instance belongs to \"userStatus\"=%s in database.", "NORMAL");
+		Dictionary normalUserStatus = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.USER_STATUS.name(), UserStatusEnum.NORMAL.name());
+		checkState(normalUserStatus != null, "No \"UserStatus\" instance belongs to \"userStatus\"=%s in database.", UserStatusEnum.NORMAL.name());
 		
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
@@ -216,7 +215,7 @@ public class UserGroupDao extends DaoBase {
 
 	/**
 	 * Returns the number of the list of found {@link User} instance with "USER" 
-	 * {@link Role#getRole()} and with "NORMAL" {@link UserStatus#getStatus()} which 
+	 * role and with "NORMAL" user status which 
 	 * belongs to the given {@code userGroupId} and each user has at least one bet 
 	 * belongs to the event of the given userGroup.
 	 * If the given {@code userGroupId} belongs to the virtual Everybody then the given
@@ -243,11 +242,11 @@ public class UserGroupDao extends DaoBase {
 					"Argument \"eventId\" cannot be null if \"userGroupId\" belongs to virtual Everybody userGroup.");
 		}
 		
-		Role userRole = roleDao.findRoleByRole("USER");
-		checkState(userRole != null, "No \"Role\" instance belongs to \"role\"=%s in database.", "USER");
+		Dictionary userRole = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.ROLE.name(), RoleEnum.USER.name());
+		checkState(userRole != null, "No \"Role\" instance belongs to \"role\"=%s in database.", RoleEnum.USER.name());
 
-		UserStatus normalUserStatus = userStatusDao.findUserStatusByStatus("NORMAL");
-		checkState(normalUserStatus != null, "No \"UserStatus\" instance belongs to \"userStatus\"=%s in database.", "NORMAL");
+		Dictionary normalUserStatus = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.USER_STATUS.name(), UserStatusEnum.NORMAL.name());
+		checkState(normalUserStatus != null, "No \"UserStatus\" instance belongs to \"userStatus\"=%s in database.", UserStatusEnum.NORMAL.name());
 		
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());

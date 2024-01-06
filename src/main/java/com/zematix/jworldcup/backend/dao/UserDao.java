@@ -21,11 +21,12 @@ import com.google.common.base.Strings;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.configuration.CachingConfig;
+import com.zematix.jworldcup.backend.emun.DictionaryEnum;
+import com.zematix.jworldcup.backend.emun.RoleEnum;
+import com.zematix.jworldcup.backend.entity.Dictionary;
 import com.zematix.jworldcup.backend.entity.QUser;
-import com.zematix.jworldcup.backend.entity.Role;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
-import com.zematix.jworldcup.backend.entity.UserStatus;
 
 /**
  * Database operations around {@link User} entities.
@@ -41,13 +42,10 @@ public class UserDao extends DaoBase {
 	private BetDao betDao;
 
 	@Inject
-	private RoleDao roleDao;
+	private DictionaryDao dictionaryDao;
 
 	@Inject
 	private UserOfEventDao userOfEventDao;
-
-	@Inject
-	private UserStatusDao userStatusDao;
 
 	/**
 	 * Returns a list of all {@link User} entities from database.
@@ -57,8 +55,7 @@ public class UserDao extends DaoBase {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<User> getAllUsers() {
 		TypedQuery<User> query = getEntityManager().createNamedQuery("User.findAll", User.class);
-		List<User> users = query.getResultList();
-		return users;
+		return query.getResultList();
 	}
 
 	/**
@@ -217,16 +214,16 @@ public class UserDao extends DaoBase {
 		user.setLoginPassword(encryptedLoginPassword);
 		user.setFullName(fullName);
 		user.setEmailAddr(emailAddr);
-		user.setRoles(new HashSet<Role>());
+		user.setRoles(new HashSet<Dictionary>());
 		user.setToken(token);
 		user.setZoneId(zoneId);
 		user.setModificationTime(modificationTime);
 		user.setUserGroups(new HashSet<UserGroup>());
 
-		Role role = roleDao.findRoleByRole(sRole);
+		Dictionary role = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.ROLE.name(),sRole);
 		checkArgument(role != null, String.format("Role named \"%s\" cannot be found in database.", sRole));
 
-		UserStatus userStatus = userStatusDao.findUserStatusByStatus(sStatus);
+		Dictionary userStatus = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.USER_STATUS.name(), sStatus);
 		checkArgument(userStatus != null,
 				String.format("UserStatus named \"%s\" cannot be found in database.", sStatus));
 		user.setUserStatus(userStatus);
@@ -234,7 +231,7 @@ public class UserDao extends DaoBase {
 		commonDao.persistEntity(user);
 
 		user.getRoles().add(role);
-		role.getUsers().add(user);
+		role.getRoleUsers().add(user);
 
 		return user;
 	}
@@ -309,7 +306,7 @@ public class UserDao extends DaoBase {
 				"Argument \"user\" entity cannot be detached from persitence context.");
 		checkArgument(!Strings.isNullOrEmpty(status), "Argument \"status\" cannot be null nor empty.");
 
-		UserStatus userStatus = userStatusDao.findUserStatusByStatus(status);
+		Dictionary userStatus = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.USER_STATUS.name(), status);
 		checkState(userStatus != null, String.format("No value belongs to argument \"status\"=%s in database.", status));
 
 		user.setUserStatus(userStatus);
@@ -533,7 +530,7 @@ public class UserDao extends DaoBase {
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
 
 		List<User> users = query.from(qUser).where(
-				qUser.userStatus.status.eq("CANDIDATE").and(qUser.modificationTime.before(expiredModificationTime)))
+				qUser.userStatus.value.eq("CANDIDATE").and(qUser.modificationTime.before(expiredModificationTime)))
 				.fetch();
 		return users;
 	}
@@ -570,8 +567,8 @@ public class UserDao extends DaoBase {
 	public User findFirstAdminUser() {
 		User user = null;
 
-		Role userRole = roleDao.findRoleByRole("ADMIN");
-		checkState(userRole != null, "No \"Role\" instance belongs to \"role\"=%s in database.", "ADMIN");
+		Dictionary userRole = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.ROLE.name(), RoleEnum.ADMIN.name());
+		checkState(userRole != null, "No \"Role\" instance belongs to \"role\"=%s in database.", RoleEnum.ADMIN.name());
 
 		QUser qUser = QUser.user;
 		JPAQuery<User> query = new JPAQuery<>(getEntityManager());
