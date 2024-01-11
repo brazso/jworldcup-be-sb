@@ -219,7 +219,7 @@ compileJava {
 		srcDirs += [annotationProcessorPath, wsdlPath]
 	}
 
-	sourceSets.main.resources { 
+	sourceSets.test.resources { 
 		srcDirs += [testResourcePath]
 	}
 

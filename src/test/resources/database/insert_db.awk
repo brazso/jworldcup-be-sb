@@ -4,8 +4,6 @@ BEGIN {
 	# means insert block specified by index must be placed after its value block
 	# there can be more shiftMap rules, but the indices must follow the order as they are in the source file
 	shiftMap["match_"] = "team"; # "match_" must be placed after "team"
-	shiftMap["user"] = "user_status";
-	shiftMap["user_group"] = "user";
 }
 {
 	line = $0

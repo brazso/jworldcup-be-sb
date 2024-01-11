@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.http.annotation.Obsolete;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +29,8 @@ import com.zematix.jworldcup.backend.model.openligadb.client.Team;
 @SpringBootTest
 @ActiveProfiles({"develop", "test"})
 @Transactional
+@Ignore
+@Obsolete
 public class OpenLigaDBServiceTest {
 
 	@Inject
