@@ -53,6 +53,9 @@ public class Event implements Serializable {
 	@Column(name="organizer", nullable=false, length=10)
 	private String organizer;
 
+	@Column(name="website", nullable=true, length=255)
+	private String website;
+
 	//bi-directional many-to-one association to Bet
 	@OneToMany(mappedBy="event")
 	private List<Bet> bets;

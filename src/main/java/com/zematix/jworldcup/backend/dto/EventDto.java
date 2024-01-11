@@ -16,6 +16,7 @@ public class EventDto {
 	private String shortDesc;
 	private Short year;
 	private String organizer;
+	private String website;
 //	private List<Bet> bets;
 //	private List<Group> groups;
 //	private List<Match> matches;

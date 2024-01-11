@@ -19,7 +19,7 @@ import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
 
 /**
- * Database operations around {@link Bet} entities.
+ * Database operations around {@link UserOfEvent} entities.
  */
 @Component
 @Transactional
