@@ -1,8 +1,10 @@
 ## Changes
 
-### Version
+### Version 1.0.9 / 2024-01-11
 
+* Feature: new AFC2023 and CAF2023 tournaments
 * Fix: lazy loading of Group entity at refreshSessionData
+* Fix: user's local-time-zone was not refreshed after saving it in  "Modify user" form
 
 ### Version 1.0.8 / 2022-12-10
 
