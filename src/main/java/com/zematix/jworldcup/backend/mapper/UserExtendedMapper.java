@@ -9,11 +9,11 @@ import com.zematix.jworldcup.backend.model.UserExtended;
 @Mapper
 public interface UserExtendedMapper extends MapperBase<UserExtendedDto, UserExtended> {
 
-	@Mapping(source = "userStatus.status", target = "userStatus", ignore = true)
+	@Mapping(source = "userStatus.value", target = "userStatus", ignore = true)
 	@Mapping(source = "locale", target = "languageTag", ignore = true)
 	UserExtendedDto entityToDto(UserExtended userExtended);
 
-	@Mapping(source = "userStatus", target = "userStatus.status", ignore = true)
+	@Mapping(source = "userStatus", target = "userStatus.value", ignore = true)
 	@Mapping(target = "locale", expression = "java( userExtendedDto.getLanguageTag() == null ? null : java.util.Locale.forLanguageTag( userExtendedDto.getLanguageTag() ) )") 
 	UserExtended dtoToEntity(UserExtendedDto userExtendedDto);
 

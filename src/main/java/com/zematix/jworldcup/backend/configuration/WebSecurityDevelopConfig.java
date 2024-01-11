@@ -5,7 +5,6 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -13,15 +12,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer.SessionFixationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
@@ -36,8 +38,8 @@ import com.zematix.jworldcup.backend.service.SessionLogoutHandler;
 @Profile("develop")
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true) // enable @PreAuthorize and @PostAuthorize annotations for methods
-public class WebSecurityDevelopConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity
+public class WebSecurityDevelopConfig {
 
 	@Inject
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -48,14 +50,14 @@ public class WebSecurityDevelopConfig extends WebSecurityConfigurerAdapter {
 	@Inject
 	private JwtRequestFilter jwtRequestFilter;
 	
-	@Autowired
-    private SessionLogoutHandler logoutHandler;
-	
-//	@Autowired
+	@Inject
+	private SessionLogoutHandler logoutHandler;
+
+//	@@Inject
 //	private ChangeSessionIdAuthenticationStrategyEx sessionAuthenticationStrategy;
 	
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	PasswordEncoder passwordEncoder() {
 		return new MultiCryptPasswordEncoder();
 	}
 
@@ -64,7 +66,7 @@ public class WebSecurityDevelopConfig extends WebSecurityConfigurerAdapter {
 	    return new SessionRegistryImpl(); 
 	}
 	
-	protected static final String[] ACTUATOR_WHITELIST = { "/login", "/refresh", "/signup", "/backend-version", 
+	protected static final String[] ACTUATOR_WHITELIST = { "/login", "/refresh", "/signup", "/backend-version",
 			"/verify-captcha", "/users/reset-password", "/users/process-registration-token", 
 			"/users/process-change-email-token", "/users/process-reset-password-token" };
 
@@ -81,56 +83,51 @@ public class WebSecurityDevelopConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
+		return authConfiguration.getAuthenticationManager();
 	}
 
-	@Override
-	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		
-		httpSecurity.csrf().disable()
-				// dont authenticate this particular request
-				.authorizeRequests()
-				.antMatchers(Stream.concat(Stream.of(ACTUATOR_WHITELIST), Stream.of(SWAGGER_WHITELIST))
-						.toArray(String[]::new))
-				.permitAll()
-				// .antMatchers("/", "/**").permitAll()
-				// .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // browser (angular) uses
-				// all other requests need to be authenticated
-				.anyRequest().authenticated().and().
-				exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+		httpSecurity.csrf(AbstractHttpConfigurer::disable)
+				// don't authenticate these particular requests
+				.authorizeHttpRequests(requests -> requests
+						.antMatchers(Stream.concat(Stream.of(ACTUATOR_WHITELIST), Stream.of(SWAGGER_WHITELIST))
+								.toArray(String[]::new))
+						.permitAll()
+						// but all other requests need to be authenticated
+						.anyRequest().authenticated())
+				.exceptionHandling(handling -> handling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 				// make sure we use stateless session; session won't be used to store user's
 				// state.
-				sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		
-		httpSecurity.logout()
-				.addLogoutHandler(logoutHandler)
-				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
-				.permitAll();
-		
+				.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+		httpSecurity.logout(logout -> logout.addLogoutHandler(logoutHandler)
+				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)).permitAll());
+
 		// Add a filter to validate the tokens with every request
 		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-		
-	    httpSecurity.cors().configurationSource(request -> {
-	        CorsConfiguration cors = new CorsConfiguration();
-	        cors.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:8080"));
-			cors.setAllowedMethods(List.of(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
-					HttpMethod.DELETE.name())); 
-//			cors.setAllowedHeaders(List.of("*"));
-			cors.setAllowCredentials(true);
-	        cors.applyPermitDefaultValues();
-	        return cors;
-	    });
 
-//		httpSecurity.sessionManagement().sessionAuthenticationStrategy(sessionAuthenticationStrategy)
+		httpSecurity.cors(cors -> cors.configurationSource(request -> {
+			CorsConfiguration corsConfig = new CorsConfiguration();
+			corsConfig.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:8080"));
+			corsConfig.setAllowedMethods(List.of(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
+					HttpMethod.DELETE.name()));
+			// corsConfig.setAllowedHeaders(List.of("*"));
+			corsConfig.setAllowCredentials(true);
+			corsConfig.applyPermitDefaultValues();
+			return corsConfig;
+		}));
+
+//      httpSecurity.sessionManagement(management -> management.sessionAuthenticationStrategy(sessionAuthenticationStrategy)
 //				.maximumSessions(-1) // concurrent REST API calls from the same authenticated user might need more sessions
-//				.sessionRegistry(sessionRegistry());
-		
-		httpSecurity.sessionManagement()
-				.maximumSessions(1)
-				.sessionRegistry(sessionRegistry()).and().
-				sessionFixation().none(); // works flawlessly but session fixation invokes security risk
-	}
+//				.sessionRegistry(sessionRegistry()));
 
+		httpSecurity.sessionManagement(management -> management
+				.sessionConcurrency(concurrency -> concurrency.maximumSessions(1).sessionRegistry(sessionRegistry()))
+				// works flawlessly but session fixation invokes security risk
+				.sessionFixation(SessionFixationConfigurer::none));
+
+		return httpSecurity.build();
+	}
 }

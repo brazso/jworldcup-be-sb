@@ -47,7 +47,7 @@ import freemarker.template.TemplateExceptionHandler;
 @ApplicationScope
 @Service
 public class TemplateService extends ServiceBase {
-
+	
 	@Value("${app.shortName}")
 	private String appShortName;
 
@@ -137,48 +137,44 @@ public class TemplateService extends ServiceBase {
 	 */
 	public ByteArrayOutputStream generatePDFContent(TemplateId templateId, Properties properties, Locale locale) throws ServiceException {
 		List<ParameterizedMessage> errMsgs = new ArrayList<>();
-		
+
 		checkNotNull(templateId);
 		checkNotNull(properties);
 		checkNotNull(locale);
 		checkArgument(templateId.templateType == TemplateType.PDF, "TemplateType from argument \"templateId\" must be PDF.");
-		
+
 		addDefaultProperties(properties);
-		
+
 		// example templateName: pdf/user_certificate_hu.odt 
 		String templateName = String.format("%s/%s_%s.%s", templateId.templateType.fileName, 
 				templateId.fileName, locale.getLanguage(), templateId.fileExtension);
 
 		ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
 
-		try {
-			// use getClassLoader() only if test should read from /src/test/resources 
-			InputStream templateOdtInputStream = getClass()/*.getClassLoader()*/
-					.getResourceAsStream(TEMPLATE_PACKAGE_PATH + templateName);
-			
+		try (// use getClassLoader() only if test should read from /src/test/resources
+				InputStream templateOdtInputStream = getClass()/* .getClassLoader() */
+						.getResourceAsStream(TEMPLATE_PACKAGE_PATH + templateName);) {
+
 			// Load ODT file and set the template engine to Freemarker
 			IXDocReport xdocGenerator = XDocReportRegistry.getRegistry().loadReport(templateOdtInputStream,
 					TemplateEngineKind.Freemarker);
 			IContext context = xdocGenerator.createContext();
-	
-			// Configuring the XDOCReport Context by registering the java model 
+
+			// Configuring the XDOCReport Context by registering the java model
 			// stored in a Properties object.
 			// Name "uc" is used as key in the ODT freemarker template to reference the java
 			// object stored in properties.
 			context.put("uc", properties);
 			// Set format converter from ODT to PDF
 			Options options = Options.getFrom(DocumentKind.ODT).to(ConverterTypeTo.PDF);
-	
+
 			// Merge Java model with the ODT and convert it to PDF
 			xdocGenerator.convert(context, options, pdfOutputStream);
-			templateOdtInputStream.close();
-			pdfOutputStream.close();
-		}
-		catch (IOException | XDocReportException e) {
+		} catch (IOException | XDocReportException e) {
 			errMsgs.add(ParameterizedMessage.create("TEMPLATE_GENERATION_FAILED", templateId.toString()));
 			throw new ServiceException(errMsgs);
 		}
-		
+
 		return pdfOutputStream;
 	}
 }

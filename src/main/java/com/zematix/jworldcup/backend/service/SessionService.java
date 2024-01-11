@@ -15,7 +15,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Async;
@@ -46,7 +45,6 @@ import com.zematix.jworldcup.backend.model.UserCertificate;
  */
 @SessionScope
 @Service
-@Configuration
 public class SessionService extends ServiceBase {
 	private final String id = UUID.randomUUID().toString();
 	
@@ -103,19 +101,13 @@ public class SessionService extends ServiceBase {
 	private String newsLine;
 
 	/**
-	 * Stored separately because at logout/scheduler, without authentication, it must be used.
+	 * Stored separately because at logout/scheduler, without authentication, it is a must.
 	 */
 	private String username;
 
 	/**
-	 * List of userGroups belongs to this.event and this.user
-	 */
-	private List<UserGroup> userGroups = new ArrayList<>();
-
-	/**
 	 * List of news messages to be displayed on UI header as newsLine.
 	 */
-//	private Queue<String> headerMessages = new LinkedList<>();
 	private HeaderMessageList headerMessages = new HeaderMessageList();
 	
 	/**
@@ -127,7 +119,7 @@ public class SessionService extends ServiceBase {
 		
 		locale = Locale.getDefault();
 //		event = eventService.findLastEvent();
-		// user cannot be initialized here, see getUser cached method
+		// user cannot be initialized here, see getUser method
 		
 //		// store local id into session
 //		HttpSession session = WebContextHolder.get().getSession();
@@ -141,7 +133,7 @@ public class SessionService extends ServiceBase {
 	
 	private void initSessionAfterUserInitialized() {
 		// refresh event
-		event = eventService.findLastEventByUserId(user.getUserId());
+		event = eventService.findLastEventByUserId(this.user.getUserId());
 		
 		// refresh userOfEvent
 		this.getUserOfEvent();
@@ -158,7 +150,7 @@ public class SessionService extends ServiceBase {
 	private void initHeaderMessages() {
 		this.headerMessages.clear();
 		
-		String message = ParameterizedMessage.create("header.label.welcome", user.getLoginName()).buildMessage(msgs, locale);
+		String message = ParameterizedMessage.create("header.label.welcome", this.user.getLoginName()).buildMessage(msgs, locale);
 //		String message = msgs.getMessage("header.label.welcome", new String[]{user.getLoginName()}, locale); // same result
 		HeaderMessage headerMessage = HeaderMessage.builder().message(message).priority(1).creationTime(getActualDateTime()).build();
 		this.headerMessages.push(headerMessage);
@@ -169,7 +161,7 @@ public class SessionService extends ServiceBase {
 			chat = chatService.retrieveLatestChat(event.getEventId(), user.getUserId());
 		} catch (ServiceException e) {
 			logger.error("Problem retrieving latest chat message for event #{} of user #{}!", event.getEventId(),
-					user.getUserId(), e);
+					this.user.getUserId(), e);
 		}
 		if (chat != null) {
 			String userGroupName = chat.getUserGroup().isEverybody() ? /*msgs.getString("userGroups.name.Everybody")*/ UserGroup.EVERYBODY_NAME: chat.getUserGroup().getName();
@@ -182,7 +174,7 @@ public class SessionService extends ServiceBase {
 		if (isEventFinished()) {
 			Event nextEvent = eventService.findNextEvent();
 			if (nextEvent == null) {
-				message = ParameterizedMessage.create("newsLine.noNextEvent", user.getLoginName()).buildMessage(msgs, locale);
+				message = ParameterizedMessage.create("newsLine.noNextEvent", this.user.getLoginName()).buildMessage(msgs, locale);
 			}
 			else {
 				long days = getActualDateTime().until(nextEvent.getStartTime(), ChronoUnit.DAYS);
@@ -382,7 +374,7 @@ public class SessionService extends ServiceBase {
 	}
 
 	public void setLanguage(String language) {
-		locale = new Locale(language);
+		locale = Locale.of(language);
 	}
 
 	/**
@@ -404,9 +396,9 @@ public class SessionService extends ServiceBase {
 	 * @return authenticated user
 	 */
 	public User getUser() {
-		if (this.user != null) {
-			return this.user;
-		}
+//		if (this.user != null) {
+//			return this.user;
+//		}
 
 		var authenticatedUser = userDetailsService.getAuthenticatedUser();
 		String loginName = authenticatedUser != null ? authenticatedUser.getUsername() : this.username;
@@ -430,10 +422,6 @@ public class SessionService extends ServiceBase {
 		return this.user;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
 	/**
 	 * Retrieves {@link UserOfEvent} instance from database. Creates an empty 
 	 * instance if it is not found the database.
@@ -475,22 +463,24 @@ public class SessionService extends ServiceBase {
 		this.newsLine = newsLine;
 	}
 
+	/**
+	 * Returns authenticated user (login) name or {@code null} unless exists
+	 * @return authenticated user name
+	 */
 	public String getUsername() {
 		return this.username;
 	}
 
 	/**
-	 * Retrieves a list of {@link UserGroup} instances. Creates an empty instance if it is 
-	 * not found in the database.
+	 * Retrieves a list of {@link UserGroup} instances belongs to this.event and this.user. 
+	 * Creates an empty instance if it is not found in the database.
 	 * 
 	 * @return database/empty userGroups
 	 */
 	public List<UserGroup> getUserGroups() {
-		if (this.event == null || this.user == null) {
-			this.userGroups = new ArrayList<>();
-		}
-		else {
-			List<UserGroup> userGroups = new ArrayList<>();
+		List<UserGroup> userGroups = new ArrayList<>();
+		
+		if (this.event != null && this.user != null) {
 			try {
 				userGroups = userGroupService.retrieveUserGroups(this.event.getEventId(), this.user.getUserId(), true); // cached method
 				userGroups.forEach(userGroup -> {
@@ -505,10 +495,9 @@ public class SessionService extends ServiceBase {
 				consumeServiceException(e);
 				throw new IllegalStateException(e.getMessage()); // fatal case 
 			}
-			this.userGroups = userGroups;
 		}
 
-		return this.userGroups;
+		return userGroups;
 	}
 	
 	public HeaderMessageList getHeaderMessages() {

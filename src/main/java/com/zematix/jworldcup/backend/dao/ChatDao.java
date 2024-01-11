@@ -29,9 +29,6 @@ public class ChatDao extends DaoBase {
 
 	public static final long MAX_USERGROUP_CHAT_MESSAGES = 50;
 
-//	@Inject
-//	private CommonDao commonDao;
-	
 	/**
 	 * Returns a list of all {@link Chat} entities from database.
 	 * 

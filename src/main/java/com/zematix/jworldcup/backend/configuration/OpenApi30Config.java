@@ -24,7 +24,7 @@ public class OpenApi30Config {
   }
 
   @Bean
-  public OpenAPI customOpenAPI() {
+  OpenAPI customOpenAPI() {
     final String securitySchemeName = "bearerAuth";
     final String apiTitle = String.format("%s API", StringUtils.capitalize(apiModuleName));
     return new OpenAPI()

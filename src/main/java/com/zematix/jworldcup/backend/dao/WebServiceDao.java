@@ -12,11 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.entity.QWebService;
-import com.zematix.jworldcup.backend.entity.UserStatus;
 import com.zematix.jworldcup.backend.entity.WebService;
 
 /**
- * Database operations around {@link UserStatus} entities.
+ * Database operations around {@link WebService} entities.
  */
 @Component
 @Transactional

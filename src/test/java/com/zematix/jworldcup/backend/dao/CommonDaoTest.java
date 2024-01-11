@@ -22,8 +22,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zematix.jworldcup.backend.entity.Dictionary;
 import com.zematix.jworldcup.backend.entity.Event;
-import com.zematix.jworldcup.backend.entity.Role;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.WebService;
 
@@ -308,8 +308,8 @@ public class CommonDaoTest {
 	 */
 	@Test
 	public void /*<ENTITYCLASS> List<ENTITYCLASS>*/ findAllEntities(/*Class<ENTITYCLASS> entityClass*/) {
-		List<Role> roles = commonDao.findAllEntities(Role.class);
-		assertEquals(2, roles.size());
+		List<Dictionary> roles = commonDao.findAllEntities(Dictionary.class);
+		assertTrue(roles.size() > 0);
 	}
 	
 	/**

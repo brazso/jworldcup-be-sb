@@ -30,10 +30,8 @@ import com.zematix.jworldcup.backend.dto.UserDto;
 import com.zematix.jworldcup.backend.dto.UserGroupDto;
 import com.zematix.jworldcup.backend.dto.UserPositionDto;
 import com.zematix.jworldcup.backend.entity.Event;
-import com.zematix.jworldcup.backend.entity.Role;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
-import com.zematix.jworldcup.backend.entity.UserStatus;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.mapper.UserCertificateExtendedMapper;
 import com.zematix.jworldcup.backend.mapper.UserCertificateMapper;
@@ -93,8 +91,8 @@ public class UserGroupController extends ServiceBase implements ResponseEntityHe
 	}
 	
 	/**
-	 * Returns a list of found {@link User} instance with "USER" {@link Role#getRole()} 
-	 * and with "NORMAL" {@link UserStatus#getStatus()} which belongs to the given 
+	 * Returns a list of found {@link User} instance with "USER" role 
+	 * and with "NORMAL" userStatus which belongs to the given 
 	 * {@code userGroupId}. If the given userGroup is virtual Everybody then all users 
 	 * are retrieved.
 	 * 

@@ -58,5 +58,15 @@ public enum EventShortDescWithYearEnum {
 	/**
 	 * FIFA World Cup 2022
 	 */
-	WC2022
+	WC2022,
+	
+	/**
+	 * Africa Cup of Nations 2023
+	 */
+	CAF2023,
+	
+	/**
+	 * AFC Asian Cup 2023
+	 */
+	AFC2023
 }

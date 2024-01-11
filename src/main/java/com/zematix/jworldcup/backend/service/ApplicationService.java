@@ -11,9 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Service;
@@ -34,7 +32,6 @@ import com.zematix.jworldcup.backend.model.UserCertificate;
  */
 @ApplicationScope
 @Service
-@Configuration
 public class ApplicationService extends ServiceBase {
 	@Inject
 	private MatchService matchService;
@@ -48,7 +45,7 @@ public class ApplicationService extends ServiceBase {
 	@Inject
 	private ChatService chatService;
 	
-	@Autowired
+	@Inject
 	private SessionRegistry sessionRegistry;
 
 	@Value("${app.shortName}")

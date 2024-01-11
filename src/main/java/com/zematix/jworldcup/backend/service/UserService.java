@@ -30,6 +30,7 @@ import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.UserDao;
 import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
+import com.zematix.jworldcup.backend.emun.UserStatusEnum;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
@@ -102,13 +103,13 @@ public class UserService extends ServiceBase {
 		else if (!passwordEncoder.matches(loginPassword, user.getLoginPassword())) {
 			errMsgs.add(ParameterizedMessage.create("USER_DISALLOWED_TO_LOGIN", loginName));
 		}
-		else if (user.getUserStatus().getStatus().equals("CANDIDATE")) {
+		else if (user.getUserStatus().getValue().equals(UserStatusEnum.CANDIDATE.name())) {
 			errMsgs.add(ParameterizedMessage.create("USER_CANDIDATE_DISALLOWED_TO_LOGIN"));
 		}
-		else if (user.getUserStatus().getStatus().equals("LOCKED")) {
+		else if (user.getUserStatus().getValue().equals(UserStatusEnum.LOCKED.name())) {
 			errMsgs.add(ParameterizedMessage.create("USER_LOCKED_DISALLOWED_TO_LOGIN"));
 		}
-		else if (!user.getUserStatus().getStatus().equals("NORMAL")) {
+		else if (!user.getUserStatus().getValue().equals(UserStatusEnum.NORMAL.name())) {
 			logger.warn(String.format("User with unknown status '%s' gained login. Is it really allowed?"), user.getUserStatus().getName());
 		}
 
@@ -174,7 +175,7 @@ public class UserService extends ServiceBase {
 		}
 		
 		User user = userDao.findUserByLoginNameOrEmailAddress(loginName, emailAddr);
-		if (user != null && !user.getUserStatus().getStatus().equals("CANDIDATE")) {
+		if (user != null && !user.getUserStatus().getValue().equals(UserStatusEnum.CANDIDATE.name())) {
 			errMsgs.add(ParameterizedMessage.create("USER_EXIST_OR_EMAIL_ADDRESS_OCCUPIED"));
 		}
 		else {
@@ -358,11 +359,11 @@ public class UserService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 		
-		if (user.getUserStatus().getStatus().equals("LOCKED")) {
+		if (user.getUserStatus().getValue().equals(UserStatusEnum.LOCKED.name())) {
 			errMsgs.add(ParameterizedMessage.create("REGISTRATION_TOKEN_LOCKED"));
 			throw new ServiceException(errMsgs);
 		}
-		else if (user.getUserStatus().getStatus().equals("CANDIDATE")) {
+		else if (user.getUserStatus().getValue().equals(UserStatusEnum.CANDIDATE.name())) {
 			// first login after registration
 			userDao.modifyUserStatusToken(user, "NORMAL", applicationService.getActualDateTime());
 
@@ -391,7 +392,7 @@ public class UserService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 		
-		if (!user.getUserStatus().getStatus().equals("NORMAL")) {
+		if (!user.getUserStatus().getValue().equals(UserStatusEnum.NORMAL.name())) {
 			errMsgs.add(ParameterizedMessage.create("USER_TOKEN_NOT_NORMAL"));
 			throw new ServiceException(errMsgs);
 		}
@@ -540,7 +541,7 @@ public class UserService extends ServiceBase {
 			errMsgs.add(ParameterizedMessage.create("GIVEN_EMAIL_ADDRESS_NOT_EXIST"));
 			throw new ServiceException(errMsgs);
 		}
-		if (!user.getUserStatus().getStatus().equals("NORMAL")) {
+		if (!user.getUserStatus().getValue().equals(UserStatusEnum.NORMAL.name())) {
 			errMsgs.add(ParameterizedMessage.create("USER_STATUS_INADEQUATE"));
 			throw new ServiceException(errMsgs);
 		}
@@ -588,7 +589,7 @@ public class UserService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 		
-		if (!user.getUserStatus().getStatus().equals("NORMAL")) {
+		if (!user.getUserStatus().getValue().equals(UserStatusEnum.NORMAL.name())) {
 			errMsgs.add(ParameterizedMessage.create("USER_STATUS_INADEQUATE"));
 			throw new ServiceException(errMsgs);
 		}
