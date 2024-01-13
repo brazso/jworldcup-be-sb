@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
@@ -21,6 +22,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.emun.SessionDataModificationFlag;
 import com.zematix.jworldcup.backend.emun.SessionDataOperationFlag;
 import com.zematix.jworldcup.backend.entity.Chat;
@@ -131,9 +133,16 @@ public class SessionService extends ServiceBase {
 		logger.info("SessionService.preDestroy");
 	}
 	
+	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_BY_LOGIN_NAME, key = "#userName")
+	public void cacheEvictUser(String userName) {
+		// only purpose of this method to evict a cache item
+	}
+	
 	private void initSessionAfterUserInitialized() {
+		this.user.setLoginTime(applicationService.getActualDateTime());
+
 		// refresh event
-		event = eventService.findLastEventByUserId(this.user.getUserId());
+		this.event = eventService.findLastEventByUserId(this.user.getUserId());
 		
 		// refresh userOfEvent
 		this.getUserOfEvent();
@@ -396,10 +405,6 @@ public class SessionService extends ServiceBase {
 	 * @return authenticated user
 	 */
 	public User getUser() {
-//		if (this.user != null) {
-//			return this.user;
-//		}
-
 		var authenticatedUser = userDetailsService.getAuthenticatedUser();
 		String loginName = authenticatedUser != null ? authenticatedUser.getUsername() : this.username;
 		if (loginName == null) {
@@ -407,15 +412,14 @@ public class SessionService extends ServiceBase {
 			this.username = null;
 		}
 		else {
-			var user = userService.findUserByLoginName(loginName); // cached method
-			if (user == null) {
+			boolean isUserInitialized = !loginName.equals(this.username); 
+			this.user = userService.findUserByLoginName(loginName); // cached method
+			if (this.user == null) {
 				// authenticated user must exist in the database, so this is supposed to be a dead code
 				throw new IllegalStateException(String.format("User with loginName \"%s\" is not found in the database.", loginName));
 			}
-			user.setLoginTime(applicationService.getActualDateTime());
-			this.user = user;
 			this.username = loginName;
-			if (authenticatedUser != null) {
+			if (isUserInitialized) {
 				initSessionAfterUserInitialized();
 			}
 		}	
