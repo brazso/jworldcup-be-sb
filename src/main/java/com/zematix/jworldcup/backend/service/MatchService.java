@@ -18,15 +18,9 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
-import org.springframework.lang.NonNull;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -55,7 +49,6 @@ import com.zematix.jworldcup.backend.util.LambdaExceptionUtil;
  * However it may also inject other services and DAO classes.
  */
 @Service
-@Configuration
 @Transactional
 public class MatchService extends ServiceBase {
 
@@ -357,43 +350,18 @@ public class MatchService extends ServiceBase {
 		
 		// After successful transaction commit after the end of this method a new transaction
 		// is called asynchronously by event handler, which might update the upcoming matches. 
-		// A wrapper service method calling this method and the mentioned asynchronous method 
-		// might be easier, but it needs an extra service. 
-		final Match finalMatch = match;
-		executeAfterTransactionCommits(() -> {
-			// launches event to generate a header message about the updated match elsewhere
-			PublishedEvent<Match> event = new PublishedEvent<>(finalMatch, true);
-			applicationEventPublisher.publishEvent(event);			
-		});
+		applicationEventPublisher.publishEvent(new PublishedEvent<>(match));
 		
 		return match;
 	}
 	
-	private void executeAfterTransactionCommits(Runnable task) {
-		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-			@Override
-			public void afterCommit() {
-				task.run();
-			}
-		});
-	}
-	
 	/**
-	 * Invoked from {@link MatchService#saveMatch(Long, boolean, Boolean, LocalDateTime, Byte, Byte, Byte, Byte, Byte, Byte)
+	 * Invoked from {@link MatchAsyncService#onUpdateMatchEvent(PublishedEvent<Match>)
 	 * when a match result is saved.
-	 * @param event - contains the saved match
+	 * @param match - saved match
 	 */
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	@Async
-	@EventListener(condition = "#event.success")
-	public void onUpdateMatchEvent(@NonNull PublishedEvent/*<Match>*/ event) throws ServiceException {
-		if (!event.getEntity().getClass().equals(Match.class)) {
-			return;
-		}
-		
-		Match match = (Match)event.getEntity();
-		logger.info("onUpdateMatchEvent matchId: {}", match.getMatchId());
-		
+	@Transactional(propagation = Propagation.MANDATORY)
+	public void onUpdateMatchEvent(Match match) throws ServiceException {
 		updateMatchParticipants(match.getEvent().getEventId(), match.getMatchId());
 		// update cached value
 		applicationService.refreshEventCompletionPercentCache(match.getEvent().getEventId());
@@ -456,14 +424,7 @@ public class MatchService extends ServiceBase {
 		
 		// After successful transaction commit after the end of this method a new transaction
 		// is called asynchronously by event handler, which might update the upcoming matches. 
-		// A wrapper service method calling this method and the mentioned asynchronous method 
-		// might be easier, but it needs an extra service. 
-		final Match finalMatch = match;
-		executeAfterTransactionCommits(() -> {
-			// launches event to generate a header message about the updated match elsewhere
-			PublishedEvent<Match> event = new PublishedEvent<>(finalMatch, true);
-			applicationEventPublisher.publishEvent(event);			
-		});
+		applicationEventPublisher.publishEvent(new PublishedEvent<>(match));
 		
 		return match;
 	}

@@ -73,7 +73,6 @@ public class MessageQueueService extends ServiceBase{
 		template.convertAndSend("/queue/privatechat#"+chat.getTargetUser().getUserId(), chatMapper.entityToDto(chat), headers);
 
 		// launches event to generate a header message about the sent private message elsewhere 
-		PublishedEvent<Chat> event = new PublishedEvent<>(chat, true);
-		applicationEventPublisher.publishEvent(event);
+		applicationEventPublisher.publishEvent(new PublishedEvent<>(chat));
 	}
 }

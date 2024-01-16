@@ -18,7 +18,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
@@ -693,16 +692,12 @@ public class SessionService extends ServiceBase {
 	 * when a match result is saved.
 	 * @param event - contains the saved match
 	 */
-	@Async
-	@EventListener(condition = "#event.success")
-	public void onUpdateMatchEvent(@NonNull PublishedEvent/*<Match>*/ event) {
-		if (!event.getEntity().getClass().equals(Match.class)) {
-			return;
-		}
-		
-		Match match = (Match)event.getEntity();
+//	@Async
+	@EventListener
+	public void onUpdateMatchEvent(@NonNull PublishedEvent<Match> event) {
+		Match match = event.getEntity();
 		logger.info("onUpdateMatchEvent matchId: {}", match.getMatchId());
-
+		
 		String teamName1 = ParameterizedMessage.create("team."+match.getTeam1().getName()).buildMessage(msgs, locale);
 		String teamName2 = ParameterizedMessage.create("team."+match.getTeam2().getName()).buildMessage(msgs, locale);
 		String message = ParameterizedMessage.create("header.label.match_result", teamName1, teamName2,
@@ -712,18 +707,13 @@ public class SessionService extends ServiceBase {
 	}
 
 	/**
-	 * Invoked from {@link MatchService#saveMatch(Long, boolean, Boolean, LocalDateTime, Byte, Byte, Byte, Byte, Byte, Byte)
-	 * when a match result is saved.
-	 * @param event - contains the saved match
+	 * Invoked from {@link MessageQueueService#sendPrivateChat(Chat) when a private chat is sent.
+	 * @param event - contains the sent chat
 	 */
-	@Async
-	@EventListener(condition = "#event.success")
-	public void onSendPrivateChat(@NonNull PublishedEvent/*<Chat>*/ event) {
-		if (!event.getEntity().getClass().equals(Chat.class)) {
-			return;
-		}
-		
-		Chat chat = (Chat)event.getEntity();
+//	@Async
+	@EventListener
+	public void onSendPrivateChat(@NonNull PublishedEvent<Chat> event) {
+		Chat chat = event.getEntity();
 		logger.info("onSendPrivateChat chatId: {}", chat.getChatId());
 
 		String message = ParameterizedMessage.create("header.label.private_chat", chat.getUser().getLoginName())

@@ -231,8 +231,7 @@ public class SchedulerService extends ServiceBase {
 				SessionService sessionService = (SessionService)session.getAttribute("scopedTarget.sessionService");
 				if (sessionService != null) {
 					for (Match match: matches) {
-						PublishedEvent<Match> publishedEvent = new PublishedEvent<>(match, true);
-						sessionService.onUpdateMatchEvent(publishedEvent); // direct call
+						sessionService.onUpdateMatchEvent(new PublishedEvent<>(match)); // direct call
 					}
 				}
 			});
