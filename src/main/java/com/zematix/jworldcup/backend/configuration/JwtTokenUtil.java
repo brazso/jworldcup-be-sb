@@ -33,10 +33,16 @@ public class JwtTokenUtil implements Serializable {
 	@Value("${jwt.secret}")
 	private String jwtSecret;
 	
-	@Value("${jwt.validity.access:600}") // default is 10 minutes in seconds
+	/**
+	 * Access token expiration age in seconds
+	 */
+	@Value("${jwt.validity.access}")
 	private String jwtValidityAccess;
 	
-	@Value("${jwt.validity.refresh:86400}") // default is 24 hours in seconds
+	/**
+	 * Refresh token expiration age in seconds
+	 */
+	@Value("${jwt.validity.refresh}")
 	private String jwtValidityRefresh;
 
 	@Value("${app.shortName}")

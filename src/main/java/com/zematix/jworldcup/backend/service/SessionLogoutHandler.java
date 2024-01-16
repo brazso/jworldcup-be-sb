@@ -39,6 +39,7 @@ public class SessionLogoutHandler implements LogoutHandler {
 		if (sessionService.getUsername() != null) {
 			expireUserSessions(sessionService.getUsername()); // getUser() cannot be used, no authentication yet here
 			applicationService.getLastAppearancebyUserCache().invalidate(sessionService.getUsername());
+			sessionService.cacheEvictUser(sessionService.getUsername());
 		}
 
 		// invalidate refreshToken cookie

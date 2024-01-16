@@ -1,5 +1,9 @@
 ## Changes
 
+### Version 1.1.0 / 2024-01-13
+
+* Fix: undetected event (tournament) change if the latest one was involved
+
 ### Version 1.0.9 / 2024-01-11
 
 * Feature: new AFC2023 and CAF2023 tournaments
