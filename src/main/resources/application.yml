@@ -13,6 +13,7 @@ spring:
     hibernate:
       ddl-auto: none
       connection:
+    open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -97,20 +98,4 @@ rabbitMQ:
 logging:
   file.path: logs
   level:
-    #org.hibernate.SQL: DEBUG
-    #org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    #org.springframework.orm.jpa: TRACE
-#    org.springframework.transaction.interceptor: TRACE
-#    com.zaxxer.hikari: TRACE
-#    com.mysql.cj.jdbc: TRACE
-    
-#    org.springframework.security.ldap: TRACE
-#    org.springframework.ldap: TRACE
-#    org.springframework.messaging.simp: WARN
-    
-#    org.springframework.messaging: DEBUG
-#    org.springframework.security.web.authentication: TRACE
-#    org.springframework.security.core.session: TRACE
-#    org.springframework.cache.interceptor: TRACE
-    
-    com.zematix.jworldcup.backend: TRACE
+    com.zematix.jworldcup.backend: DEBUG

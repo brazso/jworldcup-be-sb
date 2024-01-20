@@ -19,7 +19,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.GroupDao;
-import com.zematix.jworldcup.backend.dao.MatchDao;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Match;
@@ -42,7 +41,7 @@ public class GroupService extends ServiceBase {
 	private GroupDao groupDao;
 
 	@Inject 
-	private MatchDao matchDao;
+	private MatchService matchService;
 
 	@Inject 
 	private GroupTeamService groupTeamService;
@@ -84,7 +83,7 @@ public class GroupService extends ServiceBase {
 		List<GroupTeam> groupTeams = new ArrayList<>();
 		for (Team team : group.getTeams()) {
 			team.getEvent().getEventId();
-			List<Match> playedMatches = matchDao.retrieveFinishedGroupMatchesByTeam(team.getTeamId());
+			List<Match> playedMatches = matchService.retrieveFinishedGroupMatchesByTeam(team.getTeamId());
 			GroupTeam groupTeam = new GroupTeam(team, playedMatches);
 			groupTeams.add(groupTeam);
 		}
@@ -104,12 +103,12 @@ public class GroupService extends ServiceBase {
 		checkNotNull(eventId);
 		List<GroupTeam> result = new ArrayList<>();
 		
-		List<Group> groups = groupDao.retrieveGroupsByEvent(eventId);
+		List<Group> groups = retrieveGroupsByEvent(eventId);
 		for (Group group: groups) {
 			List<GroupTeam> groupTeams = new ArrayList<>();
 			for (Team team : group.getTeams()) {
 				team.getEvent().getEventId();
-				List<Match> playedMatches = matchDao.retrieveFinishedGroupMatchesByTeam(team.getTeamId());
+				List<Match> playedMatches = matchService.retrieveFinishedGroupMatchesByTeam(team.getTeamId());
 				GroupTeam groupTeam = new GroupTeam(team, playedMatches);
 				groupTeams.add(groupTeam);
 			}
@@ -223,7 +222,7 @@ public class GroupService extends ServiceBase {
 		List<GroupPosition> groupPositions = new ArrayList<>();
 
 		// retrieve participant rules, e.g. "A1-B2", "A2-BCD3", "W34-W35", "L32-L33", ...
-		List<String> participantRules = matchDao.retrieveParticipantRulesOfMatchesByEvent(eventId);
+		List<String> participantRules = matchService.retrieveParticipantRulesOfMatchesByEvent(eventId);
 		
 		// filter out non group rules, e.g. "W34-W35", "L32-L33"
 		participantRules = participantRules.stream()
@@ -253,8 +252,7 @@ public class GroupService extends ServiceBase {
 		checkNotNull(eventId);
 		checkArgument(!Strings.isNullOrEmpty(name), "Argument \"name\" cannot be null nor empty.");
 		
-		Group group = groupDao.retrieveGroupByName(eventId, name);
-		return group;
+		return groupDao.retrieveGroupByName(eventId, name);
 		
 	}
 }

@@ -115,6 +115,10 @@ public class UserOfEventService extends ServiceBase {
 			if (favouriteGroupTeam == null) {
 				throw new IllegalStateException(String.format("No \"Team\" entity belongs to \"favouriteGroupTeamId\"=%d, cannot be found in database.", favouriteGroupTeamId));
 			}
+			// load lazy associations
+			favouriteGroupTeam.getName();
+			favouriteGroupTeam.getGroup().getName();
+
 		}
 		Team favouriteKnockoutTeam = null;
 		if (favouriteKnockoutTeamId != null) {
@@ -122,6 +126,9 @@ public class UserOfEventService extends ServiceBase {
 			if (favouriteKnockoutTeam == null) {
 				throw new IllegalStateException(String.format("No \"Team\" entity belongs to \"favouriteKnockoutTeamId\"=%d, cannot be found in database.", favouriteKnockoutTeamId));
 			}
+			// load lazy associations
+			favouriteKnockoutTeam.getName();
+			favouriteKnockoutTeam.getGroup().getName();
 		}
 		
 		userOfEvent.setFavouriteGroupTeam(favouriteGroupTeam);

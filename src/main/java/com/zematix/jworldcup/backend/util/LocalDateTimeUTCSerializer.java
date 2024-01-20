@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  */
 public class LocalDateTimeUTCSerializer extends StdSerializer<LocalDateTime> {
 
-	private static final long serialVersionUID = -639333373209238925L;
+	private static final long serialVersionUID = 1L;
 
 	public LocalDateTimeUTCSerializer(Class<LocalDateTime> t) {
         super(t);

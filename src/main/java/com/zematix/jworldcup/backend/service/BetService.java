@@ -74,6 +74,22 @@ public class BetService extends ServiceBase {
 			bet.setScore(retrieveScoreByBet(bet, favouriteTeamIds));
 			bet.setFavouriteTeamIndex(retrieveFavouriteTeamIndexByBet(bet, favouriteTeamIds));
 		}
+		
+		// load lazy associations
+		for (Bet bet: bets) {
+			Match match = bet.getMatch();
+			if (match.getTeam1() != null) {
+				match.getTeam1().getName();
+				match.getTeam1().getGroup().getName();
+			}
+			if (match.getTeam2() != null) {
+				match.getTeam2().getName();
+				match.getTeam2().getGroup().getName();
+			}
+			bet.getUser().getLoginName();
+			bet.getUser().getRoles().size();
+		}
+
 		return bets;
 	}
 	
@@ -295,14 +311,8 @@ public class BetService extends ServiceBase {
 		checkNotNull(bet);
 		Integer favouriteTeamIndex = null;
 		
-		Long favouriteGroupTeamId = null;
-		Long favouriteKnockoutTeamId = null;
 		if (favouriteTeamIds == null) {
 			favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
-		}
-		if (favouriteTeamIds != null) { 
-			favouriteGroupTeamId = favouriteTeamIds.getValue1();
-			favouriteKnockoutTeamId = favouriteTeamIds.getValue2();
 		}
 
 		boolean isGroupmatch = Boolean.TRUE.equals(bet.getMatch().getRound().getIsGroupmatchAsBoolean());
@@ -329,16 +339,8 @@ public class BetService extends ServiceBase {
 		checkNotNull(eventId);
 		checkNotNull(userId);
 
-		int score = 0;
-		List<Bet> bets = betDao.retrieveBetsByEventAndUser(eventId, userId);
-		Pair<Long> favouriteTeamIds = null;
-		for (Bet bet : bets) {
-			if (favouriteTeamIds == null) {
-				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
-			}
-			score += retrieveScoreByBet(bet, favouriteTeamIds);
-		}
-		return score;
+		List<Bet> bets = retrieveBetsByEventAndUser(eventId, userId);
+		return bets.stream().mapToInt(Bet::getScore).sum();
 	}
 
 	/**
@@ -356,14 +358,10 @@ public class BetService extends ServiceBase {
 
 		Map<LocalDateTime, Integer> mapScoreByDate = new HashMap<>();
 		int score = 0;
-		List<Bet> bets = betDao.retrieveBetsByEventAndUser(eventId, userId);
-		Pair<Long> favouriteTeamIds = null;
+		List<Bet> bets = retrieveBetsByEventAndUser(eventId, userId);
 		for (Bet bet : bets) {
-			if (favouriteTeamIds == null) {
-				favouriteTeamIds = retrieveFavouriteTeamIdsByBet(bet);
-			}
 			LocalDateTime matchDate = CommonUtil.truncateDateTime(bet.getMatch().getStartTime());
-			score += retrieveScoreByBet(bet, favouriteTeamIds);
+			score += bet.getScore();
 			mapScoreByDate.put(matchDate, score);
 		}
 		return mapScoreByDate;

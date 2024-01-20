@@ -27,7 +27,6 @@ import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.MatchDao;
-import com.zematix.jworldcup.backend.dao.RoundDao;
 import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
@@ -59,7 +58,7 @@ public class MatchService extends ServiceBase {
 	private MatchDao matchDao;
 
 	@Inject 
-	private RoundDao roundDao;
+	private RoundService roundService;
 
 	@Inject 
 	private CommonDao commonDao;
@@ -106,16 +105,16 @@ public class MatchService extends ServiceBase {
 
 		checkNotNull(eventId);
 		
-		List<Round> rounds = roundDao.retrieveRoundsByEvent(eventId);
+		List<Round> rounds = roundService.retrieveRoundsByEvent(eventId);
 		
 		// load lazy entity associations
 		for (Round round : rounds) {
 			for (Match match : round.getMatches()) {
 				if (match.getTeam1() != null) {
-					match.getTeam1().getTeamId();
+					match.getTeam1().getName();
 				}
 				if (match.getTeam2() != null) {
-					match.getTeam2().getTeamId();
+					match.getTeam2().getName();
 				}
 			}
 		}
@@ -146,12 +145,14 @@ public class MatchService extends ServiceBase {
 		
 		// load lazy associations
 		for (Match match : matches) {
-			match.getRound().getRoundId();
+			match.getRound().getName();
 			if (match.getTeam1() != null) {
-				match.getTeam1().getTeamId();
+				match.getTeam1().getName();
+				match.getTeam1().getGroup().getName();
 			}
 			if (match.getTeam2() != null) {
-				match.getTeam2().getTeamId();
+				match.getTeam2().getName();
+				match.getTeam2().getGroup().getName();
 			}
 			if (match.getTeam1() != null && match.getTeam2() != null) {
 				match.setResultSignByTeam1(getMatchResult(match, match.getTeam1().getTeamId()));
@@ -166,6 +167,27 @@ public class MatchService extends ServiceBase {
 	}
 
 	/**
+	 * Returns a list of {@link Match} instances where each match element has the given 
+	 * {@code teamId} participant, the match is finished (has valid result) and 
+	 * the match is played in the group stage.
+	 *
+	 * @param teamId
+	 * @return list of {@link Match} instances containing all finished matches belongs to the given team
+	 * @throws IllegalArgumentException if any of the parameters is null
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Match> retrieveFinishedGroupMatchesByTeam(Long teamId) {
+		List<Match> matches = matchDao.retrieveFinishedGroupMatchesByTeam(teamId);
+		
+		// load lazy associations
+		for (Match match : matches) {
+			match.getRound().getName();
+		}
+		
+		return matches;
+	}
+	
+	/**
 	 * Retrieves a list of {@link Match} instances belongs to the  given {@code eventId}, 
 	 * with not null {@link Match#participantsRule} value, located in the 
 	 * knockout stage and has at least one {@link Team} participant with {@code null} value.
@@ -178,9 +200,6 @@ public class MatchService extends ServiceBase {
 	 */
 	@Transactional(readOnly = true)
 	public List<Match> retrieveMatchesWithoutParticipantsByEvent(Long eventId) throws ServiceException {
-
-		List<ParameterizedMessage> errMsgs = new ArrayList<>();
-
 		checkNotNull(eventId);
 		
 		List<Match> matches = matchDao.retrieveMatchesWithoutParticipantsByEvent(eventId);
@@ -188,18 +207,29 @@ public class MatchService extends ServiceBase {
 		// load lazy associations
 		for (Match match : matches) {
 			if (match.getTeam1() != null) {
-				match.getTeam1().getTeamId();
+				match.getTeam1().getName();
 			}
 			if (match.getTeam2() != null) {
-				match.getTeam2().getTeamId();
+				match.getTeam2().getName();
 			}
 		}
 		
-		if (!errMsgs.isEmpty()) {
-			throw new ServiceException(errMsgs);
-		}
-
 		return matches;
+	}
+
+	/**
+	 * Returns a list of {@link Match#participantsRule} values of all matches
+	 * belongs to the provided {@code eventId} event. Only the non empty
+	 * values are retrieved of the knock-out matches where there is at least
+	 * a missing team participant.
+	 * 
+	 * @param eventId
+	 * @return list of participant rules of all matches of the provided event
+	 * @throws IllegalArgumentException if any of the parameters is null
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<String> retrieveParticipantRulesOfMatchesByEvent(Long eventId) {
+		return matchDao.retrieveParticipantRulesOfMatchesByEvent(eventId);
 	}
 
 	/**
@@ -225,10 +255,10 @@ public class MatchService extends ServiceBase {
 		// load lazy associations
 		match.getRound().getRoundId();
 		if (match.getTeam1() != null) {
-			match.getTeam1().getTeamId();
+			match.getTeam1().getName();
 		}
 		if (match.getTeam2() != null) {
-			match.getTeam2().getTeamId();
+			match.getTeam2().getName();
 		}
 
 		commonDao.detachEntity(match);
@@ -1106,12 +1136,12 @@ public class MatchService extends ServiceBase {
 		
 		// load lazy associations
 		for (Match match : matches) {
-			match.getRound().getRoundId();
+			match.getRound().getName();
 			if (match.getTeam1() != null) {
-				match.getTeam1().getTeamId();
+				match.getTeam1().getName();
 			}
 			if (match.getTeam2() != null) {
-				match.getTeam2().getTeamId();
+				match.getTeam2().getName();
 			}
 		}
 		

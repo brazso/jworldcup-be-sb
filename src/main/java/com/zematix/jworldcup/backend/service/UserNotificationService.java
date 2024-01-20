@@ -56,6 +56,10 @@ public class UserNotificationService extends ServiceBase {
 			return null;
 		}
 		
+		// load lazy associations
+		userNotification.getUser().getRoles().size();
+		userNotification.getUserNotificationType().getKey();
+		
 		commonDao.detachEntity(userNotification);
 		return userNotification;
 	}	

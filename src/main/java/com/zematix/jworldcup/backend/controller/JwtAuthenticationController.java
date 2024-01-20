@@ -78,11 +78,8 @@ public class JwtAuthenticationController extends ServiceBase implements Response
 	@PostMapping(value = "/login")
 	@Operation(summary = "Authenticate a user", description = "Authenticate a user")
 	public ResponseEntity<JwtResponse> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws ServiceException {
-//		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword()); // authentication is already executed in every request of {@link JwtRequestFilter}
-//		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-
 		User user = userDetailsService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-		UserDetails userDetails = userDetailsService.loadUserDetailsByUser(user);
+		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 		
 		String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
 		ResponseCookie responseCookie = jwtTokenUtil.generateRefreshTokenCookie(userDetails);

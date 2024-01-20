@@ -1,5 +1,9 @@
 ## Changes
 
+### Version 1.1.1 / 2024-01-??
+
+* Optimization: cached retrieval of static timezone ids
+
 ### Version 1.1.0 / 2024-01-13
 
 * Fix: undetected event (tournament) change if the latest one was involved
