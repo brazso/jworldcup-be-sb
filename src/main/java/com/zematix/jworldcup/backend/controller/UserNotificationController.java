@@ -68,8 +68,8 @@ public class UserNotificationController extends ServiceBase implements ResponseE
 	 */
 	@Operation(summary = "Creates a new userNotification", description = "Creates a new userNotification")
 	@PostMapping(value = "/insert")
-	public ResponseEntity<GenericResponse<UserNotificationDto>> insert(@RequestParam Long userId, @RequestParam String key, @RequestParam String value, @RequestParam boolean hasModificationTime) throws ServiceException {
-		UserNotification userNotification = userNotificationService.insert(userId, UserNotificationEnum.valueOf(key), value, hasModificationTime);
+	public ResponseEntity<GenericResponse<UserNotificationDto>> insert(@RequestParam Long userId, @RequestParam String key, @RequestParam(required = false) String value, @RequestParam boolean hasModificationTime) throws ServiceException {
+		var userNotification = userNotificationService.insert(userId, UserNotificationEnum.valueOf(key), value, hasModificationTime);
 		return buildResponseEntityWithOK(new GenericResponse<>(userNotificationMapper.entityToDto(userNotification)));
 	}
 	
@@ -88,9 +88,9 @@ public class UserNotificationController extends ServiceBase implements ResponseE
 	@Operation(summary = "Modifies an userNotification", description = "Modifies an userNotification with the given data")
 	@PutMapping(value = "/update")
 	public ResponseEntity<GenericResponse<UserNotificationDto>> update(
-			@RequestParam Long userNotificationId, @RequestParam String value) throws ServiceException {
+			@RequestParam Long userNotificationId, @RequestParam(required = false) String value) throws ServiceException {
 
-		UserNotification userNotification = userNotificationService.update(userNotificationId, value); 
+		var userNotification = userNotificationService.update(userNotificationId, value); 
 		return buildResponseEntityWithOK(new GenericResponse<>(userNotificationMapper.entityToDto(userNotification)));
 	}
 }

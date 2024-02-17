@@ -83,7 +83,13 @@ public class UserNotificationService extends ServiceBase {
 		LocalDateTime creationTime = applicationService.getActualDateTime();
 		LocalDateTime modificationTime = hasModificationTime ? creationTime : null;
 		
-		return userNotificationDao.insert(userId, key, creationTime, modificationTime, value);
+		UserNotification userNotification = userNotificationDao.insert(userId, key, creationTime, modificationTime, value);
+		
+		// load lazy associations
+		userNotification.getUser().getRoles().size();
+		userNotification.getUserNotificationType().getKey();
+
+		return userNotification;
 	}
 
 	/**
@@ -101,6 +107,10 @@ public class UserNotificationService extends ServiceBase {
 		LocalDateTime modificationTime = applicationService.getActualDateTime();
 		
 		UserNotification userNotification = userNotificationDao.update(userNotificationId, modificationTime, value);
+		
+		// load lazy associations
+		userNotification.getUser().getRoles().size();
+		userNotification.getUserNotificationType().getKey();
 
 		return userNotification;
 	}

@@ -110,6 +110,19 @@ public class BetService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 
+		// load lazy associations
+		Match match = bet.getMatch();
+		if (match.getTeam1() != null) {
+			match.getTeam1().getName();
+			match.getTeam1().getGroup().getName();
+		}
+		if (match.getTeam2() != null) {
+			match.getTeam2().getName();
+			match.getTeam2().getGroup().getName();
+		}
+		bet.getUser().getLoginName();
+		bet.getUser().getRoles().size();
+
 		bet.setScore(retrieveScoreByBet(bet, null));
 		bet.setFavouriteTeamIndex(retrieveFavouriteTeamIndexByBet(bet, null));
 		
@@ -130,10 +143,27 @@ public class BetService extends ServiceBase {
 		checkNotNull(userGroupId);
 		
 		List<Bet> bets = betDao.retrieveBetsByMatchAndUserGroup(matchId, userGroupId);
+		
+		// load lazy associations
+		for (Bet bet: bets) {
+			Match match = bet.getMatch();
+			if (match.getTeam1() != null) {
+				match.getTeam1().getName();
+				match.getTeam1().getGroup().getName();
+			}
+			if (match.getTeam2() != null) {
+				match.getTeam2().getName();
+				match.getTeam2().getGroup().getName();
+			}
+			bet.getUser().getLoginName();
+			bet.getUser().getRoles().size();
+		}
+		
 		for (Bet bet: bets) {
 			bet.setScore(retrieveScoreByBet(bet, null));
 			bet.setFavouriteTeamIndex(retrieveFavouriteTeamIndexByBet(bet, null));
 		}
+		
 		return bets;
 	}
 	
@@ -202,6 +232,12 @@ public class BetService extends ServiceBase {
 			}
 		}
 
+		if (bet != null) {
+			// load lazy associations
+			bet.getUser().getLoginName();
+			bet.getUser().getRoles().size();
+		}
+		
 		if (bet != null) {
 			bet.setScore(this.retrieveScoreByBet(bet, null));
 			bet.setFavouriteTeamIndex(retrieveFavouriteTeamIndexByBet(bet, null));

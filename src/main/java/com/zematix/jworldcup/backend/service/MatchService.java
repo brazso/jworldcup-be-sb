@@ -253,16 +253,16 @@ public class MatchService extends ServiceBase {
 		}
 		
 		// load lazy associations
-		match.getRound().getRoundId();
+		match.getRound().getName();
 		if (match.getTeam1() != null) {
 			match.getTeam1().getName();
+			match.getTeam1().getGroup().getName();
 		}
 		if (match.getTeam2() != null) {
 			match.getTeam2().getName();
+			match.getTeam2().getGroup().getName();
 		}
 
-		commonDao.detachEntity(match);
-		
 		return match;
 	}
 
@@ -356,7 +356,7 @@ public class MatchService extends ServiceBase {
 		}
 
 		// retrieve match from table and validate it
-		match = commonDao.findEntityById(Match.class, matchId);
+		match = retrieveMatch(matchId);
 		if (match == null) {
 			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH"));
 			throw new ServiceException(errMsgs);
@@ -432,7 +432,7 @@ public class MatchService extends ServiceBase {
 		}
 
 		// retrieve match from table and validate it
-		match = commonDao.findEntityById(Match.class, matchId);
+		match = retrieveMatch(matchId);
 		if (match == null) {
 			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH"));
 			throw new ServiceException(errMsgs);
@@ -1224,7 +1224,7 @@ public class MatchService extends ServiceBase {
 		
 		// update match table
 
-		match = commonDao.findEntityById(Match.class, matchId);
+		match = retrieveMatch(matchId);
 		if (match == null) {
 			errMsgs.add(ParameterizedMessage.create("MISSING_MATCH"));
 			throw new ServiceException(errMsgs);

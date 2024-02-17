@@ -1,8 +1,9 @@
 ## Changes
 
-### Version 1.1.1 / 2024-01-??
+### Version 1.1.1 / 2024-02-??
 
-* Optimization: cached retrieval of static timezone ids
+* Feature: cached retrieval of static timezone ids
+* Fix: open-in-view got false setting => lazy fetch
 
 ### Version 1.1.0 / 2024-01-13
 

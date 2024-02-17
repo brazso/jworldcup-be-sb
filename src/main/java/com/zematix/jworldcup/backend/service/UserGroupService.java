@@ -287,7 +287,6 @@ public class UserGroupService extends ServiceBase {
 	 * @param name - name of the user group to be imported
 	 * @return persisted UserGroup entity instance
 	 */
-//	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, allEntries = true)
 	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
 			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
 	public UserGroup importUserGroup(Long eventId, Long userId, String name) throws ServiceException {
@@ -300,11 +299,6 @@ public class UserGroupService extends ServiceBase {
 			errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_EMPTY"));
 			throw new ServiceException(errMsgs);
 		}
-		
-//		if (name.equals(UserGroup.EVERYBODY_NAME)) {
-//			errMsgs.add(ParametrizedMessage.create("USER_GROUP_EVERYBODY_CANNOT_BE_MODIFIED"));
-//			throw new ServiceException(errMsgs);
-//		}
 		
 		UserGroup foundUserGroup = findLastUserGroupByName(eventId, name);
 		
@@ -543,7 +537,6 @@ public class UserGroupService extends ServiceBase {
 
 		try {
 			properties = mapper.writeValueAsProperties(userCertificate);
-			//UserCertificate userCertificate = mapper.readValue(properties, UserCertificate.class); // other direction
 			pdfOutputStream = templateService.generatePDFContent(TemplateId.USER_CERTIFICATE_PDF, properties, locale);
 		} catch (IOException e) {
 			errMsgs.add(ParameterizedMessage.create("TEMPLATE_GENERATION_FAILED", TemplateId.USER_CERTIFICATE_PDF));

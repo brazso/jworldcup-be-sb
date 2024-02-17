@@ -52,6 +52,9 @@ public class UserGroup implements Serializable {
 	@EqualsAndHashCode.Include
 	private Long userGroupId;
 
+	@Column
+	private Byte priority;
+	
 	@Column(name="is_public_editable", nullable=false)
 	private Byte isPublicEditable;
 

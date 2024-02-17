@@ -422,6 +422,7 @@ public class UserService extends ServiceBase {
 		User user = userDao.findUserByLoginName(loginName);
 		if (user != null) {
 			user.getRoles().size(); // forced lazy fetch
+			user.getUserStatus().getUserStatusUsers().size();
 		}
 		
 		return user;
@@ -480,6 +481,7 @@ public class UserService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 
+		user.getRoles().size(); // lazy fetch
 		commonDao.detachEntity(user);
 		
 		return user;
