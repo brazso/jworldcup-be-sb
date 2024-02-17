@@ -47,10 +47,10 @@ public class UserNotification implements Serializable {
 	@Column(name="creation_time", nullable=false)
 	private LocalDateTime creationTime;
 
-	@Column(name="modification_time", nullable=false)
+	@Column(name="modification_time")
 	private LocalDateTime modificationTime;
 
-	@Column(nullable=false, length=255)
+	@Column(length=255)
 	private String value;
 	
 }
