@@ -27,9 +27,6 @@ public class EmailService extends ServiceBase {
 	@Inject
 	private MailSmtpService mailSmtpService;
 
-//	@Inject
-//	@MessageBundle
-//	private UTF8ResourceBundle msgs;
 	@Inject
 	private MessageSource msgs;
 

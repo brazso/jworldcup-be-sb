@@ -165,6 +165,20 @@ public class ChatService extends ServiceBase {
 
 		List<Chat> chats = chatDao.retrievePrivateChats(eventId, sourceUserId, targetUserId);
 
+		// load lazy associations
+		for (Chat chat: chats) {
+			chat.getUser().getLoginName();
+			chat.getUser().getRoles().size();
+			chat.getEvent().getDescription();
+			if (chat.getUserGroup() != null) {
+				chat.getUserGroup().getName();
+			}
+			if (chat.getTargetUser() != null) {
+				chat.getTargetUser().getLoginName();
+				chat.getTargetUser().getRoles().size();
+			}
+		}
+		
 		// update accessTime - it is null yet - aimed to sourceUserId  
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		for (Chat chat: chats) {
@@ -173,16 +187,6 @@ public class ChatService extends ServiceBase {
 			}
 		}
 
-		// load lazy associations
-		chats.stream().forEach(e -> {
-			e.getUser().getLoginName();
-			e.getUser().getRoles().size();
-			e.getEvent().getDescription();
-			if (e.getUserGroup() != null) {
-				e.getUserGroup().getName();
-			}
-		});
-		
 		return chats;
 	}
 

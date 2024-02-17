@@ -45,9 +45,6 @@ public class EventServiceTest {
 	@SpyBean
 	private EventService eventServicePartial; // partial mock
 	
-	@MockBean
-	private ApplicationService applicationService;
-
 	/**
 	 * Test {@link EventService#findAllEvents()} method.
 	 * Scenario: successfully retrieves all events

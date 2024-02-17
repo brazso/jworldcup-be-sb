@@ -42,11 +42,7 @@ import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-//@CrossOrigin
 public class JwtAuthenticationController extends ServiceBase implements ResponseEntityHelper {
-
-//	@Inject
-//	private AuthenticationManager authenticationManager;
 
 	@Inject
 	private JwtTokenUtil jwtTokenUtil;
@@ -78,11 +74,8 @@ public class JwtAuthenticationController extends ServiceBase implements Response
 	@PostMapping(value = "/login")
 	@Operation(summary = "Authenticate a user", description = "Authenticate a user")
 	public ResponseEntity<JwtResponse> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws ServiceException {
-//		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword()); // authentication is already executed in every request of {@link JwtRequestFilter}
-//		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-
 		User user = userDetailsService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-		UserDetails userDetails = userDetailsService.loadUserDetailsByUser(user);
+		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 		
 		String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
 		ResponseCookie responseCookie = jwtTokenUtil.generateRefreshTokenCookie(userDetails);
@@ -148,27 +141,6 @@ public class JwtAuthenticationController extends ServiceBase implements Response
 		return buildResponseEntityWithOK(new GenericResponse<>(version));
 	}
 	
-//	private void authenticate(String username, String password) throws ServiceException {
-//		List<ParameterizedMessage> errMsgs = new ArrayList<>();
-//		
-//		try {
-//			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-//		} catch (DisabledException e) {
-//			errMsgs.add(ParameterizedMessage.create("USER_DISABLED"));
-////			throw new ServiceException("USER_DISABLED", e);
-//		} catch (LockedException e) {
-//			errMsgs.add(ParameterizedMessage.create("USER_LOCKED"));
-////			throw new ServiceException("USER_LOCKED", e);
-//		} catch (BadCredentialsException e) {
-//			errMsgs.add(ParameterizedMessage.create("INVALID_CREDENTIALS"));
-////			throw new Exception("INVALID_CREDENTIALS", e);
-//		}
-//		
-//		if (!errMsgs.isEmpty()) {
-//			throw new ServiceException(errMsgs);
-//		}
-//	}
-
 	/**
 	 * Verifies the given captcha reponse
 	 * 

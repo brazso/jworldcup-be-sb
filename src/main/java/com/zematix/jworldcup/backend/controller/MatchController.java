@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Strings;
-import com.zematix.jworldcup.backend.dao.EventDao;
 import com.zematix.jworldcup.backend.dto.CommonResponse;
 import com.zematix.jworldcup.backend.dto.GenericListResponse;
 import com.zematix.jworldcup.backend.dto.GenericResponse;
@@ -34,6 +33,7 @@ import com.zematix.jworldcup.backend.entity.Round;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.mapper.MatchMapper;
 import com.zematix.jworldcup.backend.mapper.RoundMapper;
+import com.zematix.jworldcup.backend.service.EventService;
 import com.zematix.jworldcup.backend.service.MatchService;
 import com.zematix.jworldcup.backend.service.ServiceBase;
 
@@ -51,7 +51,7 @@ public class MatchController extends ServiceBase implements ResponseEntityHelper
 	private MatchService matchService;
 	
 	@Inject
-	private EventDao eventDao;
+	private EventService eventService;
 	
 	@Inject 
 	private RoundMapper roundMapper;
@@ -141,7 +141,8 @@ public class MatchController extends ServiceBase implements ResponseEntityHelper
 
 		checkArgument(!Strings.isNullOrEmpty(eventByShortDescWithYear));
 		
-		Event event = eventDao.findEventByShortDescWithYear(eventByShortDescWithYear);
+		// TODO - remove this call and use already eventId in the endpoint
+		Event event = eventService.findEventByShortDescWithYear(eventByShortDescWithYear);
 		checkNotNull(event);
 		
 		List<Match> matches = matchService.retrieveMatchesByEvent(event.getEventId());

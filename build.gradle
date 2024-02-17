@@ -81,16 +81,12 @@ dependencies {
 	runtimeOnly 'org.hsqldb:hsqldb'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	
-	// JUnit4 used instead of the native JUnit5
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.jupiter'
-	}
-	testImplementation('org.junit.vintage:junit-vintage-engine:5.8.1')
-	
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation('org.junit.vintage:junit-vintage-engine') // JUnit4 support
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+		
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.junit.platform:junit-platform-engine:1.7.0'
-	testImplementation 'org.junit.platform:junit-platform-commons:1.7.0'
 	
 	implementation 'com.github.ben-manes.caffeine:caffeine:3.0.2'
 	

@@ -39,8 +39,6 @@ public class RoundDao extends DaoBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Round> retrieveRoundsByEvent(Long eventId) {
-		List<Round> rounds;
-		
 		QRound qRound = QRound.round;
 		JPAQuery<Round> query = new JPAQuery<>(getEntityManager());
 		return query.from(qRound)
