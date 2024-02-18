@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
@@ -246,5 +247,26 @@ public class ChatDao extends DaoBase {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Delete all chat entities belongs to the given user. Not just sent/received
+	 * chat entities are deleted connected to the user but also those ones which
+	 * were sent to a userGroup where the user is the owner. Note:
+	 * QueryDSL/Hibernate generated "cross join" which is unsupported in MySQL
+	 * DELETE command therefore native query is used.
+	 * 
+	 * @param userId - belongs to an {@link User} entity
+	 * @throws IllegalArgumentException if any of the given parameter is
+	 *                                  {@code null}
+	 */
+	public void deleteChatsByUser(Long userId) {
+		checkNotNull(userId);
+
+		Query query = getEntityManager().createNamedQuery("Chat.deleteChatsByUserId", Chat.class);
+		query.setParameter(1, userId);
+		query.setParameter(2, userId);
+		query.setParameter(3, userId);
+		query.executeUpdate();
 	}
 }

@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -24,8 +25,12 @@ import lombok.Setter;
  * 
  */
 @Entity
-@Table(name="chat")
-@NamedQuery(name="Chat.findAll", query="SELECT c FROM Chat c")
+@Table(name = "chat")
+@NamedQuery(name = "Chat.findAll", query = "SELECT c FROM Chat c")
+@NamedNativeQuery(
+		name = "Chat.deleteChatsByUserId", 
+		query = "DELETE FROM chat WHERE chat_id IN (SELECT * FROM (SELECT chat_id FROM chat c LEFT JOIN user_group u ON c.user_group_id = u.user_group_id WHERE c.user_id = ? or c.target_user_id = ? or u.owner = ?) as t)",
+		resultClass = Chat.class)
 @Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Chat implements Serializable {
 	private static final long serialVersionUID = 1L;

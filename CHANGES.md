@@ -4,6 +4,7 @@
 
 * Feature: cached retrieval of static timezone ids
 * Fix: open-in-view got false setting => lazy fetch
+* Fix: delete user account
 
 ### Version 1.1.0 / 2024-01-13
 

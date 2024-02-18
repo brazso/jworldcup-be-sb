@@ -9,16 +9,10 @@ spring.config.import: optional:secrets-develop.yml
 # Spring 
 spring:
   datasource:
-    #driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
+    #url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
     password: worldcup.org
     hikari:
       maximumPoolSize: 3
-      spring:
-#  devtools:
-#    livereload:
-#      enabled: false
-#      port: 35729
   quartz :
     #auto-startup: false
     properties.org.quartz:
@@ -68,4 +62,3 @@ logging:
 #    org.springframework.cache.interceptor: TRACE
     
     com.zematix.jworldcup.backend: TRACE
-

@@ -4,7 +4,7 @@
 # native mysql database usage for automatic tests
 
 # Change @ActiveProfiles({"develop", "test"}) to
-# @ActiveProfiles({"develop", "test_native"}) in
+# @ActiveProfiles({"develop", "test-native"}) in
 # test files if you want to use it. Before each release
 # it is recommended to run a native complete test.
 
@@ -24,8 +24,6 @@ spring:
             create-script-source: database/worldcup_test_create.sql
           sql-load-script-source: database/worldcup_test_insert.sql
   datasource:
-    #driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/worldcup_test?useLegacyDatetimeCode=false
   quartz :
     auto-startup: false
-    

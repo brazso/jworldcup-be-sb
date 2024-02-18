@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
-import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.entity.QUserOfEvent;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
@@ -94,6 +93,4 @@ public class UserOfEventDao extends DaoBase {
 
 		return userOfEvents;
 	}
-
-
 }

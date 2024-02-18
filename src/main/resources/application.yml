@@ -12,7 +12,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-      connection:
     open-in-view: false
     properties:
       hibernate:
@@ -24,7 +23,6 @@ spring:
         jdbc: 
           time_zone: UTC
   datasource:
-    #driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://mysql:3306/worldcup?useLegacyDatetimeCode=false # mysql host runs in a docker container
     username: worldcup
     #password: worldcup.org #SECRET
@@ -73,8 +71,7 @@ app:
   api:
     moduleName: jworldcup
     version: 1.0
-  #reCaptcha:
-    #secretKey: 6LdAnY0iAAAAALusuamLTrTwloLRU9UJ51IM6u2f #SECRET
+  #reCaptcha.secretKey: 6LdAnY0iAAAAALusuamLTrTwloLRU9UJ51IM6u2f #SECRET
 
 # SMTP parameters- Zoho email provider used with generated app specific pwd
 mail.smtp:

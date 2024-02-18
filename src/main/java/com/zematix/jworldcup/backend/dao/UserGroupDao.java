@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.emun.DictionaryEnum;
 import com.zematix.jworldcup.backend.emun.RoleEnum;
@@ -408,5 +409,19 @@ public class UserGroupDao extends DaoBase {
 		checkState(userGroup != null, String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userGroupId));			
 		
 		commonDao.removeEntity(userGroup);
+	}
+	
+	/**
+	 * Delete all userGroups where the given user is an owner.
+	 * 
+	 * @param userId - belongs to an {@link User} entity
+	 * @throws IllegalArgumentException if any of the given parameters is {@code null}
+	 */
+	public void deleteUserGroupsByUser(Long userId) {
+		checkNotNull(userId);
+		
+		QUserGroup qUserGroup = QUserGroup.userGroup;
+		new JPADeleteClause(getEntityManager(), qUserGroup)
+				.where(qUserGroup.owner.userId.eq(userId)).execute();
 	}
 }

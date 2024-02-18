@@ -47,6 +47,15 @@ public class UserDao extends DaoBase {
 	@Inject
 	private UserOfEventDao userOfEventDao;
 
+	@Inject
+	private ChatDao chatDao;
+	
+	@Inject
+	private UserGroupDao userGroupDao;
+	
+	@Inject
+	private UserNotificationDao userNotificationDao;
+
 	/**
 	 * Returns a list of all {@link User} entities from database.
 	 * 
@@ -515,9 +524,12 @@ public class UserDao extends DaoBase {
 
 		// delete all dependencies of user
 		betDao.deleteBetsByUser(user.getUserId());
+		chatDao.deleteChatsByUser(user.getUserId());
 		deleteUserRolesByUserId(user.getUserId());
 		deleteUserUserGroupsByUserId(user.getUserId());
+		userGroupDao.deleteUserGroupsByUser(user.getUserId()); // where user is an owner
 		userOfEventDao.deleteUserOfEventsByUser(user.getUserId());
+		userNotificationDao.deleteUserNotificationsByUser(user.getUserId());
 
 		commonDao.removeEntity(user);
 
