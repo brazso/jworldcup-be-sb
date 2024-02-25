@@ -2,10 +2,10 @@ package com.zematix.jworldcup.backend.tool;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,18 +17,14 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.msiggi.openligadb.client.ArrayOfGroup;
-import com.msiggi.openligadb.client.ArrayOfLeague;
-import com.msiggi.openligadb.client.ArrayOfMatchdata;
-import com.msiggi.openligadb.client.ArrayOfTeam;
-import com.msiggi.openligadb.client.Matchdata;
-import com.msiggi.openligadb.client.Sportsdata;
+import com.msiggi.openligadb.model.League;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Round;
 import com.zematix.jworldcup.backend.entity.Team;
 import com.zematix.jworldcup.backend.entity.WebService;
+import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
@@ -52,7 +48,7 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 	 * @return {@code true} if the modifications are commitable, {@code false} otherwise
 	 */
 	@Override
-	public boolean importEvent() {
+	public boolean importEvent() throws OpenLigaDBException {
 		EntityManager em = (EntityManager) params.get("EntityManager");
 		checkNotNull(em, "Parameter named EntityManager is not set, its value cannot be null.");
 		
@@ -63,28 +59,17 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 		final String EVENT_ORGANIZER = "UEFA";
 		
 		final String LEAGUE_SHORTCUT = "em20"; // IS_GROUP_STORED false
-		final String LEAGUE_SAISON = "2020";
+		final String LEAGUE_SEASON = "2020";
 		
 		final int TEAMS_IN_GROUP = 4; // number of teams in a group
 
 		Map<String, String> fifaCodeByCountryNameMap = retrieveFifaCodeByCountryNameMap();
 		checkNotNull(fifaCodeByCountryNameMap, "Retrieved fifaCodeByCountryNameMap cannot be null.");
 
-		List<com.msiggi.openligadb.client.League> oldbLeagues = new ArrayList<>();
-		Sportsdata sportsdata = null;
-		try {
-			/*Sportsdata*/ sportsdata = new Sportsdata();
-			ArrayOfLeague aol = sportsdata.getSportsdataSoap12().getAvailLeaguesBySports(/*sportID*/ 1);
-			/*List<Sport>*/ oldbLeagues = aol.getLeague();
-		}
-		catch (/*WebService*/Exception e) {
-			//throw new OpenLigaDBException(e.getMessage());
-		}
-
+		List<League> oldbLeagues = openLigaDBService.getAvailableLeagues();
 		oldbLeagues.stream()
-				.filter(e -> LEAGUE_SAISON.equals(e.getLeagueSaison()))
-				.forEach(e -> logger.info(String.format("%s %s %s %s", e.getLeagueID(), e.getLeagueName(), e.getLeagueSaison(), e.getLeagueShortcut())));
-
+				.filter(e -> LEAGUE_SEASON.equals(e.getLeagueSeason()))
+				.forEach(e -> logger.info(String.format("%s %s %s %s", e.getLeagueId(), e.getLeagueName(), e.getLeagueSeason(), e.getLeagueShortcut())));
 		// 4220, Fußball-Weltmeisterschaft 2018 - Russland, 2018, wmrussland
 		// 4215, Weltmeisterschaft 2018 - Russland, 2018, wm2018ru
 		
@@ -96,19 +81,7 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 		event.setOrganizer(EVENT_ORGANIZER);
 		em.persist(event);
 		
-		logger.info("eventId="+event.getEventId());
-		
-		List<com.msiggi.openligadb.client.Group> oldbGroups = new ArrayList<>();
-		//Sportsdata sportsdata = null;
-		try {
-			//Sportsdata sportsdata = new Sportsdata();
-			ArrayOfGroup aog = sportsdata.getSportsdataSoap12().getAvailGroups(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-			/*List<Sport>*/ oldbGroups = aog.getGroup();
-		}
-		catch (/*WebService*/Exception e) {
-			//throw new OpenLigaDBException(e.getMessage());
-		}
-
+		List<com.msiggi.openligadb.model.Group> oldbGroups = openLigaDBService.getAvailableGroups(LEAGUE_SHORTCUT, LEAGUE_SEASON);
 //		30803, 1. Spieltag, 1
 //		30804, 2. Spieltag, 2
 //		30805, 3. Spieltag, 3
@@ -119,7 +92,7 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 
 		Map<Integer, Round> roundMap = new HashMap<>();
 		List<Round> roundList = new ArrayList<>();
-		for (com.msiggi.openligadb.client.Group oldbGroup : oldbGroups) {
+		for (com.msiggi.openligadb.model.Group oldbGroup : oldbGroups) {
 			boolean isGroupMatch = false;
 			Round round = new Round();
 			round.setEvent(event);
@@ -174,16 +147,7 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 					.filter(distinctByKey(Team::getName))
 					.collect(Collectors.toMap(t -> t.getName(), t -> t));
 
-		List<com.msiggi.openligadb.client.Team> oldbTeams = new ArrayList<>();
-		//Sportsdata sportsdata = null;
-		try {
-			//Sportsdata sportsdata = new Sportsdata();
-			ArrayOfTeam aot = sportsdata.getSportsdataSoap12().getTeamsByLeagueSaison(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-			/*List<Sport>*/ oldbTeams = aot.getTeam();
-		}
-		catch (/*WebService*/Exception e) {
-			//throw new OpenLigaDBException(e.getMessage());
-		}
+		List<com.msiggi.openligadb.model.Team> oldbTeams = openLigaDBService.getAvailableTeams(LEAGUE_SHORTCUT, LEAGUE_SEASON);
 		
 		List<Group> groupList = new ArrayList<>();
 		for (int i=0; i < oldbTeams.size() / TEAMS_IN_GROUP; i++) {
@@ -196,7 +160,7 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 		}
 		
 		Map<Integer, Team> teamMapByWsId = new HashMap<>();
-		for (com.msiggi.openligadb.client.Team oldbTeam : oldbTeams) {
+		for (com.msiggi.openligadb.model.Team oldbTeam : oldbTeams) {
 			if (oldbTeam.getTeamName().contains("Gruppe")
 					|| oldbTeam.getTeamName().contains("Sieger")
 					|| oldbTeam.getTeamName().contains("Verlierer")) {
@@ -208,11 +172,11 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 			boolean isLowerCase = false;
 			// url #1 (mostly used) contains English name, it can be used for translation
 			// e.g. https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Flag_of_Syria.svg/20px-Flag_of_Syria.svg.png
-			Matcher matcher = Pattern.compile("(.*?_of_)(.*?)(_%28.*|\\.svg.*)").matcher(oldbTeam.getTeamIconURL());
+			Matcher matcher = Pattern.compile("(.*?_of_)(.*?)(_%28.*|\\.svg.*)").matcher(oldbTeam.getTeamIconUrl());
 			if (!matcher.find()) {
 				// url #2 (rarely used) contains English name, it can be used for translation
 				// e.g. http://www.nationalflaggen.de/media/flags/flagge-thailand.gif
-				matcher = Pattern.compile("(.*?flagge-)(.*?)(\\..*)").matcher(oldbTeam.getTeamIconURL());
+				matcher = Pattern.compile("(.*?flagge-)(.*?)(\\..*)").matcher(oldbTeam.getTeamIconUrl());
 				isLowerCase = true;
 			} else {
 				matcher.reset();
@@ -229,7 +193,7 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 			} else {
 				name = oldbTeam.getTeamName();
 				logger.warn(String.format("OpenLigaDB team named %s could not be translated into English "
-						+ "via its IconUrl named %s.", oldbTeam.getTeamName(), oldbTeam.getTeamIconURL()));
+						+ "via its IconUrl named %s.", oldbTeam.getTeamName(), oldbTeam.getTeamIconUrl()));
 			}
 			team.setName(name);
 			//logger.info("TeamName: " + name + ", TeamIconUrl: " + oldbTeam.getTeamIconURL());
@@ -241,13 +205,13 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 			else if (fifaCodeByCountryNameMap.containsKey(name)) {
 				flag = fifaCodeByCountryNameMap.get(name);
 				logger.warn(String.format("OpenLigaDB team named %s may have no flag %s image stored "
-						+ "in local. Download %s image.", name, flag, oldbTeam.getTeamIconURL()));
+						+ "in local. Download %s image.", name, flag, oldbTeam.getTeamIconUrl()));
 			}
 			else {
 				flag = "XYZ"; // unknown FIFA country code
 				logger.warn(String.format("OpenLigaDB team named %s may have no flag image stored "
 						+ "in local. Download %s image and update its %s dummy flag name at its team "
-						+ "in the database.", name, flag, oldbTeam.getTeamIconURL()));
+						+ "in the database.", name, flag, oldbTeam.getTeamIconUrl()));
 			}
 			team.setFlag(flag);
 			
@@ -258,30 +222,23 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 				team.setGroup(group);
 			}
 			team.setFifaPoints((short) 0); // unknown
-			team.setWsId(Long.valueOf(oldbTeam.getTeamID()));
+			team.setWsId(Long.valueOf(oldbTeam.getTeamId()));
 			em.persist(team);
 			teamMapByWsId.put(team.getWsId().intValue(), team);
 		}
 		
-		List<Matchdata> matchdatas = new ArrayList<>();
-		try {
-			//Sportsdata sportsdata = new Sportsdata();
-			ArrayOfMatchdata aomd = sportsdata.getSportsdataSoap12().getMatchdataByLeagueSaison(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-			/*List<Matchdata>*/ matchdatas = aomd.getMatchdata();
-		}
-		catch (/*WebService*/Exception e) {
-			//throw new OpenLigaDBException(e.getMessage());
-		}
+		List<com.msiggi.openligadb.model.Match> matchdatas = openLigaDBService.getMatchdata(LEAGUE_SHORTCUT, LEAGUE_SEASON);
+		Collections.sort(matchdatas, (a, b) -> a.getMatchDateTime().compareTo(b.getMatchDateTime()));
 
 		for (int i=0; i < matchdatas.size(); i++) {
-			Matchdata matchdata = matchdatas.get(i);
+			com.msiggi.openligadb.model.Match matchdata = matchdatas.get(i);
 			Match match = new Match();
 			match.setEvent(event);
 			match.setMatchN((short)(i+1));
-			match.setTeam1(teamMapByWsId.get(matchdata.getIdTeam1()));
-			match.setTeam2(teamMapByWsId.get(matchdata.getIdTeam2()));
-			match.setStartTime(new Timestamp(matchdata.getMatchDateTime().toGregorianCalendar().getTimeInMillis()).toLocalDateTime());
-			match.setRound(roundMap.get(matchdata.getGroupID()));
+			match.setTeam1(teamMapByWsId.get(matchdata.getTeam1().getTeamId()));
+			match.setTeam2(teamMapByWsId.get(matchdata.getTeam2().getTeamId()));
+			match.setStartTime(matchdata.getMatchDateTime());
+			match.setRound(roundMap.get(matchdata.getGroup().getGroupID()));
 
 			em.persist(match);
 		}
@@ -290,14 +247,14 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 		webService.setEvent(event);
 		webService.setPriority((byte)1);
 		webService.setLeagueShortcut(LEAGUE_SHORTCUT);
-		webService.setLeagueSaison(LEAGUE_SAISON);
+		webService.setLeagueSaison(LEAGUE_SEASON);
 		webService.setResultNormalLabel("Ergebnis90");
 		webService.setResultExtraLabel("Ergebnis120");
 		webService.setResultPenaltyLabel("Ergebnis11");
 		em.persist(webService);
 
 		addMissingMatches(event, roundList.stream().filter(e -> Boolean.FALSE.equals(e.getIsGroupmatchAsBoolean())).toList(),
-				matchdatas.size(), teamMapByWsId);
+				matchdatas.size());
 		
 		if (params.containsKey("TestMode") && (boolean)params.get("TestMode")) {
 			logger.warn("Because TestMode is on, changes are not commited to the database.");
@@ -308,7 +265,7 @@ public class OpenLigaDBEventEC2020 extends OpenLigaDBEvent {
 
 	}
 	
-	private void addMissingMatches(Event event, List<Round> roundList, int matchesSize, Map<Integer, Team> teamMapByWsId) {
+	private void addMissingMatches(Event event, List<Round> roundList, int matchesSize) {
 		EntityManager em = (EntityManager) params.get("EntityManager");
 		checkNotNull(em, "Parameter named EntityManager is not set, its value cannot be null.");
 		final DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

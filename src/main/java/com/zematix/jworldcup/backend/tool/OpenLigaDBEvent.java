@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 import com.zematix.jworldcup.backend.model.CountryCode;
 import com.zematix.jworldcup.backend.service.OpenLigaDBService;
 
@@ -30,7 +31,7 @@ public abstract class OpenLigaDBEvent {
 	
 	protected OpenLigaDBService openLigaDBService;
 	
-	public OpenLigaDBEvent() {
+	protected OpenLigaDBEvent() {
 		this.openLigaDBService = new OpenLigaDBService(); // cannot be injected here
 	}
 
@@ -53,7 +54,7 @@ public abstract class OpenLigaDBEvent {
 		params.put(name, value);
 	}
 	
-	public abstract boolean importEvent();
+	public abstract boolean importEvent() throws OpenLigaDBException;
 	
 	/**
 	 * Helper method retrieves FIFA country codes from a JSON url and returns a map containing 

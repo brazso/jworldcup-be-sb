@@ -12,6 +12,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
+
 /**
  * Imports all matches and other data of a new event from OpeLigaDB. 
  * It would be exhaustive manually entering the start data of a tournament. 
@@ -47,7 +49,14 @@ public class ImportOpenLigaDBEvent implements CommandLineRunner {
 		OpenLigaDBEvent openLigaDBEvent = factory.createOpenLigaDBEvent();
 		openLigaDBEvent.setParams("EntityManager", em);
 		openLigaDBEvent.setParams("TestMode", isTestMode);
-		boolean isCommitable = openLigaDBEvent.importEvent();
+
+		boolean isCommitable;
+		try {
+			isCommitable = openLigaDBEvent.importEvent();
+		}
+		catch (OpenLigaDBException e) {
+			isCommitable = false;
+		}
 		
 		if (isCommitable) {
 			tx.commit();

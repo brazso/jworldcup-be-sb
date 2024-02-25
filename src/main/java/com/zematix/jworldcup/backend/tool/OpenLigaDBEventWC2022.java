@@ -2,7 +2,6 @@ package com.zematix.jworldcup.backend.tool;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,10 +13,7 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.msiggi.openligadb.client.ArrayOfGroup;
-import com.msiggi.openligadb.client.ArrayOfLeague;
-import com.msiggi.openligadb.client.Matchdata;
-import com.msiggi.openligadb.client.Sportsdata;
+import com.msiggi.openligadb.model.League;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Match;
@@ -30,7 +26,7 @@ import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
  * were just minor issues.
  */
 public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
-
+	
 	/**
 	 * Imports event belongs to {@link OpenLigaDBEventWC2022}
 	 * 
@@ -38,33 +34,34 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 	 * @throws OpenLigaDBException 
 	 */
 	@Override
-	public boolean importEvent() {
+	public boolean importEvent() throws OpenLigaDBException {
 		EntityManager em = (EntityManager) params.get("EntityManager");
 		checkNotNull(em, "Parameter named EntityManager is not set, its value cannot be null.");
 		
 		final String LEAGUE_SHORTCUT = "wmk";
-		final String LEAGUE_SAISON = "2022";
+		final String LEAGUE_SEASON = "2022";
 
-		List<com.msiggi.openligadb.client.League> oldbLeagues = new ArrayList<>();
-		Sportsdata sportsdata = new Sportsdata();
-		ArrayOfLeague aol = sportsdata.getSportsdataSoap12().getAvailLeaguesBySports(/*sportID*/ 1);
-		/*List<Sport>*/ oldbLeagues = aol.getLeague();
-
+		List<League> oldbLeagues = openLigaDBService.getAvailableLeagues();
 		oldbLeagues.stream()
-				.filter(e -> LEAGUE_SAISON.equals(e.getLeagueSaison()))
-				.forEach(e -> logger.info(String.format("%s %s %s %s", e.getLeagueID(), e.getLeagueName(), e.getLeagueSaison(), e.getLeagueShortcut())));
-
-		com.msiggi.openligadb.client.League league =
+				.filter(e -> LEAGUE_SEASON.equals(e.getLeagueSeason()))
+				.forEach(e -> logger.info(String.format("%s %s %s %s", e.getLeagueId(), e.getLeagueName(), e.getLeagueSeason(), e.getLeagueShortcut())));
+		League league =
 				oldbLeagues.stream().filter(
-						e -> LEAGUE_SHORTCUT.equals(e.getLeagueShortcut()) && LEAGUE_SAISON.equals(e.getLeagueSaison()))
-						.findFirst().get();
-
+						e -> LEAGUE_SHORTCUT.equals(e.getLeagueShortcut()) && LEAGUE_SEASON.equals(e.getLeagueSeason()))
+						.findFirst().orElse(null);
+		if (league == null) {
+			String msg = String.format("League is not found in OpenLigaDB where "
+					+ "leagueShortcut=%s and leagueSaison=%s.",
+					LEAGUE_SHORTCUT, LEAGUE_SEASON);
+			logger.error(msg);
+			throw new OpenLigaDBException(msg);
+		}
 		// 4537, Fußball-WM 2022 (Katar), 2022, wmk
 		
 		Event event = new Event();
 //		event.setLocation(league.getLeagueName());
 		event.setLocation("Qatar");
-		event.setYear(Short.valueOf(league.getLeagueSaison()));
+		event.setYear(Short.valueOf(league.getLeagueSeason()));
 //		event.setDescription(league.getLeagueName());
 		event.setDescription("World Cup");
 		event.setShortDesc("WC");
@@ -73,10 +70,7 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 		
 		logger.info("eventId={}", event.getEventId());
 		
-		List<com.msiggi.openligadb.client.Group> oldbGroups = new ArrayList<>();
-		ArrayOfGroup aog = sportsdata.getSportsdataSoap12().getAvailGroups(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-		/*List<Sport>*/ oldbGroups = aog.getGroup();
-
+		List<com.msiggi.openligadb.model.Group> oldbGroups = openLigaDBService.getAvailableGroups(LEAGUE_SHORTCUT, LEAGUE_SEASON);
 //		39225, Vorrunde Spieltag 1, 1
 //		39226, Vorrunde Spieltag 2, 2
 //		39227, Vorrunde Spieltag 3, 3
@@ -88,7 +82,7 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 
 		Map<Integer, Round> roundMap = new HashMap<>();
 		List<Round> roundList = new ArrayList<>();
-		for (com.msiggi.openligadb.client.Group oldbGroup : oldbGroups) {
+		for (com.msiggi.openligadb.model.Group oldbGroup : oldbGroups) {
 			Round round = new Round();
 			round.setEvent(event);
 			// Vorrunde Spieltag #, Achtelfinale, Viertelfinale, Halbfinale, Spiel um Platz 3, Finale
@@ -118,6 +112,11 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 				case "Finale":
 					name = "Final";
 					break;
+				default:
+					String msg = String.format("Unsupported OpenLigaDB \"%s\" group name found. "
+							+ "Update the import script.", name);
+					logger.error(msg);
+					throw new OpenLigaDBException(msg);
 			}
 			round.setName(name);
 			round.setIsGroupmatchAsBoolean(oldbGroup.getGroupName().contains("Vorrunde Spieltag"));
@@ -129,12 +128,7 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 		TypedQuery<Team> query = em.createNamedQuery("Team.findAll", Team.class);
 		List<Team> teams = query.getResultList();
 		
-		List<com.zematix.jworldcup.backend.model.openligadb.client.Team> olTeams = new ArrayList<>(); 
-		try {
-			olTeams = openLigaDBService.getAvailableTeams(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-		} catch (OpenLigaDBException e1) {
-			// TODO Auto-generated catch block
-		}
+		List<com.msiggi.openligadb.model.Team> olTeams = openLigaDBService.getAvailableTeams(LEAGUE_SHORTCUT, LEAGUE_SEASON);
 		
 		List<Group> groupList = new ArrayList<>();
 		olTeams.stream().filter(e -> e.getTeamGroupName() != null).sorted((e1, e2) -> {return e1.getTeamGroupName().compareTo(e2.getTeamGroupName());}).forEach(olTeam -> {
@@ -170,46 +164,38 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 			teamMapByWsId.put(team.getWsId().intValue(), team);
 		});
 		
-		List<Matchdata> matchdatas = new ArrayList<>();
-//		List<com.zematix.jworldcup.backend.model.openligadb.client.Matchdata> olMatchdatas = new ArrayList<>();
-		try {
-			matchdatas = this.openLigaDBService.getMatchdataByLeagueSaison(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-//			olMatchdatas = this.openLigaDBService.getMatchdata(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-			Collections.sort(matchdatas, (a, b) -> a.getMatchDateTime().compare(b.getMatchDateTime()));
-		}
-		catch (OpenLigaDBException e) {
-			// TODO Auto-generated catch block
-		}
+		List<com.msiggi.openligadb.model.Match> matchdatas = openLigaDBService.getMatchdata(LEAGUE_SHORTCUT, LEAGUE_SEASON);
+		Collections.sort(matchdatas, (a, b) -> a.getMatchDateTime().compareTo(b.getMatchDateTime()));
 
 		Map<Team, Integer> teamOccurenceMap = new HashMap<>();
 		Map<String, List<Match>> matchesByRoundMap = new HashMap<>();
 		for (int i=0; i < matchdatas.size(); i++) {
-			Matchdata matchdata = matchdatas.get(i);
+			com.msiggi.openligadb.model.Match matchdata = matchdatas.get(i);
 			Match match = new Match();
 			match.setEvent(event);
 			match.setMatchN((short)(i+1));
-			match.setTeam1(teamMapByWsId.get(matchdata.getIdTeam1()));
+			match.setTeam1(teamMapByWsId.get(matchdata.getTeam1().getTeamId()));
 			if (match.getTeam1() != null) {
 				teamOccurenceMap.put(match.getTeam1(), teamOccurenceMap.get(match.getTeam1()) == null ? 1 : teamOccurenceMap.get(match.getTeam1())+1);
 			}
-			match.setTeam2(teamMapByWsId.get(matchdata.getIdTeam2()));
+			match.setTeam2(teamMapByWsId.get(matchdata.getTeam2().getTeamId()));
 			if (match.getTeam2() != null) {
 				teamOccurenceMap.put(match.getTeam2(), teamOccurenceMap.get(match.getTeam2()) == null ? 1 : teamOccurenceMap.get(match.getTeam2())+1);
 			}
-			match.setStartTime(new Timestamp(matchdata.getMatchDateTime().toGregorianCalendar().getTimeInMillis()).toLocalDateTime());
-			if (matchdata.getGroupName().contains("Vorrunde Spieltag")) { // Vorrunde Spieltag #
+			match.setStartTime(matchdata.getMatchDateTimeUTC());
+			if (matchdata.getGroup().getGroupName().contains("Vorrunde Spieltag")) { // Vorrunde Spieltag #
 				match.setRound(roundList.get(teamOccurenceMap.get(match.getTeam1())-1));
 			}
-			else if (matchdata.getGroupName().equals("Achtelfinale")) {
+			else if (matchdata.getGroup().getGroupName().equals("Achtelfinale")) {
 				match.setRound(roundList.get(3));
 				
 				// Sieger Gr. A vs Zweiter Gr. B A1-B2 
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("(Sieger|Zweiter)( Gr\\. )(.*)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("(Sieger|Zweiter)( Gr\\. )(.*)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = matcher.group(3)+("Sieger".equals(matcher.group(1)) ? "1" : "2"); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("(Sieger|Zweiter)( Gr\\. )(.*)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("(Sieger|Zweiter)( Gr\\. )(.*)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-"+matcher.group(3)+("Sieger".equals(matcher.group(1)) ? "1" : "2"); 
 				}
@@ -221,16 +207,16 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 				}
 				matchesByRoundMap.get("Achtelfinale").add(match);
 			}
-			else if (matchdata.getGroupName().contains("Viertelfinale")) {
+			else if (matchdata.getGroup().getGroupName().contains("Viertelfinale")) {
 				match.setRound(roundList.get(4));
 
 				// Sieger AF5 vs Sieger AF6
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("(Sieger AF)(\\d+)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("(Sieger AF)(\\d+)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = "W"+matchesByRoundMap.get("Achtelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("(Sieger AF)(\\d+)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("(Sieger AF)(\\d+)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-W"+matchesByRoundMap.get("Achtelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
@@ -242,16 +228,16 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 				}
 				matchesByRoundMap.get("Viertelfinale").add(match);
 			}
-			else if (matchdata.getGroupName().contains("Halbfinale")) {
+			else if (matchdata.getGroup().getGroupName().contains("Halbfinale")) {
 				match.setRound(roundList.get(5));
 				
 				// Sieger VF2 vs Sieger VF1 
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("(Sieger VF)(\\d+)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("(Sieger VF)(\\d+)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = "W"+matchesByRoundMap.get("Viertelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("(Sieger VF)(\\d+)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("(Sieger VF)(\\d+)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-W"+matchesByRoundMap.get("Viertelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
@@ -263,32 +249,32 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 				}
 				matchesByRoundMap.get("Halbfinale").add(match);
 			}
-			else if (matchdata.getGroupName().contains("Spiel um Platz 3")) {
+			else if (matchdata.getGroup().getGroupName().contains("Spiel um Platz 3")) {
 				match.setRound(roundList.get(6));
 				
 				// Verlierer HF1 vs Verlierer HF2
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("(Verlierer HF)(\\d+)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("(Verlierer HF)(\\d+)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = "L"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("(Verlierer HF)(\\d+)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("(Verlierer HF)(\\d+)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-L"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
 				match.setParticipantsRule(participantsRule);
 				logger.info("participantsRule: {}", participantsRule);
 			}
-			else if (matchdata.getGroupName().contains("Finale")) {
+			else if (matchdata.getGroup().getGroupName().contains("Finale")) {
 				match.setRound(roundList.get(7));
 				
 				// Sieger HF1 vs Sieger HF2 
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("(Sieger HF)(\\d+)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("(Sieger HF)(\\d+)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = "W"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("(Sieger HF)(\\d+)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("(Sieger HF)(\\d+)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-W"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
@@ -296,6 +282,11 @@ public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 				logger.info("participantsRule: {}", participantsRule);
 			}
 			em.persist(match);
+		}
+
+		if (params.containsKey("TestMode") && (boolean)params.get("TestMode")) {
+			logger.warn("Because TestMode is on, changes are not commited to the database.");
+			return false; // changes are not to be committed in test mode
 		}
 		
 		return true;

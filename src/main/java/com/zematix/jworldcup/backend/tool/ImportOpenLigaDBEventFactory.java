@@ -22,12 +22,8 @@ public class ImportOpenLigaDBEventFactory {
 	 */
 	public OpenLigaDBEvent createOpenLigaDBEvent() {
 		switch (eventShortDescWithYear) {
-		case "WC2018": 
-			return new OpenLigaDBEventWC2018();
 		case "AFC2019":
 			return new OpenLigaDBEventAFC2019();
-		case "CA2019":
-			return new OpenLigaDBEventCA2019();
 		case "CAF2019":
 			return new OpenLigaDBEventCAF2019();
 		case "EC2020": 

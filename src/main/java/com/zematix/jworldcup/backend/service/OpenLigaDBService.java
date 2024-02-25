@@ -12,13 +12,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.springframework.stereotype.Service;
 
-import com.msiggi.openligadb.client.ArrayOfMatchdata;
-import com.msiggi.openligadb.client.ArrayOfSport;
-import com.msiggi.openligadb.client.Matchdata;
-import com.msiggi.openligadb.client.Sport;
-import com.msiggi.openligadb.client.Sportsdata;
+import com.msiggi.openligadb.model.Group;
+import com.msiggi.openligadb.model.League;
+import com.msiggi.openligadb.model.Match;
+import com.msiggi.openligadb.model.Sport;
+import com.msiggi.openligadb.model.Team;
 import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
-import com.zematix.jworldcup.backend.model.openligadb.client.Team;
 
 /**
  * Web service client implementation to get online results of football matches 
@@ -34,7 +33,7 @@ import com.zematix.jworldcup.backend.model.openligadb.client.Team;
 @Service
 public class OpenLigaDBService extends ServiceBase {
 	
-	public static final String OPENLIGADB_WEB_API_URI = "https://www.openligadb.de/api/";
+	public static final String OPENLIGADB_WEB_API_URI = "https://api.openligadb.de";
 
 	/**
 	 * Service wrapper of the {@link SportsDataSoap#getAvailSports()} method
@@ -44,34 +43,58 @@ public class OpenLigaDBService extends ServiceBase {
 	 */
 	public List<Sport> getAvailableSports() throws OpenLigaDBException {
 		List<Sport> sports = new ArrayList<>();
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(OPENLIGADB_WEB_API_URI + "/getavailablesports");
 		try {
-			Sportsdata sportsdata = new Sportsdata();
-			ArrayOfSport aos = sportsdata.getSportsdataSoap12().getAvailSports();
-			/*List<Sport>*/ sports = aos.getSport();
+			Builder builder = target.request(MediaType.APPLICATION_JSON);
+			sports = builder.get(new GenericType<List<Sport>>() {});
 		}
-		catch (/*WebService*/Exception e) {
+		catch (Exception e) {
 			throw new OpenLigaDBException(e.getMessage());
 		}
 		return sports;
 	}
 	
 	/**
-	 * Service wrapper of the {@link SportsDataSoap#getMatchdataByLeagueSaison(String, String)} method
+	 * Service wrapper of the {@link SportsDataSoap#getAvailableLeagues()} method
 	 * 
-	 * @return list of available matches of a season (event)
+	 * @return list of all leagues
 	 * @throws OpenLigaDBException if there is problem with the WS call
 	 */
-	public List<Matchdata> getMatchdataByLeagueSaison(String leagueShortcut, String leagueSaison) throws OpenLigaDBException {
-		List<Matchdata> matchdatas = new ArrayList<>();
+	public List<League> getAvailableLeagues() throws OpenLigaDBException {
+		List<League> leagues = new ArrayList<>();
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(OPENLIGADB_WEB_API_URI + "/getavailableleagues");
 		try {
-			Sportsdata sportsdata = new Sportsdata();
-			ArrayOfMatchdata aomd = sportsdata.getSportsdataSoap12().getMatchdataByLeagueSaison(leagueShortcut, leagueSaison);
-			/*List<Sport>*/ matchdatas = aomd.getMatchdata();
+			Builder builder = target.request(MediaType.APPLICATION_JSON);
+			leagues = builder.get(new GenericType<List<League>>() {});
 		}
-		catch (/*WebService*/Exception e) {
+		catch (Exception e) {
 			throw new OpenLigaDBException(e.getMessage());
 		}
-		return matchdatas;
+		return leagues;
+	}
+	
+	/**
+	 * Service wrapper of the OpenLigaDB WEB-API getavailablegroups method
+	 * 
+	 * @return list of available groups of a season (event)
+	 * @throws OpenLigaDBException if there is problem with the WS call
+	 */
+	public List<Group> getAvailableGroups(String leagueShortcut, String leagueSeason) throws OpenLigaDBException {
+		List<Group> groups = new ArrayList<>();
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(OPENLIGADB_WEB_API_URI + "/getavailablegroups/{leagueShortcut}/{leagueSeason}")
+				.resolveTemplate("leagueShortcut", leagueShortcut)
+				.resolveTemplate("leagueSeason", leagueSeason);
+		try {
+			Builder builder = target.request(MediaType.APPLICATION_JSON);
+			groups = builder.get(new GenericType<List<Group>>() {});
+		}
+		catch (Exception e) {
+			throw new OpenLigaDBException(e.getMessage());
+		}
+		return groups;
 	}
 
 	/**
@@ -81,15 +104,15 @@ public class OpenLigaDBService extends ServiceBase {
 	 * @return list of available matches of a season (event)
 	 * @throws OpenLigaDBException if there is problem with the WS call
 	 */
-	public List<com.zematix.jworldcup.backend.model.openligadb.client.Matchdata> getMatchdata(String leagueShortcut, String leagueSaison) throws OpenLigaDBException {
-		List<com.zematix.jworldcup.backend.model.openligadb.client.Matchdata> matchdatas = new ArrayList<>();
+	public List<Match> getMatchdata(String leagueShortcut, String leagueSeason) throws OpenLigaDBException {
+		List<Match> matchdatas = new ArrayList<>();
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(OPENLIGADB_WEB_API_URI + "/getmatchdata/{leagueShortcut}/{leagueSaison}")
+		WebTarget target = client.target(OPENLIGADB_WEB_API_URI + "/getmatchdata/{leagueShortcut}/{leagueSeason}")
 				.resolveTemplate("leagueShortcut", leagueShortcut)
-				.resolveTemplate("leagueSaison", leagueSaison);
+				.resolveTemplate("leagueSeason", leagueSeason);
 		try {
 			Builder builder = target.request(MediaType.APPLICATION_JSON);
-			matchdatas = builder.get(new GenericType<List<com.zematix.jworldcup.backend.model.openligadb.client.Matchdata>>() {});
+			matchdatas = builder.get(new GenericType<List<Match>>() {});
 		}
 		catch (Exception e) {
 			throw new OpenLigaDBException(e.getMessage());
@@ -104,12 +127,12 @@ public class OpenLigaDBService extends ServiceBase {
 	 * @return list of all teams of a season (event)
 	 * @throws OpenLigaDBException if there is problem with the WS call
 	 */
-	public List<Team> getAvailableTeams(String leagueShortcut, String leagueSaison) throws OpenLigaDBException {
+	public List<Team> getAvailableTeams(String leagueShortcut, String leagueSeason) throws OpenLigaDBException {
 		List<Team> teams = new ArrayList<>();
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(OPENLIGADB_WEB_API_URI + "/getavailableteams/{leagueShortcut}/{leagueSaison}")
+		WebTarget target = client.target(OPENLIGADB_WEB_API_URI + "/getavailableteams/{leagueShortcut}/{leagueSeason}")
 				.resolveTemplate("leagueShortcut", leagueShortcut)
-				.resolveTemplate("leagueSaison", leagueSaison);
+				.resolveTemplate("leagueSeason", leagueSeason);
 		try {
 			Builder builder = target.request(MediaType.APPLICATION_JSON);
 			teams = builder.get(new GenericType<List<Team>>() {});

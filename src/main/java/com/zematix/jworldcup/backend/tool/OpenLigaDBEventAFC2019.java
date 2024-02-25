@@ -2,7 +2,6 @@ package com.zematix.jworldcup.backend.tool;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,18 +15,14 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.msiggi.openligadb.client.ArrayOfGroup;
-import com.msiggi.openligadb.client.ArrayOfLeague;
-import com.msiggi.openligadb.client.ArrayOfMatchdata;
-import com.msiggi.openligadb.client.ArrayOfTeam;
-import com.msiggi.openligadb.client.Matchdata;
-import com.msiggi.openligadb.client.Sportsdata;
+import com.msiggi.openligadb.model.League;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.Round;
 import com.zematix.jworldcup.backend.entity.Team;
 import com.zematix.jworldcup.backend.entity.WebService;
+import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
@@ -48,7 +43,7 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 	 * @return {@code true} if the modifications are commitable, {@code false} otherwise
 	 */
 	@Override
-	public boolean importEvent() {
+	public boolean importEvent() throws OpenLigaDBException {
 		EntityManager em = (EntityManager) params.get("EntityManager");
 		checkNotNull(em, "Parameter named EntityManager is not set, its value cannot be null.");
 		
@@ -58,37 +53,23 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 		final Short EVENT_YEAR = 2019;
 		final String EVENT_ORGANIZER = "AFC";
 		final String LEAGUE_SHORTCUT = "AFC2019";
-		final String LEAGUE_SAISON = "2019";
+		final String LEAGUE_SEASON = "2019";
 		final List<String> ORDNUNGZAHLEN = Arrays.asList("Sieger", "Zweiter", "Dritter");
 		
 		Map<String, String> fifaCodeByCountryNameMap = retrieveFifaCodeByCountryNameMap();
 		checkNotNull(fifaCodeByCountryNameMap, "Retrieved fifaCodeByCountryNameMap cannot be null.");
 
-		List<com.msiggi.openligadb.client.League> oldbLeagues = new ArrayList<>();
-		Sportsdata sportsdata = null;
-		try {
-			/*Sportsdata*/ sportsdata = new Sportsdata();
-			ArrayOfLeague aol = sportsdata.getSportsdataSoap12().getAvailLeaguesBySports(/*sportID*/ 1);
-			/*List<Sport>*/ oldbLeagues = aol.getLeague();
-		}
-		catch (/*WebService*/Exception e) {
-			//throw new OpenLigaDBException(e.getMessage());
-		}
-
-//		oldbLeagues.stream()
-//				.filter(e -> LEAGUE_SAISON.equals(e.getLeagueSaison()))
-//				.forEach(e -> logger.info(String.format("%s %s %s %s", e.getLeagueID(), e.getLeagueName(), e.getLeagueSaison(), e.getLeagueShortcut())));
-
-		com.msiggi.openligadb.client.League league = oldbLeagues.stream()
-				.filter(e -> LEAGUE_SHORTCUT.equals(e.getLeagueShortcut()) && LEAGUE_SAISON.equals(e.getLeagueSaison()))
+		List<League> oldbLeagues = openLigaDBService.getAvailableLeagues();
+		League league = oldbLeagues.stream()
+				.filter(e -> LEAGUE_SHORTCUT.equals(e.getLeagueShortcut()) && LEAGUE_SEASON.equals(e.getLeagueSeason()))
 				.findFirst().orElse(null);
 		if (league == null) {
-			logger.error(String.format("League is not found in OpenLigaDB where "
+			String msg = String.format("League is not found in OpenLigaDB where "
 					+ "leagueShortcut=%s and leagueSaison=%s.",
-					LEAGUE_SHORTCUT, LEAGUE_SAISON));
-			return false;
+					LEAGUE_SHORTCUT, LEAGUE_SEASON);
+			logger.error(msg);
+			throw new OpenLigaDBException(msg);
 		}
-
 		// 4329, Fußball-Asienmeisterschaft 2019, 2019, AFC2019
 		
 		Event event = new Event();
@@ -99,19 +80,7 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 		event.setOrganizer(EVENT_ORGANIZER);
 		em.persist(event);
 		
-		//logger.info("New eventId="+event.getEventId());
-		
-		List<com.msiggi.openligadb.client.Group> oldbGroups = new ArrayList<>();
-		//Sportsdata sportsdata = null;
-		try {
-			//Sportsdata sportsdata = new Sportsdata();
-			ArrayOfGroup aog = sportsdata.getSportsdataSoap12().getAvailGroups(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-			/*List<Sport>*/ oldbGroups = aog.getGroup();
-		}
-		catch (/*WebService*/Exception e) {
-			//throw new OpenLigaDBException(e.getMessage());
-		}
-
+		List<com.msiggi.openligadb.model.Group> oldbGroups = openLigaDBService.getAvailableGroups(LEAGUE_SHORTCUT, LEAGUE_SEASON);
 //		33409, 1. Runde, 1
 //		33410, 2. Runde, 2
 //		33411, 3. Runde, 3
@@ -122,7 +91,7 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 
 		Map<Integer, Round> roundMap = new HashMap<>();
 		List<Round> roundList = new ArrayList<>();
-		for (com.msiggi.openligadb.client.Group oldbGroup : oldbGroups) {
+		for (com.msiggi.openligadb.model.Group oldbGroup : oldbGroups) {
 			Round round = new Round();
 			round.setEvent(event);
 			String name = oldbGroup.getGroupName();
@@ -161,10 +130,10 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 					isGroupMatch = false;
 					break;
 				default:
-					logger.error(String.format("Unsupported OpenLigaDB \"%s\" group name found. "
-							+ "Update the import script.", name));
-					return false;
-					//break;
+					String msg = String.format("Unsupported OpenLigaDB \"%s\" group name found. "
+							+ "Update the import script.", name);
+					logger.error(msg);
+					throw new OpenLigaDBException(msg);
 			}
 			round.setName(name);
 			round.setIsGroupmatchAsBoolean(isGroupMatch);
@@ -183,43 +152,33 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 					.filter(distinctByKey(Team::getName))
 					.collect(Collectors.toMap(t -> t.getName(), t -> t));
 
-		List<com.msiggi.openligadb.client.Team> oldbTeams = new ArrayList<>();
-		//Sportsdata sportsdata = null;
-		try {
-			//Sportsdata sportsdata = new Sportsdata();
-			ArrayOfTeam aot = sportsdata.getSportsdataSoap12().getTeamsByLeagueSaison(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-			/*List<Sport>*/ oldbTeams = aot.getTeam();
-		}
-		catch (/*WebService*/Exception e) {
-			//throw new OpenLigaDBException(e.getMessage());
-		}
+		List<com.msiggi.openligadb.model.Team> oldbTeams = openLigaDBService.getAvailableTeams(LEAGUE_SHORTCUT, LEAGUE_SEASON);
 		
 		// among teams there are Gruppe, Sieger, Verlierer ones. The latter ones have no icon.
-		List<com.msiggi.openligadb.client.Team> oldbRealTeams = 
-				oldbTeams.stream().filter(e->!e.getTeamIconURL().isEmpty()).toList();
+		List<com.msiggi.openligadb.model.Team> oldbRealTeams = 
+				oldbTeams.stream().filter(e->!e.getTeamIconUrl().isEmpty()).toList();
 		
 		List<Group> groupList = new ArrayList<>();
 		for (int i=0; i < oldbRealTeams.size()/4; i++) {
 			Group group = new Group();
 			group.setEvent(event);
 			group.setName(String.valueOf((char)('A'+i)));
-			//logger.info("Group: " + group.getName());
 			em.persist(group);
 			groupList.add(group);
 		}
 		
 		Map<Integer, Team> teamMapByWsId = new HashMap<>();
-		for (com.msiggi.openligadb.client.Team oldbTeam : oldbRealTeams) {
+		for (com.msiggi.openligadb.model.Team oldbTeam : oldbRealTeams) {
 			Team team = new Team();
 			team.setEvent(event);
 			boolean isLowerCase = false;
 			// url #1 (mostly used) contains English name, it can be used for translation
 			// e.g. https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Flag_of_Syria.svg/20px-Flag_of_Syria.svg.png
-			Matcher matcher = Pattern.compile("(.*?_of_)(.*?)(_%28.*|\\.svg.*)").matcher(oldbTeam.getTeamIconURL());
+			Matcher matcher = Pattern.compile("(.*?_of_)(.*?)(_%28.*|\\.svg.*)").matcher(oldbTeam.getTeamIconUrl());
 			if (!matcher.find()) {
 				// url #2 (rarely used) contains English name, it can be used for translation
 				// e.g. http://www.nationalflaggen.de/media/flags/flagge-thailand.gif
-				matcher = Pattern.compile("(.*?flagge-)(.*?)(\\..*)").matcher(oldbTeam.getTeamIconURL());
+				matcher = Pattern.compile("(.*?flagge-)(.*?)(\\..*)").matcher(oldbTeam.getTeamIconUrl());
 				isLowerCase = true;
 			} else {
 				matcher.reset();
@@ -234,7 +193,7 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 			} else {
 				name = oldbTeam.getTeamName();
 				logger.warn(String.format("OpenLigaDB team named %s could not be translated into English "
-						+ "via its IconUrl named %s.", oldbTeam.getTeamName(), oldbTeam.getTeamIconURL()));
+						+ "via its IconUrl named %s.", oldbTeam.getTeamName(), oldbTeam.getTeamIconUrl()));
 			}
 			team.setName(name);
 			//logger.info("TeamName: " + name + ", TeamIconUrl: " + oldbTeam.getTeamIconURL());
@@ -246,54 +205,46 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 			else if (fifaCodeByCountryNameMap.containsKey(name)) {
 				flag = fifaCodeByCountryNameMap.get(name);
 				logger.warn(String.format("OpenLigaDB team named %s may have no flag %s image stored "
-						+ "in local. Download %s image.", name, flag, oldbTeam.getTeamIconURL()));
+						+ "in local. Download %s image.", name, flag, oldbTeam.getTeamIconUrl()));
 			}
 			else {
 				flag = "XYZ"; // unknown FIFA country code
 				logger.warn(String.format("OpenLigaDB team named %s may have no flag image stored "
 						+ "in local. Download %s image and update its %s dummy flag name at its team "
-						+ "in the database.", name, flag, oldbTeam.getTeamIconURL()));
+						+ "in the database.", name, flag, oldbTeam.getTeamIconUrl()));
 			}
 			team.setFlag(flag);
 			
 			team.setGroup(groupList.get(0)); // unfortunately real group is not stored here
 			team.setFifaPoints((short) 0); // unknown
-			team.setWsId(Long.valueOf(oldbTeam.getTeamID()));
+			team.setWsId(Long.valueOf(oldbTeam.getTeamId()));
 			em.persist(team);
 			teamMapByWsId.put(team.getWsId().intValue(), team);
 		}
 		
-		List<Matchdata> matchdatas = new ArrayList<>();
-		try {
-			//Sportsdata sportsdata = new Sportsdata();
-			ArrayOfMatchdata aomd = sportsdata.getSportsdataSoap12().getMatchdataByLeagueSaison(LEAGUE_SHORTCUT, LEAGUE_SAISON);
-			/*List<Matchdata>*/ matchdatas = aomd.getMatchdata();
-			Collections.sort(matchdatas, (a, b) -> a.getMatchDateTime().compare(b.getMatchDateTime()));
-		}
-		catch (/*WebService*/Exception e) {
-			//throw new OpenLigaDBException(e.getMessage());
-		}
+		List<com.msiggi.openligadb.model.Match> matchdatas = openLigaDBService.getMatchdata(LEAGUE_SHORTCUT, LEAGUE_SEASON);
+		Collections.sort(matchdatas, (a, b) -> a.getMatchDateTime().compareTo(b.getMatchDateTime()));
 
 		Map<Team, Integer> teamOccurenceMap = new HashMap<>();
 		Map<String, List<Match>> matchesByRoundMap = new HashMap<>();
 		for (int i=0; i < matchdatas.size(); i++) {
-			Matchdata matchdata = matchdatas.get(i);
+			com.msiggi.openligadb.model.Match matchdata = matchdatas.get(i);
 			Match match = new Match();
 			match.setEvent(event);
 			match.setMatchN((short)(i+1));
-			match.setTeam1(teamMapByWsId.get(matchdata.getIdTeam1()));
+			match.setTeam1(teamMapByWsId.get(matchdata.getTeam1().getTeamId()));
 			if (match.getTeam1() != null) {
 				teamOccurenceMap.put(match.getTeam1(), teamOccurenceMap.get(match.getTeam1()) == null ? 1 : teamOccurenceMap.get(match.getTeam1())+1);
 			}
-			match.setTeam2(teamMapByWsId.get(matchdata.getIdTeam2()));
+			match.setTeam2(teamMapByWsId.get(matchdata.getTeam2().getTeamId()));
 			if (match.getTeam2() != null) {
 				teamOccurenceMap.put(match.getTeam2(), teamOccurenceMap.get(match.getTeam2()) == null ? 1 : teamOccurenceMap.get(match.getTeam2())+1);
 			}
 			
-			match.setStartTime(new Timestamp(matchdata.getMatchDateTimeUTC().toGregorianCalendar().getTimeInMillis()).toLocalDateTime());
-			match.setRound(roundMap.get(matchdata.getGroupID()));
+			match.setStartTime(matchdata.getMatchDateTimeUTC());
+			match.setRound(roundMap.get(matchdata.getGroup().getGroupID()));
 
-			if (matchdata.getGroupName().equals("1. Runde")) {
+			if (matchdata.getGroup().getGroupName().equals("1. Runde")) {
 				String groupName = String.valueOf(matchdata.getLocation().getLocationCity());
 				if (groupName != null) {
 					Group group = groupList.stream().filter(e -> e.getName().equals(groupName)).findFirst().get();
@@ -302,16 +253,16 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 					em.flush();
 				}
 			}
-			else if (matchdata.getGroupName().matches("^\\d\\. Runde$")) { // 2nd and 3rd rounds
+			else if (matchdata.getGroup().getGroupName().matches("^\\d\\. Runde$")) { // 2nd and 3rd rounds
 			}
-			else if (matchdata.getGroupName().equals("Achtelfinale")) {
+			else if (matchdata.getGroup().getGroupName().equals("Achtelfinale")) {
 				// Sieger Gruppe B vs Dritter Gruppe A/C/D -> B1-ACD3
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("("+String.join("|", ORDNUNGZAHLEN)+")( Gruppe )(.*)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("("+String.join("|", ORDNUNGZAHLEN)+")( Gruppe )(.*)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = matcher.group(3).replace("/", "")+(ORDNUNGZAHLEN.indexOf(matcher.group(1))+1); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("("+String.join("|", ORDNUNGZAHLEN)+")( Gruppe )(.*)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("("+String.join("|", ORDNUNGZAHLEN)+")( Gruppe )(.*)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-" + matcher.group(3).replace("/", "")+(ORDNUNGZAHLEN.indexOf(matcher.group(1))+1); 
 				}
@@ -319,18 +270,18 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 				//logger.info("participantsRule: "+participantsRule);
 				
 				if (matchesByRoundMap.get("Achtelfinale") == null) {
-					matchesByRoundMap.put("Achtelfinale", new ArrayList<Match>());
+					matchesByRoundMap.put("Achtelfinale", new ArrayList<>());
 				}
 				matchesByRoundMap.get("Achtelfinale").add(match);
 			}
-			else if (matchdata.getGroupName().contains("Viertelfinale")) {
+			else if (matchdata.getGroup().getGroupName().contains("Viertelfinale")) {
 				// Sieger Achtelfinale 1 vs	Sieger Achtelfinale 2
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("(Sieger Achtelfinale )(\\d+)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("(Sieger Achtelfinale )(\\d+)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = "W"+matchesByRoundMap.get("Achtelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("(Sieger Achtelfinale )(\\d+)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("(Sieger Achtelfinale )(\\d+)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-W"+matchesByRoundMap.get("Achtelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
@@ -342,14 +293,14 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 				}
 				matchesByRoundMap.get("Viertelfinale").add(match);
 			}
-			else if (matchdata.getGroupName().contains("Halbfinale")) {
+			else if (matchdata.getGroup().getGroupName().contains("Halbfinale")) {
 				// Sieger Viertelfinale 1 vs Sieger Viertelfinale 2
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("(Sieger Viertelfinale )(\\d+)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("(Sieger Viertelfinale )(\\d+)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = "W"+matchesByRoundMap.get("Viertelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("(Sieger Viertelfinale )(\\d+)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("(Sieger Viertelfinale )(\\d+)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-W"+matchesByRoundMap.get("Viertelfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
@@ -361,28 +312,28 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 				}
 				matchesByRoundMap.get("Halbfinale").add(match);
 			}
-			else if (matchdata.getGroupName().contains("Spiel um Platz 3")) {
+			else if (matchdata.getGroup().getGroupName().contains("Spiel um Platz 3")) {
 				// Verlierer Halbfinale 1 vs Verlierer Halbfinale 2
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("(Verlierer Halbfinale )(\\d+)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("(Verlierer Halbfinale )(\\d+)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = "L"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("(Verlierer Halbfinale )(\\d+)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("(Verlierer Halbfinale )(\\d+)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-L"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
 				match.setParticipantsRule(participantsRule);
 				//logger.info("participantsRule: "+participantsRule);
 			}
-			else if (matchdata.getGroupName().contains("Finale")) {
+			else if (matchdata.getGroup().getGroupName().contains("Finale")) {
 				// Sieger Halbfinale 1 vs Sieger Halbfinale 2
 				String participantsRule = null;
-				Matcher matcher = Pattern.compile("(Sieger Halbfinale )(\\d+)").matcher(matchdata.getNameTeam1());
+				Matcher matcher = Pattern.compile("(Sieger Halbfinale )(\\d+)").matcher(matchdata.getTeam1().getTeamName());
 				if (matcher.find()) {
 					participantsRule = "W"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
-				/*Matcher*/ matcher = Pattern.compile("(Sieger Halbfinale )(\\d+)").matcher(matchdata.getNameTeam2());
+				/*Matcher*/ matcher = Pattern.compile("(Sieger Halbfinale )(\\d+)").matcher(matchdata.getTeam2().getTeamName());
 				if (matcher.find()) {
 					participantsRule += "-W"+matchesByRoundMap.get("Halbfinale").get(Integer.valueOf(matcher.group(2))-1).getMatchN(); 
 				}
@@ -390,9 +341,10 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 				//logger.info("participantsRule: "+participantsRule);
 			}
 			else {
-				logger.error(String.format("Unsupported OpenLigaDB \"%s\" group name found of a match. "
-						+ "Update the import script.", matchdata.getGroupName()));
-				return false;
+				String msg = String.format("Unsupported OpenLigaDB \"%s\" group name found of a match. "
+						+ "Update the import script.", matchdata.getGroup().getGroupName());
+				logger.error(msg);
+				throw new OpenLigaDBException(msg);
 			}
 			
 			em.persist(match);
@@ -402,7 +354,7 @@ public class OpenLigaDBEventAFC2019 extends OpenLigaDBEvent {
 		webService.setEvent(event);
 		webService.setPriority((byte)1);
 		webService.setLeagueShortcut(LEAGUE_SHORTCUT);
-		webService.setLeagueSaison(LEAGUE_SAISON);
+		webService.setLeagueSaison(LEAGUE_SEASON);
 		webService.setResultNormalLabel("nach Nachspielzeit");
 		webService.setResultExtraLabel("nach Verlängerung");
 		webService.setResultPenaltyLabel("nach Elfmeterschießen");

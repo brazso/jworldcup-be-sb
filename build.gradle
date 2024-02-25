@@ -3,7 +3,8 @@ buildscript {
 		generatedSourcesRelativePath = "generated/src"
 	}
     dependencies {
-        classpath group: 'org.yaml', name: 'snakeyaml', version: '1.19'
+        classpath('org.yaml:snakeyaml:1.19')
+        classpath('io.swagger.codegen.v3:swagger-codegen-maven-plugin:3.0.31')
     }
 }
 
@@ -13,7 +14,6 @@ plugins {
 	id('java')
 	id('eclipse')
 	id("de.undercouch.download") version "5.5.0"
-	id("uk.co.boothen.gradle.wsimport") version "0.21"
 	id("io.freefair.lombok") version "8.4"
 }
 
@@ -71,9 +71,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
-
-	//implementation 'org.springframework.amqp:spring-rabbit'
-	//implementation 'org.springframework.amqp:spring-rabbit-admin'
 
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JSON Web Token Support For The JVM
 	
@@ -145,24 +142,43 @@ test {
 	}*/
 }
 
-task downloadFile(type: Download, description: "Download OpenLigaDB WSDL file") {
+task downloadApi(type: Download, description: "Download Swagger OpenLigaDB JSON file") {
 	dependsOn processResources 
-	src "https://www.openligadb.de/Webservices/Sportsdata.asmx?wsdl"
-	dest "src/main/resources/wsdl/Sportsdata.wsdl"
-	//onlyIfModified true
-	overwrite false
+	src "https://api.openligadb.de/swagger/v1/swagger.json"
+	dest "src/main/resources/swagger/matchdataApi.json"
+	onlyIfModified true
 }
 
-wsimport {  
-	wsdlSourceRoot = "src/main/resources/wsdl"
-	generatedSourceRoot = "${generatedSourcesRelativePath}/wsdl/main/java"
-	target = "2.0"
-	keep = true
-	extension = true
+import io.swagger.codegen.v3.CodegenConfigLoader
+import io.swagger.codegen.v3.DefaultGenerator
+import io.swagger.codegen.v3.ClientOptInput
+import io.swagger.codegen.v3.ClientOpts
+import io.swagger.v3.parser.OpenAPIV3Parser
 
-	wsdl ("Sportsdata.wsdl") {
-		packageName("com.msiggi.openligadb.client")
-		wsdlLocation("../../../../wsdl/Sportsdata.wsdl")
+task generateApi {
+	dependsOn downloadApi
+	String swaggerSourceFile = "$projectDir/src/main/resources/swagger/matchdataApi.json"
+	String swaggerTargetFolder = "$buildDir/${generatedSourcesRelativePath}/swagger/main/java"
+	
+	doLast {
+		def openAPI = new OpenAPIV3Parser().read(swaggerSourceFile, null, null)
+        def clientOpts = new ClientOptInput().openAPI(openAPI)
+        def codegenConfig = CodegenConfigLoader.forName('spring')
+        codegenConfig.setOutputDir(swaggerTargetFolder)
+        clientOpts.setConfig(codegenConfig)
+        def clientOps = new ClientOpts()
+        clientOps.setProperties([
+                'dateLibrary': 'java8-localdatetime', // Date library to use
+                'useTags': 'true',  // Use tags for the naming
+                'interfaceOnly': 'true',   // Generating the Controller API interface and the models only
+                'apiPackage': 'com.msiggi.openligadb.api',
+                'modelPackage': 'com.msiggi.openligadb.model',
+                'sourceFolder': ''
+        ])
+        clientOpts.setOpts(clientOps)
+
+        def generator = new DefaultGenerator().opts(clientOpts)
+        generator.generate() // Executing the generation
 	}
 }
 
@@ -207,12 +223,12 @@ task copyBuildInfo(type: Copy) {
 }
 
 compileJava {
-	String annotationProcessorPath = "$buildDir/$generatedSourcesRelativePath/annotationProcessor/main/java"  
-	String wsdlPath = wsimport.generatedSourceRoot
+	String annotationProcessorPath = "$buildDir/${generatedSourcesRelativePath}/annotationProcessor/main/java"  
+	String swaggerPath = "$buildDir/${generatedSourcesRelativePath}/swagger/main/java"
 	String testResourcePath = "$buildDir/${generatedSourcesRelativePath}/test/resources"
 
 	sourceSets.main.java { 
-		srcDirs += [annotationProcessorPath, wsdlPath]
+		srcDirs += [annotationProcessorPath, swaggerPath]
 	}
 
 	sourceSets.test.resources { 
@@ -227,7 +243,7 @@ compileJava {
 }
 
 tasks.withType(JavaCompile) {
-	dependsOn downloadFile, generateTestDatabaseScripts//, copyBuildInfo //, wsimport //, generateJaxb
+	dependsOn generateTestDatabaseScripts, generateApi//, copyBuildInfo
 	options.compilerArgs += [
 		//"--enable-preview",
 		"-Amapstruct.defaultComponentModel=spring",

@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.msiggi.openligadb.client.MatchResult;
-import com.msiggi.openligadb.client.Matchdata;
+import com.msiggi.openligadb.model.MatchResult;
 import com.zematix.jworldcup.backend.dao.WebServiceDao;
 import com.zematix.jworldcup.backend.emun.ParameterizedMessageType;
 import com.zematix.jworldcup.backend.entity.Match;
@@ -36,9 +35,6 @@ public class WebServiceService extends ServiceBase {
 	@Inject 
 	private WebServiceDao webServiceDao;
 	
-//	@Inject
-//	private CommonDao commonDao;
-
 	@Inject
 	private ApplicationService applicationService;
 
@@ -57,20 +53,19 @@ public class WebServiceService extends ServiceBase {
 	 * @return found match in matchdatas otherwise {@code null}
 	 */
 	@VisibleForTesting
-	/*private*/ Matchdata findMatchInMatchdatas(List<Matchdata> matchdatas, Match match) {
+	/*private*/ com.msiggi.openligadb.model.Match findMatchInMatchdatas(List<com.msiggi.openligadb.model.Match> matchdatas, Match match) {
 		checkNotNull(matchdatas);
 		checkNotNull(match);
 		
-		for (Matchdata matchdata : matchdatas) {
-			//java.util.Date#equals() is never true, why? additional .getTime() is necessary
-			if (Timestamp.valueOf(match.getStartTime()).getTime() == matchdata.getMatchDateTimeUTC().toGregorianCalendar().getTimeInMillis()) {
+		for (com.msiggi.openligadb.model.Match matchdata : matchdatas) {
+			if (match.getStartTime().equals(matchdata.getMatchDateTimeUTC())) {
 				if (match.getTeam1() == null || match.getTeam2() == null) {
 					return matchdata;
 				}
-				else if ((match.getTeam1().getWsId().equals((long)matchdata.getIdTeam1())
-					&& match.getTeam2().getWsId().equals((long)matchdata.getIdTeam2())) ||
-						(match.getTeam1().getWsId().equals((long)matchdata.getIdTeam2())
-								&& match.getTeam2().getWsId().equals((long)matchdata.getIdTeam1()))) {
+				else if ((match.getTeam1().getWsId().equals((long)matchdata.getTeam1().getTeamId())
+					&& match.getTeam2().getWsId().equals((long)matchdata.getTeam2().getTeamId())) ||
+						(match.getTeam1().getWsId().equals((long)matchdata.getTeam2().getTeamId())
+								&& match.getTeam2().getWsId().equals((long)matchdata.getTeam1().getTeamId()))) {
 					return matchdata;
 				}
 			}
@@ -118,9 +113,9 @@ public class WebServiceService extends ServiceBase {
 		List<WebService> webServices = retrieveWebServicesByEvent(eventId);
 		for (WebService webService : webServices) {
 			
-			List<Matchdata> matchdatas = new ArrayList<>();
+			List<com.msiggi.openligadb.model.Match> matchdatas = new ArrayList<>();
 			try {
-				/*List<Matchdata>*/ matchdatas = openLigaDBService.getMatchdataByLeagueSaison(webService.getLeagueShortcut(), webService.getLeagueSaison());
+				/*List<Matchdata>*/ matchdatas = openLigaDBService.getMatchdata(webService.getLeagueShortcut(), webService.getLeagueSaison());
 			} catch (OpenLigaDBException e) {
 				logger.error(e.getMessage(), e);
 				errMsgs.add(ParameterizedMessage.create("WEBSERVICE_CALL_FAILED_FOR_METHOD", ParameterizedMessageType.ERROR, "getMatchdataByLeagueSaison"));
@@ -129,7 +124,7 @@ public class WebServiceService extends ServiceBase {
 			
 			List<Match> matches = matchService.retrieveIncompleteEscalatedMatchesByEvent(eventId, actualDateTime);
 			for (Match match : matches) {
-				Matchdata matchdata = findMatchInMatchdatas(matchdatas, match);
+				com.msiggi.openligadb.model.Match matchdata = findMatchInMatchdatas(matchdatas, match);
 				if (matchdata != null && matchdata.isMatchIsFinished()) {
 					logger.info(String.format("Match with %d matchId is incomplete but escalated", match.getMatchId()));
 					boolean isUpdated = updateMatchByMatchdata(match, matchdata, webService);
@@ -156,7 +151,7 @@ public class WebServiceService extends ServiceBase {
 	 * @throws ServiceException
 	 */
 	@VisibleForTesting
-	/*private*/ boolean updateMatchByMatchdata(Match match, Matchdata matchdata, WebService webService) throws ServiceException {
+	/*private*/ boolean updateMatchByMatchdata(Match match, com.msiggi.openligadb.model.Match matchdata, WebService webService) throws ServiceException {
 		checkNotNull(match);
 		checkNotNull(matchdata);
 		checkNotNull(webService);
@@ -164,10 +159,10 @@ public class WebServiceService extends ServiceBase {
 		// participant teams
 		// are the teams of matchdata on the same order as in match?
 		// reversed teams in matchdata is still accepted
-		boolean isNotReversedTeams = matchService.isCandidateMatchTeam(match, matchdata.getIdTeam1(), 1) &&
-				matchService.isCandidateMatchTeam(match, matchdata.getIdTeam2(), 2);
-		boolean isReversedTeams = matchService.isCandidateMatchTeam(match, matchdata.getIdTeam1(), 2) &&
-				matchService.isCandidateMatchTeam(match, matchdata.getIdTeam2(), 1);
+		boolean isNotReversedTeams = matchService.isCandidateMatchTeam(match, matchdata.getTeam1().getTeamId(), 1) &&
+				matchService.isCandidateMatchTeam(match, matchdata.getTeam2().getTeamId(), 2);
+		boolean isReversedTeams = matchService.isCandidateMatchTeam(match, matchdata.getTeam1().getTeamId(), 2) &&
+				matchService.isCandidateMatchTeam(match, matchdata.getTeam2().getTeamId(), 1);
 		if (!isNotReversedTeams && !isReversedTeams) {
 			logger.warn(String.format("There is problem with teams of matchdata and match with matchId=%d", match.getMatchId()));
 			return false;
@@ -175,11 +170,11 @@ public class WebServiceService extends ServiceBase {
 				
 		Long team1WsId = null;
 		if (match.getTeam1() == null) {
-			team1WsId = (long)(!isReversedTeams ? matchdata.getIdTeam1() : matchdata.getIdTeam2());
+			team1WsId = (long)(!isReversedTeams ? matchdata.getTeam1().getTeamId() : matchdata.getTeam2().getTeamId());
 		}
 		Long team2WsId = null;
 		if (match.getTeam2() == null) {
-			team2WsId = (long)(!isReversedTeams ? matchdata.getIdTeam2() : matchdata.getIdTeam1());
+			team2WsId = (long)(!isReversedTeams ? matchdata.getTeam2().getTeamId() : matchdata.getTeam1().getTeamId());
 		}
 		
 		// match result
@@ -193,22 +188,22 @@ public class WebServiceService extends ServiceBase {
 		Byte goalPenalty2 = null;
 		
 		// retrieves results by the labels used in webService
-		for (MatchResult matchResult : matchdata.getMatchResults().getMatchResult()) {
+		for (MatchResult matchResult : matchdata.getMatchResults()) {
 			if (matchResult.getResultName().equals(webService.getResultNormalLabel())) {
-				goalNormal1 = (byte)(!isReversedTeams ? matchResult.getPointsTeam1() : matchResult.getPointsTeam2());
-				goalNormal2 = (byte)(!isReversedTeams ? matchResult.getPointsTeam2() : matchResult.getPointsTeam1());
+				goalNormal1 = (!isReversedTeams ? matchResult.getPointsTeam1() : matchResult.getPointsTeam2()).byteValue();
+				goalNormal2 = (!isReversedTeams ? matchResult.getPointsTeam2() : matchResult.getPointsTeam1()).byteValue();
 			}
 			else if (matchResult.getResultName().equals(webService.getResultNormalExtraLabel())) {
-				goalNormalExtra1 = (byte)(!isReversedTeams ? matchResult.getPointsTeam1() : matchResult.getPointsTeam2());
-				goalNormalExtra2 = (byte)(!isReversedTeams ? matchResult.getPointsTeam2() : matchResult.getPointsTeam1());
+				goalNormalExtra1 = (!isReversedTeams ? matchResult.getPointsTeam1() : matchResult.getPointsTeam2()).byteValue();
+				goalNormalExtra2 = (!isReversedTeams ? matchResult.getPointsTeam2() : matchResult.getPointsTeam1()).byteValue();
 			}
 			else if (matchResult.getResultName().equals(webService.getResultExtraLabel())) {
-				goalExtra1 = (byte)(!isReversedTeams ? matchResult.getPointsTeam1() : matchResult.getPointsTeam2());
-				goalExtra2 = (byte)(!isReversedTeams ? matchResult.getPointsTeam2() : matchResult.getPointsTeam1());
+				goalExtra1 = (!isReversedTeams ? matchResult.getPointsTeam1() : matchResult.getPointsTeam2()).byteValue();
+				goalExtra2 = (!isReversedTeams ? matchResult.getPointsTeam2() : matchResult.getPointsTeam1()).byteValue();
 			}
 			else if (matchResult.getResultName().equals(webService.getResultPenaltyLabel())) {
-				goalPenalty1 = (byte)(!isReversedTeams ? matchResult.getPointsTeam1() : matchResult.getPointsTeam2());
-				goalPenalty2 = (byte)(!isReversedTeams ? matchResult.getPointsTeam2() : matchResult.getPointsTeam1());
+				goalPenalty1 = (!isReversedTeams ? matchResult.getPointsTeam1() : matchResult.getPointsTeam2()).byteValue();
+				goalPenalty2 = (!isReversedTeams ? matchResult.getPointsTeam2() : matchResult.getPointsTeam1()).byteValue();
 			}
 		}
 		
