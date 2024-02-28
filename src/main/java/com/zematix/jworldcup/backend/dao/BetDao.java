@@ -82,7 +82,7 @@ public class BetDao extends DaoBase {
 		bets = query.from(qBet)
 				.where(qBet.event.eventId.eq(eventId),
 						qBet.user.userId.eq(userId))
-				.orderBy(qBet.match.startTime.asc())
+				.orderBy(qBet.match.matchN.asc())
 				.fetch();
 
 		return bets;

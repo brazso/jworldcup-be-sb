@@ -49,7 +49,7 @@ public class MatchDao extends DaoBase {
 		JPAQuery<Match> query = new JPAQuery<>(getEntityManager());
 		matches = query.from(qMatch)
 			.where(qMatch.event.eventId.eq(eventId))
-			.orderBy(qMatch.startTime.asc())
+			.orderBy(qMatch.matchN.asc())
 			.fetch();
 		
 		return matches;

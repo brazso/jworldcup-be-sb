@@ -26,7 +26,7 @@ import com.zematix.jworldcup.backend.exception.UnauthorizedException;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable, ApiErrorHelper {
 
 	@Inject
-	ObjectMapper mapper;
+	private ObjectMapper mapper;
 	
 	private static final long serialVersionUID = 1L;
 

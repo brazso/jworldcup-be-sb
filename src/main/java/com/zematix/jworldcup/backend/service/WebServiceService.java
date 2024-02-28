@@ -2,9 +2,9 @@ package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -62,10 +62,10 @@ public class WebServiceService extends ServiceBase {
 				if (match.getTeam1() == null || match.getTeam2() == null) {
 					return matchdata;
 				}
-				else if ((match.getTeam1().getWsId().equals((long)matchdata.getTeam1().getTeamId())
-					&& match.getTeam2().getWsId().equals((long)matchdata.getTeam2().getTeamId())) ||
-						(match.getTeam1().getWsId().equals((long)matchdata.getTeam2().getTeamId())
-								&& match.getTeam2().getWsId().equals((long)matchdata.getTeam1().getTeamId()))) {
+				else if ((match.getTeam1().getWsIds().contains((long)matchdata.getTeam1().getTeamId())
+					&& match.getTeam2().getWsIds().contains((long)matchdata.getTeam2().getTeamId())) ||
+						(match.getTeam1().getWsIds().contains((long)matchdata.getTeam2().getTeamId())
+								&& match.getTeam2().getWsIds().contains((long)matchdata.getTeam1().getTeamId()))) {
 					return matchdata;
 				}
 			}
@@ -97,7 +97,7 @@ public class WebServiceService extends ServiceBase {
 
 	/**
 	 * Updates incomplete but escalated matches from calling web service.
-	 * Returns the updated matches.
+	 * Returns the updated matches in ascending {@code matchN} order.
 	 * 
 	 * @return list of updated matches
 	 * @throws ServiceException
@@ -112,7 +112,6 @@ public class WebServiceService extends ServiceBase {
 		
 		List<WebService> webServices = retrieveWebServicesByEvent(eventId);
 		for (WebService webService : webServices) {
-			
 			List<com.msiggi.openligadb.model.Match> matchdatas = new ArrayList<>();
 			try {
 				/*List<Matchdata>*/ matchdatas = openLigaDBService.getMatchdata(webService.getLeagueShortcut(), webService.getLeagueSaison());
@@ -136,6 +135,7 @@ public class WebServiceService extends ServiceBase {
 			}
 		}
 		
+		Collections.sort(updatedMatches, (a, b) -> a.getMatchN().compareTo(b.getMatchN()));
 		return updatedMatches;
 	}
 

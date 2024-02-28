@@ -4,11 +4,13 @@ import java.util.List;
 
 import javax.persistence.TypedQuery;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.jpa.impl.JPAQuery;
+import com.zematix.jworldcup.backend.configuration.CachingConfig;
 import com.zematix.jworldcup.backend.entity.Dictionary;
 import com.zematix.jworldcup.backend.entity.QDictionary;
 
@@ -36,6 +38,7 @@ public class DictionaryDao extends DaoBase {
 	 * @return found {@link Dictionary} list or empty list if not found 
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_DICTIONARY_BY_KEY, key = "{#key}")
 	public List<Dictionary> findDictionarisByKey(String key) {
 		QDictionary qDictionary = QDictionary.dictionary;
 		JPAQuery<Dictionary> query = new JPAQuery<>(getEntityManager());
@@ -53,6 +56,7 @@ public class DictionaryDao extends DaoBase {
 	 * @return found {@link Dictionary} entity instance or {@code null} if not found 
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Cacheable(cacheNames = CachingConfig.CACHE_DICTIONARY_BY_KEY_AND_VALUE, key = "{#key, #value}")
 	public Dictionary findDictionaryByKeyAndValue(String key, String value) {
 		QDictionary qDictionary = QDictionary.dictionary;
 		JPAQuery<Dictionary> query = new JPAQuery<>(getEntityManager());

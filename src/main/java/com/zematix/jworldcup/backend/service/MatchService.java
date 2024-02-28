@@ -1167,7 +1167,7 @@ public class MatchService extends ServiceBase {
 		
 		Team team = index ==1 ? match.getTeam1() : match.getTeam2();
 		if (team != null)
-			return team.getWsId().equals(teamWsId);
+			return team.getWsIds().contains(teamWsId);
 
 		// there is no participant team on index, the match cannot be in group stage
 		checkState(!match.getRound().getIsGroupmatchAsBoolean(),
@@ -1265,6 +1265,10 @@ public class MatchService extends ServiceBase {
 		}
 		
 		if (isUpdated) {
+			if (match.getTeam1() != null && match.getTeam2() != null) {
+				match.setResultSignByTeam1(getMatchResult(match, match.getTeam1().getTeamId()));
+			}
+			
 			commonDao.flushEntityManager();
 			
 			// Update additional matches setting teams on them.

@@ -1,13 +1,27 @@
 package com.zematix.jworldcup.backend.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.zematix.jworldcup.backend.listener.TeamListener;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 
 /**
@@ -15,6 +29,7 @@ import java.util.List;
  * 
  */
 @Entity
+@EntityListeners({TeamListener.class})
 @Table(name="team")
 @NamedQuery(name="Team.findAll", query="SELECT t FROM Team t")
 @Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -65,6 +80,12 @@ public class Team implements Serializable {
 	@JoinColumn(name="group_id", nullable=false)
 	private Group group;
 
+	/**
+	 * Alternative webservice team ids. It includes wsId as first element.
+	 */
+	@Transient
+	private List<Long> wsIds;
+	
 	public Group addGroups1(Group groups1) {
 		getGroups1().add(groups1);
 		groups1.setTeam1(this);

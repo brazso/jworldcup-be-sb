@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -18,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.dao.CommonDao;
+import com.zematix.jworldcup.backend.dao.DictionaryDao;
 import com.zematix.jworldcup.backend.dao.GroupDao;
+import com.zematix.jworldcup.backend.entity.Dictionary;
 import com.zematix.jworldcup.backend.entity.Event;
 import com.zematix.jworldcup.backend.entity.Group;
 import com.zematix.jworldcup.backend.entity.Match;
@@ -39,6 +42,9 @@ public class GroupService extends ServiceBase {
 
 	@Inject 
 	private GroupDao groupDao;
+
+	@Inject
+	private DictionaryDao dictionaryDao;
 
 	@Inject 
 	private MatchService matchService;
@@ -132,6 +138,7 @@ public class GroupService extends ServiceBase {
 		
 		Map<GroupPosition, Team> teamByGroupPositionMap = new HashMap<>();
 		
+		Event event = commonDao.findEntityById(Event.class, eventId);
 		List<Group> groups = retrieveGroupsByEvent(eventId);
 		for (Group group : groups) {
 			List<GroupTeam> rankedGroupTeams = getRankedGroupTeamsByGroup(group.getGroupId());
@@ -139,7 +146,8 @@ public class GroupService extends ServiceBase {
 				continue;
 			}
 			List<GroupTeam> bestGroupTeams = new ArrayList<>();
-			for (GroupPosition groupPosition : retrieveGroupPositionsOfParticipantRules(eventId)) {
+			List<GroupPosition> groupPositions = retrieveGroupPositionsOfParticipantRules(eventId); 
+			for (GroupPosition groupPosition : groupPositions) {
 				if (groupPosition.getGroupName().equals(group.getName())) {
 					// single group name
 					GroupTeam groupTeam = groupTeamService.getGroupTeamByGroupPosition(rankedGroupTeams, groupPosition.getPosition());
@@ -154,7 +162,21 @@ public class GroupService extends ServiceBase {
 					}
 					for (GroupTeam groupTeam : bestGroupTeams) {
 						if (groupPosition.getGroupName().contains(groupTeam.getTeam().getGroup().getName())) {
-							if (!teamByGroupPositionMap.values().contains(groupTeam.getTeam())) {
+							String bestGroups = bestGroupTeams.stream().map(e -> e.getTeam().getGroup().getName()).sorted().collect(Collectors.joining());
+							GroupPosition vsGroupPosition = groupPositions.get(groupPositions.indexOf(groupPosition)
+									+ groupPositions.indexOf(groupPosition) % 2 * (-2) + 1); // comes in pairs
+							boolean isFound = false;
+							Dictionary dictionary = dictionaryDao.findDictionaryByKeyAndValue(event.getShortDescWithYear()+"_1ST3RD", bestGroups);
+							if (dictionary != null) {
+								if (dictionary.getName().contains(vsGroupPosition.getGroupName() + groupTeam.getTeam().getGroup().getName()) ||
+										dictionary.getName().contains(groupTeam.getTeam().getGroup().getName() + vsGroupPosition.getGroupName())) {
+									isFound = true;
+								}
+							}
+							else if (!teamByGroupPositionMap.values().contains(groupTeam.getTeam())) {
+								isFound = true;
+							}
+							if (isFound ) {
 								teamByGroupPositionMap.put(groupPosition, groupTeam.getTeam());
 								break;
 							}

@@ -77,7 +77,23 @@ INSERT INTO `dictionary` (`dictionary_id`, `key_`, `value`, `name`) VALUES
 (3, 'ROLE', 'USER', 'User'),
 (4, 'USER_STATUS', 'NORMAL', 'Normal'),
 (5, 'USER_STATUS', 'CANDIDATE', 'Candidate'),
-(6, 'USER_STATUS', 'LOCKED', 'Locked');
+(6, 'USER_STATUS', 'LOCKED', 'Locked'),
+(7, 'WS_TEAM_ID', '151', '3122'),
+(8, 'EC2016_1ST3RD', 'ABCD', 'AC,BD,CA,DB'),
+(9, 'EC2016_1ST3RD', 'ABCE', 'AC,BA,CB,DE'),
+(11, 'EC2016_1ST3RD', 'ABCF', 'AC,BA,CB,DF'),
+(12, 'EC2016_1ST3RD', 'ABDE', 'AD,BA,CB,DE'),
+(13, 'EC2016_1ST3RD', 'ABDF', 'AD,BA,CB,DF'),
+(14, 'EC2016_1ST3RD', 'ABEF', 'AE,BA,CB,DF'),
+(15, 'EC2016_1ST3RD', 'ACDE', 'AC,BD,CA,DE'),
+(16, 'EC2016_1ST3RD', 'ACDF', 'AC,BD,CA,DF'),
+(17, 'EC2016_1ST3RD', 'ACEF', 'AC,BA,CF,DE'),
+(18, 'EC2016_1ST3RD', 'ADEF', 'AD,BA,CF,DE'),
+(19, 'EC2016_1ST3RD', 'BCDE', 'AC,BD,CB,DE'),
+(20, 'EC2016_1ST3RD', 'BCDF', 'AC,BD,CB,DF'),
+(21, 'EC2016_1ST3RD', 'BCEF', 'AE,BC,CB,DF'),
+(22, 'EC2016_1ST3RD', 'BDEF', 'AE,BD,CB,DF'),
+(23, 'EC2016_1ST3RD', 'CDEF', 'AC,BD,CF,DE');
 
 -- --------------------------------------------------------
 
@@ -290,13 +306,13 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (53, 1, 53, 15, 26, '2014-06-30 16:00:00', 4, 2, 0, NULL, NULL, NULL, NULL, 'E1-F2'),
 (54, 1, 54, 16, 1, '2014-06-30 20:00:00', 4, 0, 0, 2, 1, NULL, NULL, 'G1-H2'),
 (55, 1, 55, 2, 30, '2014-07-01 16:00:00', 4, 0, 0, 1, 0, NULL, NULL, 'F1-E2'),
-(56, 1, 56, 4, 32, '2014-07-01 20:00:00', 4, 0, 0, 2, 1, NULL, NULL, 'G2-H1'),
+(56, 1, 56, 4, 32, '2014-07-01 20:00:00', 4, 0, 0, 2, 1, NULL, NULL, 'H1-G2'),
 (57, 1, 57, 15, 16, '2014-07-04 16:00:00', 5, 0, 1, NULL, NULL, NULL, NULL, 'W53-W54'),
 (58, 1, 58, 6, 9, '2014-07-04 20:00:00', 5, 2, 1, NULL, NULL, NULL, NULL, 'W49-W50'),
 (59, 1, 59, 2, 4, '2014-07-05 16:00:00', 5, 1, 0, NULL, NULL, NULL, NULL, 'W55-W56'),
 (60, 1, 60, 25, 10, '2014-07-05 20:00:00', 5, 0, 0, 0, 0, 4, 3, 'W51-W52'),
-(61, 1, 61, 6, 16, '2014-07-08 20:00:00', 6, 1, 7, NULL, NULL, NULL, NULL, 'W57-W58'),
-(62, 1, 62, 25, 2, '2014-07-09 20:00:00', 6, 0, 0, 0, 0, 2, 4, 'W59-W60'),
+(61, 1, 61, 16, 6, '2014-07-08 20:00:00', 6, 7, 1, NULL, NULL, NULL, NULL, 'W57-W58'),
+(62, 1, 62, 25, 2, '2014-07-09 20:00:00', 6, 0, 0, 0, 0, 2, 4, 'W60-W59'),
 (63, 1, 63, 6, 25, '2014-07-12 20:00:00', 7, 0, 3, NULL, NULL, NULL, NULL, 'L61-L62'),
 (64, 1, 64, 16, 2, '2014-07-13 19:00:00', 8, 0, 0, 1, 0, NULL, NULL, 'W61-W62'),
 (65, 2, 1, 33, 34, '2016-06-10 19:00:00', 9, 2, 1, NULL, NULL, NULL, NULL, NULL),
@@ -335,7 +351,7 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (98, 2, 24, 53, 55, '2016-06-18 19:00:00', 10, 0, 0, NULL, NULL, NULL, NULL, NULL),
 (99, 2, 33, 54, 55, '2016-06-22 16:00:00', 11, 2, 1, NULL, NULL, NULL, NULL, NULL),
 (100, 2, 34, 56, 53, '2016-06-22 16:00:00', 11, 3, 3, NULL, NULL, NULL, NULL, NULL),
-(101, 2, 37, 36, 43, '2016-06-25 13:00:00', 12, 1, 1, 1, 1, 4, 5, 'A2-C2'),
+(101, 2, 37, 36, 43, '2016-06-25 13:00:00', 12, 1, 1, 1, 1, 5, 6, 'A2-C2'),
 (102, 2, 38, 39, 44, '2016-06-25 16:00:00', 12, 1, 0, NULL, NULL, NULL, NULL, 'B1-ACD3'),
 (103, 2, 39, 48, 53, '2016-06-25 19:00:00', 12, 0, 0, 0, 1, NULL, NULL, 'D1-BEF3'),
 (104, 2, 40, 33, 51, '2016-06-26 13:00:00', 12, 2, 1, NULL, NULL, NULL, NULL, 'A1-CDE3'),
@@ -343,9 +359,9 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (106, 2, 42, 56, 49, '2016-06-26 19:00:00', 12, 0, 4, NULL, NULL, NULL, NULL, 'F1-E2'),
 (107, 2, 43, 50, 45, '2016-06-27 16:00:00', 12, 2, 0, NULL, NULL, NULL, NULL, 'E1-D2'),
 (108, 2, 44, 37, 54, '2016-06-27 19:00:00', 12, 1, 2, NULL, NULL, NULL, NULL, 'B2-F2'),
-(109, 2, 45, 43, 53, '2016-06-30 19:00:00', 13, 1, 1, 1, 1, 3, 5, 'W37-W39'),
+(109, 2, 45, 43, 53, '2016-06-30 19:00:00', 13, 1, 1, 1, 1, 4, 6, 'W37-W39'),
 (110, 2, 46, 39, 49, '2016-07-01 19:00:00', 13, 3, 1, NULL, NULL, NULL, NULL, 'W38-W42'),
-(111, 2, 47, 41, 50, '2016-07-02 19:00:00', 13, 1, 1, 1, 1, 6, 5, 'W41-W43'),
+(111, 2, 47, 41, 50, '2016-07-02 19:00:00', 13, 1, 1, 1, 1, 7, 6, 'W41-W43'),
 (112, 2, 48, 33, 54, '2016-07-03 19:00:00', 13, 5, 2, NULL, NULL, NULL, NULL, 'W40-W44'),
 (113, 2, 49, 53, 39, '2016-07-06 19:00:00', 14, 2, 0, NULL, NULL, NULL, NULL, 'W45-W46'),
 (114, 2, 50, 41, 33, '2016-07-07 19:00:00', 14, 0, 2, NULL, NULL, NULL, NULL, 'W47-W48'),
@@ -1049,7 +1065,7 @@ INSERT INTO `team` (`team_id`, `event_id`, `name`, `flag`, `group_id`, `fifa_poi
 (57, 3, 'United States', 'USA', 15, 0, 762),
 (58, 3, 'Colombia', 'COL', 15, 0, 1469),
 (59, 3, 'Costa Rica', 'CRC', 15, 0, 2669),
-(60, 3, 'Paraguay', 'PAR', 15, 0, -1),
+(60, 3, 'Paraguay', 'PAR', 15, 0, 756),
 (61, 3, 'Brazil', 'BRA', 16, 0, 753),
 (62, 3, 'Ecuador', 'ECU', 16, 0, 2670),
 (63, 3, 'Haiti', 'HAI', 16, 0, NULL),
@@ -1584,7 +1600,7 @@ ALTER TABLE `chat`
 -- AUTO_INCREMENT for table `dictionary`
 --
 ALTER TABLE `dictionary`
-  MODIFY `dictionary_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `dictionary_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `event`

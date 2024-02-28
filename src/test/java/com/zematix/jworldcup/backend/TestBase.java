@@ -26,6 +26,16 @@ public class TestBase {
 		return result;
 	}
 	
+	protected String generatePrettyJson(Object object) {
+		String result;
+		try {
+			result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			result = null;
+		}
+		return result;
+	}
+
 	protected String readStringResource(String path) {
 		String result;
 		try {

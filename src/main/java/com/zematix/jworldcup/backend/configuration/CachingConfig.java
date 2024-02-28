@@ -22,6 +22,8 @@ public class CachingConfig {
 	public static final String CACHE_FAVOURITE_GROUP_TEAMS = "favouriteGroupTeams";
 	public static final String CACHE_FAVOURITE_KNOCKOUT_TEAMS = "favouriteKnockoutTeams";
 	public static final String CACHE_TIMEZONE_IDS = "timeZoneIds";
+	public static final String CACHE_DICTIONARY_BY_KEY = "dicitonaryByKey";
+	public static final String CACHE_DICTIONARY_BY_KEY_AND_VALUE = "dicitonaryByKeyandValue";
 
     @Bean
     CacheManager cacheManager() {
@@ -29,7 +31,7 @@ public class CachingConfig {
         		CACHE_USER_BY_LOGIN_NAME, CACHE_USER_OF_EVENT, CACHE_USER_GROUPS, 
         		CACHE_EVENT_START_TIME, CACHE_EVENT_KNOCKOUT_START_TIME, CACHE_EVENT_END_TIME,
         		CACHE_FAVOURITE_GROUP_TEAMS, CACHE_FAVOURITE_KNOCKOUT_TEAMS,
-        		CACHE_TIMEZONE_IDS
+        		CACHE_TIMEZONE_IDS, CACHE_DICTIONARY_BY_KEY, CACHE_DICTIONARY_BY_KEY_AND_VALUE
         );
         cacheManager.setCaffeine(Caffeine.newBuilder()
           .initialCapacity(200)
