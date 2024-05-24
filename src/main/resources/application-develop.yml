@@ -9,7 +9,7 @@ spring.config.import: optional:secrets-develop.yml
 # Spring 
 spring:
   datasource:
-    #url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
+    url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
     password: worldcup.org
     hikari:
       maximumPoolSize: 3

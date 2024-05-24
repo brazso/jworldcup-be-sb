@@ -25,6 +25,7 @@ import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
  * Imports WC2022 event from OpenLigaDB. It was not difficult to implement it, there
  * were just minor issues.
  */
+@Deprecated
 public class OpenLigaDBEventWC2022 extends OpenLigaDBEvent {
 	
 	/**

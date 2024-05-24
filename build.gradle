@@ -121,6 +121,8 @@ dependencies {
 	// Quartz addon for jobs which is not included in "org.springframework.boot:spring-boot-starter-quartz"
 	implementation "org.quartz-scheduler:quartz-jobs"
 	
+	developmentOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0"
+	
 	// this Mockito version must be used because at later versions Mockito.when() does not work with  
 	// class.static_method() input using PowerMockito.spy. It does work only on mocked object. We need 
 	// this feature for partial mock on static methods. Although later Mockito versions since 3.4.0 

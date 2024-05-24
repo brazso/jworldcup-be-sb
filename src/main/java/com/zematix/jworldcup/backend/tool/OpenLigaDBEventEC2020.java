@@ -28,7 +28,6 @@ import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
- * @Deprecated
  * Imports EC2020 event from OpenLigaDB. Retrieving the groups (from A to F) was impossibe
  * because it cannot be retrieved from OpenLigaDB.
  * Having run this script on 2021-06-06, there were lots of post-database work. 

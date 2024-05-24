@@ -26,7 +26,6 @@ import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
- * @Deprecated
  * Imports complete CA2021 event from OpenLigaDB. 
  * 
  * Groups come from the matches of the preliminary round, namely from its city location. 

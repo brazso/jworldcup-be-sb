@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 
 import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 
@@ -23,10 +24,9 @@ import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
   */
 @EnableAutoConfiguration
 @EntityScan(basePackages = "com.zematix.jworldcup.backend.entity")
+@ComponentScan(basePackages = "com.zematix.jworldcup.backend")
 public class ImportOpenLigaDBEvent implements CommandLineRunner {
 
-	//private static final Logger logger = LoggerFactory.getLogger(ImportOpenLigaDBEvent.class);
-	
 	@PersistenceUnit
 	private EntityManagerFactory emf; // application managed transaction 
 	
@@ -80,7 +80,7 @@ public class ImportOpenLigaDBEvent implements CommandLineRunner {
 	 */
 	@Override
 	public void run(String... args) {
-		final String eventShortDescWithYear = "WC2022";
+		final String eventShortDescWithYear = "EC2024";
 		final boolean isTestMode = false; // flag that changes are not committed back to the database
 
 		importOpenLigaDBEvent(eventShortDescWithYear, isTestMode);

@@ -41,7 +41,7 @@ public enum EventShortDescWithYearEnum {
 	CAF2019,
 
 	/**
-	 * UEFA European Championship 2016
+	 * UEFA European Championship 2020
 	 */
 	EC2020,
 	
@@ -68,5 +68,12 @@ public enum EventShortDescWithYearEnum {
 	/**
 	 * AFC Asian Cup 2023
 	 */
-	AFC2023
+	AFC2023,
+	
+	/**
+	 * UEFA European Championship 2024
+	 */
+	EC2024
+	
+
 }

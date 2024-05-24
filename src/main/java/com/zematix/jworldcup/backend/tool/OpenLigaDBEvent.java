@@ -1,8 +1,10 @@
 package com.zematix.jworldcup.backend.tool;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +19,10 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.common.base.Strings;
 import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 import com.zematix.jworldcup.backend.model.CountryCode;
@@ -63,6 +68,7 @@ public abstract class OpenLigaDBEvent {
 	 * 
 	 * @return map containing fifa codes by country names
 	 */
+	@Deprecated
 	protected Map<String, String> retrieveFifaCodeByCountryNameMap(){
 		final String COUNTRY_CODES_JSON_URL = "https://datahub.io/core/country-codes/r/country-codes.json";
 		
@@ -72,10 +78,10 @@ public abstract class OpenLigaDBEvent {
 
 		List<CountryCode> list = new ArrayList<>();
 		try {
-			list = mapper.readValue(new URL(COUNTRY_CODES_JSON_URL), new TypeReference<List<CountryCode>>(){});
+			list = mapper.readValue(URI.create(COUNTRY_CODES_JSON_URL).toURL(), new TypeReference<List<CountryCode>>(){});
 		} catch (IOException e) {
 			logger.error("Country codes JSON file could not be read.", e);
-			return null;
+			return Collections.emptyMap();
 		}
 		
 		Map<String, String> mapByDisplayName = list.stream().filter(e -> !Strings.isNullOrEmpty(e.getDisplayName()) && !Strings.isNullOrEmpty(e.getFifa()))
@@ -90,13 +96,46 @@ public abstract class OpenLigaDBEvent {
 		return mapByName;
 	}
 
+	protected Map<String, String> retrieveFifaCodeByCountryNameMapFromCSV() {
+		final String COUNTRY_CODES_CSV_URL = "https://github.com/datasets/country-codes/raw/master/data/country-codes.csv";
+		
+		CsvSchema countryCodeSchema = CsvSchema.emptySchema().withHeader();
+		CsvMapper csvMapper = new CsvMapper();
+		csvMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		List<CountryCode> list = new ArrayList<>();
+		
+		try  {
+			MappingIterator<CountryCode> countryCodes = csvMapper.readerFor(CountryCode.class).with(countryCodeSchema)
+					.readValues(URI.create(COUNTRY_CODES_CSV_URL).toURL());
+			list = countryCodes.readAll();
+		} catch (IOException e) {
+			logger.error("Country codes JSON file could not be read.", e);
+			return Collections.emptyMap();
+		}
+
+		Map<String, String> mapByDisplayName = list.stream().filter(e -> !Strings.isNullOrEmpty(e.getDisplayName()) && !Strings.isNullOrEmpty(e.getFifa()))
+				.collect(Collectors.toMap(CountryCode::getDisplayName, CountryCode::getFifa));
+		Map<String, String> mapByName = list.stream().filter(e -> !Strings.isNullOrEmpty(e.getName()) && !Strings.isNullOrEmpty(e.getFifa()))
+				.collect(Collectors.toMap(CountryCode::getName, CountryCode::getFifa));
+		mapByName.putAll(mapByDisplayName);
+		
+		// add additional missing pairs
+		mapByName.put("Scotland", "SCO");
+		
+		return mapByName;
+	}
 	/**
 	 * Returns a German-English dictionary for missing team names.
 	 * @return
 	 */
 	protected Map<String, String> retrieveTeamDictionary() {
 		return Map.of(
-				"Schweden","Sweden" 
+				"Belgien", "Belgium",
+				"Deutschland", "Germany",
+				"England", "England",
+				"Italien", "Italy",
+				"Schweden","Sweden",
+				"Ungarn", "Hungary"
 				);
 	}
 
