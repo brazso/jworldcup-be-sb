@@ -52,6 +52,7 @@ public class OpenLigaDBEventEC2024 extends OpenLigaDBEvent {
 		final String EVENT_SHORT_DESC = "EC";
 		final Short EVENT_YEAR = 2024;
 		final String EVENT_ORGANIZER = "UEFA";
+		final String EVENT_WEBSITE = "https://en.wikipedia.org/wiki/UEFA_Euro_2024";
 		
 		final String LEAGUE_SHORTCUT = "em2024"; // IS_GROUP_STORED true
 		final String LEAGUE_SEASON = "2024";
@@ -75,6 +76,7 @@ public class OpenLigaDBEventEC2024 extends OpenLigaDBEvent {
 		event.setDescription(EVENT_DESCRIPTION);
 		event.setShortDesc(EVENT_SHORT_DESC);
 		event.setOrganizer(EVENT_ORGANIZER);
+		event.setWebsite(EVENT_WEBSITE);
 		em.persist(event);
 		
 		List<com.msiggi.openligadb.model.Group> oldbGroups = openLigaDBService.getAvailableGroups(LEAGUE_SHORTCUT, LEAGUE_SEASON);
