@@ -27,11 +27,11 @@ import com.zematix.jworldcup.backend.util.CommonUtil;
 
 /**
  * Imports complete CA2024 event from OpenLigaDB. 
+ * Groups come from OpenLigaDB team at last.
+ *  
+ * Having run this script on 2024-05-29, there was no post-database work. 
  * 
- * Groups come from the matches of the preliminary round, namely from its city location. 
- * If only the API could support the retrieval of team groups! Having run this script 
- * on 2021-06-05, there was no need any post-database work. There were no new team icons 
- * neither.
+ * Problems after execution of this import: none 
  * 
  * If you want sql logging, add
  * -Dspring.profiles.active=develop
@@ -49,17 +49,18 @@ public class OpenLigaDBEventCA2024 extends OpenLigaDBEvent {
 		EntityManager em = (EntityManager) params.get("EntityManager");
 		checkNotNull(em, "Parameter named EntityManager is not set, its value cannot be null.");
 		
-		final String EVENT_LOCATION = "Brazil";
+		final String EVENT_LOCATION = "United States";
 		final String EVENT_DESCRIPTION = "Copa America";
 		final String EVENT_SHORT_DESC = "CA";
-		final Short EVENT_YEAR = 2021;
+		final Short EVENT_YEAR = 2024;
 		final String EVENT_ORGANIZER = "CONMEBOL";
-		final String LEAGUE_SHORTCUT = "CA2021";
-		final String LEAGUE_SEASON = "2021";
-		final int TEAMS_IN_GROUP = 5; // number of teams in a group
+		final String EVENT_WEBSITE = "https://en.wikipedia.org/wiki/2024_Copa_América";
+		final String LEAGUE_SHORTCUT = "CA2024";
+		final String LEAGUE_SEASON = Short.toString(EVENT_YEAR);
+		final int TEAMS_IN_GROUP = 4; // number of teams in a group
 		final List<String> ORDNUNGZAHLEN = Arrays.asList("Sieger", "Zweiter", "Dritter", "Vierter");
 		
-		Map<String, String> fifaCodeByCountryNameMap = retrieveFifaCodeByCountryNameMap();
+		Map<String, String> fifaCodeByCountryNameMap = retrieveFifaCodeByCountryNameMapFromCSV();
 		checkNotNull(fifaCodeByCountryNameMap, "Retrieved fifaCodeByCountryNameMap cannot be null.");
 
 		List<League> oldbLeagues = openLigaDBService.getAvailableLeagues();
@@ -74,7 +75,7 @@ public class OpenLigaDBEventCA2024 extends OpenLigaDBEvent {
 			logger.error(msg);
 			throw new OpenLigaDBException(msg);
 		}
-		// Copa América 2021, 2021, CA2021
+		// Copa América 2024, 2024, CA2024
 		
 		Event event = new Event();
 		event.setLocation(EVENT_LOCATION);
@@ -82,10 +83,13 @@ public class OpenLigaDBEventCA2024 extends OpenLigaDBEvent {
 		event.setDescription(EVENT_DESCRIPTION);
 		event.setShortDesc(EVENT_SHORT_DESC);
 		event.setOrganizer(EVENT_ORGANIZER);
+		event.setWebsite(EVENT_WEBSITE);
 		em.persist(event);
 		
 		List<com.msiggi.openligadb.model.Group> oldbGroups = openLigaDBService.getAvailableGroups(LEAGUE_SHORTCUT, LEAGUE_SEASON);
-//		Vorrunde, 1
+//		1. Runde
+//		2. Runde
+//		3. Runde
 //		Viertelfinale, 2
 //		Halbfinale, 3
 //		Spiel um Platz 3, 4		
@@ -98,26 +102,39 @@ public class OpenLigaDBEventCA2024 extends OpenLigaDBEvent {
 			round.setEvent(event);
 			String name = oldbGroup.getGroupName();
 			boolean isGroupMatch = false;
+			Boolean isOvertime = null; 
 			switch (name) {
-				case "Vorrunde":
-					name = "Preliminary round";
+				case "1. Runde":
+					name = "1st round";
+					isGroupMatch = true;
+					break;
+				case "2. Runde":
+					name = "2nd round";
+					isGroupMatch = true;
+					break;
+				case "3. Runde":
+					name = "3rd round";
 					isGroupMatch = true;
 					break;
 				case "Viertelfinale":
 					name = "Quarter-finals";
 					isGroupMatch = false;
+					isOvertime = false;
 					break;
 				case "Halbfinale":
 					name = "Semi-finals";
 					isGroupMatch = false;
+					isOvertime = false;
 					break;
 				case "Spiel um Platz 3":
 					name = "Third place play-off";
 					isGroupMatch = false;
+					isOvertime = false;
 					break;
 				case "Finale":
 					name = "Final";
 					isGroupMatch = false;
+					isOvertime = true;
 					break;
 				default:
 					String msg = String.format("Unsupported OpenLigaDB \"%s\" group name found. "
@@ -127,6 +144,7 @@ public class OpenLigaDBEventCA2024 extends OpenLigaDBEvent {
 			}
 			round.setName(name);
 			round.setIsGroupmatchAsBoolean(isGroupMatch);
+			round.setIsOvertimeAsBoolean(isOvertime);
 			em.persist(round);
 			roundMap.put(oldbGroup.getGroupID(), round);
 			roundList.add(round);
@@ -140,20 +158,19 @@ public class OpenLigaDBEventCA2024 extends OpenLigaDBEvent {
 					.stream()
 					.sorted((t1, t2) -> t1.getName().compareTo(t2.getName()))
 					.filter(distinctByKey(Team::getName))
-					.collect(Collectors.toMap(t -> t.getName(), t -> t));
+					.collect(Collectors.toMap(Team::getName, t -> t));
 
 		List<com.msiggi.openligadb.model.Team> oldbTeams = openLigaDBService.getAvailableTeams(LEAGUE_SHORTCUT, LEAGUE_SEASON);
 		
 		// among teams there are also Gruppe, Sieger, Verlierer ones. However these have no icons.
 		List<com.msiggi.openligadb.model.Team> oldbRealTeams = 
-				oldbTeams.stream().filter(e->e.getTeamIconUrl()!=null && !e.getTeamIconUrl().isEmpty()).toList();
+				oldbTeams.stream().filter(e->e.getTeamGroupName()!=null).toList();
 		
 		List<Group> groupList = new ArrayList<>();
 		for (int i=0; i < oldbRealTeams.size() / TEAMS_IN_GROUP; i++) {
 			Group group = new Group();
 			group.setEvent(event);
 			group.setName(String.valueOf((char)('A'+i)));
-			//logger.info("Group: " + group.getName());
 			em.persist(group);
 			groupList.add(group);
 		}
@@ -212,7 +229,7 @@ public class OpenLigaDBEventCA2024 extends OpenLigaDBEvent {
 			}
 			team.setFlag(flag);
 			
-			team.setGroup(groupList.get(0)); // TODO - team groups from API?
+			team.setGroup(groupList.stream().filter(e->("Gruppe "+e.getName()).equals(oldbTeam.getTeamGroupName())).findFirst().orElse(null));
 			team.setFifaPoints((short) 0); // unknown
 			team.setWsId(Long.valueOf(oldbTeam.getTeamId()));
 			em.persist(team);
@@ -241,17 +258,8 @@ public class OpenLigaDBEventCA2024 extends OpenLigaDBEvent {
 			match.setStartTime(matchdata.getMatchDateTimeUTC());
 			match.setRound(roundMap.get(matchdata.getGroup().getGroupID()));
 
-			if (matchdata.getGroup().getGroupName().equals("Vorrunde")) {
-				String groupName = String.valueOf(matchdata.getLocation().getLocationCity());
-				if (groupName != null) {
-					// get group from the location of the match (unfortunately API does not support retrieving of groups)
-					Group group = groupList.stream().filter(e -> e.getName().equals(groupName)).findFirst().orElse(null);
-					if (group != null) {
-						match.getTeam1().setGroup(group);
-						match.getTeam2().setGroup(group);
-						em.flush();
-					}
-				}
+			if (matchdata.getGroup().getGroupName().endsWith(". Runde")) {
+				// nothing to do
 			}
 			else if (matchdata.getGroup().getGroupName().equals("Viertelfinale")) {
 				// Sieger Gruppe A vs Dritter Gruppe B/C -> A1-BC3

@@ -144,7 +144,8 @@ INSERT INTO `event` (`event_id`, `location`, `year`, `description`, `short_desc`
 (11, 'Qatar', 2022, 'World Cup', 'WC', 'FIFA', 'https://en.wikipedia.org/wiki/2022_FIFA_World_Cup'),
 (12, 'Qatar', 2023, 'Asian Cup', 'AFC', 'AFC', 'https://en.wikipedia.org/wiki/2023_AFC_Asian_Cup'),
 (13, 'Ivory Coast', 2023, 'Africa Cup of Nations', 'CAF', 'CAF', 'https://en.wikipedia.org/wiki/2023_Africa_Cup_of_Nations'),
-(14, 'Germany', 2024, 'Euro Cup', 'EC', 'UEFA', 'https://en.wikipedia.org/wiki/UEFA_Euro_2024');
+(14, 'Germany', 2024, 'Euro Cup', 'EC', 'UEFA', 'https://en.wikipedia.org/wiki/UEFA_Euro_2024'),
+(15, 'United States', 2024, 'Copa America', 'CA', 'CONMEBOL', 'https://en.wikipedia.org/wiki/2024_Copa_América');
 
 -- --------------------------------------------------------
 
@@ -942,7 +943,39 @@ INSERT INTO `match_` (`match_id`, `event_id`, `match_n`, `team1_id`, `team2_id`,
 (666, 14, 48, NULL, NULL, '2024-07-06 19:00:00', 99, NULL, NULL, NULL, NULL, NULL, NULL, 'W43-W44'),
 (667, 14, 49, NULL, NULL, '2024-07-09 19:00:00', 100, NULL, NULL, NULL, NULL, NULL, NULL, 'W45-W46'),
 (668, 14, 50, NULL, NULL, '2024-07-10 19:00:00', 100, NULL, NULL, NULL, NULL, NULL, NULL, 'W47-W48'),
-(669, 14, 51, NULL, NULL, '2024-07-14 19:00:00', 101, NULL, NULL, NULL, NULL, NULL, NULL, 'W49-W50');
+(669, 14, 51, NULL, NULL, '2024-07-14 19:00:00', 101, NULL, NULL, NULL, NULL, NULL, NULL, 'W49-W50'),
+(670, 15, 1, 319, 326, '2024-06-21 00:00:00', 102, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(671, 15, 2, 331, 322, '2024-06-22 00:00:00', 102, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(672, 15, 3, 324, 334, '2024-06-22 22:00:00', 102, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(673, 15, 4, 328, 325, '2024-06-23 01:00:00', 102, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(674, 15, 5, 333, 320, '2024-06-23 22:00:00', 102, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(675, 15, 6, 332, 329, '2024-06-24 01:00:00', 102, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(676, 15, 7, 327, 330, '2024-06-24 22:00:00', 102, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(677, 15, 8, 321, 323, '2024-06-24 23:00:00', 102, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(678, 15, 9, 331, 326, '2024-06-25 22:00:00', 103, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(679, 15, 10, 322, 319, '2024-06-26 01:00:00', 103, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(680, 15, 11, 324, 325, '2024-06-26 22:00:00', 103, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(681, 15, 12, 334, 328, '2024-06-27 01:00:00', 103, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(682, 15, 13, 329, 333, '2024-06-27 22:00:00', 103, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(683, 15, 14, 332, 320, '2024-06-28 01:00:00', 103, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(684, 15, 15, 327, 323, '2024-06-28 22:00:00', 103, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(685, 15, 16, 330, 321, '2024-06-29 01:00:00', 103, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(686, 15, 17, 319, 331, '2024-06-30 00:00:00', 104, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(687, 15, 18, 326, 322, '2024-06-30 00:00:00', 104, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(688, 15, 19, 328, 324, '2024-07-01 00:00:00', 104, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(689, 15, 20, 325, 334, '2024-07-01 00:00:00', 104, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(690, 15, 21, 320, 329, '2024-07-02 01:00:00', 104, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(691, 15, 22, 333, 330, '2024-07-02 01:00:00', 104, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(692, 15, 23, 321, 327, '2024-07-03 01:00:00', 104, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(693, 15, 24, 323, 330, '2024-07-03 01:00:00', 104, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(694, 15, 25, NULL, NULL, '2024-07-05 01:00:00', 105, NULL, NULL, NULL, NULL, NULL, NULL, 'A1-B2'),
+(695, 15, 26, NULL, NULL, '2024-07-06 01:00:00', 105, NULL, NULL, NULL, NULL, NULL, NULL, 'B1-A2'),
+(696, 15, 27, NULL, NULL, '2024-07-06 22:00:00', 105, NULL, NULL, NULL, NULL, NULL, NULL, 'C1-D2'),
+(697, 15, 28, NULL, NULL, '2024-07-07 01:00:00', 105, NULL, NULL, NULL, NULL, NULL, NULL, 'D1-C2'),
+(698, 15, 29, NULL, NULL, '2024-07-10 00:00:00', 106, NULL, NULL, NULL, NULL, NULL, NULL, 'W25-W26'),
+(699, 15, 30, NULL, NULL, '2024-07-11 00:00:00', 106, NULL, NULL, NULL, NULL, NULL, NULL, 'W27-W28'),
+(700, 15, 31, NULL, NULL, '2024-07-14 00:00:00', 107, NULL, NULL, NULL, NULL, NULL, NULL, 'L29-L30'),
+(701, 15, 32, NULL, NULL, '2024-07-15 00:00:00', 108, NULL, NULL, NULL, NULL, NULL, NULL, 'W29-W30');
 
 -- --------------------------------------------------------
 
@@ -1551,7 +1584,8 @@ INSERT INTO `web_service` (`web_service_id`, `event_id`, `priority`, `league_sho
 (12, 9, 1, 'CA2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
 (13, 10, 1, 'ABC2021', '2021', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen'),
 (14, 11, 1, 'wmk', '2022', 'Endergebnis', NULL, 'nach Verlängerung', 'nach Elfmeterschiessen'),
-(15, 14, 1, 'em2024', '2024', 'Endergebnis', NULL, 'nach Verlängerung', 'nach Elfmeterscheißen');
+(15, 14, 1, 'em2024', '2024', 'Endergebnis', NULL, 'nach Verlängerung', 'nach Elfmeterscheißen'),
+(16, 15, 1, 'CA2024', '2024', 'nach Nachspielzeit', NULL, 'nach Verlängerung', 'nach Elfmeterschießen');
 
 --
 -- Indexes for dumped tables
@@ -1711,37 +1745,37 @@ ALTER TABLE `dictionary`
 -- AUTO_INCREMENT for table `event`
 --
 ALTER TABLE `event`
-  MODIFY `event_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `event_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `group_`
 --
 ALTER TABLE `group_`
-  MODIFY `group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `group_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `match_`
 --
 ALTER TABLE `match_`
-  MODIFY `match_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=670;
+  MODIFY `match_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=702;
 
 --
 -- AUTO_INCREMENT for table `round`
 --
 ALTER TABLE `round`
-  MODIFY `round_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `round_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT for table `team`
 --
 ALTER TABLE `team`
-  MODIFY `team_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=319;
+  MODIFY `team_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=335;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `user_group`
@@ -1765,7 +1799,7 @@ ALTER TABLE `user_of_event`
 -- AUTO_INCREMENT for table `web_service`
 --
 ALTER TABLE `web_service`
-  MODIFY `web_service_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `web_service_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables
