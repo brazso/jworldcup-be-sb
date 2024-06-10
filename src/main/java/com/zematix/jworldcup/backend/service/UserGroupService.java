@@ -106,6 +106,7 @@ public class UserGroupService extends ServiceBase {
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setUserGroupId(UserGroup.EVERYBODY_USER_GROUP_ID);
+		userGroup.setPriority(UserGroup.PRIORITY_DEFAULT);
 				
 		return userGroup;
 	}
@@ -682,6 +683,7 @@ public class UserGroupService extends ServiceBase {
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setOwner(user);
 		userGroup.addUser(user);
+		userGroup.setPriority(UserGroup.PRIORITY_DEFAULT);
 		
 		commonDao.persistEntity(userGroup);
 		
@@ -723,6 +725,7 @@ public class UserGroupService extends ServiceBase {
 			userGroup.getUsers().add(user);
 		}
 		userGroup.getUsers().stream().forEach(u -> { u.getUserGroups().add(userGroup); });
+		userGroup.setPriority(UserGroup.PRIORITY_DEFAULT);
 		
 		commonDao.persistEntity(userGroup);
 		

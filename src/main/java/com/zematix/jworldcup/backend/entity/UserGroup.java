@@ -46,13 +46,18 @@ public class UserGroup implements Serializable {
 	 */
 	public static final String EVERYBODY_NAME =  "Everybody";
 
+	/**
+	 * Default priority value.
+	 */
+	public static final Byte PRIORITY_DEFAULT =  2;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="user_group_id", unique=true, nullable=false)
 	@EqualsAndHashCode.Include
 	private Long userGroupId;
 
-	@Column
+	@Column(nullable=false)
 	private Byte priority;
 	
 	@Column(name="is_public_editable", nullable=false)
