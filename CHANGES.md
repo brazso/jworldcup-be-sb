@@ -1,10 +1,12 @@
 ## Changes
 
-### Version 1.1.1 / 2024-02-??
+### Version 1.2.0 / 2024-06-10
 
+* Feature: added new EC2024 and CA2023 tournaments
 * Feature: cached retrieval of static timezone ids
 * Fix: open-in-view got false setting => lazy fetch
 * Fix: delete user account
+* Fix: user_group.priority constraint
 
 ### Version 1.1.0 / 2024-01-13
 
