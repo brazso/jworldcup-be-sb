@@ -73,7 +73,11 @@ public enum EventShortDescWithYearEnum {
 	/**
 	 * UEFA European Championship 2024
 	 */
-	EC2024
+	EC2024,
 	
+	/**
+	 * Copa America 2024
+	 */
+	CA2024
 
 }
