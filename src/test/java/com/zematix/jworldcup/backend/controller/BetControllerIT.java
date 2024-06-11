@@ -128,6 +128,45 @@ public class BetControllerIT {
 	
 	@Test
 	@WithMockUser(username = "normal", roles = {"USER"})
+	public void saveExistingBet()
+			throws ServiceException {
+		// given
+		Long betId = 2L;
+		Long matchId = 3L;
+		Long userId = 2L; // normal
+		LocalDateTime matchStartTime = LocalDateTime.parse("2014-06-13 19:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		RoundDto roundDto = new RoundDto();
+		roundDto.setIsGroupmatch(true);
+		roundDto.setIsOvertime(false);
+		MatchDto matchDto = new MatchDto();
+		matchDto.setMatchId(matchId);
+		matchDto.setRound(roundDto);
+		matchDto.setStartTime(matchStartTime);
+		matchDto.setGoalNormalByTeam1(null);
+		matchDto.setGoalNormalByTeam2(null);
+		UserDto userDto = new UserDto();
+		userDto.setUserId(userId);
+		BetDto betDto = new BetDto();
+		betDto.setBetId(betId);
+		betDto.setGoalNormalByTeam1((byte)2);
+		betDto.setGoalNormalByTeam2((byte)2);
+		betDto.setMatch(matchDto);
+		betDto.setUser(userDto);
+		// when
+		Mockito.when(applicationService.getActualDateTime()).thenReturn(matchStartTime);
+		var result = betController.saveBet(betDto);
+		// then
+		assertEquals(HttpStatus.OK, result.getStatusCode());
+		assertTrue(result.getBody().getSuccessful());
+		assertEquals(2, result.getBody().getData().getGoalNormalByTeam1().byteValue());
+		assertEquals(2, result.getBody().getData().getGoalNormalByTeam2().byteValue());
+		Bet bet = commonDao.findEntityById(Bet.class, result.getBody().getData().getBetId());
+		assertEquals(bet.getGoalNormalByTeam1(), result.getBody().getData().getGoalNormalByTeam1());
+		assertEquals(bet.getGoalNormalByTeam2(), result.getBody().getData().getGoalNormalByTeam2());
+	}
+	
+	@Test
+	@WithMockUser(username = "normal", roles = {"USER"})
 	public void deleteBet() throws ServiceException {
 		// given
 		Long betId = 1L;

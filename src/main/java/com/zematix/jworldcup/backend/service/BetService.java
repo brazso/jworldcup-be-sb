@@ -234,6 +234,15 @@ public class BetService extends ServiceBase {
 
 		if (bet != null) {
 			// load lazy associations
+			Match match = bet.getMatch();
+			if (match.getTeam1() != null) {
+				match.getTeam1().getName();
+				match.getTeam1().getGroup().getName();
+			}
+			if (match.getTeam2() != null) {
+				match.getTeam2().getName();
+				match.getTeam2().getGroup().getName();
+			}
 			bet.getUser().getLoginName();
 			bet.getUser().getRoles().size();
 		}
