@@ -1,5 +1,9 @@
 ## Changes
 
+### Version 1.2.1 / 2024-06-11
+
+* Fix: lazy loading of saving existing bet
+
 ### Version 1.2.0 / 2024-06-10
 
 * Feature: added new EC2024 and CA2023 tournaments
