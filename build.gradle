@@ -4,17 +4,17 @@ buildscript {
 	}
     dependencies {
         classpath('org.yaml:snakeyaml:1.19')
-        classpath('io.swagger.codegen.v3:swagger-codegen-maven-plugin:3.0.31')
     }
 }
 
 plugins {
-	id("org.springframework.boot") version "2.7.18"
+	id("org.springframework.boot") version "3.3.0"
 	id('io.spring.dependency-management') version '1.1.4'
 	id('java')
 	id('eclipse')
 	id("de.undercouch.download") version "5.5.0"
 	id("io.freefair.lombok") version "8.4"
+	id "org.openapi.generator" version "7.5.0"
 }
 
 //Buildship doesn't use that hooks (https://discuss.gradle.org/t/when-does-buildship-eclipse-customization-run/20781/2)
@@ -89,18 +89,23 @@ dependencies {
 	
 	implementation "com.google.guava:guava:${guavaVersion}"
 	
-	implementation "org.springdoc:springdoc-openapi-ui:${openapiVersion}"
-	 
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openapiVersion}"
+	implementation "com.google.code.gson:gson:2.11.0"
+	implementation "org.openapitools:jackson-databind-nullable:0.2.1"
+	implementation "com.squareup.okhttp3:okhttp:4.10.0"
+	implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
+	implementation "io.gsonfire:gson-fire:1.9.0"
+		 
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 	testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 	
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
-	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
 	annotationProcessor(
-		"com.querydsl:querydsl-apt:${queryDslVersion}:jpa",
-		"javax.persistence:javax.persistence-api",
-		"javax.annotation:javax.annotation-api"
+		"com.querydsl:querydsl-apt:${queryDslVersion}:jakarta",
+		"jakarta.persistence:jakarta.persistence-api",
+		"jakarta.annotation:jakarta.annotation-api"
 	)
 	
 	// Freemark dependencies
@@ -150,37 +155,20 @@ task downloadApi(type: Download, description: "Download Swagger OpenLigaDB JSON 
 	onlyIfModified true
 }
 
-import io.swagger.codegen.v3.CodegenConfigLoader
-import io.swagger.codegen.v3.DefaultGenerator
-import io.swagger.codegen.v3.ClientOptInput
-import io.swagger.codegen.v3.ClientOpts
-import io.swagger.v3.parser.OpenAPIV3Parser
-
-task generateApi {
-	dependsOn downloadApi
-	String swaggerSourceFile = "$projectDir/src/main/resources/swagger/matchdataApi.json"
-	String swaggerTargetFolder = "$buildDir/${generatedSourcesRelativePath}/swagger/main/java"
-	
-	doLast {
-		def openAPI = new OpenAPIV3Parser().read(swaggerSourceFile, null, null)
-        def clientOpts = new ClientOptInput().openAPI(openAPI)
-        def codegenConfig = CodegenConfigLoader.forName('spring')
-        codegenConfig.setOutputDir(swaggerTargetFolder)
-        clientOpts.setConfig(codegenConfig)
-        def clientOps = new ClientOpts()
-        clientOps.setProperties([
-                'dateLibrary': 'java8-localdatetime', // Date library to use
-                'useTags': 'true',  // Use tags for the naming
-                'interfaceOnly': 'true',   // Generating the Controller API interface and the models only
-                'apiPackage': 'com.msiggi.openligadb.api',
-                'modelPackage': 'com.msiggi.openligadb.model',
-                'sourceFolder': ''
-        ])
-        clientOpts.setOpts(clientOps)
-
-        def generator = new DefaultGenerator().opts(clientOpts)
-        generator.generate() // Executing the generation
-	}
+task generateApi(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    generatorName = "java"
+    generateApiTests = false
+    generateModelTests = false
+    inputSpec = "$projectDir/src/main/resources/swagger/matchdataApi.json".toString()
+    outputDir = "$buildDir/${generatedSourcesRelativePath}/swagger/main/java"
+    apiPackage = "com.msiggi.openligadb.api"
+    modelPackage = "com.msiggi.openligadb.model"
+    configOptions = [
+            dateLibrary: "java8-localdatetime",
+            useTags: 'true',
+            interfaceOnly: 'true', // Generating the Controller API interface and the models only
+            sourceFolder: ''
+    ]
 }
 
 task generateTestDatabaseScripts {
@@ -246,7 +234,6 @@ compileJava {
 tasks.withType(JavaCompile) {
 	dependsOn generateTestDatabaseScripts, generateApi//, copyBuildInfo
 	options.compilerArgs += [
-		//"--enable-preview",
 		"-Amapstruct.defaultComponentModel=spring",
 		"-Amapstruct.unmappedTargetPolicy=IGNORE"
 	]
@@ -254,13 +241,11 @@ tasks.withType(JavaCompile) {
 
 tasks.withType(Test) {
 	jvmArgs += [
-		//"--enable-preview"
 	]
 }
 
 tasks.withType(JavaExec) {
 	jvmArgs += [
-		//"--enable-preview"
 	]
 }
 

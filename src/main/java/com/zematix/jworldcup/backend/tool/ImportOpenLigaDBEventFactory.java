@@ -20,6 +20,7 @@ public class ImportOpenLigaDBEventFactory {
 	 * 
 	 * @return a new OpenLigaDBEvent object
 	 */
+	@SuppressWarnings("deprecation")
 	public OpenLigaDBEvent createOpenLigaDBEvent() {
 		switch (eventShortDescWithYear) {
 		case "AFC2019":

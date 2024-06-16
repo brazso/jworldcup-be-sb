@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -124,7 +124,7 @@ public class WebServiceService extends ServiceBase {
 			List<Match> matches = matchService.retrieveIncompleteEscalatedMatchesByEvent(eventId, actualDateTime);
 			for (Match match : matches) {
 				com.msiggi.openligadb.model.Match matchdata = findMatchInMatchdatas(matchdatas, match);
-				if (matchdata != null && matchdata.isMatchIsFinished()) {
+				if (matchdata != null && matchdata.getMatchIsFinished()) {
 					logger.info(String.format("Match with %d matchId is incomplete but escalated", match.getMatchId()));
 					boolean isUpdated = updateMatchByMatchdata(match, matchdata, webService);
 					if (isUpdated) {

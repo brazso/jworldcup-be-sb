@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.scheduler;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

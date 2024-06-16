@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.inject.Inject;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;

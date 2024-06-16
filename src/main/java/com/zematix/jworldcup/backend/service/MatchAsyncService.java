@@ -2,7 +2,7 @@ package com.zematix.jworldcup.backend.service;
 
 import java.time.LocalDateTime;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Async;

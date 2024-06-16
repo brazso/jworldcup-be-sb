@@ -2,7 +2,7 @@ package com.zematix.jworldcup.backend.configuration;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,7 +91,7 @@ public class WebSecurityConfig {
 	SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf(AbstractHttpConfigurer::disable)
 				// don't authenticate these particular requests
-				.authorizeHttpRequests(requests -> requests.antMatchers(ACTUATOR_WHITELIST).permitAll()
+				.authorizeHttpRequests(requests -> requests.requestMatchers(ACTUATOR_WHITELIST).permitAll()
 						// but all other requests need to be authenticated
 						.anyRequest().authenticated())
 				.exceptionHandling(handling -> handling.authenticationEntryPoint(jwtAuthenticationEntryPoint))

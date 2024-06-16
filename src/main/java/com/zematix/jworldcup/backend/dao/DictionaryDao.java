@@ -2,7 +2,7 @@ package com.zematix.jworldcup.backend.dao;
 
 import java.util.List;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
