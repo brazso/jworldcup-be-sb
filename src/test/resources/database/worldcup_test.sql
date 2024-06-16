@@ -244,7 +244,11 @@ INSERT INTO `group_` (`group_id`, `event_id`, `name`, `team1_id`, `team2_id`) VA
 (76, 14, 'C', NULL, NULL),
 (77, 14, 'D', NULL, NULL),
 (78, 14, 'E', NULL, NULL),
-(79, 14, 'F', NULL, NULL);
+(79, 14, 'F', NULL, NULL),
+(80, 15, 'A', NULL, NULL),
+(81, 15, 'B', NULL, NULL),
+(82, 15, 'C', NULL, NULL),
+(83, 15, 'D', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1096,7 +1100,14 @@ INSERT INTO `round` (`round_id`, `event_id`, `name`, `is_groupmatch`, `is_overti
 (98, 14, 'Round of 16', 0, 1),
 (99, 14, 'Quarter-finals', 0, 1),
 (100, 14, 'Semi-finals', 0, 1),
-(101, 14, 'Final', 0, 1);
+(101, 14, 'Final', 0, 1),
+(102, 15, '1st round', 1, NULL),
+(103, 15, '2nd round', 1, NULL),
+(104, 15, '3rd round', 1, NULL),
+(105, 15, 'Quarter-finals', 0, 0),
+(106, 15, 'Semi-finals', 0, 0),
+(107, 15, 'Third place play-off', 0, 0),
+(108, 15, 'Final', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -1436,7 +1447,23 @@ INSERT INTO `team` (`team_id`, `event_id`, `name`, `flag`, `group_id`, `fifa_poi
 (315, 14, 'Czech Republic', 'CZE', 79, 0, 141),
 (316, 14, 'Turkey', 'TUR', 79, 0, 153),
 (317, 14, 'Ukraine', 'UKR', 78, 0, 3204),
-(318, 14, 'Hungary', 'HUN', 74, 0, 1395);
+(318, 14, 'Hungary', 'HUN', 74, 0, 1395),
+(319, 15, 'Argentina', 'ARG', 80, 0, 764),
+(320, 15, 'Bolivia', 'BOL', 82, 0, 3178),
+(321, 15, 'Brazil', 'BRA', 83, 0, 753),
+(322, 15, 'Chile', 'CHI', 80, 0, 760),
+(323, 15, 'Costa Rica', 'CRC', 83, 0, 2669),
+(324, 15, 'Ecuador', 'ECU', 81, 0, 2670),
+(325, 15, 'Jamaica', 'JAM', 81, 0, 5821),
+(326, 15, 'Canada', 'CAN', 80, 0, 1645),
+(327, 15, 'Colombia', 'COL', 83, 0, 1469),
+(328, 15, 'Mexico', 'MEX', 81, 0, 761),
+(329, 15, 'Panama', 'PAN', 82, 0, 4631),
+(330, 15, 'Paraguay', 'PAR', 83, 0, 756),
+(331, 15, 'Peru', 'PER', 80, 0, 3177),
+(332, 15, 'Uruguay', 'URU', 82, 0, 849),
+(333, 15, 'United States', 'USA', 82, 0, 762),
+(334, 15, 'Venezuela', 'VEN', 81, 0, 3179);
 
 -- --------------------------------------------------------
 
