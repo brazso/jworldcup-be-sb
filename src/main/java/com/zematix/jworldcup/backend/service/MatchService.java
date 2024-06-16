@@ -87,7 +87,7 @@ public class MatchService extends ServiceBase {
 	@Inject
 	private CacheManager cacheManager;
 	
-	@Value("${scheduler.expiration.event.days:0}")
+	@Value("${app.scheduler.expiration.event.days:0}")
 	private String appExpiredDaysEvent;
 	
 	/**
