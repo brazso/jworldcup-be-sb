@@ -1,5 +1,9 @@
 ## Changes
 
+### Version 1.2.2 / 2024-06-19
+
+* Fix: fixed scheduler expiration naming
+
 ### Version 1.2.1 / 2024-06-11
 
 * Fix: lazy loading of saving existing bet
