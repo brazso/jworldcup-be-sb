@@ -21,7 +21,7 @@ spring:
 
 # Security
 jwt:
-  secret: jworldcup-sensitive-secret-key
+  secret: andvcmxkY3VwLXNlbnNpdGl2ZS1zZWNyZXQta2V5LWp3b3JsZGN1cC1zZW5zaXRpdmUtc2VjcmV0LWtleS1qd29ybGRjdXA= #jworldcup-sensitive-secret-key-jworldcup-sensitive-secret-key-jworldcup
 #  validity: 60 # a minute in seconds
 
 # Application
