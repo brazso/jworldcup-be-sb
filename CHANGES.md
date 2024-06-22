@@ -1,5 +1,10 @@
 ## Changes
 
+### Version 1.2.3 / 2024-06-22
+
+* Fix: fixed deletion of a userGroup
+* Fix: fixed lazy loading of retrieving of chat entities
+
 ### Version 1.2.2 / 2024-06-19
 
 * Fix: fixed scheduler expiration naming
