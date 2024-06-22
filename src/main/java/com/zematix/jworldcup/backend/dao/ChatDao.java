@@ -269,4 +269,20 @@ public class ChatDao extends DaoBase {
 		query.setParameter(3, userId);
 		query.executeUpdate();
 	}
+	
+	/**
+	 * Delete all chat entities belongs to the given userGroup
+	 * 
+	 * @param userGroupId - belongs to an {@link UserGroup} entity
+	 * @throws IllegalArgumentException if any of the given parameter is
+	 *                                  {@code null}
+	 */
+	public void deleteChatsByUserGroup(Long userGroupId) {
+		checkNotNull(userGroupId);
+
+		QChat qChat = QChat.chat;
+		JPADeleteClause clause = new JPADeleteClause(getEntityManager(), qChat);
+		clause.where(qChat.userGroup.userGroupId.eq(userGroupId)).execute();
+	}
+
 }

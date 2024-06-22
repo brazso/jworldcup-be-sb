@@ -39,6 +39,9 @@ public class UserGroupDao extends DaoBase {
 	@Inject
 	private DictionaryDao dictionaryDao;
 	
+	@Inject
+	private ChatDao chatDao;
+	
 	/**
 	 * Returns a list of all {@link UserGroup} entities from database.
 	 * 
@@ -410,6 +413,9 @@ public class UserGroupDao extends DaoBase {
 		checkNotNull(userGroupId);
 		UserGroup userGroup = commonDao.findEntityById(UserGroup.class, userGroupId);
 		checkState(userGroup != null, String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userGroupId));			
+		
+		// delete all dependencies of userGroup
+		chatDao.deleteChatsByUserGroup(userGroupId);
 		
 		commonDao.removeEntity(userGroup);
 	}
