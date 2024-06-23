@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -32,6 +33,11 @@ import lombok.Setter;
 @Entity
 @Table(name="user_group", uniqueConstraints=@UniqueConstraint(columnNames={"name", "event_id"}))
 @NamedQuery(name="UserGroup.findAll", query="SELECT u FROM UserGroup u")
+@NamedNativeQuery(
+        name    =   "deleteUserUserGroupsByUserGroupId",
+        query   =   "DELETE FROM user__user_group WHERE user_group_id = ?",
+                    resultClass=UserGroup.class
+)
 @Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
