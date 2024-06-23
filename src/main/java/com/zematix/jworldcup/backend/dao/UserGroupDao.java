@@ -43,9 +43,6 @@ public class UserGroupDao extends DaoBase {
 	@Inject
 	private ChatDao chatDao;
 	
-	@Inject
-	private UserDao userDao;
-	
 	/**
 	 * Returns a list of all {@link UserGroup} entities from database.
 	 * 

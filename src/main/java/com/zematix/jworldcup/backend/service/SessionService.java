@@ -716,9 +716,12 @@ public class SessionService extends ServiceBase {
 		Chat chat = event.getEntity();
 		logger.info("onSendPrivateChat chatId: {}", chat.getChatId());
 
-		String message = ParameterizedMessage.create("header.label.private_chat", chat.getUser().getLoginName())
-				.buildMessage(msgs, locale);
-		HeaderMessage headerMessage = HeaderMessage.builder().message(message).priority(2).creationTime(getActualDateTime()).build();
-		this.headerMessages.push(headerMessage);
+		if (!chat.getUser().equals(this.user)) {
+			String message = String.format("[%s -> %s] %s", chat.getUser().getLoginName(),
+					chat.getTargetUser().getLoginName(), chat.getMessage());
+			HeaderMessage headerMessage = HeaderMessage.builder().message(message).priority(2)
+					.creationTime(getActualDateTime()).build();
+			this.headerMessages.push(headerMessage);
+		}
 	}
 }

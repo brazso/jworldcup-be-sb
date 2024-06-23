@@ -132,8 +132,9 @@ public class ChatDao extends DaoBase {
 	}
 
 	/**
-	 * Return latest chat record which belongs to the given {@code eventId} and {@code user}.
-	 * via some {@link UserGroup}. Unless it is found it returns {@code null}.
+	 * Return latest chat record which belongs to the given {@code eventId} and {@code userId} 
+	 * where given user is equal to chat.targetUser or is in chat.userGroup. Chat records sent
+	 * by the given user does not take account. If it is not found it returns {@code null}.
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Chat retrieveLatestChat(Long eventId, Long userId) throws ServiceException {
@@ -145,7 +146,8 @@ public class ChatDao extends DaoBase {
 		JPAQuery<Chat> query = new JPAQuery<>(getEntityManager());
 		chat = query.from(qChat)
 		  .where(qChat.event.eventId.eq(eventId)
-				  .and(qChat.userGroup.isNull().or(qChat.userGroup.users.any().userId.eq(userId))))
+				  .and(qChat.user.userId.ne(userId))
+				  .and(qChat.targetUser.userId.eq(userId).or(qChat.userGroup.users.any().userId.eq(userId))))
 		  .orderBy(qChat.modificationTime.desc())
 		  .fetchFirst();
 		
