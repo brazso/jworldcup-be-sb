@@ -79,6 +79,8 @@ public class ChatService extends ServiceBase {
 			e.getEvent().getDescription();
 			if (e.getUserGroup() != null) {
 				e.getUserGroup().getName();
+				e.getUserGroup().getOwner().getLoginName();
+				e.getUserGroup().getOwner().getRoles().size();
 			}
 		});
 		
@@ -141,6 +143,8 @@ public class ChatService extends ServiceBase {
 			chat.getUser().getLoginName();
 			if (chat.getUserGroup() != null) {
 				chat.getUserGroup().getName();
+				chat.getUserGroup().getOwner().getLoginName();
+				chat.getUserGroup().getOwner().getRoles().size();
 			}
 			else {
 				chat.setUserGroup(userGroupService.createVirtualEverybodyUserGroup(eventId, userId));
@@ -172,6 +176,8 @@ public class ChatService extends ServiceBase {
 			chat.getEvent().getDescription();
 			if (chat.getUserGroup() != null) {
 				chat.getUserGroup().getName();
+				chat.getUserGroup().getOwner().getLoginName();
+				chat.getUserGroup().getOwner().getRoles().size();
 			}
 			if (chat.getTargetUser() != null) {
 				chat.getTargetUser().getLoginName();

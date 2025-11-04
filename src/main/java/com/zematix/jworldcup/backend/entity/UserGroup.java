@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
@@ -24,7 +25,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-
 /**
  * The persistent class for the user_group database table.
  * 
@@ -32,6 +32,11 @@ import lombok.Setter;
 @Entity
 @Table(name="user_group", uniqueConstraints=@UniqueConstraint(columnNames={"name", "event_id"}))
 @NamedQuery(name="UserGroup.findAll", query="SELECT u FROM UserGroup u")
+@NamedNativeQuery(
+        name    =   "deleteUserUserGroupsByUserGroupId",
+        query   =   "DELETE FROM user__user_group WHERE user_group_id = ?",
+                    resultClass=UserGroup.class
+)
 @Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserGroup implements Serializable {
 	private static final long serialVersionUID = 1L;

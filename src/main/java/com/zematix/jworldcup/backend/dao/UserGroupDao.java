@@ -7,6 +7,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.List;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
@@ -38,6 +39,9 @@ public class UserGroupDao extends DaoBase {
 	
 	@Inject
 	private DictionaryDao dictionaryDao;
+	
+	@Inject
+	private ChatDao chatDao;
 	
 	/**
 	 * Returns a list of all {@link UserGroup} entities from database.
@@ -411,7 +415,43 @@ public class UserGroupDao extends DaoBase {
 		UserGroup userGroup = commonDao.findEntityById(UserGroup.class, userGroupId);
 		checkState(userGroup != null, String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userGroupId));			
 		
+		// delete all dependencies of userGroup
+		chatDao.deleteChatsByUserGroup(userGroupId);
+		deleteUserUserGroupsByUserGroupId(userGroupId);
+		
 		commonDao.removeEntity(userGroup);
+	}
+	
+	/**
+	 * Delete all associations between users and userGroups of the given userGroup.
+	 * 
+	 * @param userGroupId - belongs to an {@link UserGroup} entity
+	 * @throws IllegalArgumentException if any of the given parameters is
+	 *                                  {@code null}
+	 */
+	public void deleteUserUserGroupsByUserGroupId(Long userGroupId) {
+		checkNotNull(userGroupId);
+
+		Query query = getEntityManager().createNamedQuery("deleteUserUserGroupsByUserGroupId", UserGroup.class);
+		query.setParameter(1, userGroupId);
+		query.executeUpdate();
+	}
+
+	/**
+	 * Removes the {@link UserGroup} instance belongs to the given {@code userGroupId} parameter 
+	 * from database.
+	 * 
+	 * @param userGroupId
+	 * @throws IllegalArgumentException if any of the given parameters is invalid
+	 */
+	public void deleteUsersByUserGroup(Long userGroupId) {
+		checkNotNull(userGroupId);
+		UserGroup userGroup = commonDao.findEntityById(UserGroup.class, userGroupId);
+		checkState(userGroup != null, String.format("No \"UserGroup\" entity belongs to \"userGroupId\"=%d in database.", userGroupId));			
+		
+		QUser qUser = QUser.user;
+		new JPADeleteClause(getEntityManager(), qUser)
+				.where(qUser.userGroups.contains(userGroup)).execute();
 	}
 	
 	/**
