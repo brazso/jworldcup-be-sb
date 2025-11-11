@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.exception;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 public class JaxbValidationException extends ValidationException {
 

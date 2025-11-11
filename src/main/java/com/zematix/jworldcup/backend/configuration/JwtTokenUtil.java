@@ -96,7 +96,7 @@ public class JwtTokenUtil implements Serializable {
 	 * @exception JwtException
 	 */
 	private Claims getAllClaimsFromToken(String token) throws JwtException {
-		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+		return Jwts.parser().setSigningKey(jwtSecret).build().parseClaimsJws(token).getBody();
 	}
 
 	/**
@@ -178,8 +178,8 @@ public class JwtTokenUtil implements Serializable {
 	 */
 	private String doGenerateToken(Map<String, Object> claims, String subject, String jwtValidity) {
 
-		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(jwtValidity) * 1000))
+		return Jwts.builder().claims(claims).subject(subject).issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() + Long.parseLong(jwtValidity) * 1000))
 				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
 	}
 }

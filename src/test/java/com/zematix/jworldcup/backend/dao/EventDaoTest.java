@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +54,7 @@ public class EventDaoTest {
 	 */
 	@Test
 	public void /*Event*/ findLastEvent() {
-		Event expectedLastEvent = commonDao.findEntityById(Event.class, 13L); // increase me by one in case of new event
+		Event expectedLastEvent = commonDao.findEntityById(Event.class, 15L); // increase me by one in case of new event
 		Event lastEvent = eventDao.findLastEvent();
 		
 		assertEquals(expectedLastEvent, lastEvent);

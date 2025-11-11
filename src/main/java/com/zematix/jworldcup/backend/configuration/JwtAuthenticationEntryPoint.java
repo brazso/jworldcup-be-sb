@@ -3,9 +3,9 @@ package com.zematix.jworldcup.backend.configuration;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 		ResponseEntity<Object> responseEntity = buildResponseEntity(
 				new ApiError(HttpStatus.UNAUTHORIZED, new UnauthorizedException(null)));
 
-		response.setStatus(responseEntity.getStatusCodeValue());
+		response.setStatus(responseEntity.getStatusCode().value());
 
 		String json = mapper.writeValueAsString(responseEntity.getBody());
 		response.getWriter().write(json);

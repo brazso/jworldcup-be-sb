@@ -2,11 +2,11 @@ package com.zematix.jworldcup.backend.dao;
 
 import java.util.List;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.metamodel.Type;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;

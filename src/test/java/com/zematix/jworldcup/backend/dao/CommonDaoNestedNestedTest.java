@@ -3,8 +3,8 @@ package com.zematix.jworldcup.backend.dao;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import javax.inject.Inject;
-import javax.persistence.PersistenceException;
+import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;

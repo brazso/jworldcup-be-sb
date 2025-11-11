@@ -2,7 +2,7 @@ package com.zematix.jworldcup.backend.dao;
 
 import static org.junit.Assert.fail;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;

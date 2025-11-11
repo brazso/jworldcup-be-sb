@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.controller;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

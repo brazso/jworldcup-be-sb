@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

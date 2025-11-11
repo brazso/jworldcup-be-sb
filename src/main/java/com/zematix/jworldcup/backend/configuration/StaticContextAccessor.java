@@ -6,9 +6,8 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +18,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class StaticContextAccessor {
 
-    private static final Map<Class, DynamicInvocationhandler> classHandlers = new HashMap<>();
+    @SuppressWarnings("rawtypes")
+	private static final Map<Class, DynamicInvocationhandler> classHandlers = new HashMap<>();
     private static ApplicationContext context;
 
-    @Autowired
     public StaticContextAccessor(ApplicationContext applicationContext) {
         context = applicationContext;
     }
@@ -34,7 +33,8 @@ public class StaticContextAccessor {
         return context.getBean(clazz);
     }
 
-    private static <T> T getProxy(Class<T> clazz) {
+    @SuppressWarnings("unchecked")
+	private static <T> T getProxy(Class<T> clazz) {
         DynamicInvocationhandler<T> invocationhandler = new DynamicInvocationhandler<>();
         classHandlers.put(clazz, invocationhandler);
         return (T) Proxy.newProxyInstance(
@@ -45,7 +45,8 @@ public class StaticContextAccessor {
     }
 
     //Use the context to get the actual beans and feed them to the invocationhandlers
-    @PostConstruct
+    @SuppressWarnings("unchecked")
+	@PostConstruct
     private void init() {
         classHandlers.forEach((clazz, invocationHandler) -> {
             Object bean = context.getBean(clazz);

@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.dto;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public class CommonResponse {
 

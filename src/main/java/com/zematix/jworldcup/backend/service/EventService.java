@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

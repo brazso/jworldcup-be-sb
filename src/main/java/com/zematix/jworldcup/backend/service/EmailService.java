@@ -3,7 +3,7 @@ package com.zematix.jworldcup.backend.service;
 import java.util.Locale;
 import java.util.Properties;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;

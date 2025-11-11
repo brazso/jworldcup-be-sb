@@ -10,9 +10,9 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.MessageSource;
@@ -121,10 +121,6 @@ public class SessionService extends ServiceBase {
 		locale = Locale.getDefault();
 //		event = eventService.findLastEvent();
 		// user cannot be initialized here, see getUser method
-		
-//		// store local id into session
-//		HttpSession session = WebContextHolder.get().getSession();
-//		session.setAttribute("sessionServiceId", id);
 	}
 
 	@PreDestroy
