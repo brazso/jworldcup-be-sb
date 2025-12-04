@@ -227,4 +227,15 @@ public class GroupTeam extends ServerBase {
 	public String getEventShortDescWithYear() {
 		return this.team.getEvent().getShortDescWithYear();
 	}
+	
+	/**
+	 * Returns the tiebreaker of an event belongs to the actual {@link GroupTeam} 
+	 * instance.
+	 * 
+	 * @return tiebreaker rule as number of event
+	 */
+	public Short getEventTiebreaker() {
+		return this.team.getEvent().getTiebreaker();
+	}
+
 }
