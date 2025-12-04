@@ -56,6 +56,9 @@ public class Event implements Serializable {
 	@Column(name="website", nullable=true, length=255)
 	private String website;
 
+	@Column(nullable=false)
+	private Short tiebreaker;
+
 	//bi-directional many-to-one association to Bet
 	@OneToMany(mappedBy="event")
 	private List<Bet> bets;

@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -21,8 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zematix.jworldcup.backend.dao.CommonDao;
 import com.zematix.jworldcup.backend.dao.EventDao;
-import com.zematix.jworldcup.backend.emun.EventShortDescWithYearEnum;
 import com.zematix.jworldcup.backend.entity.Event;
+
+import jakarta.inject.Inject;
 
 /**
  * Contains test functions of {@link EventService} class.
@@ -166,7 +165,7 @@ public class EventServiceTest {
 	 */
 	@Test
 	public void /*Event*/ findEventByShortDescWithYear(/*String shortDescWithYear*/) {
-		String shortDescWithYear = EventShortDescWithYearEnum.WC2014.name();
+		String shortDescWithYear = "WC2014";
 		Event expectedEvent = commonDao.findEntityById(Event.class, 1L); // WC2014
 		Mockito.when(eventDao.findEventByShortDescWithYear(shortDescWithYear)).thenReturn(expectedEvent);
 		
