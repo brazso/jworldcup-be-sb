@@ -10,19 +10,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -35,6 +33,8 @@ import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserGroup;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.EmailService;
+
+import jakarta.inject.Inject;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -49,10 +49,10 @@ public class UserControllerIT extends TestBase {
 	@Inject
 	private CommonDao commonDao;
 	
-	@MockBean
+	@MockitoBean
 	private EmailService emailService;
 	
-	@MockBean 
+	@MockitoBean 
 	private SessionRegistry sessionRegistry;
 
 	@Test

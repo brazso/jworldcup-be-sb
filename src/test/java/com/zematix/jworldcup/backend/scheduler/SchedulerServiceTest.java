@@ -3,8 +3,8 @@ package com.zematix.jworldcup.backend.scheduler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.zematix.jworldcup.backend.service.ApplicationService;
@@ -24,16 +24,16 @@ public class SchedulerServiceTest {
 //	@Inject
 //	private SchedulerService schedulerService;
 	
-	@MockBean
+	@MockitoBean
 	private ApplicationService applicationService;
 	
-	@MockBean
+	@MockitoBean
 	private UserService userService;
 
-	@MockBean
+	@MockitoBean
 	private MatchService matchService;
 	
-	@MockBean
+	@MockitoBean
 	private WebServiceService webServiceService;
 	
 //	private Map<Long, Short> futileAttemptsByEventId = new HashMap<>();

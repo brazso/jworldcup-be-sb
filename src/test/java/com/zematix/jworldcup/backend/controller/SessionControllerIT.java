@@ -4,16 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.zematix.jworldcup.backend.TestBase;
@@ -21,6 +19,8 @@ import com.zematix.jworldcup.backend.dto.SessionDataDto;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.SessionData;
 import com.zematix.jworldcup.backend.service.MessageQueueService;
+
+import jakarta.inject.Inject;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -30,7 +30,7 @@ public class SessionControllerIT extends TestBase {
 	@Inject
 	private SessionController sessionController;
 	
-	@MockBean
+	@MockitoBean
 	private MessageQueueService messageQueueService;
 
 	@Test

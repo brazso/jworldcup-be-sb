@@ -11,9 +11,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,10 +38,10 @@ public class EventServiceTest {
 	@Inject
 	private CommonDao commonDao;
 	
-	@MockBean
+	@MockitoBean
 	private EventDao eventDao; // used by methods of EventService
 	
-	@SpyBean
+	@MockitoSpyBean
 	private EventService eventServicePartial; // partial mock
 	
 	/**
@@ -169,7 +169,6 @@ public class EventServiceTest {
 		Event expectedEvent = commonDao.findEntityById(Event.class, 1L); // WC2014
 		Mockito.when(eventDao.findEventByShortDescWithYear(shortDescWithYear)).thenReturn(expectedEvent);
 		
-		EventService eventServicePartial = Mockito.spy(eventService); // partial mock
 		Mockito.doNothing().when(eventServicePartial).initEvent(expectedEvent);
 
 		Event event = eventServicePartial.findEventByShortDescWithYear(shortDescWithYear);
