@@ -64,6 +64,8 @@ public class CommonDaoTest {
 		event.setDescription("World Cup");
 		event.setShortDesc("WC");
 		event.setOrganizer("FIFA");
+		event.setTiebreaker((short)0);
+		
 		commonDao.persistEntity(event);
 		logger.info("eventId=" + event.getEventId());
 		assertNotNull(event.getEventId());
@@ -84,6 +86,7 @@ public class CommonDaoTest {
 		event.setDescription("World Cup");
 		event.setShortDesc("WC");
 		event.setOrganizer("FIFA");
+		event.setTiebreaker((short)0);
 		
 		commonDao.persistEntity(event);
 		fail("Should not be persisted because of not null constraint violation.");

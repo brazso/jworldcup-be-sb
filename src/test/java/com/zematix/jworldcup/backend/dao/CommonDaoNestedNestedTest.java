@@ -36,6 +36,7 @@ public class CommonDaoNestedNestedTest {
 		event.setDescription("Euro Cup");
 		event.setShortDesc("EC");
 		event.setOrganizer("UEFA");
+		event.setTiebreaker((short)0);
 		commonDao.persistEntity(event);
 		assertNotNull(event.getEventId());
 
@@ -45,6 +46,7 @@ public class CommonDaoNestedNestedTest {
 		event.setDescription("World Cup");
 		event.setShortDesc("WC");
 		event.setOrganizer("FIFA");
+		event.setTiebreaker((short)0);
 		commonDao.persistEntity(event);
 		fail("Should not be persisted because of not null constraint violation.");
 	}

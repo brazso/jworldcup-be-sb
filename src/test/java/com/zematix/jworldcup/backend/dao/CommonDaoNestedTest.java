@@ -37,6 +37,7 @@ public class CommonDaoNestedTest {
 		event.setDescription("World Cup");
 		event.setShortDesc("WC");
 		event.setOrganizer("FIFA");
+		event.setTiebreaker((short)0);
 		commonDao.persistEntity(event);
 		
 		try {
