@@ -1,3 +1,11 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+// needed for task -> doLast -> exec
+interface InjectedExecOps {
+    @Inject
+    ExecOperations getExecOps()
+}
+
 buildscript {
 	ext {
 		generatedSourcesRelativePath = "generated/src"
@@ -9,9 +17,9 @@ buildscript {
 
 plugins {
 	id("org.springframework.boot") version "${springBootVersion}"
-	id("io.spring.dependency-management") version "1.1.4"
 	id("java")
 	id("eclipse")
+	id("com.diffplug.eclipse.apt") version "4.4.1" // mapStruct - only for Eclipse
 	id("de.undercouch.download") version "5.5.0"
 	id("io.freefair.lombok") version "8.4"
 	id "org.openapi.generator" version "7.5.0"
@@ -36,7 +44,9 @@ def applicationConfig = new org.yaml.snakeyaml.Yaml().loadAll(new File("$project
 
 group = "com.zematix.jworldcup"
 version = applicationConfig.app.version.number
-sourceCompatibility = "21"
+java {
+	sourceCompatibility = "25"
+}
 
 bootRun {
 	String activeProfile = System.properties["spring.profiles.active"]
@@ -59,6 +69,9 @@ repositories {
 }
 
 dependencies {
+	// Use the constant provided by the Spring Boot plugin to import the BOM
+    implementation platform(SpringBootPlugin.BOM_COORDINATES)
+    
 	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 	implementation "org.springframework.boot:spring-boot-starter-data-rest"
 	implementation "org.springframework.boot:spring-boot-starter-freemarker"
@@ -76,7 +89,7 @@ dependencies {
 	runtimeOnly "io.jsonwebtoken:jjwt-impl:${jsonWebtokenVersion}"
     runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jsonWebtokenVersion}" 
 	
-	developmentOnly "org.springframework.boot:spring-boot-devtools"
+	developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
 	runtimeOnly "org.hsqldb:hsqldb"
 	runtimeOnly "com.mysql:mysql-connector-j"
 	
@@ -105,10 +118,11 @@ dependencies {
 	
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+	
 	annotationProcessor(
 		"com.querydsl:querydsl-apt:${queryDslVersion}:jakarta",
-		"jakarta.persistence:jakarta.persistence-api",
-		"jakarta.annotation:jakarta.annotation-api"
+		"jakarta.persistence:jakarta.persistence-api:3.2.0",
+		"jakarta.annotation:jakarta.annotation-api:3.0.0"
 	)
 	
 	// Freemark dependencies
@@ -179,32 +193,33 @@ task generateApi(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTa
 task generateTestDatabaseScripts {
 	String generatedResourceRoot = "$buildDir/${generatedSourcesRelativePath}/test/resources/database"
 	String awkSourceDir = "${projectDir}/src/test/resources/database"
+	def injected = project.objects.newInstance(InjectedExecOps)
 
 	doLast() {
 		mkdir generatedResourceRoot
 
-		exec {
+		injected.execOps.exec {
 			workingDir awkSourceDir
 			commandLine "awk", "-f", "drop_db.awk", "worldcup_test.sql"
-			standardOutput new FileOutputStream("${generatedResourceRoot}/worldcup_test_drop.sql")
+			standardOutput = new FileOutputStream("${generatedResourceRoot}/worldcup_test_drop.sql")
 		}
 
-		exec {
+		injected.execOps.exec {
 			workingDir awkSourceDir
 			commandLine "awk", "-f", "create_db.awk", "worldcup_test.sql"
-			standardOutput new FileOutputStream("${generatedResourceRoot}/worldcup_test_create.sql")
+			standardOutput = new FileOutputStream("${generatedResourceRoot}/worldcup_test_create.sql")
 		}
 		
-		exec {
+		injected.execOps.exec {
 			workingDir awkSourceDir
 			commandLine "awk", "-f", "insert_db.awk", "worldcup_test.sql"
-			standardOutput new FileOutputStream("${generatedResourceRoot}/worldcup_test_insert.sql")
+			standardOutput = new FileOutputStream("${generatedResourceRoot}/worldcup_test_insert.sql")
 		}
 		
-		exec {
+		injected.execOps.exec {
 			workingDir awkSourceDir
 			commandLine "awk", "-f", "insert_hsqldb.awk", "worldcup_test.sql"
-			standardOutput new FileOutputStream("${generatedResourceRoot}/worldcup_test_insert_hsqldb.sql")
+			standardOutput = new FileOutputStream("${generatedResourceRoot}/worldcup_test_insert_hsqldb.sql")
 		}
 	}
 }
@@ -232,7 +247,7 @@ compileJava {
 	File annotationProcessorPathFile = project.file(annotationProcessorPath)
 	println "Creating and configuring generated annotationProcessor source directory $annotationProcessorPathFile"
 	project.mkdir(annotationProcessorPathFile)
-	options.annotationProcessorGeneratedSourcesDirectory = annotationProcessorPathFile
+	options.generatedSourceOutputDirectory = annotationProcessorPathFile
 	outputs.dir(annotationProcessorPathFile)
 }
 
@@ -242,10 +257,10 @@ tasks.withType(JavaCompile) {
 	options.compilerArgs += [
 		"-Amapstruct.defaultComponentModel=spring",
 		"-Amapstruct.unmappedTargetPolicy=IGNORE",
-		"-Amapstruct.verbose=true",
+//		"-Amapstruct.verbose=true",
 		"-Xlint:deprecation",
 		"-parameters",
-		"-verbose"
+//		"-verbose"
 	]
 }
 
