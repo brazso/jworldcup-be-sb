@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +21,8 @@ import com.zematix.jworldcup.backend.dto.UserDto;
 import com.zematix.jworldcup.backend.dto.UserGroupDto;
 import com.zematix.jworldcup.backend.entity.Chat;
 import com.zematix.jworldcup.backend.exception.ServiceException;
+
+import jakarta.inject.Inject;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

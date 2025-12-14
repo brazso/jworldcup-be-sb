@@ -1,7 +1,5 @@
 package com.zematix.jworldcup.backend.scheduler;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -10,11 +8,13 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.zematix.jworldcup.backend.exception.ServiceException;
+
+import jakarta.inject.Inject;
 
 /**
  * Contains test functions of {@link RetrieveMatchResultsJob} class.
@@ -27,7 +27,7 @@ public class RetrieveMatchResultsJobTest {
 	@Inject
 	private RetrieveMatchResultsJob retrieveMatchResultsJob;
 	
-	@MockBean
+	@MockitoBean
 	private SchedulerService schedulerService; // used by methods of RetrieveMatchResultsJob 
 
 	/**

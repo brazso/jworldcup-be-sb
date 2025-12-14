@@ -6,17 +6,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,6 +31,8 @@ import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.EmailService;
 import com.zematix.jworldcup.backend.service.GoogleService;
 
+import jakarta.inject.Inject;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles({"develop", "test"})
@@ -45,13 +45,13 @@ public class JwtAuthenticationControllerIT extends TestBase {
 	@Inject
 	private CommonDao commonDao;
 	
-	@MockBean
+	@MockitoBean
 	private EmailService emailService;
 	
-	@MockBean
+	@MockitoBean
 	private GoogleService googleService;
 	
-	@SpyBean
+	@MockitoSpyBean
 	private JwtTokenUtil jwtTokenUtil;
 	
 	@Test

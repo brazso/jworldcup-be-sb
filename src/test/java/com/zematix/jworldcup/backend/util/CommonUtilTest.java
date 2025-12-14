@@ -11,9 +11,6 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -434,59 +431,5 @@ public class CommonUtilTest {
 		long expectedDaysBetween = -1;
 		long daysBetween = CommonUtil.daysBetween(dateTimeStart, dateTimeEnd);
 		assertEquals("Result should be equal to the expected one.", expectedDaysBetween, daysBetween);
-	}
-	
-	/**
-	 * Test {@link CommonUtil#toXMLGregorianCalendar(LocalDateTime)} method.
-	 * Scenario: successfully returns {@code null} if the given {@code date} parameter 
-	 *           is {@code null}
-	 */
-	@Test
-	public /*default XMLGregorianCalendar*/ void toXMLGregorianCalendar_NullDate(/*LocalDateTime date*/) {
-		LocalDateTime date = null;
-		XMLGregorianCalendar expectedCalendar = null;
-		XMLGregorianCalendar calendar = CommonUtil.toXMLGregorianCalendar(date);
-		assertEquals("Result should be equal to the expected one.", expectedCalendar, calendar);
-	}
-	
-	/**
-	 * Test {@link CommonUtil#toXMLGregorianCalendar(LocalDateTime)} method.
-	 * Scenario: successfully returns result
-	 * @throws ParseException 
-	 * org.junit.ComparisonFailure: Result should be equal to the expected one. expected:<...7-02-22T11:00:20.000[Z]> but was:<...7-02-22T11:00:20.000[+01:00]>
-	 */
-	@Test
-	public /*default XMLGregorianCalendar*/ void toXMLGregorianCalendar(/*LocalDateTime date*/) throws ParseException {
-		LocalDateTime date = LocalDateTime.parse("2017-02-22 11:00:20", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-		String expectedCalendarString = "2017-02-22T11:00:20.000Z";
-		XMLGregorianCalendar calendar = CommonUtil.toXMLGregorianCalendar(date);
-		assertEquals("Result should be equal to the expected one.", expectedCalendarString, calendar.toString());
-	}
-	
-	/**
-	 * Test {@link CommonUtil#toDate(XMLGregorianCalendar)} method.
-	 * Scenario: successfully returns {@code null} if the given {@code calendar} parameter 
-	 *           is {@code null}
-	 */
-	@Test
-	public /*default LocalDateTime*/ void toDate_NullCalendar(/*XMLGregorianCalendar calendar*/) {
-		XMLGregorianCalendar calendar = null;
-		LocalDateTime expectedDate = null;
-		LocalDateTime date = CommonUtil.toDate(calendar);
-		assertEquals("Result should be equal to the expected one.", expectedDate, date);
-	}
-
-	/**
-	 * Test {@link CommonUtil#toDate(XMLGregorianCalendar)} method.
-	 * Scenario: successfully returns result
-	 * @throws ParseException 
-	 * @throws DatatypeConfigurationException 
-	 */
-	@Test
-	public /*default LocalDateTime*/ void toDate(/*XMLGregorianCalendar calendar*/) throws ParseException {
-		LocalDateTime expectedDate = LocalDateTime.parse("2017-02-22 11:00:20", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-		XMLGregorianCalendar calendar = CommonUtil.toXMLGregorianCalendar(expectedDate);
-		LocalDateTime date = CommonUtil.toDate(calendar);
-		assertEquals("Result should be equal to the expected one.", expectedDate, date);
 	}
 }

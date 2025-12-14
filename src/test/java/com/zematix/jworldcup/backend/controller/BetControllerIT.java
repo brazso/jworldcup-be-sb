@@ -7,16 +7,14 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -29,6 +27,8 @@ import com.zematix.jworldcup.backend.dto.UserDto;
 import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.service.ApplicationService;
+
+import jakarta.inject.Inject;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -43,7 +43,7 @@ public class BetControllerIT {
 	@Inject
 	private CommonDao commonDao;
 
-	@MockBean
+	@MockitoBean
 	private ApplicationService applicationService;
 
 	@Test

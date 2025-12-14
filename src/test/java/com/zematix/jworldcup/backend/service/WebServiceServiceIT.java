@@ -8,16 +8,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import jakarta.inject.Inject;
-
 import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -29,6 +27,8 @@ import com.zematix.jworldcup.backend.entity.Match;
 import com.zematix.jworldcup.backend.entity.WebService;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.mapper.MatchMapper;
+
+import jakarta.inject.Inject;
 
 /**
  * Contains test functions of {@link WebServiceService} class.
@@ -45,11 +45,11 @@ public class WebServiceServiceIT extends TestBase {
 //	@Inject
 //	private CommonDao commonDao;
 	
-//	@MockBean
+//	@MockitoBean
 //	private WebServiceDao webServiceDao; // used by methods of EventService
 	
-//	@SpyBean // unfortunately partial mock does not work on bean with @ApplicationScope
-	@MockBean
+//	@MockitoSpyBean // unfortunately partial mock does not work on bean with @ApplicationScope
+	@MockitoBean
 	private ApplicationService applicationService;
 	
 	@Inject
