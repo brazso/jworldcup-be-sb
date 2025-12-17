@@ -1,5 +1,9 @@
 ## Changes
 
+### Version 1.3.0 / 2025-12-17
+
+* Feature: added CAF2025 tournament
+
 ### Version 1.2.4 / 2024-06-23
 
 * Fix: fixed deletion of a userGroup
