@@ -1,1 +1,1 @@
-FROM phpmyadmin/phpmyadmin:5.0.0
+FROM phpmyadmin/phpmyadmin:5.2.3
