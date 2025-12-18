@@ -1,4 +1,4 @@
-FROM rabbitmq:3.10.1-management
+FROM rabbitmq:4.2.2-management
 
 ARG ENV_POSTFIX
 ARG RABBITMQ_JWORLDCUP_PASS
