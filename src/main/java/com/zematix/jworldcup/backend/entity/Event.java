@@ -7,6 +7,7 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,15 +61,15 @@ public class Event implements Serializable {
 	private Short tiebreaker;
 
 	//bi-directional many-to-one association to Bet
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Bet> bets;
 
 	//bi-directional many-to-one association to Group
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Group> groups;
 
 	//bi-directional many-to-one association to Match
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Match> matches;
 
 	//bi-directional many-to-one association to Round
@@ -76,23 +77,23 @@ public class Event implements Serializable {
 	private List<Round> rounds;
 
 	//bi-directional many-to-one association to Team
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Team> teams;
 
 	//bi-directional many-to-one association to WebService
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<WebService> webServices;
 
 	//bi-directional many-to-one association to UserOfEvent
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<UserOfEvent> userOfEvents;
 
 	//bi-directional many-to-one association to UserOfEvent
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<UserGroup> userGroups = new ArrayList<>();
 	
 	//bi-directional many-to-one association to Chat
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Chat> chats;
 	
 	/**

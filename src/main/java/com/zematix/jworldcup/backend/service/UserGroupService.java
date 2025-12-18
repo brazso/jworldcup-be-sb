@@ -138,7 +138,7 @@ public class UserGroupService extends ServiceBase {
 		userGroups.forEach(userGroup -> {
 			List<User> users = userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId());
 			users.forEach(user -> {
-				user.getRoles().size(); // lazy fetch
+				user.getRoles().size(); // forced lazy fetch
 			});
 			userGroup.setUsers(users);
 			userGroup.getEvent();
@@ -164,7 +164,7 @@ public class UserGroupService extends ServiceBase {
 
 		List<User> users = userGroupDao.retrieveUsersByUserGroup(userGroupId);
 		users.forEach(user -> {
-			user.getRoles().size(); // lazy fetch
+			user.getRoles().size(); // forced lazy fetch
 		});
 		return users;
 	}
@@ -233,8 +233,8 @@ public class UserGroupService extends ServiceBase {
 	 * @return persisted UserGroup entity instance
 	 */
 //	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, allEntries = true)
-	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
-			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, true}") })
 	public UserGroup insertUserGroup(Long eventId, Long userId, String name, boolean isInsertConfirmed) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -288,8 +288,8 @@ public class UserGroupService extends ServiceBase {
 	 * @param name - name of the user group to be imported
 	 * @return persisted UserGroup entity instance
 	 */
-	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
-			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, true}") })
 	public UserGroup importUserGroup(Long eventId, Long userId, String name) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -373,7 +373,7 @@ public class UserGroupService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 		
-		user.getRoles().size(); // lazy fetch
+		user.getRoles().size(); // forced lazy fetch
 		
 		if (userGroup.getUsers().contains(user)) {
 			errMsgs.add(ParameterizedMessage.create("USER_IS_ALREADY_IN_USER_GROUP", ParameterizedMessageType.WARNING));
@@ -665,8 +665,8 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	@Transactional
-	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
-			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, true}") })
 	public UserGroup insertUserGroup(Long eventId, Long userId, String name) {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -700,8 +700,8 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	@Transactional
-	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
-			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, true}") })
 	public UserGroup importUserGroup(Long eventId, Long userId, Long importedUserGroupId) {
 		checkNotNull(eventId);
 		checkNotNull(userId);

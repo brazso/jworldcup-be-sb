@@ -56,7 +56,7 @@ public class UserNotificationService extends ServiceBase {
 			return null;
 		}
 		
-		// load lazy associations
+		// forced lazy fetch
 		userNotification.getUser().getRoles().size();
 		userNotification.getUserNotificationType().getKey();
 		
@@ -85,7 +85,7 @@ public class UserNotificationService extends ServiceBase {
 		
 		UserNotification userNotification = userNotificationDao.insert(userId, key, creationTime, modificationTime, value);
 		
-		// load lazy associations
+		// forced lazy fetch
 		userNotification.getUser().getRoles().size();
 		userNotification.getUserNotificationType().getKey();
 
@@ -108,7 +108,7 @@ public class UserNotificationService extends ServiceBase {
 		
 		UserNotification userNotification = userNotificationDao.update(userNotificationId, modificationTime, value);
 		
-		// load lazy associations
+		// forced lazy fetch
 		userNotification.getUser().getRoles().size();
 		userNotification.getUserNotificationType().getKey();
 

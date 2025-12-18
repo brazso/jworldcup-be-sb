@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import jakarta.inject.Inject;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -35,6 +33,8 @@ import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.util.CommonUtil;
+
+import jakarta.inject.Inject;
 
 /**
  * Operations around {@link User} elements. 
@@ -314,8 +314,7 @@ public class UserService extends ServiceBase {
 
 		try {
 			user = userDao.modifyUser(user, fullName, newEmailAddr, encryptedNewLoginPassword, zoneId, applicationService.getActualDateTime());
-			
-			user.getRoles().size(); // lazy fetch
+			user.getRoles().size(); // forced lazy fetch
 		}
 		catch (Exception e) {
 			errMsgs.add(ParameterizedMessage.create("DB_SAVE_FAILED"));
@@ -481,7 +480,7 @@ public class UserService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 
-		user.getRoles().size(); // lazy fetch
+		user.getRoles().size(); // forced lazy fetch
 		commonDao.detachEntity(user);
 		
 		return user;

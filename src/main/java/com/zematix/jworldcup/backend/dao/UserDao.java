@@ -26,7 +26,6 @@ import com.zematix.jworldcup.backend.emun.RoleEnum;
 import com.zematix.jworldcup.backend.entity.Dictionary;
 import com.zematix.jworldcup.backend.entity.QUser;
 import com.zematix.jworldcup.backend.entity.User;
-import com.zematix.jworldcup.backend.entity.UserGroup;
 
 /**
  * Database operations around {@link User} entities.
@@ -216,6 +215,7 @@ public class UserDao extends DaoBase {
 	 * @throws IllegalArgumentException if no {@link Role} or {@link UserStatus}
 	 *                                  instances belong to the given parameters
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_DICTIONARY_BY_KEY_AND_VALUE, key = "{'ROLE', #sRole}", beforeInvocation = true)
 	public User saveUser(String loginName, String encryptedLoginPassword, String fullName, String emailAddr,
 			String sRole, String sStatus, String token, String zoneId, LocalDateTime modificationTime) {
 		User user = new User();
@@ -223,25 +223,24 @@ public class UserDao extends DaoBase {
 		user.setLoginPassword(encryptedLoginPassword);
 		user.setFullName(fullName);
 		user.setEmailAddr(emailAddr);
-		user.setRoles(new HashSet<Dictionary>());
+		user.setRoles(new HashSet<>());
 		user.setToken(token);
 		user.setZoneId(zoneId);
 		user.setModificationTime(modificationTime);
-		user.setUserGroups(new HashSet<UserGroup>());
-
-		Dictionary role = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.ROLE.name(),sRole);
-		checkArgument(role != null, String.format("Role named \"%s\" cannot be found in database.", sRole));
+		user.setUserGroups(new HashSet<>());
 
 		Dictionary userStatus = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.USER_STATUS.name(), sStatus);
 		checkArgument(userStatus != null,
 				String.format("UserStatus named \"%s\" cannot be found in database.", sStatus));
-		user.setUserStatus(userStatus);
+		user.addUserStatus(userStatus);
 
 		commonDao.persistEntity(user);
-
-		user.getRoles().add(role);
-		role.getRoleUsers().add(user);
-
+		
+		// add a join-table row between user and virtual role tables where role cannot come from cache 
+		Dictionary role = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.ROLE.name(),sRole);
+		checkArgument(role != null, String.format("Role named \"%s\" cannot be found in database.", sRole));
+		user.addRole(role);
+		
 		return user;
 	}
 

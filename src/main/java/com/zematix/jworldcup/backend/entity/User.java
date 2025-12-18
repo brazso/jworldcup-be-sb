@@ -98,11 +98,11 @@ public class User implements Serializable {
 	private LocalDateTime modificationTime;
 
 	//bi-directional many-to-one association to Bet
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	private List<Bet> bets;
 
 	//bi-directional many-to-many association to virtual Role
-	@ManyToMany(mappedBy="roleUsers")
+	@ManyToMany(mappedBy="roleUsers", fetch=FetchType.LAZY)
 	private Set<Dictionary> roles;
 
 	//bi-directional many-to-one association to virtual UserStatus
@@ -111,23 +111,23 @@ public class User implements Serializable {
 	private Dictionary userStatus;
 
 	//bi-directional many-to-many association to UserGroup
-	@ManyToMany(mappedBy="users")
+	@ManyToMany(mappedBy="users", fetch=FetchType.LAZY)
 	private Set<UserGroup> userGroups;
 
 	//bi-directional many-to-one association to UserGroup
-	@OneToMany(mappedBy="owner")
+	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
 	private List<UserGroup> ownerUserGroups;
 
 	//bi-directional many-to-one association to UserOfEvent
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	private List<UserOfEvent> userOfEvents;
 
 	//bi-directional many-to-one association to UserGroup
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	private List<Chat> chats;
 
 	//bi-directional many-to-one association to UserNotification
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	private List<UserNotification> userNotifications;
 
 	@Transient
@@ -151,6 +151,34 @@ public class User implements Serializable {
 		bet.setUser(null);
 
 		return bet;
+	}
+
+	public Dictionary addRole(Dictionary role) {
+		getRoles().add(role);
+		role.getRoleUsers().add(this);
+
+		return role;
+	}
+	
+	public Dictionary removeRole(Dictionary role) {
+		getRoles().remove(role);
+		role.getRoleUsers().remove(this);
+
+		return role;
+	}
+	
+	public Dictionary addUserStatus(Dictionary userStatus) {
+		setUserStatus(userStatus);
+		userStatus.getUserStatusUsers().add(this);
+
+		return userStatus;
+	}
+
+	public Dictionary removeUserStatus(Dictionary userStatus) {
+		setUserStatus(null);
+		userStatus.getUserStatusUsers().remove(this);
+
+		return userStatus;
 	}
 
 	public UserGroup addOwnerUserGroups(UserGroup ownerUserGroups) {
