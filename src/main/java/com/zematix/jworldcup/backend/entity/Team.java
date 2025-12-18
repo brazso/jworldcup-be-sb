@@ -55,19 +55,19 @@ public class Team implements Serializable {
 	private Long wsId;
 
 	//bi-directional many-to-one association to Group
-	@OneToMany(mappedBy="team1")
+	@OneToMany(mappedBy="team1", fetch=FetchType.LAZY)
 	private List<Group> groups1;
 
 	//bi-directional many-to-one association to Group
-	@OneToMany(mappedBy="team2")
+	@OneToMany(mappedBy="team2", fetch=FetchType.LAZY)
 	private List<Group> groups2;
 
 	//bi-directional many-to-one association to Match
-	@OneToMany(mappedBy="team1")
+	@OneToMany(mappedBy="team1", fetch=FetchType.LAZY)
 	private List<Match> matches1;
 
 	//bi-directional many-to-one association to Match
-	@OneToMany(mappedBy="team2")
+	@OneToMany(mappedBy="team2", fetch=FetchType.LAZY)
 	private List<Match> matches2;
 
 	//bi-directional many-to-one association to Event

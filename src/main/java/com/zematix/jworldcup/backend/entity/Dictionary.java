@@ -6,6 +6,7 @@ import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,7 +47,7 @@ public class Dictionary implements Serializable {
 	private String name;
 
 	//bi-directional many-to-many association between virtual Role and User
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
 		name="user__role"
 		, joinColumns={
@@ -59,23 +60,23 @@ public class Dictionary implements Serializable {
 	private Set<User> roleUsers;
 	
 	//bi-directional many-to-one association to User
-	@OneToMany(mappedBy="userStatus")
+	@OneToMany(mappedBy="userStatus", fetch=FetchType.LAZY)
 	private List<User> userStatusUsers;
 
 	//bi-directional many-to-one association to UserNotification
-	@OneToMany(mappedBy="userNotificationType")
+	@OneToMany(mappedBy="userNotificationType", fetch=FetchType.LAZY)
 	private List<UserNotification> userNotifications;
 
 	public User addRoleUser(User user) {
 		getRoleUsers().add(user);
-		user.setUserStatus(this);
+		user.getRoles().add(this);
 
 		return user;
 	}
-
+	
 	public User removeRoleUser(User user) {
 		getRoleUsers().remove(user);
-		user.setUserStatus(null);
+		user.getRoles().remove(this);
 
 		return user;
 	}

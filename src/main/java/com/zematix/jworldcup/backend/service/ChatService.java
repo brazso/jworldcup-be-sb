@@ -72,7 +72,7 @@ public class ChatService extends ServiceBase {
 		
 		List<Chat> chats = chatDao.retrieveChats(userGroup.getEvent().getEventId(), userGroup.getUserGroupId());
 		
-		// load lazy associations
+		// forced lazy fetch
 		chats.stream().forEach(e -> {
 			e.getUser().getLoginName();
 			e.getUser().getRoles().size();
@@ -169,7 +169,7 @@ public class ChatService extends ServiceBase {
 
 		List<Chat> chats = chatDao.retrievePrivateChats(eventId, sourceUserId, targetUserId);
 
-		// load lazy associations
+		// forced lazy fetch
 		for (Chat chat: chats) {
 			chat.getUser().getLoginName();
 			chat.getUser().getRoles().size();

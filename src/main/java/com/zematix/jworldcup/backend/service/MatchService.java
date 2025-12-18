@@ -107,7 +107,7 @@ public class MatchService extends ServiceBase {
 		
 		List<Round> rounds = roundService.retrieveRoundsByEvent(eventId);
 		
-		// load lazy entity associations
+		// forced lazy fetch
 		for (Round round : rounds) {
 			for (Match match : round.getMatches()) {
 				if (match.getTeam1() != null) {
@@ -143,7 +143,7 @@ public class MatchService extends ServiceBase {
 		
 		List<Match> matches = matchDao.retrieveMatchesByEvent(eventId);
 		
-		// load lazy associations
+		// forced lazy fetch
 		for (Match match : matches) {
 			match.getRound().getName();
 			if (match.getTeam1() != null) {
@@ -179,7 +179,7 @@ public class MatchService extends ServiceBase {
 	public List<Match> retrieveFinishedGroupMatchesByTeam(Long teamId) {
 		List<Match> matches = matchDao.retrieveFinishedGroupMatchesByTeam(teamId);
 		
-		// load lazy associations
+		// forced lazy fetch
 		for (Match match : matches) {
 			match.getRound().getName();
 		}
@@ -204,7 +204,7 @@ public class MatchService extends ServiceBase {
 		
 		List<Match> matches = matchDao.retrieveMatchesWithoutParticipantsByEvent(eventId);
 		
-		// load lazy associations
+		// forced lazy fetch
 		for (Match match : matches) {
 			if (match.getTeam1() != null) {
 				match.getTeam1().getName();
@@ -252,7 +252,7 @@ public class MatchService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 		
-		// load lazy associations
+		// forced lazy fetch
 		match.getRound().getName();
 		if (match.getTeam1() != null) {
 			match.getTeam1().getName();
@@ -1089,7 +1089,7 @@ public class MatchService extends ServiceBase {
 			if (isInsideExpiredModificationTimeByEventId(event.getEventId(), actualDateTime)) {
 				Match match = retrieveFirstIncompleteMatchByEvent(event.getEventId());
 				if (match != null) {
-					match.getEvent(); // lazy read
+					match.getEvent(); // forced lazy fetch
 					matches.add(match);
 				}
 			}
@@ -1134,7 +1134,7 @@ public class MatchService extends ServiceBase {
 		
 		List<Match> matches = matchDao.retrieveMatchesByGroup(groupId);
 		
-		// load lazy associations
+		// forced lazy fetch
 		for (Match match : matches) {
 			match.getRound().getName();
 			if (match.getTeam1() != null) {

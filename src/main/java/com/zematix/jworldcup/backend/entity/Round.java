@@ -48,7 +48,7 @@ public class Round implements Serializable {
 	private String name;
 
 	//bi-directional many-to-one association to Match
-	@OneToMany(mappedBy="round")
+	@OneToMany(mappedBy="round", fetch=FetchType.LAZY)
 	@OrderBy("matchN ASC")
 	private List<Match> matches;
 

@@ -76,8 +76,8 @@ public class Match implements Serializable {
 	@Column(name="start_time", nullable=false)
 	private LocalDateTime startTime;
 
-	//bi-directional many-to-one association to Bet
-	@OneToMany(mappedBy="match")
+	//bi-directional one-to-mainy association to Bets
+	@OneToMany(mappedBy="match", fetch=FetchType.LAZY)
 	private List<Bet> bets;
 
 	//bi-directional many-to-one association to Event

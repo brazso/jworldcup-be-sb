@@ -62,7 +62,7 @@ public class UserOfEventService extends ServiceBase {
 			return null;
 		}
 		
-		// load lazy associations
+		// forced lazy fetch
 		userOfEvent.getEvent().getEventId();
 		userOfEvent.getUser().getUserId();
 		if (userOfEvent.getFavouriteGroupTeam() != null) {
@@ -115,7 +115,7 @@ public class UserOfEventService extends ServiceBase {
 			if (favouriteGroupTeam == null) {
 				throw new IllegalStateException(String.format("No \"Team\" entity belongs to \"favouriteGroupTeamId\"=%d, cannot be found in database.", favouriteGroupTeamId));
 			}
-			// load lazy associations
+			// forced lazy fetch
 			favouriteGroupTeam.getName();
 			favouriteGroupTeam.getGroup().getName();
 
@@ -126,7 +126,7 @@ public class UserOfEventService extends ServiceBase {
 			if (favouriteKnockoutTeam == null) {
 				throw new IllegalStateException(String.format("No \"Team\" entity belongs to \"favouriteKnockoutTeamId\"=%d, cannot be found in database.", favouriteKnockoutTeamId));
 			}
-			// load lazy associations
+			// forced lazy fetch
 			favouriteKnockoutTeam.getName();
 			favouriteKnockoutTeam.getGroup().getName();
 		}

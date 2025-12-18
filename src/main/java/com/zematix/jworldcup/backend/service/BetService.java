@@ -75,7 +75,7 @@ public class BetService extends ServiceBase {
 			bet.setFavouriteTeamIndex(retrieveFavouriteTeamIndexByBet(bet, favouriteTeamIds));
 		}
 		
-		// load lazy associations
+		// forced lazy fetch
 		for (Bet bet: bets) {
 			Match match = bet.getMatch();
 			if (match.getTeam1() != null) {
@@ -110,7 +110,7 @@ public class BetService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 
-		// load lazy associations
+		// forced lazy fetch
 		Match match = bet.getMatch();
 		if (match.getTeam1() != null) {
 			match.getTeam1().getName();
@@ -144,7 +144,7 @@ public class BetService extends ServiceBase {
 		
 		List<Bet> bets = betDao.retrieveBetsByMatchAndUserGroup(matchId, userGroupId);
 		
-		// load lazy associations
+		// forced lazy fetch
 		for (Bet bet: bets) {
 			Match match = bet.getMatch();
 			if (match.getTeam1() != null) {
@@ -233,7 +233,7 @@ public class BetService extends ServiceBase {
 		}
 
 		if (bet != null) {
-			// load lazy associations
+			// forced lazy fetch
 			Match match = bet.getMatch();
 			if (match.getTeam1() != null) {
 				match.getTeam1().getName();

@@ -81,7 +81,7 @@ public class UserGroup implements Serializable {
 	private Event event;
 
 	//bi-directional many-to-many association to User
-	@ManyToMany //(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
 		name="user__user_group"
 		, joinColumns={
@@ -100,7 +100,7 @@ public class UserGroup implements Serializable {
 	private User owner;
 	
 	//bi-directional many-to-one association to Chat
-	@OneToMany(mappedBy="userGroup")
+	@OneToMany(mappedBy="userGroup", fetch=FetchType.LAZY)
 	private List<Chat> chats = new ArrayList<>();
 	
 	public Boolean isPublicEditableAsBoolean() {

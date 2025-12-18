@@ -51,7 +51,7 @@ public class TeamService extends ServiceBase {
 		
 		var teams = teamDao.retrieveFavouriteGroupTeams(eventId);
 
-		// load lazy associations
+		// forced lazy fetch
 		teams.stream().forEach(e -> {
 			e.getGroup().getName();
 		});
@@ -73,7 +73,7 @@ public class TeamService extends ServiceBase {
 
 		var teams = teamDao.retrieveFavouriteKnockoutTeams(eventId);
 		
-		// load lazy associations
+		// forced lazy fetch
 		teams.stream().forEach(e -> {
 			e.getGroup().getName();
 		});
