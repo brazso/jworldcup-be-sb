@@ -5,16 +5,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -56,16 +57,19 @@ public class Event implements Serializable {
 	@Column(name="website", nullable=true, length=255)
 	private String website;
 
+	@Column(nullable=false)
+	private Short tiebreaker;
+
 	//bi-directional many-to-one association to Bet
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Bet> bets;
 
 	//bi-directional many-to-one association to Group
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Group> groups;
 
 	//bi-directional many-to-one association to Match
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Match> matches;
 
 	//bi-directional many-to-one association to Round
@@ -73,23 +77,23 @@ public class Event implements Serializable {
 	private List<Round> rounds;
 
 	//bi-directional many-to-one association to Team
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Team> teams;
 
 	//bi-directional many-to-one association to WebService
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<WebService> webServices;
 
 	//bi-directional many-to-one association to UserOfEvent
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<UserOfEvent> userOfEvents;
 
 	//bi-directional many-to-one association to UserOfEvent
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<UserGroup> userGroups = new ArrayList<>();
 	
 	//bi-directional many-to-one association to Chat
-	@OneToMany(mappedBy="event")
+	@OneToMany(mappedBy="event", fetch=FetchType.LAZY)
 	private List<Chat> chats;
 	
 	/**

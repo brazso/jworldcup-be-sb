@@ -3,7 +3,7 @@ package com.zematix.jworldcup.backend.controller;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

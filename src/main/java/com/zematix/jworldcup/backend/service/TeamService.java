@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -51,7 +51,7 @@ public class TeamService extends ServiceBase {
 		
 		var teams = teamDao.retrieveFavouriteGroupTeams(eventId);
 
-		// load lazy associations
+		// forced lazy fetch
 		teams.stream().forEach(e -> {
 			e.getGroup().getName();
 		});
@@ -73,7 +73,7 @@ public class TeamService extends ServiceBase {
 
 		var teams = teamDao.retrieveFavouriteKnockoutTeams(eventId);
 		
-		// load lazy associations
+		// forced lazy fetch
 		teams.stream().forEach(e -> {
 			e.getGroup().getName();
 		});

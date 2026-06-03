@@ -12,7 +12,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-      connection:
+    open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -23,7 +23,6 @@ spring:
         jdbc: 
           time_zone: UTC
   datasource:
-    #driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://mysql:3306/worldcup?useLegacyDatetimeCode=false # mysql host runs in a docker container
     username: worldcup
     #password: worldcup.org #SECRET
@@ -58,8 +57,8 @@ jwt:
 app:
   url: https://worldcup.zematix.hu/
   version:
-    number: 1.1.0
-    date: 2024-01-13
+    number: 1.2.4
+    date: 2024-06-23
   shortName: JWorldcup
   emailAddr: jworldcup@zematix.hu
   user:
@@ -72,8 +71,7 @@ app:
   api:
     moduleName: jworldcup
     version: 1.0
-  #reCaptcha:
-    #secretKey: 6LdAnY0iAAAAALusuamLTrTwloLRU9UJ51IM6u2f #SECRET
+  #reCaptcha.secretKey: 6LdAnY0iAAAAALusuamLTrTwloLRU9UJ51IM6u2f #SECRET
 
 # SMTP parameters- Zoho email provider used with generated app specific pwd
 mail.smtp:
@@ -97,20 +95,4 @@ rabbitMQ:
 logging:
   file.path: logs
   level:
-    #org.hibernate.SQL: DEBUG
-    #org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    #org.springframework.orm.jpa: TRACE
-#    org.springframework.transaction.interceptor: TRACE
-#    com.zaxxer.hikari: TRACE
-#    com.mysql.cj.jdbc: TRACE
-    
-#    org.springframework.security.ldap: TRACE
-#    org.springframework.ldap: TRACE
-#    org.springframework.messaging.simp: WARN
-    
-#    org.springframework.messaging: DEBUG
-#    org.springframework.security.web.authentication: TRACE
-#    org.springframework.security.core.session: TRACE
-#    org.springframework.cache.interceptor: TRACE
-    
-    com.zematix.jworldcup.backend: TRACE
+    com.zematix.jworldcup.backend: DEBUG

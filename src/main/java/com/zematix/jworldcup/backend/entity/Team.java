@@ -1,13 +1,27 @@
 package com.zematix.jworldcup.backend.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+import com.zematix.jworldcup.backend.listener.TeamListener;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 
 /**
@@ -15,6 +29,7 @@ import java.util.List;
  * 
  */
 @Entity
+@EntityListeners({TeamListener.class})
 @Table(name="team")
 @NamedQuery(name="Team.findAll", query="SELECT t FROM Team t")
 @Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -40,19 +55,19 @@ public class Team implements Serializable {
 	private Long wsId;
 
 	//bi-directional many-to-one association to Group
-	@OneToMany(mappedBy="team1")
+	@OneToMany(mappedBy="team1", fetch=FetchType.LAZY)
 	private List<Group> groups1;
 
 	//bi-directional many-to-one association to Group
-	@OneToMany(mappedBy="team2")
+	@OneToMany(mappedBy="team2", fetch=FetchType.LAZY)
 	private List<Group> groups2;
 
 	//bi-directional many-to-one association to Match
-	@OneToMany(mappedBy="team1")
+	@OneToMany(mappedBy="team1", fetch=FetchType.LAZY)
 	private List<Match> matches1;
 
 	//bi-directional many-to-one association to Match
-	@OneToMany(mappedBy="team2")
+	@OneToMany(mappedBy="team2", fetch=FetchType.LAZY)
 	private List<Match> matches2;
 
 	//bi-directional many-to-one association to Event
@@ -65,6 +80,12 @@ public class Team implements Serializable {
 	@JoinColumn(name="group_id", nullable=false)
 	private Group group;
 
+	/**
+	 * Alternative webservice team ids. It includes wsId as first element.
+	 */
+	@Transient
+	private List<Long> wsIds;
+	
 	public Group addGroups1(Group groups1) {
 		getGroups1().add(groups1);
 		groups1.setTeam1(this);

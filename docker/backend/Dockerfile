@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 
 ## script that will wait on the availability of a host and TCP port
 COPY docker/wait-for-it.sh /wait-for-it.sh

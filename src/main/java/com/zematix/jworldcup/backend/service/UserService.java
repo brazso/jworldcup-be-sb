@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -35,6 +33,8 @@ import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;
 import com.zematix.jworldcup.backend.util.CommonUtil;
+
+import jakarta.inject.Inject;
 
 /**
  * Operations around {@link User} elements. 
@@ -314,6 +314,7 @@ public class UserService extends ServiceBase {
 
 		try {
 			user = userDao.modifyUser(user, fullName, newEmailAddr, encryptedNewLoginPassword, zoneId, applicationService.getActualDateTime());
+			user.getRoles().size(); // forced lazy fetch
 		}
 		catch (Exception e) {
 			errMsgs.add(ParameterizedMessage.create("DB_SAVE_FAILED"));
@@ -420,6 +421,7 @@ public class UserService extends ServiceBase {
 		User user = userDao.findUserByLoginName(loginName);
 		if (user != null) {
 			user.getRoles().size(); // forced lazy fetch
+			user.getUserStatus().getUserStatusUsers().size();
 		}
 		
 		return user;
@@ -478,6 +480,7 @@ public class UserService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 
+		user.getRoles().size(); // forced lazy fetch
 		commonDao.detachEntity(user);
 		
 		return user;
@@ -490,6 +493,7 @@ public class UserService extends ServiceBase {
 	 * 
 	 * @return a map containing all supported time zone key/value pairs
 	 */
+	@Cacheable(cacheNames = CachingConfig.CACHE_TIMEZONE_IDS)
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Map<String, String> getAllSupportedTimeZoneIds() {
 		List<String> zoneList = new ArrayList<>(ZoneId.getAvailableZoneIds());

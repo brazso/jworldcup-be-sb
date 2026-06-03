@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.inject.Inject;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,6 @@ import com.zematix.jworldcup.backend.emun.RoleEnum;
 import com.zematix.jworldcup.backend.entity.Dictionary;
 import com.zematix.jworldcup.backend.entity.QUser;
 import com.zematix.jworldcup.backend.entity.User;
-import com.zematix.jworldcup.backend.entity.UserGroup;
 
 /**
  * Database operations around {@link User} entities.
@@ -46,6 +45,15 @@ public class UserDao extends DaoBase {
 
 	@Inject
 	private UserOfEventDao userOfEventDao;
+
+	@Inject
+	private ChatDao chatDao;
+	
+	@Inject
+	private UserGroupDao userGroupDao;
+	
+	@Inject
+	private UserNotificationDao userNotificationDao;
 
 	/**
 	 * Returns a list of all {@link User} entities from database.
@@ -207,6 +215,7 @@ public class UserDao extends DaoBase {
 	 * @throws IllegalArgumentException if no {@link Role} or {@link UserStatus}
 	 *                                  instances belong to the given parameters
 	 */
+	@CacheEvict(cacheNames = CachingConfig.CACHE_DICTIONARY_BY_KEY_AND_VALUE, key = "{'ROLE', #sRole}", beforeInvocation = true)
 	public User saveUser(String loginName, String encryptedLoginPassword, String fullName, String emailAddr,
 			String sRole, String sStatus, String token, String zoneId, LocalDateTime modificationTime) {
 		User user = new User();
@@ -214,25 +223,24 @@ public class UserDao extends DaoBase {
 		user.setLoginPassword(encryptedLoginPassword);
 		user.setFullName(fullName);
 		user.setEmailAddr(emailAddr);
-		user.setRoles(new HashSet<Dictionary>());
+		user.setRoles(new HashSet<>());
 		user.setToken(token);
 		user.setZoneId(zoneId);
 		user.setModificationTime(modificationTime);
-		user.setUserGroups(new HashSet<UserGroup>());
-
-		Dictionary role = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.ROLE.name(),sRole);
-		checkArgument(role != null, String.format("Role named \"%s\" cannot be found in database.", sRole));
+		user.setUserGroups(new HashSet<>());
 
 		Dictionary userStatus = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.USER_STATUS.name(), sStatus);
 		checkArgument(userStatus != null,
 				String.format("UserStatus named \"%s\" cannot be found in database.", sStatus));
-		user.setUserStatus(userStatus);
+		user.addUserStatus(userStatus);
 
 		commonDao.persistEntity(user);
-
-		user.getRoles().add(role);
-		role.getRoleUsers().add(user);
-
+		
+		// add a join-table row between user and virtual role tables where role cannot come from cache 
+		Dictionary role = dictionaryDao.findDictionaryByKeyAndValue(DictionaryEnum.ROLE.name(),sRole);
+		checkArgument(role != null, String.format("Role named \"%s\" cannot be found in database.", sRole));
+		user.addRole(role);
+		
 		return user;
 	}
 
@@ -515,9 +523,12 @@ public class UserDao extends DaoBase {
 
 		// delete all dependencies of user
 		betDao.deleteBetsByUser(user.getUserId());
+		chatDao.deleteChatsByUser(user.getUserId());
 		deleteUserRolesByUserId(user.getUserId());
 		deleteUserUserGroupsByUserId(user.getUserId());
+		userGroupDao.deleteUserGroupsByUser(user.getUserId()); // where user is an owner
 		userOfEventDao.deleteUserOfEventsByUser(user.getUserId());
+		userNotificationDao.deleteUserNotificationsByUser(user.getUserId());
 
 		commonDao.removeEntity(user);
 

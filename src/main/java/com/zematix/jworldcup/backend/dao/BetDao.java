@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -82,7 +82,7 @@ public class BetDao extends DaoBase {
 		bets = query.from(qBet)
 				.where(qBet.event.eventId.eq(eventId),
 						qBet.user.userId.eq(userId))
-				.orderBy(qBet.match.startTime.asc())
+				.orderBy(qBet.match.matchN.asc())
 				.fetch();
 
 		return bets;

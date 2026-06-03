@@ -8,5 +8,6 @@ import com.zematix.jworldcup.backend.entity.Dictionary;
 public enum DictionaryEnum {
 	ROLE,
 	USER_NOTIFICATION,
-	USER_STATUS
+	USER_STATUS,
+	WS_TEAM_ID
 }

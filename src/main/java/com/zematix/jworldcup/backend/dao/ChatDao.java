@@ -5,7 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -131,8 +132,9 @@ public class ChatDao extends DaoBase {
 	}
 
 	/**
-	 * Return latest chat record which belongs to the given {@code eventId} and {@code user}.
-	 * via some {@link UserGroup}. Unless it is found it returns {@code null}.
+	 * Return latest chat record which belongs to the given {@code eventId} and {@code userId} 
+	 * where given user is equal to chat.targetUser or is in chat.userGroup. Chat records sent
+	 * by the given user does not take account. If it is not found it returns {@code null}.
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Chat retrieveLatestChat(Long eventId, Long userId) throws ServiceException {
@@ -144,7 +146,8 @@ public class ChatDao extends DaoBase {
 		JPAQuery<Chat> query = new JPAQuery<>(getEntityManager());
 		chat = query.from(qChat)
 		  .where(qChat.event.eventId.eq(eventId)
-				  .and(qChat.userGroup.isNull().or(qChat.userGroup.users.any().userId.eq(userId))))
+				  .and(qChat.user.userId.ne(userId))
+				  .and(qChat.targetUser.userId.eq(userId).or(qChat.userGroup.users.any().userId.eq(userId))))
 		  .orderBy(qChat.modificationTime.desc())
 		  .fetchFirst();
 		
@@ -247,4 +250,41 @@ public class ChatDao extends DaoBase {
 		
 		return true;
 	}
+	
+	/**
+	 * Delete all chat entities belongs to the given user. Not just sent/received
+	 * chat entities are deleted connected to the user but also those ones which
+	 * were sent to a userGroup where the user is the owner. Note:
+	 * QueryDSL/Hibernate generated "cross join" which is unsupported in MySQL
+	 * DELETE command therefore native query is used.
+	 * 
+	 * @param userId - belongs to an {@link User} entity
+	 * @throws IllegalArgumentException if any of the given parameter is
+	 *                                  {@code null}
+	 */
+	public void deleteChatsByUser(Long userId) {
+		checkNotNull(userId);
+
+		Query query = getEntityManager().createNamedQuery("Chat.deleteChatsByUserId", Chat.class);
+		query.setParameter(1, userId);
+		query.setParameter(2, userId);
+		query.setParameter(3, userId);
+		query.executeUpdate();
+	}
+	
+	/**
+	 * Delete all chat entities belongs to the given userGroup
+	 * 
+	 * @param userGroupId - belongs to an {@link UserGroup} entity
+	 * @throws IllegalArgumentException if any of the given parameter is
+	 *                                  {@code null}
+	 */
+	public void deleteChatsByUserGroup(Long userGroupId) {
+		checkNotNull(userGroupId);
+
+		QChat qChat = QChat.chat;
+		JPADeleteClause clause = new JPADeleteClause(getEntityManager(), qChat);
+		clause.where(qChat.userGroup.userGroupId.eq(userGroupId)).execute();
+	}
+
 }

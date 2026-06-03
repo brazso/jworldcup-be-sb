@@ -10,8 +10,8 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.PersistenceException;
+import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,6 +64,8 @@ public class CommonDaoTest {
 		event.setDescription("World Cup");
 		event.setShortDesc("WC");
 		event.setOrganizer("FIFA");
+		event.setTiebreaker((short)0);
+		
 		commonDao.persistEntity(event);
 		logger.info("eventId=" + event.getEventId());
 		assertNotNull(event.getEventId());
@@ -84,6 +86,7 @@ public class CommonDaoTest {
 		event.setDescription("World Cup");
 		event.setShortDesc("WC");
 		event.setOrganizer("FIFA");
+		event.setTiebreaker((short)0);
 		
 		commonDao.persistEntity(event);
 		fail("Should not be persisted because of not null constraint violation.");

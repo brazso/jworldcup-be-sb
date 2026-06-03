@@ -2,10 +2,10 @@ package com.zematix.jworldcup.backend.controller;
 
 import java.util.List;
 
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.core.GenericEntity;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
 import com.zematix.jworldcup.backend.exception.ServiceException;
 import com.zematix.jworldcup.backend.model.ParameterizedMessage;

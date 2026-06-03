@@ -5,22 +5,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import com.zematix.jworldcup.backend.validation.Email;
 import com.zematix.jworldcup.backend.validation.ModifyUserValidationGroup;
@@ -98,11 +98,11 @@ public class User implements Serializable {
 	private LocalDateTime modificationTime;
 
 	//bi-directional many-to-one association to Bet
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	private List<Bet> bets;
 
 	//bi-directional many-to-many association to virtual Role
-	@ManyToMany(mappedBy="roleUsers")
+	@ManyToMany(mappedBy="roleUsers", fetch=FetchType.LAZY)
 	private Set<Dictionary> roles;
 
 	//bi-directional many-to-one association to virtual UserStatus
@@ -111,23 +111,23 @@ public class User implements Serializable {
 	private Dictionary userStatus;
 
 	//bi-directional many-to-many association to UserGroup
-	@ManyToMany(mappedBy="users")
+	@ManyToMany(mappedBy="users", fetch=FetchType.LAZY)
 	private Set<UserGroup> userGroups;
 
 	//bi-directional many-to-one association to UserGroup
-	@OneToMany(mappedBy="owner")
+	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
 	private List<UserGroup> ownerUserGroups;
 
 	//bi-directional many-to-one association to UserOfEvent
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	private List<UserOfEvent> userOfEvents;
 
 	//bi-directional many-to-one association to UserGroup
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	private List<Chat> chats;
 
 	//bi-directional many-to-one association to UserNotification
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
 	private List<UserNotification> userNotifications;
 
 	@Transient
@@ -151,6 +151,34 @@ public class User implements Serializable {
 		bet.setUser(null);
 
 		return bet;
+	}
+
+	public Dictionary addRole(Dictionary role) {
+		getRoles().add(role);
+		role.getRoleUsers().add(this);
+
+		return role;
+	}
+	
+	public Dictionary removeRole(Dictionary role) {
+		getRoles().remove(role);
+		role.getRoleUsers().remove(this);
+
+		return role;
+	}
+	
+	public Dictionary addUserStatus(Dictionary userStatus) {
+		setUserStatus(userStatus);
+		userStatus.getUserStatusUsers().add(this);
+
+		return userStatus;
+	}
+
+	public Dictionary removeUserStatus(Dictionary userStatus) {
+		setUserStatus(null);
+		userStatus.getUserStatusUsers().remove(this);
+
+		return userStatus;
 	}
 
 	public UserGroup addOwnerUserGroups(UserGroup ownerUserGroups) {

@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.zematix.jworldcup.backend.emun.EventShortDescWithYearEnum;
 import com.zematix.jworldcup.backend.model.GroupPosition;
 import com.zematix.jworldcup.backend.model.GroupTeam;
 import com.zematix.jworldcup.backend.model.Pair;
@@ -27,6 +25,8 @@ import com.zematix.jworldcup.backend.model.Pair;
 @Service
 //@Transactional - no database usage here
 public class GroupTeamService extends ServiceBase {
+	
+	private static final String GROUPTEAMS_CANNOT_BE_NULL_EMPTY = "Argument \"groupTeams\" list must be neither null nor empty.";
 
 	/**
 	 * First level sorting of teams in a group based on the following tie-breaking criterion.
@@ -81,30 +81,22 @@ public class GroupTeamService extends ServiceBase {
 	 * Sorts teams in a group based on the tie-breaking criteria of the organizer of the event.
 	 *   
 	 * @param groupTeams - list of teams in a group
-	 * @param level - crieria group to be executed
+	 * @param level - criteria group to be executed
 	 * @param globalPositionInGroup - position of the first team in the group
 	 * @return {@code true} if after sorting there are equal teams in the group
 	 */
 	private boolean sortGroupTeams(List<GroupTeam> groupTeams, int level, int globalPositionInGroup) {
 		boolean hasEqualRankings = false;
-		checkArgument(groupTeams != null && !groupTeams.isEmpty(), "Argument \"groupTeams\" list must be neither null nor empty.");
+		checkArgument(groupTeams != null && !groupTeams.isEmpty(), GROUPTEAMS_CANNOT_BE_NULL_EMPTY);
 		String eventShortDescWithYear = groupTeams.get(0).getEventShortDescWithYear();
 		checkNotNull(eventShortDescWithYear);
-		EventShortDescWithYearEnum eventShortDescWithYearEnum = EventShortDescWithYearEnum.valueOf(eventShortDescWithYear); // may throw IllegalArgumentException
+		Short eventTiebreaker =  groupTeams.get(0).getEventTiebreaker();
+		checkNotNull(eventTiebreaker);
 		List<List<GroupTeam>> twinGroupTeamsList = new ArrayList<>();
 		
 		Comparator<GroupTeam> comparator = null;
 		
-		if (Arrays.asList(EventShortDescWithYearEnum.WC2014, 
-				EventShortDescWithYearEnum.EC2016, 
-				EventShortDescWithYearEnum.WC2018,
-				EventShortDescWithYearEnum.AFC2019,
-				EventShortDescWithYearEnum.CAF2019,
-				EventShortDescWithYearEnum.EC2020,
-				EventShortDescWithYearEnum.WC2022,
-				EventShortDescWithYearEnum.AFC2023,
-				EventShortDescWithYearEnum.CAF2023
-				).contains(eventShortDescWithYearEnum)) {
+		if (eventTiebreaker == 1) {
 			switch (level) {
 				case 0:
 					comparator = groupTeamComparatorPoints; // globally in group
@@ -119,12 +111,7 @@ public class GroupTeamService extends ServiceBase {
 					return true;
 			}
 		}
-		else if (Arrays.asList(
-				EventShortDescWithYearEnum.CA2016,
-				EventShortDescWithYearEnum.CA2019, 
-				EventShortDescWithYearEnum.CA2021,
-				EventShortDescWithYearEnum.ABC2021
-				).contains(eventShortDescWithYearEnum)) {
+		else if (eventTiebreaker == 2) {
 			switch (level) {
 				case 0:
 					comparator = groupTeamComparatorPGdGf;// globally in group
@@ -135,6 +122,9 @@ public class GroupTeamService extends ServiceBase {
 				default:
 					return true;
 			}
+		}
+		else {
+			throw new IllegalArgumentException(String.format("Unsupported tiebreaker %s on event %s.", eventTiebreaker, eventShortDescWithYear));
 		}
 		
 		Collections.sort(groupTeams, comparator);
@@ -170,37 +160,12 @@ public class GroupTeamService extends ServiceBase {
 				int nextLevel = level + 1;
 				boolean isAgainstEachOther = false;
 				
-				if (Arrays.asList(
-						EventShortDescWithYearEnum.WC2014, 
-						EventShortDescWithYearEnum.EC2016, 
-						EventShortDescWithYearEnum.WC2018,
-						EventShortDescWithYearEnum.AFC2019,
-						EventShortDescWithYearEnum.CAF2019,
-						EventShortDescWithYearEnum.EC2020,
-						EventShortDescWithYearEnum.WC2022,
-						EventShortDescWithYearEnum.AFC2023,
-						EventShortDescWithYearEnum.CAF2023
-						).contains(eventShortDescWithYearEnum)) {
-					if (level == 1 && twinGroupTeams.size() < groupTeams.size()) {
-						// Level sorting must be repeated to the matches between the teams
-						// who are still level to determine their final rankings.
-						nextLevel = level;
-					}
-					isAgainstEachOther = (nextLevel == 1);
+				if (level == 1 && twinGroupTeams.size() < groupTeams.size()) {
+					// Level sorting must be repeated to the matches between the teams
+					// who are still level to determine their final rankings.
+					nextLevel = level;
 				}
-				else if (Arrays.asList(
-						EventShortDescWithYearEnum.CA2016,
-						EventShortDescWithYearEnum.CA2019,
-						EventShortDescWithYearEnum.CA2021,
-						EventShortDescWithYearEnum.ABC2021
-						).contains(eventShortDescWithYearEnum)) {
-					if (level == 1 && twinGroupTeams.size() < groupTeams.size()) {
-						// Level sorting must be repeated to the matches between the teams
-						// who are still level to determine their final rankings.
-						nextLevel = level;
-					}
-					isAgainstEachOther = (nextLevel == 1);
-				}
+				isAgainstEachOther = (nextLevel == 1);
 			
 				if (isAgainstEachOther) {
 					// If, after level sorting, teams still have an equal ranking, then next 
@@ -235,14 +200,12 @@ public class GroupTeamService extends ServiceBase {
 	 * @return {@code true} if all teams finished their group matches
 	 */
 	public boolean isGroupFinished(List<GroupTeam> groupTeams) {
-		checkArgument(groupTeams != null && !groupTeams.isEmpty(), "Argument \"groupTeams\" list must be neither null nor empty.");
+		checkArgument(groupTeams != null && !groupTeams.isEmpty(), GROUPTEAMS_CANNOT_BE_NULL_EMPTY);
 		
-		boolean isGroupFinished = groupTeams.stream()
+		return groupTeams.stream()
 				.map(GroupTeam::isTeamInGroupFinished)
 				.reduce((b1, b2) -> b1 && b2).orElse(false);
-		return isGroupFinished;
 	}
-	
 	
 	/**
 	 * Returns a {@link GroupTeam} from the provided {@code groupTeams} list, 
@@ -253,7 +216,7 @@ public class GroupTeamService extends ServiceBase {
 	 * @return team on {@code positionInGroup} position from a team list of a group 
 	 */
 	public GroupTeam getGroupTeamByGroupPosition(List<GroupTeam> groupTeams, int positionInGroup) {
-		checkArgument(groupTeams != null && !groupTeams.isEmpty(), "Argument \"groupTeams\" list must be neither null nor empty.");
+		checkArgument(groupTeams != null && !groupTeams.isEmpty(), GROUPTEAMS_CANNOT_BE_NULL_EMPTY);
 		
 		List<GroupTeam> teams = groupTeams.stream()
 				.filter(groupTeam->groupTeam.getPositionInGroup() == positionInGroup)
@@ -274,29 +237,9 @@ public class GroupTeamService extends ServiceBase {
 	 */
 	public boolean sortGroupTeamsOnPosition(List<GroupTeam> groupTeams) {
 		boolean hasEqualRankings = false;
-		checkArgument(groupTeams != null && !groupTeams.isEmpty(), "Argument \"groupTeams\" list must be neither null nor empty.");
-		String eventShortDescWithYear = groupTeams.get(0).getEventShortDescWithYear();
-		checkNotNull(eventShortDescWithYear);
-		EventShortDescWithYearEnum eventShortDescWithYearEnum = EventShortDescWithYearEnum.valueOf(eventShortDescWithYear); // may throw IllegalArgumentException
+		checkArgument(groupTeams != null && !groupTeams.isEmpty(), GROUPTEAMS_CANNOT_BE_NULL_EMPTY);
 
-		Comparator<GroupTeam> comparator = null;
-		
-		if (Arrays.asList(
-				EventShortDescWithYearEnum.EC2016,
-				EventShortDescWithYearEnum.AFC2019,
-				EventShortDescWithYearEnum.CA2019,
-				EventShortDescWithYearEnum.CAF2019,
-				EventShortDescWithYearEnum.EC2020,
-				EventShortDescWithYearEnum.CA2021,
-				EventShortDescWithYearEnum.AFC2023,
-				EventShortDescWithYearEnum.CAF2023
-				).contains(eventShortDescWithYearEnum)) {
-			comparator = groupTeamComparatorPGdGf;
-		}
-		else {
-			throw new IllegalArgumentException(String.format("Unsupported function on %s event.", eventShortDescWithYear));
-		}
-
+		Comparator<GroupTeam> comparator = groupTeamComparatorPGdGf;
 		Collections.sort(groupTeams, comparator);
 		
 		GroupTeam groupTeamPrev = null;
@@ -332,7 +275,7 @@ public class GroupTeamService extends ServiceBase {
 	 * @return pair of {@link GroupPosition} elements
 	 */
 	public Pair<GroupPosition> convertParticipantRuleToGroupPositionPair(String participantRule) {
-		final String PARTICIPANT_RULE_REGEX = "^([A-Z]+)([0-9]+)-([A-Z]+)([0-9]+)$";
+		final String PARTICIPANT_RULE_REGEX = "^([A-Z]+)(\\d+)-([A-Z]+)(\\d+)$";
 		Pair<GroupPosition> groupPositionPair = new Pair<>();
 		
 		checkArgument(!Strings.isNullOrEmpty(participantRule), "Parameter \"participantRule\" must not be empty.");

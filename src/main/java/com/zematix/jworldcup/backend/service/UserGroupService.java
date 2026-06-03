@@ -14,12 +14,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
@@ -105,6 +106,7 @@ public class UserGroupService extends ServiceBase {
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setPublicEditableAsBoolean(false);
 		userGroup.setUserGroupId(UserGroup.EVERYBODY_USER_GROUP_ID);
+		userGroup.setPriority(UserGroup.PRIORITY_DEFAULT);
 				
 		return userGroup;
 	}
@@ -134,20 +136,21 @@ public class UserGroupService extends ServiceBase {
 		}
 		
 		userGroups.forEach(userGroup -> {
-			List<User> users = userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()); // lazy fetch?
+			List<User> users = userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId());
 			users.forEach(user -> {
-				user.getRoles().size(); // lazy fetch
+				user.getRoles().size(); // forced lazy fetch
 			});
 			userGroup.setUsers(users);
 			userGroup.getEvent();
+			userGroup.getOwner().getRoles().size();
 		});
 		
 		return userGroups;
 	}
 	
 	/**
-	 * Returns a list of found {@link User} instance with "USER" {@link Role#getRole()} 
-	 * and with "NORMAL" {@link UserStatus#getStatus()} which belongs to the given 
+	 * Returns a list of found {@link User} instance with "USER" role 
+	 * and with "NORMAL" userStatus which belongs to the given 
 	 * {@code userGroupId}. If the given userGroup is virtual Everybody then all users 
 	 * are retrieved.
 	 * 
@@ -159,7 +162,11 @@ public class UserGroupService extends ServiceBase {
 	public List<User> retrieveUsersByUserGroup(Long userGroupId) throws ServiceException {
 		checkNotNull(userGroupId);
 
-		return userGroupDao.retrieveUsersByUserGroup(userGroupId);
+		List<User> users = userGroupDao.retrieveUsersByUserGroup(userGroupId);
+		users.forEach(user -> {
+			user.getRoles().size(); // forced lazy fetch
+		});
+		return users;
 	}
 
 	/**
@@ -207,27 +214,14 @@ public class UserGroupService extends ServiceBase {
 		return userPositions;
 	}
 	
-//	/**
-//	 * Returns {@link UserGroup} instance which matches the given event and 
-//	 * user group name. Otherwise {@code null} is returned.
-//	 */
-//	@Override
-//	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-//	public UserGroup findUserGroupByName(Long eventId, String name) throws ServiceException {
-//		UserGroup userGroup = userGroupDao.findUserGroupByName(eventId, name);
-//		return userGroup;
-//	}
-//
-//	/**
-//	 * Returns {@link UserGroup} instance which matches the given event and 
-//	 * user group name. Otherwise {@code null} is returned.
-//	 */
-//	@Override
-//	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-//	public UserGroup findLastUserGroupByName(Long eventId, String name) throws ServiceException {
-//		UserGroup userGroup = userGroupDao.findLastUserGroupByName(eventId, name);
-//		return userGroup;
-//	}
+	/**
+	 * Returns {@link UserGroup} instance which matches the given event and 
+	 * user group name. Otherwise {@code null} is returned.
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public UserGroup findLastUserGroupByName(Long eventId, String name) throws ServiceException {
+		return userGroupDao.findLastUserGroupByName(eventId, name);
+	}
 
 	/**
 	 * Persists the given user group into database.
@@ -239,8 +233,8 @@ public class UserGroupService extends ServiceBase {
 	 * @return persisted UserGroup entity instance
 	 */
 //	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, allEntries = true)
-	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
-			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, true}") })
 	public UserGroup insertUserGroup(Long eventId, Long userId, String name, boolean isInsertConfirmed) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -257,7 +251,7 @@ public class UserGroupService extends ServiceBase {
 //			throw new ServiceException(errMsgs);
 //		}
 		
-		UserGroup foundUserGroup = userGroupDao.findLastUserGroupByName(eventId, name);
+		UserGroup foundUserGroup = findLastUserGroupByName(eventId, name);
 		if (foundUserGroup != null) {
 			if (!foundUserGroup.getEvent().getEventId().equals(eventId)) {
 				if (!isInsertConfirmed) {
@@ -281,7 +275,7 @@ public class UserGroupService extends ServiceBase {
 		}
 
 		UserGroup userGroup = userGroupDao.insertUserGroup(eventId, userId, name);
-		userGroup.setUsers(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
+		userGroup.setUsers(retrieveUsersByUserGroup(userGroup.getUserGroupId()));
 		
 		return userGroup;
 	}
@@ -294,9 +288,8 @@ public class UserGroupService extends ServiceBase {
 	 * @param name - name of the user group to be imported
 	 * @return persisted UserGroup entity instance
 	 */
-//	@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, allEntries = true)
-	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
-			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, true}") })
 	public UserGroup importUserGroup(Long eventId, Long userId, String name) throws ServiceException {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -308,12 +301,7 @@ public class UserGroupService extends ServiceBase {
 			throw new ServiceException(errMsgs);
 		}
 		
-//		if (name.equals(UserGroup.EVERYBODY_NAME)) {
-//			errMsgs.add(ParametrizedMessage.create("USER_GROUP_EVERYBODY_CANNOT_BE_MODIFIED"));
-//			throw new ServiceException(errMsgs);
-//		}
-		
-		UserGroup foundUserGroup = userGroupDao.findLastUserGroupByName(eventId, name);
+		UserGroup foundUserGroup = findLastUserGroupByName(eventId, name);
 		
 		if (foundUserGroup == null) {
 			errMsgs.add(ParameterizedMessage.create("USER_GROUP_NAME_NOT_EXIST"));
@@ -334,7 +322,7 @@ public class UserGroupService extends ServiceBase {
 		}
 
 		UserGroup userGroup = userGroupDao.importUserGroup(eventId, userId, foundUserGroup.getUserGroupId());
-		userGroup.setUsers(userGroupDao.retrieveUsersByUserGroup(userGroup.getUserGroupId()));
+		userGroup.setUsers(retrieveUsersByUserGroup(userGroup.getUserGroupId()));
 
 		return userGroup;
 	}
@@ -384,6 +372,8 @@ public class UserGroupService extends ServiceBase {
 			errMsgs.add(ParameterizedMessage.create("NO_USER_BELONGS_TO_USER_GROUP"));
 			throw new ServiceException(errMsgs);
 		}
+		
+		user.getRoles().size(); // forced lazy fetch
 		
 		if (userGroup.getUsers().contains(user)) {
 			errMsgs.add(ParameterizedMessage.create("USER_IS_ALREADY_IN_USER_GROUP", ParameterizedMessageType.WARNING));
@@ -548,7 +538,6 @@ public class UserGroupService extends ServiceBase {
 
 		try {
 			properties = mapper.writeValueAsProperties(userCertificate);
-			//UserCertificate userCertificate = mapper.readValue(properties, UserCertificate.class); // other direction
 			pdfOutputStream = templateService.generatePDFContent(TemplateId.USER_CERTIFICATE_PDF, properties, locale);
 		} catch (IOException e) {
 			errMsgs.add(ParameterizedMessage.create("TEMPLATE_GENERATION_FAILED", TemplateId.USER_CERTIFICATE_PDF));
@@ -676,8 +665,8 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	@Transactional
-	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
-			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, true}") })
 	public UserGroup insertUserGroup(Long eventId, Long userId, String name) {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -694,6 +683,7 @@ public class UserGroupService extends ServiceBase {
 		userGroup.setPublicVisibleAsBoolean(true);
 		userGroup.setOwner(user);
 		userGroup.addUser(user);
+		userGroup.setPriority(UserGroup.PRIORITY_DEFAULT);
 		
 		commonDao.persistEntity(userGroup);
 		
@@ -710,8 +700,8 @@ public class UserGroupService extends ServiceBase {
 	 * @throws IllegalArgumentException if any of the given parameters is invalid
 	 */
 	@Transactional
-	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, false}"),
-			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#p0, #p1, true}") })
+	@Caching(evict = { @CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, false}"),
+			@CacheEvict(cacheNames = CachingConfig.CACHE_USER_GROUPS, key = "{#eventId, #userId, true}") })
 	public UserGroup importUserGroup(Long eventId, Long userId, Long importedUserGroupId) {
 		checkNotNull(eventId);
 		checkNotNull(userId);
@@ -735,6 +725,7 @@ public class UserGroupService extends ServiceBase {
 			userGroup.getUsers().add(user);
 		}
 		userGroup.getUsers().stream().forEach(u -> { u.getUserGroups().add(userGroup); });
+		userGroup.setPriority(UserGroup.PRIORITY_DEFAULT);
 		
 		commonDao.persistEntity(userGroup);
 		

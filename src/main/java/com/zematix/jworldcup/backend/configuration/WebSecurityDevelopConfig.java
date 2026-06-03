@@ -3,7 +3,7 @@ package com.zematix.jworldcup.backend.configuration;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -92,7 +92,7 @@ public class WebSecurityDevelopConfig {
 		httpSecurity.csrf(AbstractHttpConfigurer::disable)
 				// don't authenticate these particular requests
 				.authorizeHttpRequests(requests -> requests
-						.antMatchers(Stream.concat(Stream.of(ACTUATOR_WHITELIST), Stream.of(SWAGGER_WHITELIST))
+						.requestMatchers(Stream.concat(Stream.of(ACTUATOR_WHITELIST), Stream.of(SWAGGER_WHITELIST))
 								.toArray(String[]::new))
 						.permitAll()
 						// but all other requests need to be authenticated

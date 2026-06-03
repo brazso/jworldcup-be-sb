@@ -1,4 +1,4 @@
-FROM mysql:8.0.25
+FROM mysql:8.0.32
 
 # Accept connections from any IP address
 RUN set -x; \

@@ -17,47 +17,26 @@ import com.zematix.jworldcup.backend.exception.ServiceException;
 
 @Configuration
 public class TransactionManagementConfig {
-//	/**
-//	 * ServiceException.class is added as "rollbackFor" attribute to all Transactional annotations,
-//	 * because checked exceptions do not throw database rollback automatically in spring.
-//	 */
-//	@Bean
-//	@Primary
-//	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-//	public TransactionAttributeSource transactionAttributeSourceWithDefaultRollBackForAllExceptions() {
-//
-//		return new AnnotationTransactionAttributeSource(new SpringTransactionAnnotationParser() {
-//
-//			@Override
-//			protected TransactionAttribute parseTransactionAnnotation(AnnotationAttributes attributes) {
-//				RuleBasedTransactionAttribute rbta = (RuleBasedTransactionAttribute) super.parseTransactionAnnotation(
-//						attributes);
-//				List<RollbackRuleAttribute> rules = new ArrayList<>(rbta.getRollbackRules());
-//				rules.add(new RollbackRuleAttribute(ServiceException.class));
-//				rbta.setRollbackRules(rules);
-//				return rbta;
-//			}
-//
-//		});
-//	}
-	
 	/**
-	 * ServiceException must invoke rollback only if it is an error. 
+	 * ServiceException must invoke rollback only if it is a real error. 
 	 */
 	@Bean
 	@Primary
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     TransactionAttributeSource transactionAttributeSourceWithDefaultRollBackForAllExceptions() {
         return new AnnotationTransactionAttributeSource() {
+			private static final long serialVersionUID = 1L;
 
-        	@Override
+			@Override
             protected TransactionAttribute determineTransactionAttribute(AnnotatedElement element) {
                 TransactionAttribute ta = super.determineTransactionAttribute(element);
                 if (ta == null) {
                     return null;
                 } else {
                     return new DelegatingTransactionAttribute(ta) {
-                        @Override
+                        private static final long serialVersionUID = 1L;
+
+						@Override
                         public boolean rollbackOn(Throwable ex) {
                             return ex instanceof ServiceException serviceException ? serviceException.getOverallType() == ParameterizedMessageType.ERROR : super.rollbackOn(ex);
                         }

@@ -2,7 +2,7 @@ package com.zematix.jworldcup.backend.scheduler;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.quartz.Job;
 import org.quartz.JobDataMap;

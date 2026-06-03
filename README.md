@@ -56,7 +56,7 @@ $ docker exec -it jworldcup.rabbitmq bash
 ```
 #### MySQL docker image
 
-Database instance is stored not inside the `jworldcup.mysql` container, but on the host in `../dock-shares/mysql` folder. If you start the container first time, that folder is empty yet and the database is loaded from the `jworldcup.mysql` docker `backup` folder, where `worldcup.sql` and `worldcup.sql.gz` files are searched for in the given order. If you want to reload the database in your developer server, remember to delete `../dock-shares/mysql` folder at first, otherwise the backup is not retrieved during docker container start.
+Database instance is stored not inside the `jworldcup.mysql` container, but on the host in `../docker-shares/mysql` folder. If you start the container first time, that folder is empty yet and the database is loaded from the `jworldcup.mysql` docker `backup` folder, where `worldcup.sql` and `worldcup.sql.gz` files are searched for in the given order. If you want to reload the database in your developer server, remember to delete `../docker-shares/mysql` folder at first, otherwise the backup is not retrieved during docker container start.
 
 ### Run application from Gradle
 

@@ -9,16 +9,10 @@ spring.config.import: optional:secrets-develop.yml
 # Spring 
 spring:
   datasource:
-    #driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/worldcup?useLegacyDatetimeCode=false
     password: worldcup.org
     hikari:
       maximumPoolSize: 3
-      spring:
-#  devtools:
-#    livereload:
-#      enabled: false
-#      port: 35729
   quartz :
     #auto-startup: false
     properties.org.quartz:
@@ -27,7 +21,7 @@ spring:
 
 # Security
 jwt:
-  secret: jworldcup-sensitive-secret-key
+  secret: andvcmxkY3VwLXNlbnNpdGl2ZS1zZWNyZXQta2V5LWp3b3JsZGN1cC1zZW5zaXRpdmUtc2VjcmV0LWtleS1qd29ybGRjdXA= #jworldcup-sensitive-secret-key-jworldcup-sensitive-secret-key-jworldcup
 #  validity: 60 # a minute in seconds
 
 # Application
@@ -68,4 +62,3 @@ logging:
 #    org.springframework.cache.interceptor: TRACE
     
     com.zematix.jworldcup.backend: TRACE
-

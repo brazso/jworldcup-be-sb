@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -62,7 +62,7 @@ public class UserOfEventService extends ServiceBase {
 			return null;
 		}
 		
-		// load lazy associations
+		// forced lazy fetch
 		userOfEvent.getEvent().getEventId();
 		userOfEvent.getUser().getUserId();
 		if (userOfEvent.getFavouriteGroupTeam() != null) {
@@ -115,6 +115,10 @@ public class UserOfEventService extends ServiceBase {
 			if (favouriteGroupTeam == null) {
 				throw new IllegalStateException(String.format("No \"Team\" entity belongs to \"favouriteGroupTeamId\"=%d, cannot be found in database.", favouriteGroupTeamId));
 			}
+			// forced lazy fetch
+			favouriteGroupTeam.getName();
+			favouriteGroupTeam.getGroup().getName();
+
 		}
 		Team favouriteKnockoutTeam = null;
 		if (favouriteKnockoutTeamId != null) {
@@ -122,6 +126,9 @@ public class UserOfEventService extends ServiceBase {
 			if (favouriteKnockoutTeam == null) {
 				throw new IllegalStateException(String.format("No \"Team\" entity belongs to \"favouriteKnockoutTeamId\"=%d, cannot be found in database.", favouriteKnockoutTeamId));
 			}
+			// forced lazy fetch
+			favouriteKnockoutTeam.getName();
+			favouriteKnockoutTeam.getGroup().getName();
 		}
 		
 		userOfEvent.setFavouriteGroupTeam(favouriteGroupTeam);

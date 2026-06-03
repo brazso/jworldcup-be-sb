@@ -4,26 +4,26 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
 
 /**
  * The persistent class for the user_group database table.
@@ -32,6 +32,11 @@ import lombok.Setter;
 @Entity
 @Table(name="user_group", uniqueConstraints=@UniqueConstraint(columnNames={"name", "event_id"}))
 @NamedQuery(name="UserGroup.findAll", query="SELECT u FROM UserGroup u")
+@NamedNativeQuery(
+        name    =   "deleteUserUserGroupsByUserGroupId",
+        query   =   "DELETE FROM user__user_group WHERE user_group_id = ?",
+                    resultClass=UserGroup.class
+)
 @Getter @Setter @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -46,12 +51,20 @@ public class UserGroup implements Serializable {
 	 */
 	public static final String EVERYBODY_NAME =  "Everybody";
 
+	/**
+	 * Default priority value.
+	 */
+	public static final Byte PRIORITY_DEFAULT =  2;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="user_group_id", unique=true, nullable=false)
 	@EqualsAndHashCode.Include
 	private Long userGroupId;
 
+	@Column(nullable=false)
+	private Byte priority;
+	
 	@Column(name="is_public_editable", nullable=false)
 	private Byte isPublicEditable;
 
@@ -68,7 +81,7 @@ public class UserGroup implements Serializable {
 	private Event event;
 
 	//bi-directional many-to-many association to User
-	@ManyToMany //(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
 		name="user__user_group"
 		, joinColumns={
@@ -87,7 +100,7 @@ public class UserGroup implements Serializable {
 	private User owner;
 	
 	//bi-directional many-to-one association to Chat
-	@OneToMany(mappedBy="userGroup")
+	@OneToMany(mappedBy="userGroup", fetch=FetchType.LAZY)
 	private List<Chat> chats = new ArrayList<>();
 	
 	public Boolean isPublicEditableAsBoolean() {

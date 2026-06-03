@@ -1,6 +1,6 @@
 package com.zematix.jworldcup.backend.controller;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.Operation;
 /**
  * WS Rest wrapper class of {@link UserService}.
  * Only the necessary public methods of its associated service class are in play.
- * Both login and signup methods were moved to {@link JwtAuthenticationController}.
+ * Both login and signup methods were moved to {@link JwtAuthenticationControllerIT}.
  */
 @RestController
 @RequestMapping("user-of-events")

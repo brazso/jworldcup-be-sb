@@ -1,28 +1,17 @@
 package com.zematix.jworldcup.backend.service;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.springframework.stereotype.Service;
 
 import com.zematix.jworldcup.backend.dto.ReCaptchaDto;
 import com.zematix.jworldcup.backend.exception.GoogleException;
 
-/**
- * Web service client implementation to get online results of football matches 
- * from <a href="https://www.openligadb.de">OpenLigaDB</a>. In the beginning
- * OpenLigaDB had supported SOAP methods only, but later it was expanded to REST ones.
- * Because technically both are supported yet, JWorldcup app still calls old SOAP methods 
- * but also new REST ones. The latter ones are those which were not implemented 
- * at OpenLigaDB/SOAP, they can be called only by REST interface.
- * Note: in fact all SOAP calls should be transferred to REST ones later, but 
- * OpenLigaDB REST interface is not so well documented, there is no Swagger support 
- * either.
- */
 @Service
 public class GoogleService extends ServiceBase {
 	

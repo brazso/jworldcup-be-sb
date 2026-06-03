@@ -3,16 +3,16 @@ package com.zematix.jworldcup.backend.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -47,10 +47,10 @@ public class UserNotification implements Serializable {
 	@Column(name="creation_time", nullable=false)
 	private LocalDateTime creationTime;
 
-	@Column(name="modification_time", nullable=false)
+	@Column(name="modification_time")
 	private LocalDateTime modificationTime;
 
-	@Column(nullable=false, length=255)
+	@Column(length=255)
 	private String value;
 	
 }

@@ -1,7 +1,7 @@
 package com.zematix.jworldcup.backend.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import com.zematix.jworldcup.backend.service.ServerBase;
 

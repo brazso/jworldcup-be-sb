@@ -1,16 +1,19 @@
 package com.zematix.jworldcup.backend.tool;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceUnit;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceUnit;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+
+import com.zematix.jworldcup.backend.exception.OpenLigaDBException;
 
 /**
  * Imports all matches and other data of a new event from OpeLigaDB. 
@@ -21,10 +24,9 @@ import org.springframework.context.ConfigurableApplicationContext;
   */
 @EnableAutoConfiguration
 @EntityScan(basePackages = "com.zematix.jworldcup.backend.entity")
+@ComponentScan(basePackages = "com.zematix.jworldcup.backend")
 public class ImportOpenLigaDBEvent implements CommandLineRunner {
 
-	//private static final Logger logger = LoggerFactory.getLogger(ImportOpenLigaDBEvent.class);
-	
 	@PersistenceUnit
 	private EntityManagerFactory emf; // application managed transaction 
 	
@@ -47,7 +49,14 @@ public class ImportOpenLigaDBEvent implements CommandLineRunner {
 		OpenLigaDBEvent openLigaDBEvent = factory.createOpenLigaDBEvent();
 		openLigaDBEvent.setParams("EntityManager", em);
 		openLigaDBEvent.setParams("TestMode", isTestMode);
-		boolean isCommitable = openLigaDBEvent.importEvent();
+
+		boolean isCommitable;
+		try {
+			isCommitable = openLigaDBEvent.importEvent();
+		}
+		catch (OpenLigaDBException e) {
+			isCommitable = false;
+		}
 		
 		if (isCommitable) {
 			tx.commit();
@@ -71,7 +80,7 @@ public class ImportOpenLigaDBEvent implements CommandLineRunner {
 	 */
 	@Override
 	public void run(String... args) {
-		final String eventShortDescWithYear = "WC2022";
+		final String eventShortDescWithYear = "CA2024";
 		final boolean isTestMode = false; // flag that changes are not committed back to the database
 
 		importOpenLigaDBEvent(eventShortDescWithYear, isTestMode);

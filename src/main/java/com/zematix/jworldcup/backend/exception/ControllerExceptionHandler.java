@@ -4,8 +4,8 @@ import java.security.InvalidParameterException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

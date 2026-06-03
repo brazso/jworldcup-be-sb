@@ -1,18 +1,18 @@
 package com.zematix.jworldcup.backend.scheduler;
 
-import javax.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.zematix.jworldcup.backend.exception.ServiceException;
+
+import jakarta.inject.Inject;
 
 /**
  * Contains test functions of {@link DatabaseMaintenanceJob} class.
@@ -25,7 +25,7 @@ public class DatabaseMaintenanceJobTest {
 	@Inject
 	private DatabaseMaintenanceJob databaseMaintenanceJob;
 	
-	@MockBean
+	@MockitoBean
 	private SchedulerService schedulerService; // used by methods of DatabaseMaintenanceJob 
 
 	/**

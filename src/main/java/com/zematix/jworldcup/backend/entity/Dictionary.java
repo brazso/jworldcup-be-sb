@@ -4,17 +4,18 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -46,7 +47,7 @@ public class Dictionary implements Serializable {
 	private String name;
 
 	//bi-directional many-to-many association between virtual Role and User
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
 		name="user__role"
 		, joinColumns={
@@ -59,23 +60,23 @@ public class Dictionary implements Serializable {
 	private Set<User> roleUsers;
 	
 	//bi-directional many-to-one association to User
-	@OneToMany(mappedBy="userStatus")
+	@OneToMany(mappedBy="userStatus", fetch=FetchType.LAZY)
 	private List<User> userStatusUsers;
 
 	//bi-directional many-to-one association to UserNotification
-	@OneToMany(mappedBy="userNotificationType")
+	@OneToMany(mappedBy="userNotificationType", fetch=FetchType.LAZY)
 	private List<UserNotification> userNotifications;
 
 	public User addRoleUser(User user) {
 		getRoleUsers().add(user);
-		user.setUserStatus(this);
+		user.getRoles().add(this);
 
 		return user;
 	}
-
+	
 	public User removeRoleUser(User user) {
 		getRoleUsers().remove(user);
-		user.setUserStatus(null);
+		user.getRoles().remove(this);
 
 		return user;
 	}

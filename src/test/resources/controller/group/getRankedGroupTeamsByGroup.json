@@ -1,0 +1,598 @@
+[
+  {
+    "team": {
+      "teamId": 6,
+      "fifaPoints": 0,
+      "flag": "BRA",
+      "name": "Brazil",
+      "wsId": 753,
+      "group": {
+        "groupId": 1,
+        "name": "A"
+      }
+    },
+    "playedMatches": [
+      {
+        "matchId": 1,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 3,
+        "goalNormalByTeam2": 1,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 1,
+        "participantsRule": null,
+        "startTime": "2014-06-12T20:00:00Z",
+        "round": {
+          "roundId": 1,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "1st round"
+        },
+        "team1": {
+          "teamId": 6,
+          "fifaPoints": 0,
+          "flag": "BRA",
+          "name": "Brazil",
+          "wsId": 753,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 12,
+          "fifaPoints": 0,
+          "flag": "CRO",
+          "name": "Croatia",
+          "wsId": 146,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      },
+      {
+        "matchId": 16,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 0,
+        "goalNormalByTeam2": 0,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 17,
+        "participantsRule": null,
+        "startTime": "2014-06-17T19:00:00Z",
+        "round": {
+          "roundId": 2,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "2nd round"
+        },
+        "team1": {
+          "teamId": 6,
+          "fifaPoints": 0,
+          "flag": "BRA",
+          "name": "Brazil",
+          "wsId": 753,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 24,
+          "fifaPoints": 0,
+          "flag": "MEX",
+          "name": "Mexico",
+          "wsId": 761,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      },
+      {
+        "matchId": 35,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 1,
+        "goalNormalByTeam2": 4,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 33,
+        "participantsRule": null,
+        "startTime": "2014-06-23T20:00:00Z",
+        "round": {
+          "roundId": 3,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "3rd round"
+        },
+        "team1": {
+          "teamId": 7,
+          "fifaPoints": 0,
+          "flag": "CMR",
+          "name": "Cameroon",
+          "wsId": 845,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 6,
+          "fifaPoints": 0,
+          "flag": "BRA",
+          "name": "Brazil",
+          "wsId": 753,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      }
+    ],
+    "filterTeamIds": [],
+    "positionInGroup": 1,
+    "matchesPlayed": 3,
+    "won": 2,
+    "draw": 1,
+    "lost": 0,
+    "goalsFor": 7,
+    "goalsAgainst": 2,
+    "goalDifference": 5,
+    "points": 7,
+    "teamInGroupFinished": true
+  },
+  {
+    "team": {
+      "teamId": 24,
+      "fifaPoints": 0,
+      "flag": "MEX",
+      "name": "Mexico",
+      "wsId": 761,
+      "group": {
+        "groupId": 1,
+        "name": "A"
+      }
+    },
+    "playedMatches": [
+      {
+        "matchId": 2,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 1,
+        "goalNormalByTeam2": 0,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 2,
+        "participantsRule": null,
+        "startTime": "2014-06-13T16:00:00Z",
+        "round": {
+          "roundId": 1,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "1st round"
+        },
+        "team1": {
+          "teamId": 24,
+          "fifaPoints": 0,
+          "flag": "MEX",
+          "name": "Mexico",
+          "wsId": 761,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 7,
+          "fifaPoints": 0,
+          "flag": "CMR",
+          "name": "Cameroon",
+          "wsId": 845,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      },
+      {
+        "matchId": 16,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 0,
+        "goalNormalByTeam2": 0,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 17,
+        "participantsRule": null,
+        "startTime": "2014-06-17T19:00:00Z",
+        "round": {
+          "roundId": 2,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "2nd round"
+        },
+        "team1": {
+          "teamId": 6,
+          "fifaPoints": 0,
+          "flag": "BRA",
+          "name": "Brazil",
+          "wsId": 753,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 24,
+          "fifaPoints": 0,
+          "flag": "MEX",
+          "name": "Mexico",
+          "wsId": 761,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      },
+      {
+        "matchId": 36,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 1,
+        "goalNormalByTeam2": 3,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 34,
+        "participantsRule": null,
+        "startTime": "2014-06-23T20:00:00Z",
+        "round": {
+          "roundId": 3,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "3rd round"
+        },
+        "team1": {
+          "teamId": 12,
+          "fifaPoints": 0,
+          "flag": "CRO",
+          "name": "Croatia",
+          "wsId": 146,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 24,
+          "fifaPoints": 0,
+          "flag": "MEX",
+          "name": "Mexico",
+          "wsId": 761,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      }
+    ],
+    "filterTeamIds": [],
+    "positionInGroup": 2,
+    "matchesPlayed": 3,
+    "won": 2,
+    "draw": 1,
+    "lost": 0,
+    "goalsFor": 4,
+    "goalsAgainst": 1,
+    "goalDifference": 3,
+    "points": 7,
+    "teamInGroupFinished": true
+  },
+  {
+    "team": {
+      "teamId": 12,
+      "fifaPoints": 0,
+      "flag": "CRO",
+      "name": "Croatia",
+      "wsId": 146,
+      "group": {
+        "groupId": 1,
+        "name": "A"
+      }
+    },
+    "playedMatches": [
+      {
+        "matchId": 36,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 1,
+        "goalNormalByTeam2": 3,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 34,
+        "participantsRule": null,
+        "startTime": "2014-06-23T20:00:00Z",
+        "round": {
+          "roundId": 3,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "3rd round"
+        },
+        "team1": {
+          "teamId": 12,
+          "fifaPoints": 0,
+          "flag": "CRO",
+          "name": "Croatia",
+          "wsId": 146,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 24,
+          "fifaPoints": 0,
+          "flag": "MEX",
+          "name": "Mexico",
+          "wsId": 761,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      },
+      {
+        "matchId": 1,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 3,
+        "goalNormalByTeam2": 1,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 1,
+        "participantsRule": null,
+        "startTime": "2014-06-12T20:00:00Z",
+        "round": {
+          "roundId": 1,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "1st round"
+        },
+        "team1": {
+          "teamId": 6,
+          "fifaPoints": 0,
+          "flag": "BRA",
+          "name": "Brazil",
+          "wsId": 753,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 12,
+          "fifaPoints": 0,
+          "flag": "CRO",
+          "name": "Croatia",
+          "wsId": 146,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      },
+      {
+        "matchId": 20,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 0,
+        "goalNormalByTeam2": 4,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 18,
+        "participantsRule": null,
+        "startTime": "2014-06-18T22:00:00Z",
+        "round": {
+          "roundId": 2,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "2nd round"
+        },
+        "team1": {
+          "teamId": 7,
+          "fifaPoints": 0,
+          "flag": "CMR",
+          "name": "Cameroon",
+          "wsId": 845,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 12,
+          "fifaPoints": 0,
+          "flag": "CRO",
+          "name": "Croatia",
+          "wsId": 146,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      }
+    ],
+    "filterTeamIds": [],
+    "positionInGroup": 3,
+    "matchesPlayed": 3,
+    "won": 1,
+    "draw": 0,
+    "lost": 2,
+    "goalsFor": 6,
+    "goalsAgainst": 6,
+    "goalDifference": 0,
+    "points": 3,
+    "teamInGroupFinished": true
+  },
+  {
+    "team": {
+      "teamId": 7,
+      "fifaPoints": 0,
+      "flag": "CMR",
+      "name": "Cameroon",
+      "wsId": 845,
+      "group": {
+        "groupId": 1,
+        "name": "A"
+      }
+    },
+    "playedMatches": [
+      {
+        "matchId": 20,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 0,
+        "goalNormalByTeam2": 4,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 18,
+        "participantsRule": null,
+        "startTime": "2014-06-18T22:00:00Z",
+        "round": {
+          "roundId": 2,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "2nd round"
+        },
+        "team1": {
+          "teamId": 7,
+          "fifaPoints": 0,
+          "flag": "CMR",
+          "name": "Cameroon",
+          "wsId": 845,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 12,
+          "fifaPoints": 0,
+          "flag": "CRO",
+          "name": "Croatia",
+          "wsId": 146,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      },
+      {
+        "matchId": 35,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 1,
+        "goalNormalByTeam2": 4,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 33,
+        "participantsRule": null,
+        "startTime": "2014-06-23T20:00:00Z",
+        "round": {
+          "roundId": 3,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "3rd round"
+        },
+        "team1": {
+          "teamId": 7,
+          "fifaPoints": 0,
+          "flag": "CMR",
+          "name": "Cameroon",
+          "wsId": 845,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 6,
+          "fifaPoints": 0,
+          "flag": "BRA",
+          "name": "Brazil",
+          "wsId": 753,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      },
+      {
+        "matchId": 2,
+        "goalExtraByTeam1": null,
+        "goalExtraByTeam2": null,
+        "goalNormalByTeam1": 1,
+        "goalNormalByTeam2": 0,
+        "goalPenaltyByTeam1": null,
+        "goalPenaltyByTeam2": null,
+        "matchN": 2,
+        "participantsRule": null,
+        "startTime": "2014-06-13T16:00:00Z",
+        "round": {
+          "roundId": 1,
+          "isGroupmatch": true,
+          "isOvertime": null,
+          "name": "1st round"
+        },
+        "team1": {
+          "teamId": 24,
+          "fifaPoints": 0,
+          "flag": "MEX",
+          "name": "Mexico",
+          "wsId": 761,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "team2": {
+          "teamId": 7,
+          "fifaPoints": 0,
+          "flag": "CMR",
+          "name": "Cameroon",
+          "wsId": 845,
+          "group": {
+            "groupId": 1,
+            "name": "A"
+          }
+        },
+        "resultSignByTeam1": null
+      }
+    ],
+    "filterTeamIds": [],
+    "positionInGroup": 4,
+    "matchesPlayed": 3,
+    "won": 0,
+    "draw": 0,
+    "lost": 3,
+    "goalsFor": 1,
+    "goalsAgainst": 9,
+    "goalDifference": -8,
+    "points": 0,
+    "teamInGroupFinished": true
+  }
+]

@@ -1,7 +1,7 @@
 package com.zematix.jworldcup.backend.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import com.zematix.jworldcup.backend.util.CommonUtil;
 

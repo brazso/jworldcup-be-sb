@@ -3,7 +3,7 @@ package com.zematix.jworldcup.backend.service;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,7 +33,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return loadUserDetailsByUser(user);
 	}
 
-	public UserDetails loadUserDetailsByUser(@NonNull User user) {
+	private UserDetails loadUserDetailsByUser(@NonNull User user) {
 		Set<SimpleGrantedAuthority> authorities = user.getRoles().stream()
 				.map(e -> new SimpleGrantedAuthority("ROLE_" + e.getValue())).collect(Collectors.toSet());
 		return new org.springframework.security.core.userdetails.User(user.getLoginName(), user.getLoginPassword(),

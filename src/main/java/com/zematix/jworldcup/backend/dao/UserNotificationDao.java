@@ -6,13 +6,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.TypedQuery;
+import jakarta.inject.Inject;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.zematix.jworldcup.backend.emun.DictionaryEnum;
 import com.zematix.jworldcup.backend.emun.UserNotificationEnum;
@@ -131,4 +132,17 @@ public class UserNotificationDao extends DaoBase {
 		return userNotification;
 	}
 
+	/**
+	 * Delete all userNotifications belongs to the given user.
+	 * 
+	 * @param userId - belongs to an {@link User} entity
+	 * @throws IllegalArgumentException if any of the given parameters is {@code null}
+	 */
+	public void deleteUserNotificationsByUser(Long userId) {
+		checkNotNull(userId);
+		
+		QUserNotification qUserNotification = QUserNotification.userNotification;
+		new JPADeleteClause(getEntityManager(), qUserNotification)
+				.where(qUserNotification.user.userId.eq(userId)).execute();
+	}
 }

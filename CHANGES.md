@@ -1,5 +1,31 @@
 ## Changes
 
+### Version 1.2.4 / 2024-06-23
+
+* Fix: fixed deletion of a userGroup
+* Feature: modified private chat message display in top banner
+
+### Version 1.2.3 / 2024-06-22
+
+* Fix: fixed deletion of a userGroup
+* Fix: fixed lazy loading of retrieving of chat entities
+
+### Version 1.2.2 / 2024-06-19
+
+* Fix: fixed scheduler expiration naming
+
+### Version 1.2.1 / 2024-06-11
+
+* Fix: lazy loading of saving existing bet
+
+### Version 1.2.0 / 2024-06-10
+
+* Feature: added new EC2024 and CA2024 tournaments
+* Feature: cached retrieval of static timezone ids
+* Fix: open-in-view got false setting => lazy fetch
+* Fix: delete user account
+* Fix: user_group.priority constraint
+
 ### Version 1.1.0 / 2024-01-13
 
 * Fix: undetected event (tournament) change if the latest one was involved

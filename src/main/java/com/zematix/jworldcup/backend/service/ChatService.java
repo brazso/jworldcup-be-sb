@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,13 +72,15 @@ public class ChatService extends ServiceBase {
 		
 		List<Chat> chats = chatDao.retrieveChats(userGroup.getEvent().getEventId(), userGroup.getUserGroupId());
 		
-		// load lazy associations
+		// forced lazy fetch
 		chats.stream().forEach(e -> {
 			e.getUser().getLoginName();
 			e.getUser().getRoles().size();
 			e.getEvent().getDescription();
 			if (e.getUserGroup() != null) {
 				e.getUserGroup().getName();
+				e.getUserGroup().getOwner().getLoginName();
+				e.getUserGroup().getOwner().getRoles().size();
 			}
 		});
 		
@@ -141,6 +143,8 @@ public class ChatService extends ServiceBase {
 			chat.getUser().getLoginName();
 			if (chat.getUserGroup() != null) {
 				chat.getUserGroup().getName();
+				chat.getUserGroup().getOwner().getLoginName();
+				chat.getUserGroup().getOwner().getRoles().size();
 			}
 			else {
 				chat.setUserGroup(userGroupService.createVirtualEverybodyUserGroup(eventId, userId));
@@ -165,6 +169,22 @@ public class ChatService extends ServiceBase {
 
 		List<Chat> chats = chatDao.retrievePrivateChats(eventId, sourceUserId, targetUserId);
 
+		// forced lazy fetch
+		for (Chat chat: chats) {
+			chat.getUser().getLoginName();
+			chat.getUser().getRoles().size();
+			chat.getEvent().getDescription();
+			if (chat.getUserGroup() != null) {
+				chat.getUserGroup().getName();
+				chat.getUserGroup().getOwner().getLoginName();
+				chat.getUserGroup().getOwner().getRoles().size();
+			}
+			if (chat.getTargetUser() != null) {
+				chat.getTargetUser().getLoginName();
+				chat.getTargetUser().getRoles().size();
+			}
+		}
+		
 		// update accessTime - it is null yet - aimed to sourceUserId  
 		LocalDateTime actualDateTime = applicationService.getActualDateTime();
 		for (Chat chat: chats) {
@@ -173,16 +193,6 @@ public class ChatService extends ServiceBase {
 			}
 		}
 
-		// load lazy associations
-		chats.stream().forEach(e -> {
-			e.getUser().getLoginName();
-			e.getUser().getRoles().size();
-			e.getEvent().getDescription();
-			if (e.getUserGroup() != null) {
-				e.getUserGroup().getName();
-			}
-		});
-		
 		return chats;
 	}
 

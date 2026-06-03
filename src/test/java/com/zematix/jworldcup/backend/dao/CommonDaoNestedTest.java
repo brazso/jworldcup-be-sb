@@ -2,7 +2,7 @@ package com.zematix.jworldcup.backend.dao;
 
 import static org.junit.Assert.fail;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -37,6 +37,7 @@ public class CommonDaoNestedTest {
 		event.setDescription("World Cup");
 		event.setShortDesc("WC");
 		event.setOrganizer("FIFA");
+		event.setTiebreaker((short)0);
 		commonDao.persistEntity(event);
 		
 		try {

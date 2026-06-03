@@ -4,20 +4,20 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -76,8 +76,8 @@ public class Match implements Serializable {
 	@Column(name="start_time", nullable=false)
 	private LocalDateTime startTime;
 
-	//bi-directional many-to-one association to Bet
-	@OneToMany(mappedBy="match")
+	//bi-directional one-to-mainy association to Bets
+	@OneToMany(mappedBy="match", fetch=FetchType.LAZY)
 	private List<Bet> bets;
 
 	//bi-directional many-to-one association to Event

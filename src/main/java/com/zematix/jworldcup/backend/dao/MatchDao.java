@@ -2,7 +2,7 @@ package com.zematix.jworldcup.backend.dao;
 
 import java.util.List;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -49,7 +49,7 @@ public class MatchDao extends DaoBase {
 		JPAQuery<Match> query = new JPAQuery<>(getEntityManager());
 		matches = query.from(qMatch)
 			.where(qMatch.event.eventId.eq(eventId))
-			.orderBy(qMatch.startTime.asc())
+			.orderBy(qMatch.matchN.asc())
 			.fetch();
 		
 		return matches;

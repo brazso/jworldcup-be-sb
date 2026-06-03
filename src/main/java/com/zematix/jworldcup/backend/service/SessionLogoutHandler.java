@@ -2,10 +2,10 @@ package com.zematix.jworldcup.backend.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Inject;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.springframework.http.ResponseCookie;

@@ -2,7 +2,7 @@ package com.zematix.jworldcup.backend.dao;
 
 import java.util.List;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,8 +39,6 @@ public class RoundDao extends DaoBase {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Round> retrieveRoundsByEvent(Long eventId) {
-		List<Round> rounds;
-		
 		QRound qRound = QRound.round;
 		JPAQuery<Round> query = new JPAQuery<>(getEntityManager());
 		return query.from(qRound)

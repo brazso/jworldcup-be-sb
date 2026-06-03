@@ -13,10 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -253,46 +249,4 @@ public final class CommonUtil {
 	public static LocalDateTime getEpochDateTime() {
 		return LocalDate.parse("3000-01-01", DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
 	}
-
-	/**
-	 * Converts the given {@ link LocalDateTime} object to {@link XMLGregorianCalendar} one
-	 * 
-	 * @param date - to be converted
-	 */
-	public static XMLGregorianCalendar toXMLGregorianCalendar(LocalDateTime date) {
-		if (date == null) {
-			return null;
-		}
-		XMLGregorianCalendar xmlCalendar = null;
-		try {
-			xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(date.getYear(), date.getMonthValue(),
-					date.getDayOfMonth(), date.getHour(), date.getMinute(), date.getSecond(), date.getNano() / 1000, 0);
-		} catch (DatatypeConfigurationException e) {
-			logger.error("XMLGregorianCalendar could not be instantiated", e);
-		}
-		return xmlCalendar;
-	}
-
-	/**
-	 * Converts the given {@link XMLGregorianCalendar} object to {@link LocalDateTime} one
-	 * 
-	 * @param calendar - to be converted
-	 */
-	public static LocalDateTime toDate(XMLGregorianCalendar calendar) {
-		if (calendar == null) {
-			return null;
-		}
-		
-		LocalDateTime date = LocalDateTime.of(
-				calendar.getYear(), 
-				calendar.getMonth(), 
-				calendar.getDay(),
-				calendar.getHour(),
-				calendar.getMinute(),
-				calendar.getSecond(),
-				calendar.getMillisecond()*1000);
-		
-		return date;
-	}
-
 }

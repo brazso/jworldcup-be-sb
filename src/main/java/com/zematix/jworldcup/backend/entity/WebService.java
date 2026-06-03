@@ -1,7 +1,7 @@
 package com.zematix.jworldcup.backend.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

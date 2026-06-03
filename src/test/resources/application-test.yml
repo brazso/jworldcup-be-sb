@@ -30,7 +30,6 @@ spring:
             create-source: metadata
           sql-load-script-source: database/worldcup_test_insert_hsqldb.sql
   datasource:
-    #driver-class-name: org.hsqldb.jdbc.JDBCDriver
     url: jdbc:hsqldb:mem:testdb;shutdown=true;syntax_mys=true;hsqldb.tx=mvcc #;hsqldb.tx_level=serializable
     username: sa
     password:

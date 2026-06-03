@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
-import com.zematix.jworldcup.backend.entity.Bet;
 import com.zematix.jworldcup.backend.entity.QUserOfEvent;
 import com.zematix.jworldcup.backend.entity.User;
 import com.zematix.jworldcup.backend.entity.UserOfEvent;
@@ -94,6 +93,4 @@ public class UserOfEventDao extends DaoBase {
 
 		return userOfEvents;
 	}
-
-
 }
