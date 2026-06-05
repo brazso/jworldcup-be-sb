@@ -55,44 +55,6 @@ public final class CommonUtil {
 		return matcher.matches();
 	}
 
-//	/**
-//	 * Returns the encrypted hash code of the given loginPassword used by the
-//	 * application. See more info about used hashing algorithm at {@link SecureHashingOld}.
-//	 * 
-//	 * @param - loginName (not used)
-//	 * @param - loginPassword
-//	 * @return encrypted hashed password 
-//	 */
-//	public static String getEncryptedLoginPassword(String loginName, String loginPassword) {
-//		return SecureHashing.hashString(loginPassword);
-//	}
-//
-//	/**
-//	 * Validates given loginPassword with the given loginPasswordHash. Returns {@code true}
-//	 * if they match.
-//	 *  
-//	 * @param loginPassword
-//	 * @param loginPasswordHash
-//	 * @return {@code true} if the given parameters match, {@code false} otherwise
-//	 */
-//	public static boolean validateLoginPassword(String loginPassword, String loginPasswordHash) {
-//		return SecureHashing.validateHash(loginPassword, loginPasswordHash);
-//	}
-//
-//	/**
-//	 * Validates length of given loginPasswordHash with the value of used 
-//	 * in the hashing algorithm. Returns {@code true} if they match.
-//	 *  
-//	 * @param loginPassword
-//	 * @param loginPasswordHash
-//	 * @return {@code true} if the length of the given loginPasswordHash value length is correct,
-//	 *         {@code false} otherwise
-//	 */
-//	public static boolean validateLoginPasswordLength(String loginPasswordHash) {
-//		checkArgument(loginPasswordHash!=null, "Argument \"loginPasswordHash\" must not be null");
-//		return SecureHashing.getHashLength() == loginPasswordHash.length();
-//	}
-//
 	/**
 	 * Generates a random String suitable for use as a token.
 	 * It must be exactly 20 characters long and must contain only [a-zA-Z0-9] characters.
