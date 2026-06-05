@@ -110,7 +110,23 @@ After gradle test (or build if test is not disabled there) the result can be che
 
 file://{$buildDir}/reports/tests/test/index.html
 
+### Visual Studio Code
+At JWorldcup v1.4.0 development changed to VSCode IDE. Eclipse is not used more.
+
+Install the following extension in VSCode 
+* Extension Pack for Java
+* Spring Boot Extension Pack provided by VMWare.
+
+Gradle JVM home had to be changed to JDK25, otherwise build failed on compilation. Following configuration was added to USER settings.
+```
+"java.import.gradle.java.home": "/usr/lib/jvm/java-25-openjdk-amd64",
+```
+
+There are still traces of Eclipse in project conifguration files, e.g. in build.gradle, but they are unharmful.
+
 ### Eclipse IDE
+It was used as development IDE before JWorldcup v1.4.0.
+
 If you use Eclipse IDE (4.30 2023-12) it is recommended to install the following items in Eclipse Marketplace
 * Install lombok.jar (v1.18.30), see also [https://www.baeldung.com/lombok-ide#eclipse](https://www.baeldung.com/lombok-ide#eclipse)
 * Spring Tools 4 (aka Spring Tool Suite4) 4.21.0.RELEASE (Spring tool, e.g. running application easily as Spring Boot App from IDE)
