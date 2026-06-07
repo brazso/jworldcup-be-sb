@@ -1,5 +1,9 @@
 ## Changes
 
+### Version 1.4.0 / 2026-06-07
+
+* Feature: added WC2026 tournament
+
 ### Version 1.3.0 / 2025-12-18
 
 * Feature: added CAF2025 tournament
