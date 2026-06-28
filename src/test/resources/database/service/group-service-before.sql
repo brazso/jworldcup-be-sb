@@ -1,0 +1,2 @@
+-- getTeamByGroupPositionMapForWC2026 - restore match table state to the state before knockout stage
+UPDATE match_ m SET m.goal_normal_by_team1=null, m.goal_normal_by_team2=null, m.goal_extra_by_team1=null, m.goal_extra_by_team2=null, m.goal_penalty_by_team1=null, m.goal_penalty_by_team2=null, m.team1_id=null, m.team2_id=null WHERE m.event_id=17 and m.round_id in (SELECT round_id FROM round WHERE event_id=m.event_id AND is_groupmatch=0);

@@ -168,8 +168,7 @@ public class GroupService extends ServiceBase {
 							boolean isFound = false;
 							Dictionary dictionary = dictionaryDao.findDictionaryByKeyAndValue(event.getShortDescWithYear()+"_1ST3RD", bestGroups);
 							if (dictionary != null) {
-								if (dictionary.getName().contains(vsGroupPosition.getGroupName() + groupTeam.getTeam().getGroup().getName()) ||
-										dictionary.getName().contains(groupTeam.getTeam().getGroup().getName() + vsGroupPosition.getGroupName())) {
+								if (dictionary.getName().contains(vsGroupPosition.getGroupName() + groupTeam.getTeam().getGroup().getName())) {
 									isFound = true;
 								}
 							}
