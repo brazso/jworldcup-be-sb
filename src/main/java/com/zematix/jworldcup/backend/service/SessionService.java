@@ -168,9 +168,12 @@ public class SessionService extends ServiceBase {
 					this.user.getUserId(), e);
 		}
 		if (chat != null) {
-			String userGroupName = chat.getUserGroup().isEverybody() ? /*msgs.getString("userGroups.name.Everybody")*/ UserGroup.EVERYBODY_NAME: chat.getUserGroup().getName();
+			String target = chat.getUserGroup().isEverybody() ? /*msgs.getString("userGroups.name.Everybody")*/ UserGroup.EVERYBODY_NAME: chat.getUserGroup().getName();
+			if (chat.getTargetUser() != null) {
+				target = chat.getTargetUser().getLoginName();
+			}
 			message = String.format("[%s -> %s] %s", chat.getUser().getLoginName(), 
-					userGroupName, chat.getMessage());
+					target, chat.getMessage());
 			headerMessage = HeaderMessage.builder().message(message).priority(5).creationTime(getActualDateTime()).build();
 			this.headerMessages.push(headerMessage);
 		}
