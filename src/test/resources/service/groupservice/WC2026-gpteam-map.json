@@ -1,0 +1,354 @@
+{
+    "GroupPosition(groupName=BEFIJ, position=3)": {
+        "teamId": 364,
+        "fifaPoints": 0,
+        "flag": "BIH",
+        "name": "Bosnia and Herzegovina",
+        "wsId": 2671,
+        "group": {
+            "groupId": 91,
+            "name": "B"
+        }
+    },
+    "GroupPosition(groupName=A, position=2)": {
+        "teamId": 360,
+        "fifaPoints": 0,
+        "flag": "RSA",
+        "name": "South Africa",
+        "wsId": 677,
+        "group": {
+            "groupId": 90,
+            "name": "A"
+        }
+    },
+    "GroupPosition(groupName=B, position=2)": {
+        "teamId": 363,
+        "fifaPoints": 0,
+        "flag": "CAN",
+        "name": "Canada",
+        "wsId": 1645,
+        "group": {
+            "groupId": 91,
+            "name": "B"
+        }
+    },
+    "GroupPosition(groupName=C, position=2)": {
+        "teamId": 368,
+        "fifaPoints": 0,
+        "flag": "MAR",
+        "name": "Morocco",
+        "wsId": 4629,
+        "group": {
+            "groupId": 92,
+            "name": "C"
+        }
+    },
+    "GroupPosition(groupName=D, position=2)": {
+        "teamId": 373,
+        "fifaPoints": 0,
+        "flag": "AUS",
+        "name": "Australia",
+        "wsId": 750,
+        "group": {
+            "groupId": 93,
+            "name": "D"
+        }
+    },
+    "GroupPosition(groupName=E, position=2)": {
+        "teamId": 377,
+        "fifaPoints": 0,
+        "flag": "CIV",
+        "name": "Ivory Coast",
+        "wsId": 4993,
+        "group": {
+            "groupId": 94,
+            "name": "E"
+        }
+    },
+    "GroupPosition(groupName=A, position=1)": {
+        "teamId": 359,
+        "fifaPoints": 0,
+        "flag": "MEX",
+        "name": "Mexico",
+        "wsId": 761,
+        "group": {
+            "groupId": 90,
+            "name": "A"
+        }
+    },
+    "GroupPosition(groupName=F, position=2)": {
+        "teamId": 380,
+        "fifaPoints": 0,
+        "flag": "JPN",
+        "name": "Japan",
+        "wsId": 749,
+        "group": {
+            "groupId": 95,
+            "name": "F"
+        }
+    },
+    "GroupPosition(groupName=B, position=1)": {
+        "teamId": 366,
+        "fifaPoints": 0,
+        "flag": "SUI",
+        "name": "Switzerland",
+        "wsId": 38,
+        "group": {
+            "groupId": 91,
+            "name": "B"
+        }
+    },
+    "GroupPosition(groupName=G, position=2)": {
+        "teamId": 384,
+        "fifaPoints": 0,
+        "flag": "EGY",
+        "name": "Egypt",
+        "wsId": 4766,
+        "group": {
+            "groupId": 96,
+            "name": "G"
+        }
+    },
+    "GroupPosition(groupName=C, position=1)": {
+        "teamId": 367,
+        "fifaPoints": 0,
+        "flag": "BRA",
+        "name": "Brazil",
+        "wsId": 753,
+        "group": {
+            "groupId": 92,
+            "name": "C"
+        }
+    },
+    "GroupPosition(groupName=H, position=2)": {
+        "teamId": 388,
+        "fifaPoints": 0,
+        "flag": "CPV",
+        "name": "Cape Verde",
+        "wsId": 6159,
+        "group": {
+            "groupId": 97,
+            "name": "H"
+        }
+    },
+    "GroupPosition(groupName=D, position=1)": {
+        "teamId": 371,
+        "fifaPoints": 0,
+        "flag": "USA",
+        "name": "United States",
+        "wsId": 762,
+        "group": {
+            "groupId": 93,
+            "name": "D"
+        }
+    },
+    "GroupPosition(groupName=I, position=2)": {
+        "teamId": 394,
+        "fifaPoints": 0,
+        "flag": "NOR",
+        "name": "Norway",
+        "wsId": 1396,
+        "group": {
+            "groupId": 98,
+            "name": "I"
+        }
+    },
+    "GroupPosition(groupName=E, position=1)": {
+        "teamId": 375,
+        "fifaPoints": 0,
+        "flag": "GER",
+        "name": "Germany",
+        "wsId": 139,
+        "group": {
+            "groupId": 94,
+            "name": "E"
+        }
+    },
+    "GroupPosition(groupName=J, position=2)": {
+        "teamId": 397,
+        "fifaPoints": 0,
+        "flag": "AUT",
+        "name": "Austria",
+        "wsId": 37,
+        "group": {
+            "groupId": 99,
+            "name": "J"
+        }
+    },
+    "GroupPosition(groupName=F, position=1)": {
+        "teamId": 379,
+        "fifaPoints": 0,
+        "flag": "NED",
+        "name": "Netherlands",
+        "wsId": 4353,
+        "group": {
+            "groupId": 95,
+            "name": "F"
+        }
+    },
+    "GroupPosition(groupName=K, position=2)": {
+        "teamId": 399,
+        "fifaPoints": 0,
+        "flag": "POR",
+        "name": "Portugal",
+        "wsId": 3198,
+        "group": {
+            "groupId": 100,
+            "name": "K"
+        }
+    },
+    "GroupPosition(groupName=G, position=1)": {
+        "teamId": 383,
+        "fifaPoints": 0,
+        "flag": "BEL",
+        "name": "Belgium",
+        "wsId": 2673,
+        "group": {
+            "groupId": 96,
+            "name": "G"
+        }
+    },
+    "GroupPosition(groupName=L, position=2)": {
+        "teamId": 404,
+        "fifaPoints": 0,
+        "flag": "CRO",
+        "name": "Croatia",
+        "wsId": 7325,
+        "group": {
+            "groupId": 101,
+            "name": "L"
+        }
+    },
+    "GroupPosition(groupName=EFGIJ, position=3)": {
+        "teamId": 396,
+        "fifaPoints": 0,
+        "flag": "ALG",
+        "name": "Algeria",
+        "wsId": 7322,
+        "group": {
+            "groupId": 99,
+            "name": "J"
+        }
+    },
+    "GroupPosition(groupName=H, position=1)": {
+        "teamId": 387,
+        "fifaPoints": 0,
+        "flag": "ESP",
+        "name": "Spain",
+        "wsId": 170,
+        "group": {
+            "groupId": 97,
+            "name": "H"
+        }
+    },
+    "GroupPosition(groupName=I, position=1)": {
+        "teamId": 391,
+        "fifaPoints": 0,
+        "flag": "FRA",
+        "name": "France",
+        "wsId": 1647,
+        "group": {
+            "groupId": 98,
+            "name": "I"
+        }
+    },
+    "GroupPosition(groupName=J, position=1)": {
+        "teamId": 395,
+        "fifaPoints": 0,
+        "flag": "ARG",
+        "name": "Argentina",
+        "wsId": 764,
+        "group": {
+            "groupId": 99,
+            "name": "J"
+        }
+    },
+    "GroupPosition(groupName=K, position=1)": {
+        "teamId": 402,
+        "fifaPoints": 0,
+        "flag": "COL",
+        "name": "Colombia",
+        "wsId": 1469,
+        "group": {
+            "groupId": 100,
+            "name": "K"
+        }
+    },
+    "GroupPosition(groupName=CDFGH, position=3)": {
+        "teamId": 381,
+        "fifaPoints": 0,
+        "flag": "SWE",
+        "name": "Sweden",
+        "wsId": 151,
+        "group": {
+            "groupId": 95,
+            "name": "F"
+        }
+    },
+    "GroupPosition(groupName=L, position=1)": {
+        "teamId": 403,
+        "fifaPoints": 0,
+        "flag": "ENG",
+        "name": "England",
+        "wsId": 755,
+        "group": {
+            "groupId": 101,
+            "name": "L"
+        }
+    },
+    "GroupPosition(groupName=DEIJL, position=3)": {
+        "teamId": 405,
+        "fifaPoints": 0,
+        "flag": "GHA",
+        "name": "Ghana",
+        "wsId": 754,
+        "group": {
+            "groupId": 101,
+            "name": "L"
+        }
+    },
+    "GroupPosition(groupName=AEHIJ, position=3)": {
+        "teamId": 392,
+        "fifaPoints": 0,
+        "flag": "SEN",
+        "name": "Senegal",
+        "wsId": 4630,
+        "group": {
+            "groupId": 98,
+            "name": "I"
+        }
+    },
+    "GroupPosition(groupName=ABCDF, position=3)": {
+        "teamId": 372,
+        "fifaPoints": 0,
+        "flag": "PAR",
+        "name": "Paraguay",
+        "wsId": 756,
+        "group": {
+            "groupId": 93,
+            "name": "D"
+        }
+    },
+    "GroupPosition(groupName=CEFHI, position=3)": {
+        "teamId": 378,
+        "fifaPoints": 0,
+        "flag": "ECU",
+        "name": "Ecuador",
+        "wsId": 2670,
+        "group": {
+            "groupId": 94,
+            "name": "E"
+        }
+    },
+    "GroupPosition(groupName=EHIJK, position=3)": {
+        "teamId": 400,
+        "fifaPoints": 0,
+        "flag": "COD",
+        "name": "DR Congo",
+        "wsId": 4991,
+        "group": {
+            "groupId": 100,
+            "name": "K"
+        }
+    }
+}

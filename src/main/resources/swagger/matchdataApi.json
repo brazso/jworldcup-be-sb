@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "OpenLigaDB-API",
     "version": "v1"
@@ -9,6 +9,55 @@
       "get": {
         "tags": [
           "Matchdata"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/League"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/League"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/League"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getavailableleagues/{season}": {
+      "get": {
+        "tags": [
+          "Matchdata"
+        ],
+        "parameters": [
+          {
+            "name": "season",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -1247,6 +1296,11 @@
             "type": "string",
             "nullable": true
           },
+          "scoringTeamId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "isPenalty": {
             "type": "boolean",
             "nullable": true
@@ -1322,7 +1376,12 @@
             "nullable": true
           },
           "sport": {
-            "$ref": "#/components/schemas/Sport"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Sport"
+              }
+            ],
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1383,13 +1442,28 @@
             "nullable": true
           },
           "group": {
-            "$ref": "#/components/schemas/Group"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Group"
+              }
+            ],
+            "nullable": true
           },
           "team1": {
-            "$ref": "#/components/schemas/Team"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Team"
+              }
+            ],
+            "nullable": true
           },
           "team2": {
-            "$ref": "#/components/schemas/Team"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Team"
+              }
+            ],
+            "nullable": true
           },
           "lastUpdateDateTime": {
             "type": "string",
@@ -1414,7 +1488,12 @@
             "nullable": true
           },
           "location": {
-            "$ref": "#/components/schemas/Location"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Location"
+              }
+            ],
+            "nullable": true
           },
           "numberOfViewers": {
             "type": "integer",
@@ -1481,7 +1560,12 @@
             "nullable": true
           },
           "globalResultInfo": {
-            "$ref": "#/components/schemas/GlobalResultInfo"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GlobalResultInfo"
+              }
+            ],
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1527,5 +1611,10 @@
         "additionalProperties": false
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Matchdata"
+    }
+  ]
 }
