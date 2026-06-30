@@ -1,5 +1,13 @@
 ## Changes
 
+### Version 1.4.1 / 2026-06-30
+
+* Fix: round-of-16 match pairings
+* Fix: 3rd position calculation after group stage
+* Fix: call OpenLigaDB API download during build
+* Fix: renamed DR Congo; fixed New Zealand WS ID
+* Fix: targetUser in scrolling private chat header
+
 ### Version 1.4.0 / 2026-06-07
 
 * Feature: added WC2026 tournament
