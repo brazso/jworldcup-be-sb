@@ -1,0 +1,7 @@
+[mysqld]
+# accept only local connections
+bind-address = 127.0.0.1
+
+[client]
+# enable connection to localhost in addition to 127.0.0.1
+protocol=tcp

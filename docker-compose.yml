@@ -9,7 +9,7 @@ services:
     security_opt:
       - seccomp:unconfined
     ports:
-      - 3306:3306
+      - 127.0.0.1:3306:3306 # explicitly binds to localhost only
     environment: 
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-osboxes.org}
       MYSQL_USER: worldcup
@@ -56,13 +56,8 @@ services:
       - mysql
     ports:
       - 8100:80
-#    environment:
-#      PMA_ARBITRARY: 1
-#      PMA_SOCKET: /var/run/mysqld/mysqld.sock
-##      PMA_HOST: localhost
-##      PMA_PORT: 3306
-##      PMA_USER: worldcup
-##      PMA_PASSWORD: worldcup.org
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - mysqld:/var/run/mysqld
       - ./docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
@@ -103,7 +98,6 @@ services:
       - rabbitmq
     ports:
     - "8090:8090"
-#    command: sh -c 'sleep 30; /wait-for-it.sh -t 0 mysql:3306'
     volumes:
       - ./docker/backend/logs:/logs
 
