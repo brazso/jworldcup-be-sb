@@ -1,6 +1,6 @@
 [mysqld]
-# accept only local connections
-bind-address = 127.0.0.1
+# cannot be restricted to local connections because of docker usage
+bind-address = 0.0.0.0
 
 [client]
 # enable connection to localhost in addition to 127.0.0.1
